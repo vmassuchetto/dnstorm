@@ -1,0 +1,34 @@
+{% load gravatar i18n %}
+
+{% if perms.problem.can_edit %}
+    <a class="button small radius expand" href="{% url 'problem_edit' problem.id %}">
+        <i class="foundicon-page"></i> {% trans 'Edit this problem' %}
+    </a>
+{% endif %}
+
+<p>
+    {% trans "Created in " %} {{ problem.created }}<br/>
+    {% trans "Last updated in" %} {{ problem.created }}
+</p>
+
+{% if problem.revision_count or problem.idea_count %}
+<div class="info">
+    {% if problem.revision_count %}<b><a href="{% url "problem_revision" problem.id %}">{% if problem.revision_count > 1 %}{{ problem.revision_count }} {% trans "revisions" %}{% else %}{{ problem.revision_count }} {% trans "revision" %}{% endif %}</a></b><br/>{% endif %}
+    {% if problem.idea_count %}<b><a href="#problem-ideas">{% if idea_count > 1 %}{{ problem.idea_count }} {% trans "idea contributions" %}{% else %}{{ problem.idea_count }} {% trans "idea contribution" %}{% endif %}</a></b>{% endif %}
+</div>
+{% endif %}
+
+<hr/>
+
+{% if problem.public %}
+    Share buttons
+{% endif %}
+
+{% if problem.tag.all %}
+    <div class="tags">
+        {% for tag in problem.tag.all %}
+            <a class="button small" href="#">{{ tag.slug }}</a>
+        {% endfor %}
+    </div>
+    <hr/>
+{% endif %}

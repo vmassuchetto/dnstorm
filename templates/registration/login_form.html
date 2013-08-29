@@ -1,0 +1,32 @@
+{% load i18n %}
+
+<form method="post" action="{% url "django.contrib.auth.views.login" %}">
+    {% csrf_token %}
+    <input type="hidden" name="next" value="{% if request.GET.next %}{{ request.GET.next }}{% else %}{{ request.get_full_path }}{% endif %}" />
+    <div class="row">
+        <div class="columns large-12">
+            {{ login_form.as_p }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="columns large-12">
+            <input type="submit" class="button success expand" value="{% trans 'Login' %}" />
+        </div>
+    </div>
+    <hr/>
+    <div class="row">
+        <div class="columns large-12">
+            <a class="button secondary expand" href="javascript:void(0);">{% trans "Create an account" %}</a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="columns large-12">
+            <a class="button secondary expand" href="javascript:void(0);">{% trans "Connect with Facebook" %}</a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="columns large-12">
+            <a class="button secondary expand" href="javascript:void(0);">{% trans "Connect with Google" %}</a>
+        </div>
+    </div>
+</form>

@@ -1,0 +1,105 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-06-18 23:29-0300\n"
+"PO-Revision-Date: 2013-06-18 23:32-0300\n"
+"Last-Translator: Vinicius Massuchetto <viniciusmassuchetto@gmail.com>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Poedit 1.5.4\n"
+
+#: forms.py:12 models.py:41
+msgid "Tags"
+msgstr "Tags"
+
+#: forms.py:12
+msgid "Comma separated list of tags."
+msgstr "Tags separadas por vírgulas."
+
+#: forms.py:35
+msgid "Save"
+msgstr "Salvar"
+
+#: templates/error.html:11
+msgid "There was an error while doing the request."
+msgstr "Houve um erro ao fazer a sua requisição."
+
+#: templates/header.html:25
+msgid "Logout"
+msgstr "Sair"
+
+#: templates/header.html:27 templates/header.html.py:52
+msgid "Login"
+msgstr "Login"
+
+#: templates/header.html:29 templates/header.html.py:49
+msgid "Register"
+msgstr "Criar conta"
+
+#: templates/header.html:69
+msgid "Create new problem"
+msgstr "Criar novo problema"
+
+#: templates/home.html:24
+msgid "No problem created yet. Click in the \"create new problem\" to start."
+msgstr ""
+"Nenhum problema foi criado ainda. Clique em \"criar novo problema\" para "
+"começar."
+
+#: templates/dnstorm/problem_detail.html:26
+msgid "Created in "
+msgstr "Criado em"
+
+#: templates/dnstorm/problem_detail.html:27
+msgid "Last updated in"
+msgstr "Modificado em"
+
+#: templatetags/date_diff.py:21
+msgid "year"
+msgid_plural "years"
+msgstr[0] "ano"
+msgstr[1] "anos"
+
+#: templatetags/date_diff.py:22
+msgid "month"
+msgid_plural "months"
+msgstr[0] "mês"
+msgstr[1] "meses"
+
+#: templatetags/date_diff.py:23
+msgid "week"
+msgid_plural "weeks"
+msgstr[0] "semana"
+msgstr[1] "semanas"
+
+#: templatetags/date_diff.py:24
+msgid "day"
+msgid_plural "days"
+msgstr[0] "dia"
+msgstr[1] "dias"
+
+#: templatetags/date_diff.py:32
+#, python-format
+msgid "%(number)d %(type)s"
+msgstr "%(number)d %(type)s"
+
+#: views/ajax.py:13
+msgid "Invalid request"
+msgstr "Requisição inválida"
+
+#: views/base.py:20
+msgid "You don't have permission to access the page you requested."
+msgstr "Você não tem permissão para acessar a página requisitada."
+
+#: views/base.py:22
+msgid "There was an error during the request."
+msgstr "Houver um erro ao fazer a requisição."

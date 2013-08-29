@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load gravatar i18n %}
+
+{% block "bodyclass" %}problem-revisions{% endblock %}
+
+{% block "content" %}
+
+    <div class="row problem-detail-title">
+    <div class="columns content large-12">
+        <h4>{% trans "Revisions for" %} {{ problem.title }}</h4>
+    </div>
+    </div>
+
+    <div class="row">
+    <div class="columns large-9 problem-detail">
+
+        {% for revision in revisions %}
+
+        <div class="description">
+            {{ revision.description|safe }}
+        </div>
+
+        {% endfor %}
+
+    </div>
+    <div class="columns sidebar large-3">
+        {% include "problem_sidebar.html" %}
+    </div>
+    </div>
+
+
+{% endblock %}

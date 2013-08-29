@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% load humanize i18n %}
+
+{% block "bodyclass" %}404{% endblock %}
+
+{% block "content" %}
+
+    <div class="row">
+        <div class="panel">
+            {% trans "The page you are trying to access does not exist." %}
+        </div>
+    </div>
+
+{% endblock %}

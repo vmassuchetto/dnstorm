@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags i18n %}
+
+{% block "bodyclass" %}problem-edit{% endblock %}
+
+{% block "head" %}{{ form.media }}{% endblock %}
+
+{% block "content" %}
+    <div class="row problem-form">
+    <div class="columns large-12">
+        {% if mode == "new" %}
+            <h4>{% trans "Create new problem" %}</h4>
+        {% else %}
+            <h4>{% trans "Edit problem" %}</h4>
+        {% endif %}
+        {% crispy form %}
+    </div>
+    </div>
+{% endblock %}

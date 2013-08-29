@@ -1,0 +1,24 @@
+# Vi
+*~
+*.swp
+*.swo
+
+# Sass
+.sass-cache/
+
+# Python
+*.pyc
+env
+
+# Django
+help
+manage.py
+settings.py
+migrations # by now
+
+# Migrations
+migrations
+
+# DNStorm
+*.sqlite3
+media

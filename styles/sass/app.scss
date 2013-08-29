@@ -1,0 +1,203 @@
+@import "settings";
+@import "normalize";
+@import "foundation";
+@import "general_foundicons";
+@import "social_foundicons";
+
+@import "compass/css3";
+@import "compass/utilities";
+
+// General
+
+.alignright {
+    text-align: right;
+}
+
+// Mandatory global radius
+
+.button,
+.panel,
+fieldset,
+input[type='text'] {
+    @include border-radius($global-radius);
+}
+
+// CKEditor
+
+.cke_ltr {
+    width: 100% !important;
+}
+
+.cke_combopanel__format {
+    width: 200px !important;
+}
+
+// Buttons
+
+.buttonHolder {
+    text-align: right;
+    #advanced {
+        float:left;
+    }
+}
+
+// Forms
+
+form {
+    label {
+        display: inline-block;
+    }
+    input[type='checkbox'] {
+        margin:0 3px 0 0;
+    }
+    .ctrlHolder {
+        margin-bottom: emCalc(15px);
+    }
+    .formHint {
+        font-size: 11px;
+        color: $light-black;
+        margin: 0;
+        padding: emCalc(3px) 0;
+    }
+    .control-group {
+        margin-bottom: emCalc(15px);
+    }
+    .asteriskField {
+        color: $red;
+    }
+}
+
+// Error panel
+
+.error-panel {
+    @include panel(pink, 20px);
+    @include border-radius($global-radius);
+}
+
+// Header
+
+.header h1 a {
+    font-family: sans-serif;
+    color: $dark-black;
+    letter-spacing: emCalc(-1px);
+    @include text-shadow(
+        lighten($black, 40%) 1px 1px 0,
+        lighten($black, 60%) 2px 2px 0,
+        lighten($black, 80%) 3px 3px 0,
+        lighten($black, 100%) 4px 4px 0
+    );
+    &:hover {
+        color: darken($black, 10%);
+    }
+}
+
+.header .buttons-padding {
+    display: block;
+    width: 100%;
+    padding: emCalc(40px) 0 0 0;
+}
+
+.header .buttons .button {
+    margin-bottom: 0;
+}
+
+// Problem listing
+
+.problem-list-item {
+    margin-top: 5px !important;
+    margin-bottom: 5px !important;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid lighten($black, 60%);
+    h4 {
+        margin: 3px 0;
+        color: $black;
+        line-height: 1;
+        @include text-shadow(
+            lighten($black, 60%) 1px 1px 0,
+            lighten($black, 80%) 2px 2px 0
+        );
+    }
+    h6.subheader {
+        margin: 0;
+        font-size: emCalc(14px);
+    }
+    .problem-counter {
+        text-align:center;
+        background: lighten($black, 65%);
+        padding: 8px 5px;
+        span {
+            display: block;
+        }
+        .number {
+            color: $black;
+            font-weight: bold;
+            font-size: emCalc(25px);
+            letter-spacing: emCalc(-1px);
+            line-height: 1;
+        }
+        .description {
+            color: $light-black;
+            font-size: emCalc(12px);
+        }
+    }
+}
+
+.problem-tag-select {
+    @include form-element;
+    @include border-radius($global-radius);
+    cursor: text;
+    height: auto;
+    .button {
+        margin: 2px 3px;
+    }
+    .text {
+        display:inline-block;
+        width: 5%;
+        height: 1em;
+        margin: 0 3px;
+    }
+}
+
+.problem-tag-result {
+    display: none;
+    margin-top: 5px;
+    .button {
+        margin-bottom: 5px;
+    }
+    .description {
+        display: block;
+        font-size: emCalc(13px);
+        line-height: 1.1;
+        color: $light-black;
+    }
+}
+
+.problem-detail {
+    .description {
+        margin: 5px 0;
+    }
+}
+
+// Idea list
+
+.problem-idea {
+    .user-box {
+        @include panel(lighten($black, 70%), 5px);
+        @include border-radius($global-radius);
+        .avatar {
+            @include thumb(1px, $light-black);
+            float: right;
+            margin: 3px 0 0 6px;
+        }
+        .contributed {
+            color: $light-black;
+            font-size: emCalc(12px);
+        }
+        a.username {
+            display: inline-block;
+            font-weight: bold;
+            margin: 5px 0 0 0;
+        }
+    }
+}

@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% load problem crispy_forms_tags gravatar i18n %}
+
+{% block "bodyclass" %}problem{% endblock %}
+
+{% block "head" %}{{ form.media }}{% endblock %}
+
+{% block "content" %}
+
+    <div class="row problem-detail-title">
+    <div class="columns content large-12">
+        <h4>{{ problem.title }}</h4>
+    </div>
+    </div>
+
+    <div class="row">
+    <div class="columns large-9 problem-detail">
+
+        <div class="description">
+            {{ problem.description|safe }}
+        </div>
+
+        <hr/>
+
+        <div class="problem-form-idea">
+            <h5>{% trans "Your idea" %}</h5>
+            {% crispy form %}
+            <div class="problem-form-idea-preview"></div>
+        </div>
+
+        {% if problem.idea_set.all %}
+        <a name="problem-ideas"></a>
+        <div class="problem-ideas">
+            <h5>{% trans "Submitted ideas" %}</h5>
+            {% for idea in problem.idea_set.all %}
+                <hr/>
+                <div class="problem-idea">
+
+                    <div class="row">
+                    <div class="columns large-12">
+                        {{ idea.content|safe }}
+                    </div>
+                    </div>
+
+                    <div class="row">
+                    <div class="columns large-8">
+                        <a class="button secondary"><i class="foundicon-thumb-down"></i></a>
+                        <a class="button secondary"><i class="foundicon-thumb-up"></i></a>
+                    </div>
+
+                    <div class="columns large-4">
+
+                        <div class="user-box alignright">
+
+                            <div class="row">
+                            <div class="columns large-12">
+                                <span class="contributed">
+                                    {% trans "contributed" %} {{ idea.created|date:"d b Y" }} {% trans "at" %} {{ idea.created|date:"H:i" }}
+                                </span>
+                            </div>
+                            </div>
+
+                            <div class="row">
+                            <div class="columns large-12">
+                                <a class="username" href="{% url "user" request.user.id %}">{{ idea.user.username }}</a>
+                                <a class="avatar">{% gravatar_for_user idea.user %}</a>
+                            </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                    </div>
+
+                </div>
+            {% endfor %}
+        </div>
+        <hr/>
+        {% endif %}
+
+    </div>
+
+    <div class="columns sidebar large-3">
+        {% include "problem_sidebar.html" %}
+    </div>
+
+    </div>
+
+
+{% endblock %}

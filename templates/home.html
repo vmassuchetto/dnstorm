@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% load humanize i18n %}
+
+{% block "bodyclass" %}home{% endblock %}
+
+{% block "titleside" %}
+    <div class="buttons-padding hide-for-small"></div>
+    {% if perms.problem.can_add %}
+        <a class="button small success radius" href="{% url 'problem_new' %}">
+            <i class="foundicon-page"></i> {% trans 'Create new problem' %}
+        </a>
+    {% endif %}
+{% endblock %}
+
+{% block "content" %}
+
+    <div class="row">
+
+    <div class="large-12 columns content problem-list">
+        {% if problems %}
+        {% for problem in problems %}
+
+            <div class="row problem-list-item">
+                <div class="columns large-1 problem-counter">
+                    <span class="number">{{ problem.idea_count }}</span>
+                    <span class="description">{% if problem.idea_count > 1 or problem.idea_count = 0 %}{% trans "ideas" %}{% else %}{% trans "idea" %}{% endif %}</span>
+                </div>
+                <div class="columns large-11">
+                    <h4><a href="{% url "problem" problem.slug %}">{{ problem.title }}</a></h4>
+                    <h6 class="subheader">{% trans "modified" %} {{ problem.updated|naturaltime }}</h6>
+                </div>
+            </div>
+
+        {% endfor %}
+        {% else %}
+            <div class="panel">
+                {% if user.is_authenticated %}
+                    {% trans "No problem here. You can start by" %} <a href="{% url "problem_new" %}">{% trans "creating a new one" %}</a>.
+                {% else %}
+                    <a href="{% url "django.contrib.auth.views.login" %}?next={{ request.get_full_path }}">{% trans "Log in" %}</a> {% trans "to view and create problems" %}.
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+
+    </div>
+
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% load humanize i18n %}
+
+{% block "bodyclass" %}login{% endblock %}
+
+{% block "content" %}
+    <div class="row">
+    <div class="large-4 large-offset-4 columns content problem-list">
+        {% include "registration/login_form.html" %}
+    </div>
+    </div>
+{% endblock %}
