@@ -4,7 +4,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from datetime import datetime
-from utils.unique_slugify import unique_slugify
+from lib.slug import unique_slugify
 import settings
 
 from ckeditor.fields import RichTextField
@@ -37,11 +37,15 @@ class Problem(models.Model):
     slug = models.SlugField(max_length=90, unique=True, editable=False)
     description = RichTextField(verbose_name=_('Description'), blank=True)
     tag = models.ManyToManyField(Tag, verbose_name=_('Tags'), editable=False, blank=True, null=True)
+    author = models.ForeignKey(User, related_name='author', editable=False, blank=True, null=True)
     user = models.ManyToManyField(User, related_name='user', verbose_name=_('Users'), help_text=_('Users with permission to contribute to this problem.'), blank=True, null=True)
     manager = models.ManyToManyField(User, related_name='admin', verbose_name=_('Admins'), help_text=_('Users with permission to manage this problem.'), blank=True, null=True)
     open = models.BooleanField(verbose_name=_('Open participation'), help_text=_('Any registered user can contribute to this problem.'), default=True)
     public = models.BooleanField(verbose_name=_('Public'), help_text=_('The problem will be publicy available to anyone.'), default=True)
     max = models.IntegerField(verbose_name=_('Max ideas per user.'), help_text=_('Leave 0 for unlimited ideas per user.'), default=0, blank=True)
+    voting = models.BooleanField(verbose_name=_('Enable voting for ideas'), help_text=_('Users will be able to vote for the ideas.'), default=True, blank=True)
+    vote_count = models.BooleanField(verbose_name=_('Display vote counts'), help_text=_('Users will be able to see how many votes each idea had.'), default=True, blank=True)
+    vote_author = models.BooleanField(verbose_name=_('Display vote authors'), help_text=_('Ideas voting will be completely transparent.'), default=False, blank=True)
     revision = models.ForeignKey('self', editable=False, blank=True, null=True)
     modified = models.DateTimeField(auto_now=True, editable=False)
 
@@ -62,12 +66,13 @@ class Problem(models.Model):
         return Problem.objects.filter(revision=self.id).count()
 
     def idea_count(self):
-        return Idea.objects.filter(problem=self).count()
+        return Idea.objects.filter(problem=self, revision=None).count()
 
 class Idea(models.Model):
     content = RichTextField(config_name='idea_content')
     problem = models.ForeignKey(Problem, editable=False)
     user = models.ForeignKey(User, editable=False)
+    revision = models.ForeignKey('self', editable=False, blank=True, null=True)
     modified = models.DateTimeField(auto_now=True, editable=False)
 
     def __unicode__(self):
@@ -76,8 +81,21 @@ class Idea(models.Model):
     class Meta:
         db_table = settings.DNSTORM['table_prefix'] + '_idea'
 
-    def save(self, *args, **kwargs):
-        if not self.id:
-            self.created = datetime.today()
-        self.updated = datetime.today()
-        super(Idea, self).save(*args, **kwargs)
+    def vote_count(self):
+        w = Vote.objects.filter(idea=self).aggregate(models.Sum('weight'))['weight__sum']
+        return w if w else 0
+
+class Vote(models.Model):
+    idea = models.ForeignKey(Idea)
+    user = models.ForeignKey(User)
+    weight = models.SmallIntegerField(choices=(
+        (1, _('Upvote')),
+        (-1, _('Downvote'))))
+    date = models.DateTimeField(auto_now=True)
+
+    def __unicode__(self):
+        return '%s (Idea: %s) (Type: %d)' % (self.user, self.idea, self.weight)
+
+    class Meta:
+        db_table = settings.DNSTORM['table_prefix'] + '_vote'
+

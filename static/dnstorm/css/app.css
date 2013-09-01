@@ -5,7 +5,7 @@
 /**
  * Correct `block` display not defined in IE 8/9.
  */
-/* line 22, ../../../foundation/sass/_normalize.scss */
+/* line 22, ../../../styles/sass/_normalize.scss */
 article,
 aside,
 details,
@@ -24,7 +24,7 @@ summary {
 /**
  * Correct `inline-block` display not defined in IE 8/9.
  */
-/* line 32, ../../../foundation/sass/_normalize.scss */
+/* line 32, ../../../styles/sass/_normalize.scss */
 audio,
 canvas,
 video {
@@ -35,7 +35,7 @@ video {
  * Prevent modern browsers from displaying `audio` without controls.
  * Remove excess height in iOS 5 devices.
  */
-/* line 41, ../../../foundation/sass/_normalize.scss */
+/* line 41, ../../../styles/sass/_normalize.scss */
 audio:not([controls]) {
   display: none;
   height: 0;
@@ -44,7 +44,7 @@ audio:not([controls]) {
 /**
  * Address styling not present in IE 8/9.
  */
-/* line 50, ../../../foundation/sass/_normalize.scss */
+/* line 50, ../../../styles/sass/_normalize.scss */
 [hidden] {
   display: none;
 }
@@ -61,7 +61,7 @@ audio:not([controls]) {
  * 4. Prevent iOS text size adjust after orientation change, without disabling
  *    user zoom.
  */
-/* line 68, ../../../foundation/sass/_normalize.scss */
+/* line 68, ../../../styles/sass/_normalize.scss */
 html {
   background: #fff;
   /* 1 */
@@ -78,7 +78,7 @@ html {
 /**
  * Remove default margin.
  */
-/* line 80, ../../../foundation/sass/_normalize.scss */
+/* line 80, ../../../styles/sass/_normalize.scss */
 body {
   margin: 0;
 }
@@ -89,7 +89,7 @@ body {
 /**
  * Address `outline` inconsistency between Chrome and other browsers.
  */
-/* line 92, ../../../foundation/sass/_normalize.scss */
+/* line 92, ../../../styles/sass/_normalize.scss */
 a:focus {
   outline: thin dotted;
 }
@@ -97,7 +97,7 @@ a:focus {
 /**
  * Improve readability when focused and also mouse hovered in all browsers.
  */
-/* line 101, ../../../foundation/sass/_normalize.scss */
+/* line 101, ../../../styles/sass/_normalize.scss */
 a:active,
 a:hover {
   outline: 0;
@@ -110,7 +110,7 @@ a:hover {
  * Address variable `h1` font-size and margin within `section` and `article`
  * contexts in Firefox 4+, Safari 5, and Chrome.
  */
-/* line 114, ../../../foundation/sass/_normalize.scss */
+/* line 114, ../../../styles/sass/_normalize.scss */
 h1 {
   font-size: 2em;
   margin: 0.67em 0;
@@ -119,7 +119,7 @@ h1 {
 /**
  * Address styling not present in IE 8/9, Safari 5, and Chrome.
  */
-/* line 123, ../../../foundation/sass/_normalize.scss */
+/* line 123, ../../../styles/sass/_normalize.scss */
 abbr[title] {
   border-bottom: 1px dotted;
 }
@@ -127,7 +127,7 @@ abbr[title] {
 /**
  * Address style set to `bolder` in Firefox 4+, Safari 5, and Chrome.
  */
-/* line 132, ../../../foundation/sass/_normalize.scss */
+/* line 132, ../../../styles/sass/_normalize.scss */
 b,
 strong {
   font-weight: bold;
@@ -136,7 +136,7 @@ strong {
 /**
  * Address styling not present in Safari 5 and Chrome.
  */
-/* line 140, ../../../foundation/sass/_normalize.scss */
+/* line 140, ../../../styles/sass/_normalize.scss */
 dfn {
   font-style: italic;
 }
@@ -144,7 +144,7 @@ dfn {
 /**
  * Address differences between Firefox and other browsers.
  */
-/* line 148, ../../../foundation/sass/_normalize.scss */
+/* line 148, ../../../styles/sass/_normalize.scss */
 hr {
   -moz-box-sizing: content-box;
   box-sizing: content-box;
@@ -154,7 +154,7 @@ hr {
 /**
  * Address styling not present in IE 8/9.
  */
-/* line 158, ../../../foundation/sass/_normalize.scss */
+/* line 158, ../../../styles/sass/_normalize.scss */
 mark {
   background: #ff0;
   color: #000;
@@ -163,7 +163,7 @@ mark {
 /**
  * Correct font family set oddly in Safari 5 and Chrome.
  */
-/* line 170, ../../../foundation/sass/_normalize.scss */
+/* line 170, ../../../styles/sass/_normalize.scss */
 code,
 kbd,
 pre,
@@ -175,7 +175,7 @@ samp {
 /**
  * Improve readability of pre-formatted text in all browsers.
  */
-/* line 179, ../../../foundation/sass/_normalize.scss */
+/* line 179, ../../../styles/sass/_normalize.scss */
 pre {
   white-space: pre-wrap;
 }
@@ -183,7 +183,7 @@ pre {
 /**
  * Set consistent quote types.
  */
-/* line 187, ../../../foundation/sass/_normalize.scss */
+/* line 187, ../../../styles/sass/_normalize.scss */
 q {
   quotes: "\201C" "\201D" "\2018" "\2019";
 }
@@ -191,7 +191,7 @@ q {
 /**
  * Address inconsistent and variable font size in all browsers.
  */
-/* line 195, ../../../foundation/sass/_normalize.scss */
+/* line 195, ../../../styles/sass/_normalize.scss */
 small {
   font-size: 80%;
 }
@@ -199,7 +199,7 @@ small {
 /**
  * Prevent `sub` and `sup` affecting `line-height` in all browsers.
  */
-/* line 204, ../../../foundation/sass/_normalize.scss */
+/* line 204, ../../../styles/sass/_normalize.scss */
 sub,
 sup {
   font-size: 75%;
@@ -208,12 +208,12 @@ sup {
   vertical-align: baseline;
 }
 
-/* line 211, ../../../foundation/sass/_normalize.scss */
+/* line 211, ../../../styles/sass/_normalize.scss */
 sup {
   top: -0.5em;
 }
 
-/* line 215, ../../../foundation/sass/_normalize.scss */
+/* line 215, ../../../styles/sass/_normalize.scss */
 sub {
   bottom: -0.25em;
 }
@@ -224,7 +224,7 @@ sub {
 /**
  * Remove border when inside `a` element in IE 8/9.
  */
-/* line 227, ../../../foundation/sass/_normalize.scss */
+/* line 227, ../../../styles/sass/_normalize.scss */
 img {
   border: 0;
 }
@@ -232,7 +232,7 @@ img {
 /**
  * Correct overflow displayed oddly in IE 9.
  */
-/* line 235, ../../../foundation/sass/_normalize.scss */
+/* line 235, ../../../styles/sass/_normalize.scss */
 svg:not(:root) {
   overflow: hidden;
 }
@@ -243,7 +243,7 @@ svg:not(:root) {
 /**
  * Address margin not present in IE 8/9 and Safari 5.
  */
-/* line 247, ../../../foundation/sass/_normalize.scss */
+/* line 247, ../../../styles/sass/_normalize.scss */
 figure {
   margin: 0;
 }
@@ -254,7 +254,7 @@ figure {
 /**
  * Define consistent border, margin, and padding.
  */
-/* line 259, ../../../foundation/sass/_normalize.scss */
+/* line 259, ../../../styles/sass/_normalize.scss */
 fieldset {
   border: 1px solid #c0c0c0;
   margin: 0 2px;
@@ -265,7 +265,7 @@ fieldset {
  * 1. Correct `color` not being inherited in IE 8/9.
  * 2. Remove padding so people aren't caught out if they zero out fieldsets.
  */
-/* line 270, ../../../foundation/sass/_normalize.scss */
+/* line 270, ../../../styles/sass/_normalize.scss */
 legend {
   border: 0;
   /* 1 */
@@ -278,7 +278,7 @@ legend {
  * 2. Correct font size not being inherited in all browsers.
  * 3. Address margins set differently in Firefox 4+, Safari 5, and Chrome.
  */
-/* line 284, ../../../foundation/sass/_normalize.scss */
+/* line 284, ../../../styles/sass/_normalize.scss */
 button,
 input,
 select,
@@ -295,7 +295,7 @@ textarea {
  * Address Firefox 4+ setting `line-height` on `input` using `!important` in
  * the UA stylesheet.
  */
-/* line 296, ../../../foundation/sass/_normalize.scss */
+/* line 296, ../../../styles/sass/_normalize.scss */
 button,
 input {
   line-height: normal;
@@ -307,7 +307,7 @@ input {
  * Correct `button` style inheritance in Chrome, Safari 5+, and IE 8+.
  * Correct `select` style inheritance in Firefox 4+ and Opera.
  */
-/* line 308, ../../../foundation/sass/_normalize.scss */
+/* line 308, ../../../styles/sass/_normalize.scss */
 button,
 select {
   text-transform: none;
@@ -320,7 +320,7 @@ select {
  * 3. Improve usability and consistency of cursor style between image-type
  *    `input` and others.
  */
-/* line 323, ../../../foundation/sass/_normalize.scss */
+/* line 323, ../../../styles/sass/_normalize.scss */
 button,
 html input[type="button"],
 input[type="reset"],
@@ -334,7 +334,7 @@ input[type="submit"] {
 /**
  * Re-set default cursor for disabled elements.
  */
-/* line 333, ../../../foundation/sass/_normalize.scss */
+/* line 333, ../../../styles/sass/_normalize.scss */
 button[disabled],
 html input[disabled] {
   cursor: default;
@@ -344,7 +344,7 @@ html input[disabled] {
  * 1. Address box sizing set to `content-box` in IE 8/9.
  * 2. Remove excess padding in IE 8/9.
  */
-/* line 343, ../../../foundation/sass/_normalize.scss */
+/* line 343, ../../../styles/sass/_normalize.scss */
 input[type="checkbox"],
 input[type="radio"] {
   box-sizing: border-box;
@@ -358,7 +358,7 @@ input[type="radio"] {
  * 2. Address `box-sizing` set to `border-box` in Safari 5 and Chrome
  *    (include `-moz` to future-proof).
  */
-/* line 354, ../../../foundation/sass/_normalize.scss */
+/* line 354, ../../../styles/sass/_normalize.scss */
 input[type="search"] {
   -webkit-appearance: textfield;
   /* 1 */
@@ -372,7 +372,7 @@ input[type="search"] {
  * Remove inner padding and search cancel button in Safari 5 and Chrome
  * on OS X.
  */
-/* line 367, ../../../foundation/sass/_normalize.scss */
+/* line 367, ../../../styles/sass/_normalize.scss */
 input[type="search"]::-webkit-search-cancel-button,
 input[type="search"]::-webkit-search-decoration {
   -webkit-appearance: none;
@@ -381,7 +381,7 @@ input[type="search"]::-webkit-search-decoration {
 /**
  * Remove inner padding and border in Firefox 4+.
  */
-/* line 376, ../../../foundation/sass/_normalize.scss */
+/* line 376, ../../../styles/sass/_normalize.scss */
 button::-moz-focus-inner,
 input::-moz-focus-inner {
   border: 0;
@@ -392,7 +392,7 @@ input::-moz-focus-inner {
  * 1. Remove default vertical scrollbar in IE 8/9.
  * 2. Improve readability and alignment in all browsers.
  */
-/* line 386, ../../../foundation/sass/_normalize.scss */
+/* line 386, ../../../styles/sass/_normalize.scss */
 textarea {
   overflow: auto;
   /* 1 */
@@ -406,7 +406,7 @@ textarea {
 /**
  * Remove most spacing between table cells.
  */
-/* line 399, ../../../foundation/sass/_normalize.scss */
+/* line 399, ../../../styles/sass/_normalize.scss */
 table {
   border-collapse: collapse;
   border-spacing: 0;
@@ -6671,7 +6671,7 @@ a.th {
 }
 
 /* global foundicon styles */
-/* line 7, ../../../foundation/sass/general_foundicons.scss */
+/* line 7, ../../../styles/sass/general_foundicons.scss */
 [class*="foundicon-"] {
   display: inline;
   width: auto;
@@ -6683,7 +6683,7 @@ a.th {
   background-repeat: repeat;
 }
 
-/* line 17, ../../../foundation/sass/general_foundicons.scss */
+/* line 17, ../../../styles/sass/general_foundicons.scss */
 [class*="foundicon-"]:before {
   font-family: "SocialFoundicons";
   font-weight: normal;
@@ -6692,237 +6692,237 @@ a.th {
 }
 
 /* icons */
-/* line 1312, ../../../foundation/sass/_settings.scss */
+/* line 1313, ../../../styles/sass/_settings.scss */
 .foundicon-settings:before {
   content: "\f000";
 }
 
-/* line 1312, ../../../foundation/sass/_settings.scss */
+/* line 1313, ../../../styles/sass/_settings.scss */
 .foundicon-heart:before {
   content: "\f001";
 }
 
-/* line 1312, ../../../foundation/sass/_settings.scss */
+/* line 1313, ../../../styles/sass/_settings.scss */
 .foundicon-star:before {
   content: "\f002";
 }
 
-/* line 1312, ../../../foundation/sass/_settings.scss */
+/* line 1313, ../../../styles/sass/_settings.scss */
 .foundicon-plus:before {
   content: "\f003";
 }
 
-/* line 1312, ../../../foundation/sass/_settings.scss */
+/* line 1313, ../../../styles/sass/_settings.scss */
 .foundicon-minus:before {
   content: "\f004";
 }
 
-/* line 1312, ../../../foundation/sass/_settings.scss */
+/* line 1313, ../../../styles/sass/_settings.scss */
 .foundicon-checkmark:before {
   content: "\f005";
 }
 
-/* line 1312, ../../../foundation/sass/_settings.scss */
+/* line 1313, ../../../styles/sass/_settings.scss */
 .foundicon-remove:before {
   content: "\f006";
 }
 
-/* line 1312, ../../../foundation/sass/_settings.scss */
+/* line 1313, ../../../styles/sass/_settings.scss */
 .foundicon-mail:before {
   content: "\f007";
 }
 
-/* line 1312, ../../../foundation/sass/_settings.scss */
+/* line 1313, ../../../styles/sass/_settings.scss */
 .foundicon-calendar:before {
   content: "\f008";
 }
 
-/* line 1312, ../../../foundation/sass/_settings.scss */
+/* line 1313, ../../../styles/sass/_settings.scss */
 .foundicon-page:before {
   content: "\f009";
 }
 
-/* line 1312, ../../../foundation/sass/_settings.scss */
+/* line 1313, ../../../styles/sass/_settings.scss */
 .foundicon-tools:before {
   content: "\f00a";
 }
 
-/* line 1312, ../../../foundation/sass/_settings.scss */
+/* line 1313, ../../../styles/sass/_settings.scss */
 .foundicon-globe:before {
   content: "\f00b";
 }
 
-/* line 1312, ../../../foundation/sass/_settings.scss */
+/* line 1313, ../../../styles/sass/_settings.scss */
 .foundicon-home:before {
   content: "\f00c";
 }
 
-/* line 1312, ../../../foundation/sass/_settings.scss */
+/* line 1313, ../../../styles/sass/_settings.scss */
 .foundicon-quote:before {
   content: "\f00d";
 }
 
-/* line 1312, ../../../foundation/sass/_settings.scss */
+/* line 1313, ../../../styles/sass/_settings.scss */
 .foundicon-people:before {
   content: "\f00e";
 }
 
-/* line 1312, ../../../foundation/sass/_settings.scss */
+/* line 1313, ../../../styles/sass/_settings.scss */
 .foundicon-monitor:before {
   content: "\f00f";
 }
 
-/* line 1312, ../../../foundation/sass/_settings.scss */
+/* line 1313, ../../../styles/sass/_settings.scss */
 .foundicon-laptop:before {
   content: "\f010";
 }
 
-/* line 1312, ../../../foundation/sass/_settings.scss */
+/* line 1313, ../../../styles/sass/_settings.scss */
 .foundicon-phone:before {
   content: "\f011";
 }
 
-/* line 1312, ../../../foundation/sass/_settings.scss */
+/* line 1313, ../../../styles/sass/_settings.scss */
 .foundicon-cloud:before {
   content: "\f012";
 }
 
-/* line 1312, ../../../foundation/sass/_settings.scss */
+/* line 1313, ../../../styles/sass/_settings.scss */
 .foundicon-error:before {
   content: "\f013";
 }
 
-/* line 1312, ../../../foundation/sass/_settings.scss */
+/* line 1313, ../../../styles/sass/_settings.scss */
 .foundicon-right-arrow:before {
   content: "\f014";
 }
 
-/* line 1312, ../../../foundation/sass/_settings.scss */
+/* line 1313, ../../../styles/sass/_settings.scss */
 .foundicon-left-arrow:before {
   content: "\f015";
 }
 
-/* line 1312, ../../../foundation/sass/_settings.scss */
+/* line 1313, ../../../styles/sass/_settings.scss */
 .foundicon-up-arrow:before {
   content: "\f016";
 }
 
-/* line 1312, ../../../foundation/sass/_settings.scss */
+/* line 1313, ../../../styles/sass/_settings.scss */
 .foundicon-down-arrow:before {
   content: "\f017";
 }
 
-/* line 1312, ../../../foundation/sass/_settings.scss */
+/* line 1313, ../../../styles/sass/_settings.scss */
 .foundicon-trash:before {
   content: "\f018";
 }
 
-/* line 1312, ../../../foundation/sass/_settings.scss */
+/* line 1313, ../../../styles/sass/_settings.scss */
 .foundicon-add-doc:before {
   content: "\f019";
 }
 
-/* line 1312, ../../../foundation/sass/_settings.scss */
+/* line 1313, ../../../styles/sass/_settings.scss */
 .foundicon-edit:before {
   content: "\f01a";
 }
 
-/* line 1312, ../../../foundation/sass/_settings.scss */
+/* line 1313, ../../../styles/sass/_settings.scss */
 .foundicon-lock:before {
   content: "\f01b";
 }
 
-/* line 1312, ../../../foundation/sass/_settings.scss */
+/* line 1313, ../../../styles/sass/_settings.scss */
 .foundicon-unlock:before {
   content: "\f01c";
 }
 
-/* line 1312, ../../../foundation/sass/_settings.scss */
+/* line 1313, ../../../styles/sass/_settings.scss */
 .foundicon-refresh:before {
   content: "\f01d";
 }
 
-/* line 1312, ../../../foundation/sass/_settings.scss */
+/* line 1313, ../../../styles/sass/_settings.scss */
 .foundicon-paper-clip:before {
   content: "\f01e";
 }
 
-/* line 1312, ../../../foundation/sass/_settings.scss */
+/* line 1313, ../../../styles/sass/_settings.scss */
 .foundicon-video:before {
   content: "\f01f";
 }
 
-/* line 1312, ../../../foundation/sass/_settings.scss */
+/* line 1313, ../../../styles/sass/_settings.scss */
 .foundicon-photo:before {
   content: "\f020";
 }
 
-/* line 1312, ../../../foundation/sass/_settings.scss */
+/* line 1313, ../../../styles/sass/_settings.scss */
 .foundicon-graph:before {
   content: "\f021";
 }
 
-/* line 1312, ../../../foundation/sass/_settings.scss */
+/* line 1313, ../../../styles/sass/_settings.scss */
 .foundicon-idea:before {
   content: "\f022";
 }
 
-/* line 1312, ../../../foundation/sass/_settings.scss */
+/* line 1313, ../../../styles/sass/_settings.scss */
 .foundicon-mic:before {
   content: "\f023";
 }
 
-/* line 1312, ../../../foundation/sass/_settings.scss */
+/* line 1313, ../../../styles/sass/_settings.scss */
 .foundicon-cart:before {
   content: "\f024";
 }
 
-/* line 1312, ../../../foundation/sass/_settings.scss */
+/* line 1313, ../../../styles/sass/_settings.scss */
 .foundicon-address-book:before {
   content: "\f025";
 }
 
-/* line 1312, ../../../foundation/sass/_settings.scss */
+/* line 1313, ../../../styles/sass/_settings.scss */
 .foundicon-compass:before {
   content: "\f026";
 }
 
-/* line 1312, ../../../foundation/sass/_settings.scss */
+/* line 1313, ../../../styles/sass/_settings.scss */
 .foundicon-flag:before {
   content: "\f027";
 }
 
-/* line 1312, ../../../foundation/sass/_settings.scss */
+/* line 1313, ../../../styles/sass/_settings.scss */
 .foundicon-location:before {
   content: "\f028";
 }
 
-/* line 1312, ../../../foundation/sass/_settings.scss */
+/* line 1313, ../../../styles/sass/_settings.scss */
 .foundicon-clock:before {
   content: "\f029";
 }
 
-/* line 1312, ../../../foundation/sass/_settings.scss */
+/* line 1313, ../../../styles/sass/_settings.scss */
 .foundicon-folder:before {
   content: "\f02a";
 }
 
-/* line 1312, ../../../foundation/sass/_settings.scss */
+/* line 1313, ../../../styles/sass/_settings.scss */
 .foundicon-inbox:before {
   content: "\f02b";
 }
 
-/* line 1312, ../../../foundation/sass/_settings.scss */
+/* line 1313, ../../../styles/sass/_settings.scss */
 .foundicon-website:before {
   content: "\f02c";
 }
 
-/* line 1312, ../../../foundation/sass/_settings.scss */
+/* line 1313, ../../../styles/sass/_settings.scss */
 .foundicon-smiley:before {
   content: "\f02d";
 }
 
-/* line 1312, ../../../foundation/sass/_settings.scss */
+/* line 1313, ../../../styles/sass/_settings.scss */
 .foundicon-search:before {
   content: "\f02e";
 }
@@ -6937,7 +6937,7 @@ a.th {
 }
 
 /* global foundicon styles */
-/* line 7, ../../../foundation/sass/social_foundicons.scss */
+/* line 7, ../../../styles/sass/social_foundicons.scss */
 [class*="foundicon-"] {
   display: inline;
   width: auto;
@@ -6949,7 +6949,7 @@ a.th {
   background-repeat: repeat;
 }
 
-/* line 17, ../../../foundation/sass/social_foundicons.scss */
+/* line 17, ../../../styles/sass/social_foundicons.scss */
 [class*="foundicon-"]:before {
   font-family: "SocialFoundicons";
   font-weight: normal;
@@ -6958,162 +6958,162 @@ a.th {
 }
 
 /* icons */
-/* line 1312, ../../../foundation/sass/_settings.scss */
+/* line 1313, ../../../styles/sass/_settings.scss */
 .foundicon-thumb-up:before {
   content: "\f000";
 }
 
-/* line 1312, ../../../foundation/sass/_settings.scss */
+/* line 1313, ../../../styles/sass/_settings.scss */
 .foundicon-thumb-down:before {
   content: "\f001";
 }
 
-/* line 1312, ../../../foundation/sass/_settings.scss */
+/* line 1313, ../../../styles/sass/_settings.scss */
 .foundicon-rss:before {
   content: "\f002";
 }
 
-/* line 1312, ../../../foundation/sass/_settings.scss */
+/* line 1313, ../../../styles/sass/_settings.scss */
 .foundicon-facebook:before {
   content: "\f003";
 }
 
-/* line 1312, ../../../foundation/sass/_settings.scss */
+/* line 1313, ../../../styles/sass/_settings.scss */
 .foundicon-twitter:before {
   content: "\f004";
 }
 
-/* line 1312, ../../../foundation/sass/_settings.scss */
+/* line 1313, ../../../styles/sass/_settings.scss */
 .foundicon-pinterest:before {
   content: "\f005";
 }
 
-/* line 1312, ../../../foundation/sass/_settings.scss */
+/* line 1313, ../../../styles/sass/_settings.scss */
 .foundicon-github:before {
   content: "\f006";
 }
 
-/* line 1312, ../../../foundation/sass/_settings.scss */
+/* line 1313, ../../../styles/sass/_settings.scss */
 .foundicon-path:before {
   content: "\f007";
 }
 
-/* line 1312, ../../../foundation/sass/_settings.scss */
+/* line 1313, ../../../styles/sass/_settings.scss */
 .foundicon-linkedin:before {
   content: "\f008";
 }
 
-/* line 1312, ../../../foundation/sass/_settings.scss */
+/* line 1313, ../../../styles/sass/_settings.scss */
 .foundicon-dribbble:before {
   content: "\f009";
 }
 
-/* line 1312, ../../../foundation/sass/_settings.scss */
+/* line 1313, ../../../styles/sass/_settings.scss */
 .foundicon-stumble-upon:before {
   content: "\f00a";
 }
 
-/* line 1312, ../../../foundation/sass/_settings.scss */
+/* line 1313, ../../../styles/sass/_settings.scss */
 .foundicon-behance:before {
   content: "\f00b";
 }
 
-/* line 1312, ../../../foundation/sass/_settings.scss */
+/* line 1313, ../../../styles/sass/_settings.scss */
 .foundicon-reddit:before {
   content: "\f00c";
 }
 
-/* line 1312, ../../../foundation/sass/_settings.scss */
+/* line 1313, ../../../styles/sass/_settings.scss */
 .foundicon-google-plus:before {
   content: "\f00d";
 }
 
-/* line 1312, ../../../foundation/sass/_settings.scss */
+/* line 1313, ../../../styles/sass/_settings.scss */
 .foundicon-youtube:before {
   content: "\f00e";
 }
 
-/* line 1312, ../../../foundation/sass/_settings.scss */
+/* line 1313, ../../../styles/sass/_settings.scss */
 .foundicon-vimeo:before {
   content: "\f00f";
 }
 
-/* line 1312, ../../../foundation/sass/_settings.scss */
+/* line 1313, ../../../styles/sass/_settings.scss */
 .foundicon-flickr:before {
   content: "\f010";
 }
 
-/* line 1312, ../../../foundation/sass/_settings.scss */
+/* line 1313, ../../../styles/sass/_settings.scss */
 .foundicon-slideshare:before {
   content: "\f011";
 }
 
-/* line 1312, ../../../foundation/sass/_settings.scss */
+/* line 1313, ../../../styles/sass/_settings.scss */
 .foundicon-picassa:before {
   content: "\f012";
 }
 
-/* line 1312, ../../../foundation/sass/_settings.scss */
+/* line 1313, ../../../styles/sass/_settings.scss */
 .foundicon-skype:before {
   content: "\f013";
 }
 
-/* line 1312, ../../../foundation/sass/_settings.scss */
+/* line 1313, ../../../styles/sass/_settings.scss */
 .foundicon-steam:before {
   content: "\f014";
 }
 
-/* line 1312, ../../../foundation/sass/_settings.scss */
+/* line 1313, ../../../styles/sass/_settings.scss */
 .foundicon-instagram:before {
   content: "\f015";
 }
 
-/* line 1312, ../../../foundation/sass/_settings.scss */
+/* line 1313, ../../../styles/sass/_settings.scss */
 .foundicon-foursquare:before {
   content: "\f016";
 }
 
-/* line 1312, ../../../foundation/sass/_settings.scss */
+/* line 1313, ../../../styles/sass/_settings.scss */
 .foundicon-delicious:before {
   content: "\f017";
 }
 
-/* line 1312, ../../../foundation/sass/_settings.scss */
+/* line 1313, ../../../styles/sass/_settings.scss */
 .foundicon-chat:before {
   content: "\f018";
 }
 
-/* line 1312, ../../../foundation/sass/_settings.scss */
+/* line 1313, ../../../styles/sass/_settings.scss */
 .foundicon-torso:before {
   content: "\f019";
 }
 
-/* line 1312, ../../../foundation/sass/_settings.scss */
+/* line 1313, ../../../styles/sass/_settings.scss */
 .foundicon-tumblr:before {
   content: "\f01a";
 }
 
-/* line 1312, ../../../foundation/sass/_settings.scss */
+/* line 1313, ../../../styles/sass/_settings.scss */
 .foundicon-video-chat:before {
   content: "\f01b";
 }
 
-/* line 1312, ../../../foundation/sass/_settings.scss */
+/* line 1313, ../../../styles/sass/_settings.scss */
 .foundicon-digg:before {
   content: "\f01c";
 }
 
-/* line 1312, ../../../foundation/sass/_settings.scss */
+/* line 1313, ../../../styles/sass/_settings.scss */
 .foundicon-wordpress:before {
   content: "\f01d";
 }
 
-/* line 12, ../../../foundation/sass/app.scss */
+/* line 12, ../../../styles/sass/app.scss */
 .alignright {
   text-align: right;
 }
 
-/* line 21, ../../../foundation/sass/app.scss */
+/* line 21, ../../../styles/sass/app.scss */
 .button,
 .panel,
 fieldset,
@@ -7125,54 +7125,54 @@ input[type='text'] {
   border-radius: 3px;
 }
 
-/* line 27, ../../../foundation/sass/app.scss */
+/* line 27, ../../../styles/sass/app.scss */
 .cke_ltr {
   width: 100% !important;
 }
 
-/* line 31, ../../../foundation/sass/app.scss */
+/* line 31, ../../../styles/sass/app.scss */
 .cke_combopanel__format {
   width: 200px !important;
 }
 
-/* line 37, ../../../foundation/sass/app.scss */
+/* line 37, ../../../styles/sass/app.scss */
 .buttonHolder {
   text-align: right;
 }
-/* line 39, ../../../foundation/sass/app.scss */
+/* line 39, ../../../styles/sass/app.scss */
 .buttonHolder #advanced {
   float: left;
 }
 
-/* line 47, ../../../foundation/sass/app.scss */
+/* line 47, ../../../styles/sass/app.scss */
 form label {
   display: inline-block;
 }
-/* line 50, ../../../foundation/sass/app.scss */
+/* line 50, ../../../styles/sass/app.scss */
 form input[type='checkbox'] {
   margin: 0 3px 0 0;
 }
-/* line 53, ../../../foundation/sass/app.scss */
+/* line 53, ../../../styles/sass/app.scss */
 form .ctrlHolder {
   margin-bottom: 0.9375em;
 }
-/* line 56, ../../../foundation/sass/app.scss */
+/* line 56, ../../../styles/sass/app.scss */
 form .formHint {
   font-size: 11px;
   color: #777777;
   margin: 0;
   padding: 0.1875em 0;
 }
-/* line 62, ../../../foundation/sass/app.scss */
+/* line 62, ../../../styles/sass/app.scss */
 form .control-group {
   margin-bottom: 0.9375em;
 }
-/* line 65, ../../../foundation/sass/app.scss */
+/* line 65, ../../../styles/sass/app.scss */
 form .asteriskField {
   color: red;
 }
 
-/* line 72, ../../../foundation/sass/app.scss */
+/* line 72, ../../../styles/sass/app.scss */
 .error-panel {
   border-style: solid;
   border-width: 1px;
@@ -7208,31 +7208,31 @@ form .asteriskField {
   line-height: 1.4;
 }
 
-/* line 79, ../../../foundation/sass/app.scss */
+/* line 79, ../../../styles/sass/app.scss */
 .header h1 a {
   font-family: sans-serif;
   color: #111111;
   letter-spacing: -0.0625em;
   text-shadow: #aaaaaa 1px 1px 0, #dddddd 2px 2px 0, white 3px 3px 0, white 4px 4px 0;
 }
-/* line 89, ../../../foundation/sass/app.scss */
+/* line 89, ../../../styles/sass/app.scss */
 .header h1 a:hover {
   color: #2b2b2b;
 }
 
-/* line 94, ../../../foundation/sass/app.scss */
+/* line 94, ../../../styles/sass/app.scss */
 .header .buttons-padding {
   display: block;
   width: 100%;
   padding: 2.5em 0 0 0;
 }
 
-/* line 100, ../../../foundation/sass/app.scss */
+/* line 100, ../../../styles/sass/app.scss */
 .header .buttons .button {
   margin-bottom: 0;
 }
 
-/* line 106, ../../../foundation/sass/app.scss */
+/* line 106, ../../../styles/sass/app.scss */
 .problem-list-item {
   margin-top: 5px !important;
   margin-bottom: 5px !important;
@@ -7240,29 +7240,29 @@ form .asteriskField {
   padding-bottom: 5px;
   border-bottom: 1px solid #dddddd;
 }
-/* line 112, ../../../foundation/sass/app.scss */
+/* line 112, ../../../styles/sass/app.scss */
 .problem-list-item h4 {
   margin: 3px 0;
   color: #444444;
   line-height: 1;
   text-shadow: #dddddd 1px 1px 0, white 2px 2px 0;
 }
-/* line 121, ../../../foundation/sass/app.scss */
+/* line 121, ../../../styles/sass/app.scss */
 .problem-list-item h6.subheader {
   margin: 0;
   font-size: 0.875em;
 }
-/* line 125, ../../../foundation/sass/app.scss */
+/* line 125, ../../../styles/sass/app.scss */
 .problem-list-item .problem-counter {
   text-align: center;
   background: #eaeaea;
   padding: 8px 5px;
 }
-/* line 129, ../../../foundation/sass/app.scss */
+/* line 129, ../../../styles/sass/app.scss */
 .problem-list-item .problem-counter span {
   display: block;
 }
-/* line 132, ../../../foundation/sass/app.scss */
+/* line 132, ../../../styles/sass/app.scss */
 .problem-list-item .problem-counter .number {
   color: #444444;
   font-weight: bold;
@@ -7270,13 +7270,13 @@ form .asteriskField {
   letter-spacing: -0.0625em;
   line-height: 1;
 }
-/* line 139, ../../../foundation/sass/app.scss */
+/* line 139, ../../../styles/sass/app.scss */
 .problem-list-item .problem-counter .description {
   color: #777777;
   font-size: 0.75em;
 }
 
-/* line 146, ../../../foundation/sass/app.scss */
+/* line 146, ../../../styles/sass/app.scss */
 .problem-tag-select {
   background-color: white;
   font-family: inherit;
@@ -7321,11 +7321,11 @@ form .asteriskField {
 .problem-tag-select[disabled] {
   background-color: #dddddd;
 }
-/* line 151, ../../../foundation/sass/app.scss */
+/* line 151, ../../../styles/sass/app.scss */
 .problem-tag-select .button {
   margin: 2px 3px;
 }
-/* line 154, ../../../foundation/sass/app.scss */
+/* line 154, ../../../styles/sass/app.scss */
 .problem-tag-select .text {
   display: inline-block;
   width: 5%;
@@ -7333,16 +7333,16 @@ form .asteriskField {
   margin: 0 3px;
 }
 
-/* line 162, ../../../foundation/sass/app.scss */
+/* line 162, ../../../styles/sass/app.scss */
 .problem-tag-result {
   display: none;
   margin-top: 5px;
 }
-/* line 165, ../../../foundation/sass/app.scss */
+/* line 165, ../../../styles/sass/app.scss */
 .problem-tag-result .button {
   margin-bottom: 5px;
 }
-/* line 168, ../../../foundation/sass/app.scss */
+/* line 168, ../../../styles/sass/app.scss */
 .problem-tag-result .description {
   display: block;
   font-size: 0.8125em;
@@ -7350,13 +7350,13 @@ form .asteriskField {
   color: #777777;
 }
 
-/* line 177, ../../../foundation/sass/app.scss */
+/* line 177, ../../../styles/sass/app.scss */
 .problem-detail .description {
   margin: 5px 0;
 }
 
-/* line 185, ../../../foundation/sass/app.scss */
-.problem-idea .user-box {
+/* line 183, ../../../styles/sass/app.scss */
+.user-box {
   border-style: solid;
   border-width: 1px;
   border-color: #dddddd;
@@ -7370,49 +7370,94 @@ form .asteriskField {
   border-radius: 3px;
 }
 /* line 44, ../../../../../../../../var/lib/gems/1.9.1/gems/zurb-foundation-4.2.2/scss/foundation/components/_panels.scss */
-.problem-idea .user-box > :first-child {
+.user-box > :first-child {
   margin-top: 0;
 }
 /* line 45, ../../../../../../../../var/lib/gems/1.9.1/gems/zurb-foundation-4.2.2/scss/foundation/components/_panels.scss */
-.problem-idea .user-box > :last-child {
+.user-box > :last-child {
   margin-bottom: 0;
 }
 /* line 50, ../../../../../../../../var/lib/gems/1.9.1/gems/zurb-foundation-4.2.2/scss/foundation/components/_panels.scss */
-.problem-idea .user-box h1, .problem-idea .user-box h2, .problem-idea .user-box h3, .problem-idea .user-box h4, .problem-idea .user-box h5, .problem-idea .user-box h6, .problem-idea .user-box p {
+.user-box h1, .user-box h2, .user-box h3, .user-box h4, .user-box h5, .user-box h6, .user-box p {
   color: #333333;
 }
 /* line 54, ../../../../../../../../var/lib/gems/1.9.1/gems/zurb-foundation-4.2.2/scss/foundation/components/_panels.scss */
-.problem-idea .user-box h1, .problem-idea .user-box h2, .problem-idea .user-box h3, .problem-idea .user-box h4, .problem-idea .user-box h5, .problem-idea .user-box h6 {
+.user-box h1, .user-box h2, .user-box h3, .user-box h4, .user-box h5, .user-box h6 {
   line-height: 1;
   margin-bottom: 0.625em;
 }
 /* line 56, ../../../../../../../../var/lib/gems/1.9.1/gems/zurb-foundation-4.2.2/scss/foundation/components/_panels.scss */
-.problem-idea .user-box h1.subheader, .problem-idea .user-box h2.subheader, .problem-idea .user-box h3.subheader, .problem-idea .user-box h4.subheader, .problem-idea .user-box h5.subheader, .problem-idea .user-box h6.subheader {
+.user-box h1.subheader, .user-box h2.subheader, .user-box h3.subheader, .user-box h4.subheader, .user-box h5.subheader, .user-box h6.subheader {
   line-height: 1.4;
 }
-/* line 188, ../../../foundation/sass/app.scss */
-.problem-idea .user-box .avatar {
+/* line 186, ../../../styles/sass/app.scss */
+.user-box .avatar {
   line-height: 0;
   display: inline-block;
   border: solid 1px white;
   -webkit-box-shadow: #777777;
   box-shadow: #777777;
-  float: right;
-  margin: 3px 0 0 6px;
 }
 /* line 32, ../../../../../../../../var/lib/gems/1.9.1/gems/zurb-foundation-4.2.2/scss/foundation/components/_thumbs.scss */
-.problem-idea .user-box .avatar:hover, .problem-idea .user-box .avatar:focus {
+.user-box .avatar:hover, .user-box .avatar:focus {
   -webkit-box-shadow: 0 0 6px 1px rgba(43, 166, 203, 0.5);
   box-shadow: 0 0 6px 1px rgba(43, 166, 203, 0.5);
 }
-/* line 193, ../../../foundation/sass/app.scss */
-.problem-idea .user-box .contributed {
+/* line 189, ../../../styles/sass/app.scss */
+.user-box .contributed {
   color: #777777;
   font-size: 0.75em;
 }
-/* line 197, ../../../foundation/sass/app.scss */
-.problem-idea .user-box a.username {
-  display: inline-block;
+/* line 193, ../../../styles/sass/app.scss */
+.user-box a.username {
   font-weight: bold;
   margin: 5px 0 0 0;
+}
+
+/* line 201, ../../../styles/sass/app.scss */
+.problem-idea-button {
+  margin: 0;
+}
+
+/* line 204, ../../../styles/sass/app.scss */
+.problem-idea-form {
+  display: none;
+}
+
+/* line 211, ../../../styles/sass/app.scss */
+.revision del {
+  color: red;
+  background-color: white;
+}
+/* line 215, ../../../styles/sass/app.scss */
+.revision ins {
+  color: #099c00;
+  background-color: #d2ffcf;
+  text-decoration: none;
+}
+/* line 220, ../../../styles/sass/app.scss */
+.revision .raw {
+  display: none;
+}
+
+/* line 227, ../../../styles/sass/app.scss */
+.idea > .row > .large-11 {
+  padding-left: 1em;
+}
+
+/* line 233, ../../../styles/sass/app.scss */
+.voting {
+  text-align: center;
+}
+/* line 235, ../../../styles/sass/app.scss */
+.voting a {
+  margin: 0;
+}
+/* line 238, ../../../styles/sass/app.scss */
+.voting .vote-count {
+  color: #444444;
+  display: block;
+  font-size: 1.6em;
+  letter-spacing: 0;
+  margin: 7px 0;
 }

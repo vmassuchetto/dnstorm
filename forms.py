@@ -26,7 +26,7 @@ class OptionsForm(forms.Form):
 
 
 class ProblemForm(forms.ModelForm):
-    tag = forms.Field(_('Tags'), help_text=_('Comma separated list of tags.'))
+    tag = forms.Field(_('Tags'), help_text=_('Type to search for tags.'))
 
     class Meta:
         model = Problem
@@ -47,6 +47,13 @@ class ProblemForm(forms.ModelForm):
                     Column('open', css_class='large-4'),
                     Column('public', css_class='large-4'),
                     Column('max', css_class='large-4'),
+                ),
+            ),
+            Fieldset(_('Voting'),
+                Row(
+                    Column('voting', css_class='large-4'),
+                    Column('vote_count', css_class='large-4'),
+                    Column('vote_author', css_class='large-4'),
                 ),
             ),
             ButtonHolder(

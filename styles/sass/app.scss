@@ -179,25 +179,67 @@ form {
     }
 }
 
-// Idea list
 
-.problem-idea {
-    .user-box {
-        @include panel(lighten($black, 70%), 5px);
-        @include border-radius($global-radius);
-        .avatar {
-            @include thumb(1px, $light-black);
-            float: right;
-            margin: 3px 0 0 6px;
+.user-box {
+    @include panel(lighten($black, 70%), 5px);
+    @include border-radius($global-radius);
+    .avatar {
+        @include thumb(1px, $light-black);
+    }
+    .contributed {
+        color: $light-black;
+        font-size: emCalc(12px);
+    }
+    a.username {
+        font-weight: bold;
+        margin: 5px 0 0 0;
+    }
+}
+
+// Idea form
+
+.problem-idea-button {
+    margin: 0;
+}
+.problem-idea-form {
+    display: none;
+}
+
+// Revisions
+
+.revision {
+    del {
+        color: $red;
+        background-color: lighten($red, 60%);
+    }
+    ins {
+        color: $green;
+        background-color: lighten($green, 60%);
+        text-decoration: none;
+    }
+    .raw {
+        display: none;
+    }
+}
+
+.idea {
+    > .row {
+        > .large-11 {
+            padding-left: 1em;
         }
-        .contributed {
-            color: $light-black;
-            font-size: emCalc(12px);
-        }
-        a.username {
-            display: inline-block;
-            font-weight: bold;
-            margin: 5px 0 0 0;
-        }
+    }
+}
+
+.voting {
+    text-align: center;
+    a {
+        margin: 0;
+    }
+    .vote-count {
+        color: #444444;
+        display: block;
+        font-size: 1.6em;
+        letter-spacing: 0;
+        margin: 7px 0;
     }
 }

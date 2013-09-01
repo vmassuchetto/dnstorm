@@ -13,7 +13,7 @@
 
 {% if problem.revision_count or problem.idea_count %}
 <div class="info">
-    {% if problem.revision_count %}<b><a href="{% url "problem_revision" problem.id %}">{% if problem.revision_count > 1 %}{{ problem.revision_count }} {% trans "revisions" %}{% else %}{{ problem.revision_count }} {% trans "revision" %}{% endif %}</a></b><br/>{% endif %}
+    {% if problem.revision_count > 1 %}<b><a href="{% url "problem_revision" problem.id %}">{{ problem.revision_count }} {% trans "revisions" %}</a></b><br/>{% endif %}
     {% if problem.idea_count %}<b><a href="#problem-ideas">{% if idea_count > 1 %}{{ problem.idea_count }} {% trans "idea contributions" %}{% else %}{{ problem.idea_count }} {% trans "idea contribution" %}{% endif %}</a></b>{% endif %}
 </div>
 {% endif %}
