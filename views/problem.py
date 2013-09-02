@@ -7,6 +7,9 @@ from django.views.generic import DetailView
 from django.views.generic.edit import FormView, CreateView, UpdateView
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
+from django.utils.html import strip_tags
+
+import reversion
 
 from dnstorm.models import Problem, Idea, Vote
 from dnstorm.forms import ProblemForm, IdeaForm
@@ -20,6 +23,7 @@ class ProblemCreateView(CreateView):
     def dispatch(self, *args, **kwargs):
         return super(ProblemCreateView, self).dispatch(*args, **kwargs)
 
+    @reversion.create_revision()
     def form_valid(self, form):
         self.object = form.save(commit=False)
         self.object.author = self.request.user
@@ -35,31 +39,28 @@ class ProblemUpdateView(UpdateView):
     def dispatch(self, *args, **kwargs):
         return super(ProblemUpdateView, self).dispatch(*args, **kwargs)
 
+    @reversion.create_revision()
     def form_valid(self, form):
         self.object = form.save(commit=False)
+        self.object.author = self.request.user
         self.object.save()
-        p = Problem.objects.get(pk=self.object.id)
-        p.pk = None
-        p.author = self.request.user
-        p.revision = self.object
-        p.save()
         return HttpResponseRedirect(reverse('problem', kwargs={'slug':self.object.slug}))
 
 class ProblemRevisionView(DetailView):
-    template_name = 'problem_revisions.html'
+    template_name = 'problem_revision.html'
     model = Problem
 
     def get_context_data(self, *args, **kwargs):
         context = super(ProblemRevisionView, self).get_context_data(**kwargs)
         context['revisions'] = list()
-        problems = Problem.objects.filter(revision=self.kwargs['pk']).order_by('-modified')
-        for p in problems:
-            raw = '<h2>' + p.title + '</h2>' + p.description
+        revisions = reversion.get_for_object(self.object)
+        for rev in revisions:
+            r = rev.object_version.object
             context['revisions'].append({
-                'id': p.pk,
-                'raw': raw,
-                'user': p.author,
-                'modified': p.modified
+                'title': r.title,
+                'description': r.description,
+                'author': r.author,
+                'modified': r.modified
             })
         return context
 
@@ -79,18 +80,19 @@ class ProblemView(FormView):
         context = super(ProblemView, self).get_context_data(**kwargs)
         context['problem'] = self.problem
         if self.problem.max > 0:
-            context['user_ideas_left'] = self.problem.max - Idea.objects.filter(problem=self.problem, revision=None, user=self.request.user).count()
+            context['user_ideas_left'] = self.problem.max - Idea.objects.filter(problem=self.problem, author=self.request.user).count()
         else:
             context['user_ideas_left'] = 1
-        context['ideas'] = Idea.objects.filter(problem=self.problem, revision=None)
+        context['ideas'] = Idea.objects.filter(problem=self.problem)
         for idea in context['ideas']:
-            user_vote = Vote.objects.filter(idea=idea, user=self.request.user)
+            user_vote = Vote.objects.filter(idea=idea, author=self.request.user)
             idea.user_vote = user_vote[0] if len(user_vote) else False
         return context
 
+    @reversion.create_revision()
     def form_valid(self, form):
         obj = form.save(commit=False)
         obj.problem = self.problem
-        obj.user = self.request.user
+        obj.author = self.request.user
         obj.save()
         return HttpResponseRedirect(reverse('problem', kwargs={'slug':self.problem.slug}))

@@ -85,7 +85,11 @@ jQuery('#advanced').click(function(){
 jQuery('.revisions').ready(function(){
     var raw = jQuery('.raw');
     for (i=0; i < raw.length - 1; i++) {
-        d = diff(jQuery(raw[i+1]).html(), jQuery(raw[i]).html());
+        h1 = jQuery(raw[i+1]).html();
+        h2 = jQuery(raw[i]).html();
+        if (h1 == h2)
+            continue;
+        d = diff(h1, h2);
         jQuery(raw[i]).next('.diff').html(d);
     }
     jQuery(raw[raw.length-1]).next('.diff').html(jQuery(raw[raw.length-1]).html());

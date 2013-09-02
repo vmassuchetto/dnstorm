@@ -13,7 +13,7 @@ class HomeView(TemplateView):
 
     def get_context_data(self, *args, **kwargs):
         context = super(HomeView, self).get_context_data(**kwargs)
-        context['problems'] = Problem.objects.filter(revision=None)
+        context['problems'] = Problem.objects.all()
         return context
 
 class OptionsView(FormView):

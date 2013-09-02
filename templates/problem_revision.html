@@ -23,7 +23,10 @@
 
                 <div class="row">
                 <div class="columns large-12">
-                    <div class="raw">{{ revision.raw|safe }}</div>
+                    <div class="raw">
+                        <h3>{{ revision.title }}</h3>
+                        {{ revision.description|safe }}
+                    </div>
                     <div class="diff"></div>
                 </div>
                 </div>
@@ -34,10 +37,10 @@
                         <div class="row collapse">
                         <div class="columns large-10">
                             <a class="contributed" href="{{ request.get_full_path }}#revision-{{ revision.id }}">{% trans "edited" %} {{ revision.modified|date:"d b Y" }} {% trans "at" %} {{ revision.modified|date:"H:i" }}</a><br/>
-                            <a class="username" href="{% url "user" revision.user.username %}">{{ revision.user.username }}</a>
+                            <a class="username" href="{% url "user" revision.author.username %}">{{ revision.author.username }}</a>
                         </div>
                         <div class="columns large-2">
-                            <a class="avatar"><img src="{% gravatar_for_user revision.user 32 %}" /></a>
+                            <a class="avatar"><img src="{% gravatar_for_user revision.author 32 %}" /></a>
                         </div>
                         </div>
                     </div>
