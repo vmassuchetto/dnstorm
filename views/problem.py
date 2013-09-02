@@ -1,10 +1,12 @@
 from datetime import datetime
 from lib.diff import inline_diff
 
+from django.shortcuts import get_object_or_404
 from django.core.urlresolvers import reverse
 from django.http import Http404, HttpResponseRedirect
 from django.views.generic import DetailView
 from django.views.generic.edit import FormView, CreateView, UpdateView
+from django.views.generic.base import RedirectView
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.utils.html import strip_tags
@@ -64,11 +66,17 @@ class ProblemRevisionView(DetailView):
             })
         return context
 
+class ProblemShortView(RedirectView):
+    permanent = True
+
+    def get_redirect_url(self, *args, **kwargs):
+        problem = get_object_or_404(Problem, id=kwargs['pk'])
+        return reverse('problem', kwargs={'slug':problem.slug})
+
 class ProblemView(FormView):
     template_name = 'problem.html'
     form_class = IdeaForm
 
-    @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         try:
             self.problem = Problem.objects.get(slug=self.kwargs['slug'])
@@ -79,11 +87,13 @@ class ProblemView(FormView):
     def get_context_data(self, *args, **kwargs):
         context = super(ProblemView, self).get_context_data(**kwargs)
         context['problem'] = self.problem
+        context['ideas'] = Idea.objects.filter(problem=self.problem)
+        if not self.request.user.is_authenticated():
+            return context
         if self.problem.max > 0:
             context['user_ideas_left'] = self.problem.max - Idea.objects.filter(problem=self.problem, author=self.request.user).count()
         else:
             context['user_ideas_left'] = 1
-        context['ideas'] = Idea.objects.filter(problem=self.problem)
         for idea in context['ideas']:
             user_vote = Vote.objects.filter(idea=idea, author=self.request.user)
             idea.user_vote = user_vote[0] if len(user_vote) else False

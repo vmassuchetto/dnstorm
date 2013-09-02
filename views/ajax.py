@@ -31,7 +31,7 @@ class AjaxView(View):
             idea = Idea.objects.get(id=self.request.GET['idea'])
         except:
             raise Http404()
-        if idea.user == self.request.user:
+        if not self.request.user.is_authenticated() or idea.user == self.request.user:
             raise Http404()
         weight = int(self.request.GET['weight'])
         weight_choices = [ choice[0] for choice in \

@@ -7,8 +7,7 @@
 {% endif %}
 
 <p>
-    {% trans "Created in " %} {{ problem.created }}<br/>
-    {% trans "Last updated in" %} {{ problem.created }}
+    {% trans "Last updated in" %} {{ problem.modified }}
 </p>
 
 {% if problem.revision_count or problem.idea_count %}
@@ -20,9 +19,7 @@
 
 <hr/>
 
-{% if problem.public %}
-    Share buttons
-{% endif %}
+<a href="{% url "problem_short" problem.id %}">Permanent Short Link</a>
 
 {% if problem.tag.all %}
     <div class="tags">

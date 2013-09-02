@@ -107,7 +107,7 @@ jQuery('.problem-idea-form-button').click(function(){
 
 jQuery('.voting a').click(function() {
 
-    if (jQuery(this).attr('disabled'))
+    if (jQuery(this).attr('disabled') || jQuery(this).data('reveal-id').length)
         return;
 
     var action;
@@ -170,8 +170,12 @@ jQuery('.voting a').click(function() {
         },
         complete: function(xhr, data) {
             count = parseInt(data);
-            if (isNaN(count))
-                return;
+            // Reset stuff if things go wrong
+            if (isNaN(count)) {
+                upvote.removeClass('success');
+                downvote.removeClass('alert');
+                counter.html(parseInt(counter.html()) - weight);
+            }
             counter.html(count);
         }
     });

@@ -5,63 +5,279 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: DNStorm\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-06-18 23:29-0300\n"
-"PO-Revision-Date: 2013-06-18 23:32-0300\n"
-"Last-Translator: Vinicius Massuchetto <viniciusmassuchetto@gmail.com>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"POT-Creation-Date: 2013-09-01 22:38-0300\n"
+"PO-Revision-Date: 2013-09-01 23:20-0300\n"
+"Last-Translator: Vinicius Massuchetto <vmassuchetto@gmail.com>\n"
+"Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 1.5.4\n"
+"Language: pt_BR\n"
 
-#: forms.py:12 models.py:41
-msgid "Tags"
-msgstr "Tags"
+#: forms.py:11
+msgid "Language"
+msgstr "Idioma"
 
-#: forms.py:12
-msgid "Comma separated list of tags."
-msgstr "Tags separadas por vírgulas."
-
-#: forms.py:35
+#: forms.py:21 forms.py:61
 msgid "Save"
 msgstr "Salvar"
 
-#: templates/error.html:11
-msgid "There was an error while doing the request."
-msgstr "Houve um erro ao fazer a sua requisição."
+#: forms.py:29 models.py:41
+msgid "Tags"
+msgstr "Tags"
 
-#: templates/header.html:25
+#: forms.py:29
+msgid "Type to search for tags."
+msgstr "Digite para procurar tags."
+
+#: forms.py:38
+msgid "Problem description"
+msgstr "Descrição do problema"
+
+#: forms.py:43
+msgid "Permissions"
+msgstr "Permissões"
+
+#: forms.py:52
+msgid "Voting"
+msgstr "Votação"
+
+#: forms.py:60
+msgid "Advanced options"
+msgstr "Opções avançadas"
+
+#: forms.py:78
+msgid "Submit"
+msgstr "Enviar"
+
+#: models.py:15
+msgid "Name"
+msgstr "Nome"
+
+#: models.py:17 models.py:40
+msgid "Description"
+msgstr "Descrição"
+
+#: models.py:38
+msgid "Title"
+msgstr "Título"
+
+#: models.py:43
+msgid "Contributors"
+msgstr "Colaboradores"
+
+#: models.py:43
+msgid "Users with permission to contribute to this problem."
+msgstr "Usuários com permissão para contribuir com este problema."
+
+#: models.py:44
+msgid "Managers"
+msgstr "Gerentes"
+
+#: models.py:44
+msgid "Users with permission to manage this problem."
+msgstr "Usuários com permissão para gerenciar este problema"
+
+#: models.py:45
+msgid "Open participation"
+msgstr "Participação aberta"
+
+#: models.py:45
+msgid "Any registered user can contribute to this problem."
+msgstr "Qualquer usuário registrado poderá contribuir para este problema."
+
+#: models.py:46
+msgid "Public"
+msgstr "Público"
+
+#: models.py:46
+msgid "The problem will be publicy available to anyone."
+msgstr "Este problema ficará disponível publicamente para qualquer pessoa."
+
+#: models.py:47
+msgid "Max ideas per user."
+msgstr "Máximo de ideias por usuário."
+
+#: models.py:47
+msgid "Leave 0 for unlimited ideas per user."
+msgstr "Deixe 0 para não estipular um limite"
+
+#: models.py:48
+msgid "Enable voting for ideas"
+msgstr "Habilitar as votações de ideias"
+
+#: models.py:48
+msgid "Users will be able to vote for the ideas."
+msgstr "Usuários poderão votar nas ideias."
+
+#: models.py:49
+msgid "Display vote counts"
+msgstr "Mostrar contador de votos"
+
+#: models.py:49
+msgid "Users will be able to see how many votes each idea had."
+msgstr ""
+"Usuários poderão ver quantos votos positivos ou negativos cada ideia recebeu."
+
+#: models.py:50
+msgid "Display vote authors"
+msgstr "Mostrar autores dos votos"
+
+#: models.py:50
+msgid "Ideas voting will be completely transparent."
+msgstr "A votação de ideias será completamente transparente."
+
+#: models.py:96
+msgid "Upvote"
+msgstr "Aprovar"
+
+#: models.py:97
+msgid "Downvote"
+msgstr "Reprovar"
+
+#: templates/404.html:10
+msgid "The page you are trying to access does not exist."
+msgstr "A página que você está tentanto acessar não existe."
+
+#: templates/base.html:24 templates/options.html:8
+msgid "Options"
+msgstr "Opções"
+
+#: templates/base.html:26
 msgid "Logout"
 msgstr "Sair"
 
-#: templates/header.html:27 templates/header.html.py:52
+#: templates/base.html:28 templates/registration/login_form.html:13
 msgid "Login"
 msgstr "Login"
 
-#: templates/header.html:29 templates/header.html.py:49
+#: templates/base.html:30
 msgid "Register"
 msgstr "Criar conta"
 
-#: templates/header.html:69
+#: templates/home.html:10 templates/problem_edit.html:12
 msgid "Create new problem"
 msgstr "Criar novo problema"
 
-#: templates/home.html:24
-msgid "No problem created yet. Click in the \"create new problem\" to start."
-msgstr ""
-"Nenhum problema foi criado ainda. Clique em \"criar novo problema\" para "
-"começar."
+#: templates/home.html:26
+msgid "ideas"
+msgstr "ideias"
 
-#: templates/dnstorm/problem_detail.html:26
+#: templates/home.html:26
+msgid "idea"
+msgstr "ideia"
+
+#: templates/home.html:30
+msgid "modified"
+msgstr "modificado"
+
+#: templates/home.html:38
+msgid "No problem here. You can start by"
+msgstr "Nenhum problema aqui. Você pode começar"
+
+#: templates/home.html:38
+msgid "creating a new one"
+msgstr "criar um novo"
+
+#: templates/home.html:40
+msgid "Log in"
+msgstr "Logar"
+
+#: templates/home.html:40
+msgid "to view and create problems"
+msgstr "para ver e criar problemas"
+
+#: templates/problem.html:25
+msgid "Submit your idea to this problem"
+msgstr "Envie uma ideia para este problema"
+
+#: templates/problem.html:25
+#, python-format
+msgid "you have %(ideas)s idea left"
+msgid_plural "you have %(ideas)s ideas left"
+msgstr[0] "você tem %(ideas)s ideia restante"
+msgstr[1] "você tem %(ideas)s ideias restantes\t"
+
+#: templates/problem.html:27
+msgid "You contributed with the maximum ideas allowed for this problem"
+msgstr ""
+"Você já contribuiu com o máximo de ideias permitidas para este problema"
+
+#: templates/problem.html:27
+msgid "edit or delete your existing ideas if you change your mind about them"
+msgstr "edite ou delete suas ideias existentes se você mudou de ideia"
+
+#: templates/problem.html:30
+msgid "Your idea"
+msgstr "Sua ideia"
+
+#: templates/problem.html:38
+msgid "Submitted ideas"
+msgstr "Enviar ideiais"
+
+#: templates/problem.html:62
+msgid "contributed"
+msgstr "contribuiu"
+
+#: templates/problem.html:62 templates/problem_revision.html:39
+msgid "at"
+msgstr "em"
+
+#: templates/problem_edit.html:14
+msgid "Edit problem"
+msgstr "Editar problema"
+
+#: templates/problem_revision.html:12
+msgid "Revisions for"
+msgstr "Revisões para"
+
+#: templates/problem_revision.html:12
+msgid "problem"
+msgstr "problema"
+
+#: templates/problem_revision.html:39
+msgid "edited"
+msgstr "editado"
+
+#: templates/problem_sidebar.html:5
+msgid "Edit this problem"
+msgstr "Editar este problema"
+
+#: templates/problem_sidebar.html:10
 msgid "Created in "
 msgstr "Criado em"
 
-#: templates/dnstorm/problem_detail.html:27
+#: templates/problem_sidebar.html:11
 msgid "Last updated in"
 msgstr "Modificado em"
+
+#: templates/problem_sidebar.html:16
+msgid "revisions"
+msgstr "revisões"
+
+#: templates/problem_sidebar.html:17
+msgid "idea contributions"
+msgstr "contribuições de ideias"
+
+#: templates/problem_sidebar.html:17
+msgid "idea contribution"
+msgstr "contribuição de ideia"
+
+#: templates/registration/login_form.html:19
+msgid "Create an account"
+msgstr "Criar conta"
+
+#: templates/registration/login_form.html:24
+msgid "Connect with Facebook"
+msgstr "Conectar com o Facebook"
+
+#: templates/registration/login_form.html:29
+msgid "Connect with Google"
+msgstr "Conectar com o Google"
 
 #: templatetags/date_diff.py:21
 msgid "year"
@@ -92,14 +308,24 @@ msgstr[1] "dias"
 msgid "%(number)d %(type)s"
 msgstr "%(number)d %(type)s"
 
-#: views/ajax.py:13
+#: views/ajax.py:16
 msgid "Invalid request"
 msgstr "Requisição inválida"
 
-#: views/base.py:20
-msgid "You don't have permission to access the page you requested."
-msgstr "Você não tem permissão para acessar a página requisitada."
+#~ msgid "Comma separated list of tags."
+#~ msgstr "Tags separadas por vírgulas."
 
-#: views/base.py:22
-msgid "There was an error during the request."
-msgstr "Houver um erro ao fazer a requisição."
+#~ msgid "There was an error while doing the request."
+#~ msgstr "Houve um erro ao fazer a sua requisição."
+
+#~ msgid ""
+#~ "No problem created yet. Click in the \"create new problem\" to start."
+#~ msgstr ""
+#~ "Nenhum problema foi criado ainda. Clique em \"criar novo problema\" para "
+#~ "começar."
+
+#~ msgid "You don't have permission to access the page you requested."
+#~ msgstr "Você não tem permissão para acessar a página requisitada."
+
+#~ msgid "There was an error during the request."
+#~ msgstr "Houver um erro ao fazer a requisição."
