@@ -108,20 +108,18 @@
                         </div>
 
                         {% if request.user.is_authenticated %}
-                            <div class="comment-form hidden" id="comment-form-{{ idea.id }}">
+                            <div class="comment-form hidden" id="comment-form-{{ idea.id }}" data-idea="{{ idea.id }}">
                                 {% crispy idea.comment_form %}
                             </div>
                         {% endif %}
 
-                        {% if idea.comments %}
-                        {% for comment in idea.comments %}
-                            <div class="row collapse comment" id="comment-{{ comment.id }}">
-                                <div class="columns large-12 comment-content">
-                                    {{ comment.content }} &mdash; <a class="comment-user" href="{% url "user" comment.author %}">{{ comment.author.username }}</a> <a class="comment-modified" href="#comment-{{ comment.id }}">{{ comment.modified|naturaltime }}</a>
-                                </div>
-                            </div>
-                        {% endfor %}
-                        {% endif %}
+                        <div class="comments" id="comments-{{ idea.id }}">
+                            {% if idea.comments %}
+                                {% for comment in idea.comments %}
+                                    {% include "comment.html" %}
+                                {% endfor %}
+                            {% endif %}
+                        </div>
 
                     </div>
 

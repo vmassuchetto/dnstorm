@@ -3,6 +3,7 @@ from django.db.models import Sum
 from django.views.generic import View
 from django.utils.translation import ugettext_lazy as _
 from django.shortcuts import get_object_or_404
+from django.template import loader, Context
 
 from dnstorm.models import Tag, Vote, Idea, Comment
 import json
@@ -56,4 +57,6 @@ class AjaxView(View):
         content = self.request.POST['content']
         comment = Comment(idea=idea, content=content, author=self.request.user)
         comment.save()
-        return HttpResponse(comment.content)
+        t = loader.get_template('comment.html')
+        c = Context({'comment': comment})
+        return HttpResponse(t.render(c))

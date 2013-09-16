@@ -1,0 +1,7 @@
+ {% load humanize %}
+
+ <div class="row collapse comment" id="comment-{{ comment.id }}">
+    <div class="columns large-12 comment-content">
+        {{ comment.content }} &mdash; <a class="comment-user" href="{% url "user" comment.author %}">{{ comment.author.username }}</a> <a class="comment-modified" href="#comment-{{ comment.id }}">{{ comment.modified|naturaltime }}</a>
+    </div>
+</div>

@@ -1,7 +1,4 @@
-// Foundation
-jQuery(document).foundation();
-
-// Problem tags autocomplete
+// Tag renderer
 
 function tag_field(id, label, description) {
     return '<li class="problem-tag-item">'
@@ -10,7 +7,29 @@ function tag_field(id, label, description) {
         + '</li>';
 }
 
-jQuery('.problem-tag-select .text').autocomplete({
+// jQuery calls
+
+jQuery.noConflict();
+(function($){
+
+// Foundation
+
+$(document).foundation();
+
+// Highlight
+
+$.fn.highlight = function (color) {
+    if (!color) color = '#80FF76';
+    var e = $(this[0]);
+    var original = e.css('backgroundColor');
+    return e.animate({ backgroundColor: color }, 1000, null, function(){
+        e.animate({ backgroundColor:original });
+    });
+};
+
+// Problem tags autocomplete
+
+$('.problem-tag-select .text').autocomplete({
     minLength: 2,
     source: '/ajax/',
     messages: {
@@ -26,27 +45,27 @@ jQuery('.problem-tag-select .text').autocomplete({
                 output += tag_field(item.id, item.label, item.description)
             }
         } else {
-            output += tag_field(0, jQuery('.problem-tag-select .text').text(), '');
+            output += tag_field(0, $('.problem-tag-select .text').text(), '');
         }
 
-        result = jQuery('.problem-tag-result');
+        result = $('.problem-tag-result');
         result.html(output);
         if (result.css('display') == 'none') {
             result.fadeIn(200);
         }
-        jQuery('.ui-front,.ui-helper-hidden-accessible').remove();
+        $('.ui-front,.ui-helper-hidden-accessible').remove();
 
         // Problem tags select
-        jQuery('.problem-tag-item').on('click', 'a.button', function(){
-            id = jQuery(this).data('id');
-            if (jQuery('.problem-tag-select .button[data-id="' + id + '"]').length > 0)
+        $('.problem-tag-item').on('click', 'a.button', function(){
+            id = $(this).data('id');
+            if ($('.problem-tag-select .button[data-id="' + id + '"]').length > 0)
                 return;
 
-            tag = jQuery('.problem-tag');
-            select = jQuery('.problem-tag-select');
+            tag = $('.problem-tag');
+            select = $('.problem-tag-select');
 
             // Add tag and input data
-            button = jQuery(this).clone();
+            button = $(this).clone();
             button.html(button.html().replace(/foundicon-plus/, 'foundicon-remove'));
             select.append(button);
             tag.append('<input type="hidden" name="tag" value="' + id + '">');
@@ -61,106 +80,112 @@ jQuery('.problem-tag-select .text').autocomplete({
 
 // Remove tag and input data
 
-jQuery('.problem-tag-select').on('click', 'a.button', function(){
-    id = jQuery(this).remove().data('id');
+$('.problem-tag-select').on('click', 'a.button', function(){
+    id = $(this).remove().data('id');
     console.log(id);
-    jQuery('.problem-tag input').filter('[name=tag]').filter('[value="' + id + '"]').remove();
+    $('.problem-tag input').filter('[name=tag]').filter('[value="' + id + '"]').remove();
 });
 
 // Focus writable area to simulate an input box
 
-jQuery('.problem-tag-select').click(function(){
-    jQuery(this).find('.text').focus();
+$('.problem-tag-select').click(function(){
+    $(this).find('.text').focus();
 });
 
 // Show advanced options
 
-jQuery('.problem-edit fieldset:gt(0)').hide();
-jQuery('#advanced').click(function(){
-    jQuery('.problem-edit fieldset:gt(0)').each(function(){ jQuery(this).fadeIn(300); });
+$('.problem-edit fieldset:gt(0)').hide();
+$('#advanced').click(function(){
+    $('.problem-edit fieldset:gt(0)').each(function(){ $(this).fadeIn(300); });
 });
 
 // Revision rendering
 
-jQuery('.revisions').ready(function(){
-    var raw = jQuery('.raw');
+$('.revisions').ready(function(){
+    var raw = $('.raw');
     for (i=0; i < raw.length - 1; i++) {
-        h1 = jQuery(raw[i+1]).html();
-        h2 = jQuery(raw[i]).html();
+        h1 = $(raw[i+1]).html();
+        h2 = $(raw[i]).html();
         if (h1 == h2)
             continue;
         d = diff(h1, h2);
-        jQuery(raw[i]).next('.diff').html(d);
+        $(raw[i]).next('.diff').html(d);
     }
-    jQuery(raw[raw.length-1]).next('.diff').html(jQuery(raw[raw.length-1]).html());
+    $(raw[raw.length-1]).next('.diff').html($(raw[raw.length-1]).html());
 });
 
 // Show on click
 
-jQuery('.show-on-click').click(function(){
-    var id = jQuery(this).data('show-on-click');
-    jQuery('#' + id).delay(300).fadeIn(300);
+$('.show-on-click').click(function(){
+    var id = $(this).data('show-on-click');
+    $('#' + id).delay(300).fadeIn(300);
 });
 
 // Hide after click
 
-jQuery('.hide-after-click').click(function(){
-    jQuery(this).fadeOut(300);
+$('.hide-after-click').click(function(){
+    $(this).fadeOut(300);
 });
 
 // Select all on click
 
-jQuery('.select-on-click').click(function(){
-    jQuery(this).select();
+$('.select-on-click').click(function(){
+    $(this).select();
 });
 
 // Idea form
 // Not using 'show-on-click' because of the resizing problem
 
-jQuery('.problem-idea-form-button').click(function(){
-    jQuery(this).fadeOut(300);
-    jQuery('.problem-idea-form').delay(300).fadeIn(300);
+$('.problem-idea-form-button').click(function(){
+    $(this).fadeOut(300);
+    $('.problem-idea-form').delay(300).fadeIn(300);
     CKEDITOR.instances.id_content.resize('100', '340');
 });
 
 // Comment form submit
 
-jQuery('.comment-form form').submit(function(e){
+$('.comment-form form').submit(function(e){
     e.preventDefault();
-    jQuery.ajax({
+    var idea = $(this).parent().data('idea');
+    var comments = $('#comments-' + idea);
+    $.ajax({
         url: '/ajax/',
         type: 'POST',
-        data: jQuery(this).serialize(),
+        data: $(this).serialize(),
         complete: function(xhr, data) {
-            console.log(data);
+            if (data == 'success') {
+                var c = comments.append(xhr.responseText);
+                $('.comment-form').fadeOut(300);
+                comments.find('.comment').last().highlight();
+            }
         }
     });
 });
 
 // Voting
 
-jQuery('.voting a').click(function() {
+$('.voting a').click(function() {
 
-    if (jQuery(this).attr('disabled') || jQuery(this).data('reveal-id').length)
+    if ($(this).attr('disabled') || $(this).data('reveal-id').length)
         return;
 
     var action;
-    var idea = jQuery(this).data('idea');
+    var idea = $(this).data('idea');
 
-    var upvoting = jQuery(this).hasClass('upvote');
-    var downvoting = jQuery(this).hasClass('downvote');
+    var upvoting = $(this).hasClass('upvote');
+    var downvoting = $(this).hasClass('downvote');
 
     var upvote;
     if (upvoting)
-        upvote = jQuery(this);
+        upvote = $(this);
     else
-        upvote = jQuery(this).siblings('.upvote');
+        upvote = $(this).siblings('.upvote');
 
     var downvote;
     if (downvoting)
-        downvote = jQuery(this);
+        downvote = $(this);
     else
-        downvote = jQuery(this).siblings('.downvote');
+        downvote = $(this).siblings('.downvote');
 
     var upvoted = upvote.hasClass('success');
     var downvoted = downvote.hasClass('alert');
@@ -187,7 +212,7 @@ jQuery('.voting a').click(function() {
         downvote.addClass('alert');
     }
 
-    var counter = jQuery(this).siblings('.vote-count');
+    var counter = $(this).siblings('.vote-count');
     counter.html(parseInt(counter.text()) + sum);
 
     var weight;
@@ -196,7 +221,7 @@ jQuery('.voting a').click(function() {
     else if (downvoting)
         weight = -1;
 
-    jQuery.ajax({
+    $.ajax({
         url: '/ajax/',
         data: {
             'idea': idea,
@@ -215,3 +240,5 @@ jQuery('.voting a').click(function() {
     });
 
 });
+
+})(jQuery);
