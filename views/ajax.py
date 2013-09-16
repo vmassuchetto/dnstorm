@@ -1,9 +1,10 @@
-from django.http import Http404, HttpResponse
+from django.http import Http404, HttpResponse, HttpResponseForbidden
 from django.db.models import Sum
 from django.views.generic import View
 from django.utils.translation import ugettext_lazy as _
+from django.shortcuts import get_object_or_404
 
-from dnstorm.models import Tag, Vote, Idea
+from dnstorm.models import Tag, Vote, Idea, Comment
 import json
 
 class AjaxView(View):
@@ -13,7 +14,12 @@ class AjaxView(View):
             return self.tag_search()
         elif 'idea' and 'weight' in self.request.GET:
             return self.submit_vote()
-        return HttpResponse(_('Invalid request'))
+        return HttpResponseForbidden()
+
+    def post(self, *args, **kwargs):
+        if 'idea' and 'content' in self.request.POST:
+            return self.submit_comment()
+        return HttpResponseForbidden()
 
     def tag_search(self):
         tags = Tag.objects.filter(slug__icontains = self.request.GET['term'])[:5]
@@ -27,10 +33,7 @@ class AjaxView(View):
         return HttpResponse(json.dumps(response, sort_keys=True))
 
     def submit_vote(self):
-        try:
-            idea = Idea.objects.get(id=self.request.GET['idea'])
-        except:
-            raise Http404()
+        idea = get_object_or_404(Idea, pk=self.request.GET['idea'])
         if not self.request.user.is_authenticated() or idea.user == self.request.user:
             raise Http404()
         weight = int(self.request.GET['weight'])
@@ -48,3 +51,9 @@ class AjaxView(View):
         count = Vote.objects.filter(idea=idea).aggregate(Sum('weight'))['weight__sum']
         return HttpResponse(json.dumps(count if count else 0))
 
+    def submit_comment(self):
+        idea = get_object_or_404(Idea, pk=self.request.POST['idea'])
+        content = self.request.POST['content']
+        comment = Comment(idea=idea, content=content, author=self.request.user)
+        comment.save()
+        return HttpResponse(comment.content)

@@ -89,6 +89,20 @@ class Idea(models.Model):
 
 reversion.register(Idea)
 
+class Comment(models.Model):
+    idea = models.ForeignKey(Idea, editable=False, blank=True, null=True)
+    content = models.TextField(verbose_name=_('Comment'))
+    author = models.ForeignKey(User, editable=False)
+    modified = models.DateTimeField(auto_now=True, editable=False)
+
+    def __unicode__(self):
+        return u'%d (Idea: %s) (Author: %s)' % (self.id, self.idea.id, self.author.username)
+
+    class Meta:
+        db_table = settings.DNSTORM['table_prefix'] + '_comment'
+
+reversion.register(Comment)
+
 class Vote(models.Model):
     idea = models.ForeignKey(Idea)
     author = models.ForeignKey(User)

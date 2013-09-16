@@ -1,10 +1,13 @@
-{% load gravatar i18n %}
+{% load absolute gravatar i18n %}
 
 {% if perms.problem.can_edit %}
     <a class="button small radius expand" href="{% url 'problem_edit' problem.id %}">
         <i class="foundicon-page"></i> {% trans 'Edit this problem' %}
     </a>
 {% endif %}
+
+<a class="button small secondary expand show-on-click hide-after-click" data-show-on-click="short-link-url" href="javascript:void(0);">{% trans "Short Link" %}</a>
+<div id="short-link-url" class="hidden"><input type="text" class="select-on-click" value="{% absolute "problem_short" problem.id %}" /></div>
 
 <p>
     {% trans "Last updated in" %} {{ problem.modified }}
@@ -18,8 +21,6 @@
 {% endif %}
 
 <hr/>
-
-<a href="{% url "problem_short" problem.id %}">Permanent Short Link</a>
 
 {% if problem.tag.all %}
     <div class="tags">

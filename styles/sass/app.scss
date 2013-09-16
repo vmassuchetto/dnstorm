@@ -1,16 +1,24 @@
 @import "settings";
 @import "normalize";
 @import "foundation";
-@import "general_foundicons";
-@import "social_foundicons";
+//@import "general_foundicons";
+//@import "social_foundicons";
 
 @import "compass/css3";
 @import "compass/utilities";
 
 // General
 
+.hidden {
+    display: none;
+}
+
 .alignright {
     text-align: right;
+}
+
+.left-1em {
+    padding-left: 1em !important;
 }
 
 // Mandatory global radius
@@ -205,6 +213,28 @@ form {
     display: none;
 }
 
+// Idea list
+
+.idea-content {
+    margin: 0 0 1em 0;
+}
+
+// Comment list
+
+.comment-content {
+    padding: 0.7em 0;
+    border-top: 1px dotted $dark-white;
+    font-size: 0.85em;
+    color: $light-black;
+    .comment-user {
+        background: lighten($black, 70%);
+        padding: 2px 5px;
+    }
+    a.comment-modified {
+        color: $light2-black;
+    }
+}
+
 // Revisions
 
 .revision {
@@ -222,14 +252,6 @@ form {
     }
 }
 
-.idea {
-    > .row {
-        > .large-11 {
-            padding-left: 1em;
-        }
-    }
-}
-
 .voting {
     text-align: center;
     a {
@@ -241,5 +263,16 @@ form {
         font-size: 1.6em;
         letter-spacing: 0;
         margin: 7px 0;
+    }
+}
+
+a.problem-action {
+    color: $light-black;
+    font-size: 0.9em;
+    padding: 0.1em 0.2em;
+    text-transform: lowercase;
+    &:hover {
+        background: $light-black;
+        color: $white;
     }
 }

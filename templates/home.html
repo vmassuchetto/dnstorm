@@ -37,7 +37,7 @@
                 {% if user.is_authenticated %}
                     {% trans "No problem here. You can start by" %} <a href="{% url "problem_new" %}">{% trans "creating a new one" %}</a>.
                 {% else %}
-                    <a href="{% url "django.contrib.auth.views.login" %}?next={{ request.get_full_path }}">{% trans "Log in" %}</a> {% trans "to view and create problems" %}.
+                    <a href="{% url "django.contrib.auth.views.login" %}?next={{ request.get_full_path }}">{% trans "Log in" context "imperative" %}</a> {% trans "to view and create problems" %}.
                 {% endif %}
             </div>
         {% endif %}

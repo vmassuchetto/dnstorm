@@ -13,8 +13,8 @@ from django.utils.html import strip_tags
 
 import reversion
 
-from dnstorm.models import Problem, Idea, Vote
-from dnstorm.forms import ProblemForm, IdeaForm
+from dnstorm.models import Problem, Idea, Vote, Comment
+from dnstorm.forms import ProblemForm, IdeaForm, CommentForm
 
 class ProblemCreateView(CreateView):
     template_name = 'problem_edit.html'
@@ -97,6 +97,8 @@ class ProblemView(FormView):
         for idea in context['ideas']:
             user_vote = Vote.objects.filter(idea=idea, author=self.request.user)
             idea.user_vote = user_vote[0] if len(user_vote) else False
+            idea.comments = Comment.objects.filter(idea=idea).order_by('modified')
+            idea.comment_form = CommentForm(initial={'idea': idea.id})
         return context
 
     @reversion.create_revision()

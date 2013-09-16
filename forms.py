@@ -2,10 +2,13 @@ from django import forms
 from django.conf.global_settings import LANGUAGES
 from django.utils.translation import ugettext as _
 
-from dnstorm.models import Problem, Idea
+from dnstorm.models import Problem, Idea, Comment
 from crispy_forms.helper import FormHelper
-from crispy_forms_foundation.layout import Fieldset, Field, Row, \
-    HTML, ButtonHolder, Submit, Layout, Column
+from crispy_forms_foundation.layout import Fieldset, Field, \
+    Row, HTML, ButtonHolder, Submit, Layout, Column
+
+class RowCollapse(Row):
+    css_class = 'row collapse'
 
 class OptionsForm(forms.Form):
     language = forms.ChoiceField(label=_('Language'), choices=map(lambda (k,v): (k, _(v)), LANGUAGES), required=False)
@@ -41,7 +44,7 @@ class ProblemForm(forms.ModelForm):
                 Field('tag', css_class='problem-tag', template='field_tag.html')
             ),
             Fieldset(_('Permissions'),
-                'user',
+                'contributor',
                 'manager',
                 Row(
                     Column('open', css_class='large-4'),
@@ -65,7 +68,6 @@ class ProblemForm(forms.ModelForm):
         self.fields['tag'].required = False
 
 class IdeaForm(forms.ModelForm):
-    problem = forms.HiddenInput()
 
     class Meta:
         model = Idea
@@ -78,4 +80,23 @@ class IdeaForm(forms.ModelForm):
             Row(Column(Submit('submit', _('Submit')), css_class='alignright'))
         )
         super(IdeaForm, self).__init__(*args, **kwargs)
+        self.fields['content'].label = ''
+
+class CommentForm(forms.ModelForm):
+    idea = forms.IntegerField()
+
+    class Meta:
+        model = Comment
+
+    def __init__(self, *args, **kwargs):
+        self.helper = FormHelper()
+        self.helper.form_action = '.'
+        self.helper.layout = Layout(
+            Field('idea', type='hidden'),
+            RowCollapse(
+                Column('content', css_class='large-10'),
+                Column(Submit('submit', _('Submit'), css_class='button small'), css_class='large-2 alignright'),
+            )
+        )
+        super(CommentForm, self).__init__(*args, **kwargs)
         self.fields['content'].label = ''

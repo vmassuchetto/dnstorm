@@ -95,12 +95,46 @@ jQuery('.revisions').ready(function(){
     jQuery(raw[raw.length-1]).next('.diff').html(jQuery(raw[raw.length-1]).html());
 });
 
+// Show on click
+
+jQuery('.show-on-click').click(function(){
+    var id = jQuery(this).data('show-on-click');
+    jQuery('#' + id).delay(300).fadeIn(300);
+});
+
+// Hide after click
+
+jQuery('.hide-after-click').click(function(){
+    jQuery(this).fadeOut(300);
+});
+
+// Select all on click
+
+jQuery('.select-on-click').click(function(){
+    jQuery(this).select();
+});
+
 // Idea form
+// Not using 'show-on-click' because of the resizing problem
 
 jQuery('.problem-idea-form-button').click(function(){
-    jQuery(this).fadeOut();
-    jQuery('.problem-idea-form').fadeIn();
+    jQuery(this).fadeOut(300);
+    jQuery('.problem-idea-form').delay(300).fadeIn(300);
     CKEDITOR.instances.id_content.resize('100', '340');
+});
+
+// Comment form submit
+
+jQuery('.comment-form form').submit(function(e){
+    e.preventDefault();
+    jQuery.ajax({
+        url: '/ajax/',
+        type: 'POST',
+        data: jQuery(this).serialize(),
+        complete: function(xhr, data) {
+            console.log(data);
+        }
+    });
 });
 
 // Voting

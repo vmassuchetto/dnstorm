@@ -1,180 +1,69 @@
-/* font-face */
-@font-face {
-  font-family: "SocialFoundicons";
-  src: url("../fonts/social_foundicons.eot");
-  src: url("../fonts/social_foundicons.eot?#iefix") format("embedded-opentype"), url("../fonts/social_foundicons.woff") format("woff"), url("../fonts/social_foundicons.ttf") format("truetype"), url("../fonts/social_foundicons.svg#SocialFoundicons") format("svg");
-  font-weight: normal;
-  font-style: normal;
-}
+/*
+Syntax error: Undefined mixin 'face'.
+        on line 4 of /home/vinicius/dev/dnstorm/dnstorm/styles/sass/social_foundicons.scss, in `face'
+        from line 4 of /home/vinicius/dev/dnstorm/dnstorm/styles/sass/social_foundicons.scss
 
-/* global foundicon styles */
-/* line 7, ../../../styles/sass/social_foundicons.scss */
-[class*="foundicon-"] {
-  display: inline;
-  width: auto;
-  height: auto;
-  line-height: inherit;
-  vertical-align: baseline;
-  background-image: none;
-  background-position: 0 0;
-  background-repeat: repeat;
-}
+1: /home/vinicius/dev/dnstorm/dnstorm/styles/sass/social_foundicons.scss
 
-/* line 17, ../../../styles/sass/social_foundicons.scss */
-[class*="foundicon-"]:before {
-  font-family: "SocialFoundicons";
-  font-weight: normal;
-  font-style: normal;
-  text-decoration: inherit;
-}
-
-/* icons */
-/* line 1313, ../../../styles/sass/_settings.scss */
-.foundicon-thumb-up:before {
-  content: "\f000";
-}
-
-/* line 1313, ../../../styles/sass/_settings.scss */
-.foundicon-thumb-down:before {
-  content: "\f001";
-}
-
-/* line 1313, ../../../styles/sass/_settings.scss */
-.foundicon-rss:before {
-  content: "\f002";
-}
-
-/* line 1313, ../../../styles/sass/_settings.scss */
-.foundicon-facebook:before {
-  content: "\f003";
-}
-
-/* line 1313, ../../../styles/sass/_settings.scss */
-.foundicon-twitter:before {
-  content: "\f004";
-}
-
-/* line 1313, ../../../styles/sass/_settings.scss */
-.foundicon-pinterest:before {
-  content: "\f005";
-}
-
-/* line 1313, ../../../styles/sass/_settings.scss */
-.foundicon-github:before {
-  content: "\f006";
-}
-
-/* line 1313, ../../../styles/sass/_settings.scss */
-.foundicon-path:before {
-  content: "\f007";
-}
-
-/* line 1313, ../../../styles/sass/_settings.scss */
-.foundicon-linkedin:before {
-  content: "\f008";
-}
-
-/* line 1313, ../../../styles/sass/_settings.scss */
-.foundicon-dribbble:before {
-  content: "\f009";
-}
-
-/* line 1313, ../../../styles/sass/_settings.scss */
-.foundicon-stumble-upon:before {
-  content: "\f00a";
-}
-
-/* line 1313, ../../../styles/sass/_settings.scss */
-.foundicon-behance:before {
-  content: "\f00b";
-}
-
-/* line 1313, ../../../styles/sass/_settings.scss */
-.foundicon-reddit:before {
-  content: "\f00c";
-}
-
-/* line 1313, ../../../styles/sass/_settings.scss */
-.foundicon-google-plus:before {
-  content: "\f00d";
-}
-
-/* line 1313, ../../../styles/sass/_settings.scss */
-.foundicon-youtube:before {
-  content: "\f00e";
-}
-
-/* line 1313, ../../../styles/sass/_settings.scss */
-.foundicon-vimeo:before {
-  content: "\f00f";
-}
-
-/* line 1313, ../../../styles/sass/_settings.scss */
-.foundicon-flickr:before {
-  content: "\f010";
-}
-
-/* line 1313, ../../../styles/sass/_settings.scss */
-.foundicon-slideshare:before {
-  content: "\f011";
-}
-
-/* line 1313, ../../../styles/sass/_settings.scss */
-.foundicon-picassa:before {
-  content: "\f012";
-}
-
-/* line 1313, ../../../styles/sass/_settings.scss */
-.foundicon-skype:before {
-  content: "\f013";
-}
-
-/* line 1313, ../../../styles/sass/_settings.scss */
-.foundicon-steam:before {
-  content: "\f014";
-}
-
-/* line 1313, ../../../styles/sass/_settings.scss */
-.foundicon-instagram:before {
-  content: "\f015";
-}
-
-/* line 1313, ../../../styles/sass/_settings.scss */
-.foundicon-foursquare:before {
-  content: "\f016";
-}
-
-/* line 1313, ../../../styles/sass/_settings.scss */
-.foundicon-delicious:before {
-  content: "\f017";
-}
-
-/* line 1313, ../../../styles/sass/_settings.scss */
-.foundicon-chat:before {
-  content: "\f018";
-}
-
-/* line 1313, ../../../styles/sass/_settings.scss */
-.foundicon-torso:before {
-  content: "\f019";
-}
-
-/* line 1313, ../../../styles/sass/_settings.scss */
-.foundicon-tumblr:before {
-  content: "\f01a";
-}
-
-/* line 1313, ../../../styles/sass/_settings.scss */
-.foundicon-video-chat:before {
-  content: "\f01b";
-}
-
-/* line 1313, ../../../styles/sass/_settings.scss */
-.foundicon-digg:before {
-  content: "\f01c";
-}
-
-/* line 1313, ../../../styles/sass/_settings.scss */
-.foundicon-wordpress:before {
-  content: "\f01d";
-}
+Backtrace:
+/home/vinicius/dev/dnstorm/dnstorm/styles/sass/social_foundicons.scss:4:in `face'
+/home/vinicius/dev/dnstorm/dnstorm/styles/sass/social_foundicons.scss:4
+/var/lib/gems/2.0.0/gems/sass-3.2.10/lib/sass/tree/visitors/perform.rb:253:in `visit_mixin'
+/var/lib/gems/2.0.0/gems/sass-3.2.10/lib/sass/tree/visitors/base.rb:37:in `visit'
+/var/lib/gems/2.0.0/gems/sass-3.2.10/lib/sass/tree/visitors/perform.rb:100:in `visit'
+/var/lib/gems/2.0.0/gems/sass-3.2.10/lib/sass/tree/visitors/base.rb:53:in `block in visit_children'
+/var/lib/gems/2.0.0/gems/sass-3.2.10/lib/sass/tree/visitors/base.rb:53:in `map'
+/var/lib/gems/2.0.0/gems/sass-3.2.10/lib/sass/tree/visitors/base.rb:53:in `visit_children'
+/var/lib/gems/2.0.0/gems/sass-3.2.10/lib/sass/tree/visitors/perform.rb:109:in `block in visit_children'
+/var/lib/gems/2.0.0/gems/sass-3.2.10/lib/sass/tree/visitors/perform.rb:121:in `with_environment'
+/var/lib/gems/2.0.0/gems/sass-3.2.10/lib/sass/tree/visitors/perform.rb:108:in `visit_children'
+/var/lib/gems/2.0.0/gems/sass-3.2.10/lib/sass/tree/visitors/base.rb:37:in `block in visit'
+/var/lib/gems/2.0.0/gems/sass-3.2.10/lib/sass/tree/visitors/perform.rb:128:in `visit_root'
+/var/lib/gems/2.0.0/gems/sass-3.2.10/lib/sass/tree/visitors/base.rb:37:in `visit'
+/var/lib/gems/2.0.0/gems/sass-3.2.10/lib/sass/tree/visitors/perform.rb:100:in `visit'
+/var/lib/gems/2.0.0/gems/sass-3.2.10/lib/sass/tree/visitors/perform.rb:7:in `visit'
+/var/lib/gems/2.0.0/gems/sass-3.2.10/lib/sass/tree/root_node.rb:20:in `render'
+/var/lib/gems/2.0.0/gems/sass-3.2.10/lib/sass/engine.rb:315:in `_render'
+/var/lib/gems/2.0.0/gems/sass-3.2.10/lib/sass/engine.rb:262:in `render'
+/var/lib/gems/2.0.0/gems/compass-0.12.2/lib/compass/compiler.rb:140:in `block (2 levels) in compile'
+/var/lib/gems/2.0.0/gems/compass-0.12.2/lib/compass/compiler.rb:126:in `timed'
+/var/lib/gems/2.0.0/gems/compass-0.12.2/lib/compass/compiler.rb:139:in `block in compile'
+/var/lib/gems/2.0.0/gems/compass-0.12.2/lib/compass/logger.rb:45:in `red'
+/var/lib/gems/2.0.0/gems/compass-0.12.2/lib/compass/compiler.rb:138:in `compile'
+/var/lib/gems/2.0.0/gems/compass-0.12.2/lib/compass/compiler.rb:118:in `compile_if_required'
+/var/lib/gems/2.0.0/gems/compass-0.12.2/lib/compass/compiler.rb:103:in `block (2 levels) in run'
+/var/lib/gems/2.0.0/gems/compass-0.12.2/lib/compass/compiler.rb:101:in `each'
+/var/lib/gems/2.0.0/gems/compass-0.12.2/lib/compass/compiler.rb:101:in `block in run'
+/var/lib/gems/2.0.0/gems/compass-0.12.2/lib/compass/compiler.rb:126:in `timed'
+/var/lib/gems/2.0.0/gems/compass-0.12.2/lib/compass/compiler.rb:100:in `run'
+/var/lib/gems/2.0.0/gems/compass-0.12.2/lib/compass/commands/watch_project.rb:147:in `recompile'
+/var/lib/gems/2.0.0/gems/fssm-0.2.10/lib/fssm/path.rb:73:in `call'
+/var/lib/gems/2.0.0/gems/fssm-0.2.10/lib/fssm/path.rb:73:in `run_callback'
+/var/lib/gems/2.0.0/gems/fssm-0.2.10/lib/fssm/path.rb:55:in `callback_action'
+/var/lib/gems/2.0.0/gems/fssm-0.2.10/lib/fssm/path.rb:31:in `create'
+/var/lib/gems/2.0.0/gems/fssm-0.2.10/lib/fssm/state/directory.rb:26:in `block in created'
+/var/lib/gems/2.0.0/gems/fssm-0.2.10/lib/fssm/state/directory.rb:25:in `each'
+/var/lib/gems/2.0.0/gems/fssm-0.2.10/lib/fssm/state/directory.rb:25:in `created'
+/var/lib/gems/2.0.0/gems/fssm-0.2.10/lib/fssm/state/directory.rb:17:in `refresh'
+/var/lib/gems/2.0.0/gems/fssm-0.2.10/lib/fssm/backends/polling.rb:17:in `block (2 levels) in run'
+/var/lib/gems/2.0.0/gems/fssm-0.2.10/lib/fssm/backends/polling.rb:17:in `each'
+/var/lib/gems/2.0.0/gems/fssm-0.2.10/lib/fssm/backends/polling.rb:17:in `block in run'
+/var/lib/gems/2.0.0/gems/fssm-0.2.10/lib/fssm/backends/polling.rb:15:in `loop'
+/var/lib/gems/2.0.0/gems/fssm-0.2.10/lib/fssm/backends/polling.rb:15:in `run'
+/var/lib/gems/2.0.0/gems/fssm-0.2.10/lib/fssm/monitor.rb:26:in `run'
+/var/lib/gems/2.0.0/gems/fssm-0.2.10/lib/fssm.rb:70:in `monitor'
+/var/lib/gems/2.0.0/gems/compass-0.12.2/lib/compass/commands/watch_project.rb:87:in `perform'
+/var/lib/gems/2.0.0/gems/compass-0.12.2/lib/compass/commands/base.rb:18:in `execute'
+/var/lib/gems/2.0.0/gems/compass-0.12.2/lib/compass/commands/project_base.rb:19:in `execute'
+/var/lib/gems/2.0.0/gems/compass-0.12.2/lib/compass/exec/sub_command_ui.rb:43:in `perform!'
+/var/lib/gems/2.0.0/gems/compass-0.12.2/lib/compass/exec/sub_command_ui.rb:15:in `run!'
+/var/lib/gems/2.0.0/gems/compass-0.12.2/bin/compass:30:in `block in <top (required)>'
+/var/lib/gems/2.0.0/gems/compass-0.12.2/bin/compass:44:in `call'
+/var/lib/gems/2.0.0/gems/compass-0.12.2/bin/compass:44:in `<top (required)>'
+/usr/local/bin/compass:23:in `load'
+/usr/local/bin/compass:23:in `<main>'
+*/
+body:before {
+  white-space: pre;
+  font-family: monospace;
+  content: "Syntax error: Undefined mixin 'face'.\A         on line 4 of /home/vinicius/dev/dnstorm/dnstorm/styles/sass/social_foundicons.scss, in `face'\A         from line 4 of /home/vinicius/dev/dnstorm/dnstorm/styles/sass/social_foundicons.scss\A \A 1: /home/vinicius/dev/dnstorm/dnstorm/styles/sass/social_foundicons.scss"; }
