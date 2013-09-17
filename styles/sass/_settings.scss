@@ -11,6 +11,8 @@ $white: #FFF;
 $dark-white: darken($white, 20%);
 
 $red: #FF0000;
+$light-red: lighten($red, 20%);
+
 $green: #099C00;
 
 // The default font-size is set to 100% of the browser style sheet (usually 16px)

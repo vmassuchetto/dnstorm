@@ -19,7 +19,10 @@ $(document).foundation();
 // Highlight
 
 $.fn.highlight = function (color) {
-    if (!color) color = '#80FF76';
+    if (color == 'red')
+        color = '#FF6666';
+    else
+        color = '#A8FFA2';
     var e = $(this[0]);
     var original = e.css('backgroundColor');
     return e.animate({ backgroundColor: color }, 1000, null, function(){
@@ -165,10 +168,30 @@ $('.comment-form form').submit(function(e){
         type: 'POST',
         data: $(this).serialize(),
         complete: function(xhr, data) {
+            console.log(xhr);
             if (data == 'success') {
                 var c = comments.append(xhr.responseText);
                 $('.comment-form').fadeOut(300);
                 comments.find('.comment').last().highlight();
+            }
+        }
+    });
+});
+
+// Comment delete
+
+$('.comment-delete').click(function(){
+    var c = $(this).parent();
+    $.ajax({
+        url: '/ajax/',
+        type: 'GET',
+        data: {
+            delete_comment: $(this).data('comment')
+        },
+        complete: function(xhr, data) {
+            if (data == 'success') {
+                c.highlight('red');
+                c.fadeOut(300);
             }
         }
     });

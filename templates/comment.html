@@ -1,7 +1,9 @@
- {% load humanize %}
+ {% load humanize i18n %}
 
  <div class="row collapse comment" id="comment-{{ comment.id }}">
-    <div class="columns large-12 comment-content">
-        {{ comment.content }} &mdash; <a class="comment-user" href="{% url "user" comment.author %}">{{ comment.author.username }}</a> <a class="comment-modified" href="#comment-{{ comment.id }}">{{ comment.modified|naturaltime }}</a>
+    <div class="columns large-12">
+        <div class="comment-content">
+            {{ comment.content }} &mdash; <a class="comment-author" href="{% url "user" comment.author %}">{{ comment.author.username }}</a> <a class="comment-modified" href="#comment-{{ comment.id }}">{{ comment.modified|naturaltime }}</a>{% if comment.author == request.user %} <a class="comment-delete" data-comment="{{ comment.id }}">x</a>{% endif %}
+        </div>
     </div>
 </div>

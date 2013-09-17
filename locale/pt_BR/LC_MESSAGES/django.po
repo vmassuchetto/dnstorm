@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: DNStorm\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-09-15 11:11-0300\n"
-"PO-Revision-Date: 2013-09-15 11:12-0300\n"
+"PO-Revision-Date: 2013-09-17 12:34-0300\n"
 "Last-Translator: Vinicius Massuchetto <vmassuchetto@gmail.com>\n"
 "Language-Team: \n"
 "Language: pt_BR\n"
@@ -225,7 +225,7 @@ msgstr "Sua ideia"
 
 #: templates/problem.html:48
 msgid "Submitted ideas"
-msgstr "Enviar ideiais"
+msgstr "Ideiais enviadas"
 
 #: templates/problem.html:73
 msgctxt "verb"

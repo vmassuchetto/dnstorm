@@ -99,6 +99,8 @@ class ProblemView(FormView):
             idea.user_vote = user_vote[0] if len(user_vote) else False
             idea.comments = Comment.objects.filter(idea=idea).order_by('modified')
             idea.comment_form = CommentForm(initial={'idea': idea.id})
+            if self.problem.vote_author:
+                idea.votes = Vote.objects.filter(idea=idea).order_by('date')
         return context
 
     @reversion.create_revision()

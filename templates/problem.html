@@ -56,12 +56,12 @@
             <h5>{% trans "Your idea" %}</h5>
             {% crispy form %}
         </div>
+
         <hr/>
 
         {% if ideas %}
         <a name="problem-ideas"></a>
         <div class="problem-ideas">
-            <h4>{% trans "Submitted ideas" %}</h4>
             {% for idea in ideas %}
             <div class="idea" id="idea-{{ idea.id }}">
 
@@ -71,10 +71,29 @@
                         <div class="columns large-1 small-2 voting">
 
                             <a{% if not request.user.is_authenticated %} data-reveal-id="login-modal"{% endif %} class="button secondary upvote{% if idea.user_vote.weight == 1 %} success{% endif %}" data-idea="{{ idea.id }}"{% if idea.author == request.user %} disabled="disabled"{% endif %}><i class="foundicon-thumb-up"></i></a>
-                            {% if problem.vote_count %}<span class="vote-count">{{ idea.vote_count }}</span>{% else %}{% endif %}
+                            {% if problem.vote_count %}<span class="vote-count">{% if problem.vote_author %}<a href="javascript:void(0);" data-reveal-id="idea-{{ idea.id }}-vote-history-modal">{% endif %}{{ idea.vote_count }}{% if problem.vote_author %}</a>{% endif %}</span>{% else %}{% endif %}
 
                             <a{% if not request.user.is_authenticated %} data-reveal-id="login-modal"{% endif %} class="button secondary downvote{% if idea.user_vote.weight == -1 %} alert{% endif %}" data-idea="{{ idea.id }}"{% if idea.author == request.user %} disabled="disabled"{% endif %}><i class="foundicon-thumb-down"></i></a>
 
+                        </div>
+                    {% endif %}
+
+                    {% if problem.vote_author %}
+                        <div id="idea-{{ idea.id }}-vote-history-modal" class="reveal-modal medium">
+                            {% for vote in idea.votes %}
+                                <div class="row vote" id="vote-{{ vote.id }}">
+                                    <div class="columns large-1">
+                                        <a href="javascript:void(0);" class="button secondary upvote{% if idea.user_vote.weight == 1 %} success{% else %} alert{% endif %}" disabled="disabled"><i class="foundicon-thumb-up"></i></a>
+                                        {{ vote.weight }}
+                                    </div>
+                                    <div class="columns large-11">
+                                        {{ vote.author }}
+                                        {{ vote.date }}
+                                    </div>
+                                </div>
+                                <hr/>
+                            {% endfor %}
+                            <a class="close-reveal-modal">&#215;</a>
                         </div>
                     {% endif %}
 
@@ -89,7 +108,7 @@
                         <div class="row collapse">
                             <div class="columns large-7">
                                 <a class="problem-action{% if request.user.is_authenticated %} show-on-click{% endif %}" {% if request.user.is_authenticated %}data-show-on-click="comment-form-{{ idea.id }}"{% else %}data-reveal-id="login-modal"{% endif %} href="javascript:void(0);" >{% trans "Comment" context "verb" %}</a>
-                                {% if idea.author == request.user %}<a class="problem-action" href="{% url "problem_edit" problem.id %}">{% trans "Edit" %}</a>{% endif %}
+                                {% if idea.author == request.user %}<a class="problem-action edit" data-problem="{{ problem.id }}" href="javascript:void(0);">{% trans "Edit" %}</a>{% endif %}
                             </div>
 
                             <div class="columns large-5">

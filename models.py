@@ -96,7 +96,7 @@ class Comment(models.Model):
     modified = models.DateTimeField(auto_now=True, editable=False)
 
     def __unicode__(self):
-        return u'%d (Idea: %s) (Author: %s)' % (self.id, self.idea.id, self.author.username)
+        return u'%s (Idea: %s)' % (self.author.username, self.idea.id)
 
     class Meta:
         db_table = settings.DNSTORM['table_prefix'] + '_comment'

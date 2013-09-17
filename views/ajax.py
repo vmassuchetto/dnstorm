@@ -1,5 +1,6 @@
 from django.http import Http404, HttpResponse, HttpResponseForbidden
 from django.db.models import Sum
+from django.core.exceptions import ObjectDoesNotExist
 from django.views.generic import View
 from django.utils.translation import ugettext_lazy as _
 from django.shortcuts import get_object_or_404
@@ -15,6 +16,8 @@ class AjaxView(View):
             return self.tag_search()
         elif 'idea' and 'weight' in self.request.GET:
             return self.submit_vote()
+        elif 'delete_comment' in self.request.GET:
+            return self.delete_comment()
         return HttpResponseForbidden()
 
     def post(self, *args, **kwargs):
@@ -60,3 +63,11 @@ class AjaxView(View):
         t = loader.get_template('comment.html')
         c = Context({'comment': comment})
         return HttpResponse(t.render(c))
+
+    def delete_comment(self):
+        try:
+            Comment.objects.get(pk=self.request.GET['delete_comment']).delete()
+            result = 1
+        except ObjectDoesNotExist:
+            result = 0
+        return HttpResponse(result)

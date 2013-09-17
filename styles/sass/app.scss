@@ -44,7 +44,7 @@ input[type='text'] {
 
 .buttonHolder {
     text-align: right;
-    #advanced {
+    #advanced, .cancel {
         float:left;
     }
 }
@@ -222,16 +222,25 @@ form {
 // Comment list
 
 .comment-content {
-    padding: 0.7em 0;
+    padding: 0.7em 0.5em;
     border-top: 1px dotted $dark-white;
     font-size: 0.85em;
     color: $light-black;
-    .comment-user {
+    .comment-author {
         background: lighten($black, 70%);
         padding: 2px 5px;
     }
     a.comment-modified {
         color: $light2-black;
+    }
+    a.comment-delete {
+        font-size:0.85em;
+        padding: 2px 5px;
+        color: $light-red;
+        &:hover {
+            background-color: $light-red;
+            color: $white;
+        }
     }
 }
 

@@ -7550,13 +7550,13 @@ form .asteriskField {
 
 /* line 224, ../../../styles/sass/app.scss */
 .comment-content {
-  padding: 0.7em 0;
+  padding: 0.7em 0.5em;
   border-top: 1px dotted #cccccc;
   font-size: 0.85em;
   color: #777777;
 }
 /* line 229, ../../../styles/sass/app.scss */
-.comment-content .comment-user {
+.comment-content .comment-author {
   background: #f7f7f7;
   padding: 2px 5px;
 }
@@ -7564,32 +7564,43 @@ form .asteriskField {
 .comment-content a.comment-modified {
   color: #aaaaaa;
 }
+/* line 236, ../../../styles/sass/app.scss */
+.comment-content a.comment-delete {
+  font-size: 0.85em;
+  padding: 2px 5px;
+  color: #ff6666;
+}
+/* line 240, ../../../styles/sass/app.scss */
+.comment-content a.comment-delete:hover {
+  background-color: #ff6666;
+  color: white;
+}
 
-/* line 241, ../../../styles/sass/app.scss */
+/* line 250, ../../../styles/sass/app.scss */
 .revision del {
   color: red;
   background-color: white;
 }
-/* line 245, ../../../styles/sass/app.scss */
+/* line 254, ../../../styles/sass/app.scss */
 .revision ins {
   color: #099c00;
   background-color: #d2ffcf;
   text-decoration: none;
 }
-/* line 250, ../../../styles/sass/app.scss */
+/* line 259, ../../../styles/sass/app.scss */
 .revision .raw {
   display: none;
 }
 
-/* line 255, ../../../styles/sass/app.scss */
+/* line 264, ../../../styles/sass/app.scss */
 .voting {
   text-align: center;
 }
-/* line 257, ../../../styles/sass/app.scss */
+/* line 266, ../../../styles/sass/app.scss */
 .voting a {
   margin: 0;
 }
-/* line 260, ../../../styles/sass/app.scss */
+/* line 269, ../../../styles/sass/app.scss */
 .voting .vote-count {
   color: #444444;
   display: block;
@@ -7598,14 +7609,14 @@ form .asteriskField {
   margin: 7px 0;
 }
 
-/* line 269, ../../../styles/sass/app.scss */
+/* line 278, ../../../styles/sass/app.scss */
 a.problem-action {
   color: #777777;
   font-size: 0.9em;
   padding: 0.1em 0.2em;
   text-transform: lowercase;
 }
-/* line 274, ../../../styles/sass/app.scss */
+/* line 283, ../../../styles/sass/app.scss */
 a.problem-action:hover {
   background: #777777;
   color: white;
