@@ -7259,7 +7259,7 @@ input[type='text'] {
   text-align: right;
 }
 /* line 47, ../../../styles/sass/app.scss */
-.buttonHolder #advanced {
+.buttonHolder #advanced, .buttonHolder .cancel {
   float: left;
 }
 

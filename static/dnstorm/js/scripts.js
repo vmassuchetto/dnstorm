@@ -142,6 +142,18 @@ $('.problem-idea-form-button').click(function(){
     CKEDITOR.instances.id_content.resize('100', '340');
 });
 
+// Idea edit
+
+$('.problem-idea-edit').click(function(){
+
+});
+
+// Idea cancel
+$('.problem-idea-form-cancel').click(function(){
+    $(this).parents('.problem-idea-form').fadeOut(300);
+    $('.problem-idea-button').delay(300).fadeIn(300);
+});
+
 // Comment form submit
 
 $('.comment-form form').submit(function(e){

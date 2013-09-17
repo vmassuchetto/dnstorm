@@ -77,7 +77,10 @@ class IdeaForm(forms.ModelForm):
         self.helper.form_action = '.'
         self.helper.layout = Layout(
             Row(Column('content', css_class='large-12')),
-            Row(Column(Submit('submit', _('Submit')), css_class='alignright'))
+            ButtonHolder(
+                HTML('<a class="button secondary small cancel problem-idea-form-cancel">' + _('Cancel') + '</a>'),
+                Submit('submit', _('Submit'))
+            ),
         )
         super(IdeaForm, self).__init__(*args, **kwargs)
         self.fields['content'].label = ''
