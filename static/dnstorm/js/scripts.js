@@ -139,22 +139,35 @@ $('.select-on-click').click(function(){
 // Idea form
 // Not using 'show-on-click' because of the resizing problem
 
-$('.problem-idea-form-button').click(function(){
-    $(this).fadeOut(300);
+function show_idea_form(parent) {
+    $('.problem-idea-form').prependTo(parent);
     $('.problem-idea-form').delay(300).fadeIn(300);
     CKEDITOR.instances.id_content.resize('100', '340');
+    $('html, body').animate({
+        scrollTop: $('.problem-idea-form').offset().top
+    }, 500);
+}
+
+$('.problem-idea-form-button').click(function(){
+    $('.problem-idea-button').fadeOut(300);
+    show_idea_form($('.problem-idea-form-wrap'));
 });
+
+// Idea cancel
+
+function hide_idea_form() {
+    $('.problem-idea-form').fadeOut(300);
+    $('.problem-idea-button').delay(300).fadeIn(300);
+    $('.problem-idea-form').appendTo('.problem-idea-form-wrap');
+}
+
+$('.problem-idea-form-cancel').click(hide_idea_form);
 
 // Idea edit
 
 $('.problem-idea-edit').click(function(){
-
-});
-
-// Idea cancel
-$('.problem-idea-form-cancel').click(function(){
-    $(this).parents('.problem-idea-form').fadeOut(300);
-    $('.problem-idea-button').delay(300).fadeIn(300);
+    $('.problem-idea-button').fadeIn(300);
+    show_idea_form($(this).parents('.problem-idea'));
 });
 
 // Comment form submit

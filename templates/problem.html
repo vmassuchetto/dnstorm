@@ -38,23 +38,27 @@
 
         <hr/>
 
-        {% if not request.user.is_authenticated %}
+        <div class="problem-idea-form-wrap">
 
-            <a class="large button expand secondary" data-reveal-id="login-modal">{% trans "Log in and submit your idea" %}</a>
+            {% if not request.user.is_authenticated %}
 
-        {% else %}{% if user_ideas_left > 0 %}
+                <a class="large button expand secondary" data-reveal-id="login-modal">{% trans "Log in and submit your idea" %}</a>
 
-            <a class="problem-idea-button problem-idea-form-button large button expand">{% trans "Submit your idea to this problem" %}{% if problem.max %}<br/><small>{% blocktrans count user_ideas_left as ideas %}you have {{ ideas }} idea left{% plural %}you have {{ ideas }} ideas left{% endblocktrans %}</small>{% endif %}</a>
+            {% else %}{% if user_ideas_left > 0 %}
 
-        {% else %}
+                <a class="problem-idea-button problem-idea-form-button large button expand">{% trans "Submit your idea to this problem" %}{% if problem.max %}<br/><small>{% blocktrans count user_ideas_left as ideas %}you have {{ ideas }} idea left{% plural %}you have {{ ideas }} ideas left{% endblocktrans %}</small>{% endif %}</a>
 
-            <a class="problem-idea-button large button expand secondary" disabled="disabled">{% trans "You contributed with the maximum ideas allowed for this problem" %}<br/><small>{% trans "edit or delete your existing ideas if you change your mind about them" %}</small></a>
+            {% else %}
 
-        {% endif %} {% endif %}
+                <a class="problem-idea-button large button expand secondary" disabled="disabled">{% trans "You contributed with the maximum ideas allowed for this problem" %}<br/><small>{% trans "edit or delete your existing ideas if you change your mind about them" %}</small></a>
 
-        <div class="problem-idea-form">
-            <h5>{% trans "Your idea" %}</h5>
-            {% crispy form %}
+            {% endif %} {% endif %}
+
+            <div class="problem-idea-form" id="problem-idea-form">
+                <h5>{% trans "Your idea" %}</h5>
+                {% crispy form %}
+            </div>
+
         </div>
 
         <hr/>
@@ -63,7 +67,7 @@
         <a name="problem-ideas"></a>
         <div class="problem-ideas">
             {% for idea in ideas %}
-            <div class="idea" id="idea-{{ idea.id }}">
+            <div class="problem-idea" id="idea-{{ idea.id }}">
 
                 <div class="row collapse">
 
@@ -108,7 +112,7 @@
                         <div class="row collapse">
                             <div class="columns large-7">
                                 <a class="problem-action{% if request.user.is_authenticated %} show-on-click{% endif %}" {% if request.user.is_authenticated %}data-show-on-click="comment-form-{{ idea.id }}"{% else %}data-reveal-id="login-modal"{% endif %} href="javascript:void(0);" >{% trans "Comment" context "verb" %}</a>
-                                {% if idea.author == request.user %}<a class="problem-action edit" data-problem="{{ problem.id }}" href="javascript:void(0);">{% trans "Edit" %}</a>{% endif %}
+                                {% if idea.author == request.user %}<a class="problem-action problem-idea-edit" data-problem="{{ problem.id }}" href="javascript:void(0);">{% trans "Edit" %}</a>{% endif %}
                             </div>
 
                             <div class="columns large-5">
