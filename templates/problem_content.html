@@ -1,0 +1,21 @@
+{% load gravatar i18n %}
+
+<div class="description">
+    {{ problem.description|safe }}
+</div>
+
+<div class="row">
+    <div class="columns large-offset-7 large-5">
+        <div class="user-box alignright">
+            <div class="row collapse">
+            <div class="columns large-10">
+                <a class="contributed" href="{{ request.get_full_path }}">{% trans "contributed" %} {{ problem.modified|date:"d b Y" }} {% trans "at" %} {{ problem.modified|date:"H:i" }}</a><br/>
+                <a class="username" href="{% url "user" problem.author %}">{{ problem.author.username }}</a>
+            </div>
+            <div class="columns large-2">
+                <a class="avatar"><img src="{% gravatar_for_user problem.author 32 %}" /></a>
+            </div>
+            </div>
+        </div>
+    </div>
+</div>

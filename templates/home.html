@@ -3,8 +3,7 @@
 
 {% block "bodyclass" %}home{% endblock %}
 
-{% block "titleside" %}
-    <div class="buttons-padding hide-for-small"></div>
+{% block "topright" %}
     {% if perms.problem.can_add %}
         <a class="button small success radius" href="{% url 'problem_new' %}">
             <i class="foundicon-page"></i> {% trans 'Create new problem' %}

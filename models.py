@@ -83,6 +83,9 @@ class Idea(models.Model):
     class Meta:
         db_table = settings.DNSTORM['table_prefix'] + '_idea'
 
+    def revision_count(self):
+        return reversion.get_for_object(self).count()
+
     def vote_count(self):
         w = Vote.objects.filter(idea=self).aggregate(models.Sum('weight'))['weight__sum']
         return w if w else 0

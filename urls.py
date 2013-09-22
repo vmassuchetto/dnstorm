@@ -1,5 +1,5 @@
 from django.conf.urls import patterns, include
-from dnstorm.views import base, ajax, problem, user
+from dnstorm.views import base, ajax, problem, idea, user
 
 urlpatterns = patterns('',
     (r'^$', base.HomeView.as_view(), {}, 'home'),
@@ -14,5 +14,7 @@ urlpatterns = patterns('',
     (r'^p/(?P<pk>[^/]+)/$', problem.ProblemShortView.as_view(), {}, 'problem_short'),
     (r'^problem/edit/(?P<pk>[^/]+)/$', problem.ProblemUpdateView.as_view(), {}, 'problem_edit'),
     (r'^problem/revisions/(?P<pk>[^/]+)/$', problem.ProblemRevisionView.as_view(), {}, 'problem_revision'),
+    (r'^idea/edit/(?P<pk>[^/]+)/$', idea.IdeaUpdateView.as_view(), {}, 'idea_edit'),
+    (r'^idea/revisions/(?P<pk>[^/]+)/$', idea.IdeaRevisionView.as_view(), {}, 'idea_revision'),
     (r'^user/(?P<username>[^/]+)/$', user.UserDetailView.as_view(), {}, 'user'),
 )

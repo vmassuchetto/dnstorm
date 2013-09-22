@@ -1,0 +1,8 @@
+{% extends "base_revision.html" %}
+{% load gravatar i18n static %}
+
+{% block "bodyclass" %}idea-revision{% endblock %}
+
+{% block "title" %}<h3>{% trans "Revisions for the idea" %} <a href="{% url "problem" idea.problem.slug %}#idea-{{ idea.id }}">#{{ idea.id }}</a></h3>{% endblock %}
+
+{% block "sidebar" %}{% include "idea_sidebar.html" %}{% endblock %}

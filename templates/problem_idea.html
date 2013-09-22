@@ -1,0 +1,84 @@
+{% load problem crispy_forms_tags gravatar humanize i18n %}
+
+<div class="problem-idea" id="idea-{{ idea.id }}">
+
+    <div class="row collapse">
+
+        {% if problem.voting %}
+            <div class="columns large-1 small-2 voting">
+
+                <a{% if not request.user.is_authenticated %} data-reveal-id="login-modal"{% endif %} class="button secondary upvote{% if idea.user_vote.weight == 1 %} success{% endif %}" data-idea="{{ idea.id }}"{% if idea.author == request.user %} disabled="disabled"{% endif %}><i class="foundicon-thumb-up"></i></a>
+                {% if problem.vote_count %}<span class="vote-count">{% if problem.vote_author %}<a href="javascript:void(0);" data-reveal-id="idea-{{ idea.id }}-vote-history-modal">{% endif %}{{ idea.vote_count }}{% if problem.vote_author %}</a>{% endif %}</span>{% else %}{% endif %}
+
+                <a{% if not request.user.is_authenticated %} data-reveal-id="login-modal"{% endif %} class="button secondary downvote{% if idea.user_vote.weight == -1 %} alert{% endif %}" data-idea="{{ idea.id }}"{% if idea.author == request.user %} disabled="disabled"{% endif %}><i class="foundicon-thumb-down"></i></a>
+
+            </div>
+        {% endif %}
+
+        {% if problem.vote_author %}
+            <div id="idea-{{ idea.id }}-vote-history-modal" class="reveal-modal medium">
+                {% for vote in idea.votes %}
+                    <div class="row vote" id="vote-{{ vote.id }}">
+                        <div class="columns large-1">
+                            <a href="javascript:void(0);" class="button secondary upvote{% if idea.user_vote.weight == 1 %} success{% else %} alert{% endif %}" disabled="disabled"><i class="foundicon-thumb-up"></i></a>
+                            {{ vote.weight }}
+                        </div>
+                        <div class="columns large-11">
+                            {{ vote.author }}
+                            {{ vote.date }}
+                        </div>
+                    </div>
+                    <hr/>
+                {% endfor %}
+                <a class="close-reveal-modal">&#215;</a>
+            </div>
+        {% endif %}
+
+        <div class="columns {% if problem.voting %}large-11 small-10 left-1em{% else %}large-12 small-12{% endif %}">
+
+            <div class="row collapse">
+                <div class="columns large-12 idea-content">
+                    {{ idea.content|safe }}
+                </div>
+            </div>
+
+            <div class="row collapse">
+                <div class="columns large-7">
+                    <a class="problem-action{% if request.user.is_authenticated %} show-on-click{% endif %}" {% if request.user.is_authenticated %}data-show-on-click="comment-form-{{ idea.id }}"{% else %}data-reveal-id="login-modal"{% endif %} href="javascript:void(0);" >{% trans "Comment" context "verb" %}</a>
+                    {% if idea.author == request.user %}<a class="problem-action problem-idea-edit" href="{% url "idea_edit" idea.id %}">{% trans "Edit" %}</a>{% endif %}
+                    {% if idea.revision_count > 1 %}<a class="problem-action problem-idea-revision" href="{% url "idea_revision" idea.id %}">{{ idea.revision_count }} {% trans "revisions" %}</a>{% endif %}
+                </div>
+
+                <div class="columns large-5">
+                    <div class="user-box alignright">
+                        <div class="row collapse">
+                        <div class="columns large-10">
+                            <a class="contributed" href="{{ request.get_full_path }}#idea-{{ idea.id }}">{% trans "contributed" %} {{ idea.modified|date:"d b Y" }} {% trans "at" %} {{ idea.modified|date:"H:i" }}</a><br/>
+                            <a class="username" href="{% url "user" idea.author %}">{{ idea.author.username }}</a>
+                        </div>
+                        <div class="columns large-2">
+                            <a class="avatar"><img src="{% gravatar_for_user idea.author 32 %}" /></a>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {% if request.user.is_authenticated %}
+                <div class="comment-form hidden" id="comment-form-{{ idea.id }}" data-idea="{{ idea.id }}">
+                    {% crispy idea.comment_form %}
+                </div>
+            {% endif %}
+
+            <div class="comments" id="comments-{{ idea.id }}">
+                {% if idea.comments %}
+                    {% for comment in idea.comments %}
+                        {% include "comment.html" %}
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+        </div>
+
+    </div>
+</div>

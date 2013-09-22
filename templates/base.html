@@ -9,6 +9,7 @@
     <meta name="viewport" content="width=device-width" />
     <title>DNStorm</title>
     <link rel="stylesheet" href="{% static "dnstorm/css/app.css" %}" />
+    <link rel="icon" href="{% static "dnstorm/img/favicon.ico" %}" />
     {% block "head" %}{% endblock %}
 </head>
 <body class="{% block "bodyclass" %}{% endblock %}">
@@ -16,6 +17,11 @@
 <div class="contain-to-grid">
 <nav class="top-bar">
     <section class="top-bar-section">
+        <ul class="left">
+            <li class="divider hide-for-small"></li>
+            <li><a href="{% url "home" %}">DNStorm</a></li>
+            <li class="divider hide-for-small"></li>
+        </ul>
         <ul class="right">
             <li class="divider hide-for-small"></li>
             {% if user.is_authenticated %}
@@ -43,11 +49,8 @@
 {% endif %}
 
 <div class="row header">
-    <div class="columns large-4">
-        <h1><a href="{% url "home" %}">DNStorm</a></h1>
-    </div>
-    <div class="columns large-6 alignright buttons">
-        {% block "titleside" %}{% endblock %}
+    <div class="columns large-6 large-offset-6 alignright buttons">
+        {% block "topright" %}{% endblock %}
     </div>
 </div>
 
