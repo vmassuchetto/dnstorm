@@ -1,11 +1,14 @@
 @import "settings";
 @import "normalize";
-@import "foundation";
-//@import "general_foundicons";
-//@import "social_foundicons";
 
 @import "compass/css3";
 @import "compass/utilities";
+
+@import "foundation";
+
+@import "icons/_settings.scss";
+@import "icons/general_foundicons.scss";
+@import "icons/general_foundicons_ie7.scss";
 
 // General
 
@@ -83,6 +86,10 @@ form {
 }
 
 // Header
+
+.top-bar {
+    overflow: hidden;
+}
 
 .header h1 a {
     font-family: sans-serif;
@@ -263,8 +270,10 @@ form {
 
 .voting {
     text-align: center;
-    a {
+    a.button {
         margin: 0;
+        font-size: 1.5em;
+        padding: 10px 5px 5px;
     }
     .vote-count {
         color: #444444;

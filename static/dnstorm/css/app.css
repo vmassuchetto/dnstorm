@@ -7217,22 +7217,531 @@ a.th {
   max-width: 800px;
 }
 
-/* line 12, ../../../styles/sass/app.scss */
+/* font-face */
+@font-face {
+  font-family: "GeneralFoundicons";
+  src: url("../fonts/general_foundicons.eot");
+  src: url("../fonts/general_foundicons.eot?#iefix") format("embedded-opentype"), url("../fonts/general_foundicons.woff") format("woff"), url("../fonts/general_foundicons.ttf") format("truetype"), url("../fonts/general_foundicons.svg#GeneralFoundicons") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* global foundicon styles */
+/* line 7, ../../../styles/sass/icons/general_foundicons.scss */
+[class*="foundicon-"] {
+  display: inline;
+  width: auto;
+  height: auto;
+  line-height: inherit;
+  vertical-align: baseline;
+  background-image: none;
+  background-position: 0 0;
+  background-repeat: repeat;
+}
+
+/* line 17, ../../../styles/sass/icons/general_foundicons.scss */
+[class*="foundicon-"]:before {
+  font-family: "GeneralFoundicons";
+  font-weight: normal;
+  font-style: normal;
+  text-decoration: inherit;
+}
+
+/* icons */
+/* line 6, ../../../styles/sass/icons/_settings.scss */
+.foundicon-settings:before {
+  content: "\f000";
+}
+
+/* line 6, ../../../styles/sass/icons/_settings.scss */
+.foundicon-heart:before {
+  content: "\f001";
+}
+
+/* line 6, ../../../styles/sass/icons/_settings.scss */
+.foundicon-star:before {
+  content: "\f002";
+}
+
+/* line 6, ../../../styles/sass/icons/_settings.scss */
+.foundicon-plus:before {
+  content: "\f003";
+}
+
+/* line 6, ../../../styles/sass/icons/_settings.scss */
+.foundicon-minus:before {
+  content: "\f004";
+}
+
+/* line 6, ../../../styles/sass/icons/_settings.scss */
+.foundicon-checkmark:before {
+  content: "\f005";
+}
+
+/* line 6, ../../../styles/sass/icons/_settings.scss */
+.foundicon-remove:before {
+  content: "\f006";
+}
+
+/* line 6, ../../../styles/sass/icons/_settings.scss */
+.foundicon-mail:before {
+  content: "\f007";
+}
+
+/* line 6, ../../../styles/sass/icons/_settings.scss */
+.foundicon-calendar:before {
+  content: "\f008";
+}
+
+/* line 6, ../../../styles/sass/icons/_settings.scss */
+.foundicon-page:before {
+  content: "\f009";
+}
+
+/* line 6, ../../../styles/sass/icons/_settings.scss */
+.foundicon-tools:before {
+  content: "\f00a";
+}
+
+/* line 6, ../../../styles/sass/icons/_settings.scss */
+.foundicon-globe:before {
+  content: "\f00b";
+}
+
+/* line 6, ../../../styles/sass/icons/_settings.scss */
+.foundicon-home:before {
+  content: "\f00c";
+}
+
+/* line 6, ../../../styles/sass/icons/_settings.scss */
+.foundicon-quote:before {
+  content: "\f00d";
+}
+
+/* line 6, ../../../styles/sass/icons/_settings.scss */
+.foundicon-people:before {
+  content: "\f00e";
+}
+
+/* line 6, ../../../styles/sass/icons/_settings.scss */
+.foundicon-monitor:before {
+  content: "\f00f";
+}
+
+/* line 6, ../../../styles/sass/icons/_settings.scss */
+.foundicon-laptop:before {
+  content: "\f010";
+}
+
+/* line 6, ../../../styles/sass/icons/_settings.scss */
+.foundicon-phone:before {
+  content: "\f011";
+}
+
+/* line 6, ../../../styles/sass/icons/_settings.scss */
+.foundicon-cloud:before {
+  content: "\f012";
+}
+
+/* line 6, ../../../styles/sass/icons/_settings.scss */
+.foundicon-error:before {
+  content: "\f013";
+}
+
+/* line 6, ../../../styles/sass/icons/_settings.scss */
+.foundicon-right-arrow:before {
+  content: "\f014";
+}
+
+/* line 6, ../../../styles/sass/icons/_settings.scss */
+.foundicon-left-arrow:before {
+  content: "\f015";
+}
+
+/* line 6, ../../../styles/sass/icons/_settings.scss */
+.foundicon-up-arrow:before {
+  content: "\f016";
+}
+
+/* line 6, ../../../styles/sass/icons/_settings.scss */
+.foundicon-down-arrow:before {
+  content: "\f017";
+}
+
+/* line 6, ../../../styles/sass/icons/_settings.scss */
+.foundicon-trash:before {
+  content: "\f018";
+}
+
+/* line 6, ../../../styles/sass/icons/_settings.scss */
+.foundicon-add-doc:before {
+  content: "\f019";
+}
+
+/* line 6, ../../../styles/sass/icons/_settings.scss */
+.foundicon-edit:before {
+  content: "\f01a";
+}
+
+/* line 6, ../../../styles/sass/icons/_settings.scss */
+.foundicon-lock:before {
+  content: "\f01b";
+}
+
+/* line 6, ../../../styles/sass/icons/_settings.scss */
+.foundicon-unlock:before {
+  content: "\f01c";
+}
+
+/* line 6, ../../../styles/sass/icons/_settings.scss */
+.foundicon-refresh:before {
+  content: "\f01d";
+}
+
+/* line 6, ../../../styles/sass/icons/_settings.scss */
+.foundicon-paper-clip:before {
+  content: "\f01e";
+}
+
+/* line 6, ../../../styles/sass/icons/_settings.scss */
+.foundicon-video:before {
+  content: "\f01f";
+}
+
+/* line 6, ../../../styles/sass/icons/_settings.scss */
+.foundicon-photo:before {
+  content: "\f020";
+}
+
+/* line 6, ../../../styles/sass/icons/_settings.scss */
+.foundicon-graph:before {
+  content: "\f021";
+}
+
+/* line 6, ../../../styles/sass/icons/_settings.scss */
+.foundicon-idea:before {
+  content: "\f022";
+}
+
+/* line 6, ../../../styles/sass/icons/_settings.scss */
+.foundicon-mic:before {
+  content: "\f023";
+}
+
+/* line 6, ../../../styles/sass/icons/_settings.scss */
+.foundicon-cart:before {
+  content: "\f024";
+}
+
+/* line 6, ../../../styles/sass/icons/_settings.scss */
+.foundicon-address-book:before {
+  content: "\f025";
+}
+
+/* line 6, ../../../styles/sass/icons/_settings.scss */
+.foundicon-compass:before {
+  content: "\f026";
+}
+
+/* line 6, ../../../styles/sass/icons/_settings.scss */
+.foundicon-flag:before {
+  content: "\f027";
+}
+
+/* line 6, ../../../styles/sass/icons/_settings.scss */
+.foundicon-location:before {
+  content: "\f028";
+}
+
+/* line 6, ../../../styles/sass/icons/_settings.scss */
+.foundicon-clock:before {
+  content: "\f029";
+}
+
+/* line 6, ../../../styles/sass/icons/_settings.scss */
+.foundicon-folder:before {
+  content: "\f02a";
+}
+
+/* line 6, ../../../styles/sass/icons/_settings.scss */
+.foundicon-inbox:before {
+  content: "\f02b";
+}
+
+/* line 6, ../../../styles/sass/icons/_settings.scss */
+.foundicon-website:before {
+  content: "\f02c";
+}
+
+/* line 6, ../../../styles/sass/icons/_settings.scss */
+.foundicon-smiley:before {
+  content: "\f02d";
+}
+
+/* line 6, ../../../styles/sass/icons/_settings.scss */
+.foundicon-search:before {
+  content: "\f02e";
+}
+
+/* general icons for IE7 */
+/* line 4, ../../../styles/sass/icons/general_foundicons_ie7.scss */
+[class*="foundicon-"] {
+  font-family: "GeneralFoundicons";
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* line 12, ../../../styles/sass/icons/_settings.scss */
+.foundicon-settings {
+  *zoom: expression(this.runtimeStyle['zoom'] = "1", this.innerHTML = "&#xf000;");
+}
+
+/* line 12, ../../../styles/sass/icons/_settings.scss */
+.foundicon-heart {
+  *zoom: expression(this.runtimeStyle['zoom'] = "1", this.innerHTML = "&#xf001;");
+}
+
+/* line 12, ../../../styles/sass/icons/_settings.scss */
+.foundicon-star {
+  *zoom: expression(this.runtimeStyle['zoom'] = "1", this.innerHTML = "&#xf002;");
+}
+
+/* line 12, ../../../styles/sass/icons/_settings.scss */
+.foundicon-plus {
+  *zoom: expression(this.runtimeStyle['zoom'] = "1", this.innerHTML = "&#xf003;");
+}
+
+/* line 12, ../../../styles/sass/icons/_settings.scss */
+.foundicon-minus {
+  *zoom: expression(this.runtimeStyle['zoom'] = "1", this.innerHTML = "&#xf004;");
+}
+
+/* line 12, ../../../styles/sass/icons/_settings.scss */
+.foundicon-checkmark {
+  *zoom: expression(this.runtimeStyle['zoom'] = "1", this.innerHTML = "&#xf005;");
+}
+
+/* line 12, ../../../styles/sass/icons/_settings.scss */
+.foundicon-remove {
+  *zoom: expression(this.runtimeStyle['zoom'] = "1", this.innerHTML = "&#xf006;");
+}
+
+/* line 12, ../../../styles/sass/icons/_settings.scss */
+.foundicon-mail {
+  *zoom: expression(this.runtimeStyle['zoom'] = "1", this.innerHTML = "&#xf007;");
+}
+
+/* line 12, ../../../styles/sass/icons/_settings.scss */
+.foundicon-calendar {
+  *zoom: expression(this.runtimeStyle['zoom'] = "1", this.innerHTML = "&#xf008;");
+}
+
+/* line 12, ../../../styles/sass/icons/_settings.scss */
+.foundicon-page {
+  *zoom: expression(this.runtimeStyle['zoom'] = "1", this.innerHTML = "&#xf009;");
+}
+
+/* line 12, ../../../styles/sass/icons/_settings.scss */
+.foundicon-tools {
+  *zoom: expression(this.runtimeStyle['zoom'] = "1", this.innerHTML = "&#xf00a;");
+}
+
+/* line 12, ../../../styles/sass/icons/_settings.scss */
+.foundicon-globe {
+  *zoom: expression(this.runtimeStyle['zoom'] = "1", this.innerHTML = "&#xf00b;");
+}
+
+/* line 12, ../../../styles/sass/icons/_settings.scss */
+.foundicon-home {
+  *zoom: expression(this.runtimeStyle['zoom'] = "1", this.innerHTML = "&#xf00c;");
+}
+
+/* line 12, ../../../styles/sass/icons/_settings.scss */
+.foundicon-quote {
+  *zoom: expression(this.runtimeStyle['zoom'] = "1", this.innerHTML = "&#xf00d;");
+}
+
+/* line 12, ../../../styles/sass/icons/_settings.scss */
+.foundicon-people {
+  *zoom: expression(this.runtimeStyle['zoom'] = "1", this.innerHTML = "&#xf00e;");
+}
+
+/* line 12, ../../../styles/sass/icons/_settings.scss */
+.foundicon-monitor {
+  *zoom: expression(this.runtimeStyle['zoom'] = "1", this.innerHTML = "&#xf00f;");
+}
+
+/* line 12, ../../../styles/sass/icons/_settings.scss */
+.foundicon-laptop {
+  *zoom: expression(this.runtimeStyle['zoom'] = "1", this.innerHTML = "&#xf010;");
+}
+
+/* line 12, ../../../styles/sass/icons/_settings.scss */
+.foundicon-phone {
+  *zoom: expression(this.runtimeStyle['zoom'] = "1", this.innerHTML = "&#xf011;");
+}
+
+/* line 12, ../../../styles/sass/icons/_settings.scss */
+.foundicon-cloud {
+  *zoom: expression(this.runtimeStyle['zoom'] = "1", this.innerHTML = "&#xf012;");
+}
+
+/* line 12, ../../../styles/sass/icons/_settings.scss */
+.foundicon-error {
+  *zoom: expression(this.runtimeStyle['zoom'] = "1", this.innerHTML = "&#xf013;");
+}
+
+/* line 12, ../../../styles/sass/icons/_settings.scss */
+.foundicon-right-arrow {
+  *zoom: expression(this.runtimeStyle['zoom'] = "1", this.innerHTML = "&#xf014;");
+}
+
+/* line 12, ../../../styles/sass/icons/_settings.scss */
+.foundicon-left-arrow {
+  *zoom: expression(this.runtimeStyle['zoom'] = "1", this.innerHTML = "&#xf015;");
+}
+
+/* line 12, ../../../styles/sass/icons/_settings.scss */
+.foundicon-up-arrow {
+  *zoom: expression(this.runtimeStyle['zoom'] = "1", this.innerHTML = "&#xf016;");
+}
+
+/* line 12, ../../../styles/sass/icons/_settings.scss */
+.foundicon-down-arrow {
+  *zoom: expression(this.runtimeStyle['zoom'] = "1", this.innerHTML = "&#xf017;");
+}
+
+/* line 12, ../../../styles/sass/icons/_settings.scss */
+.foundicon-trash {
+  *zoom: expression(this.runtimeStyle['zoom'] = "1", this.innerHTML = "&#xf018;");
+}
+
+/* line 12, ../../../styles/sass/icons/_settings.scss */
+.foundicon-add-doc {
+  *zoom: expression(this.runtimeStyle['zoom'] = "1", this.innerHTML = "&#xf019;");
+}
+
+/* line 12, ../../../styles/sass/icons/_settings.scss */
+.foundicon-edit {
+  *zoom: expression(this.runtimeStyle['zoom'] = "1", this.innerHTML = "&#xf01a;");
+}
+
+/* line 12, ../../../styles/sass/icons/_settings.scss */
+.foundicon-lock {
+  *zoom: expression(this.runtimeStyle['zoom'] = "1", this.innerHTML = "&#xf01b;");
+}
+
+/* line 12, ../../../styles/sass/icons/_settings.scss */
+.foundicon-unlock {
+  *zoom: expression(this.runtimeStyle['zoom'] = "1", this.innerHTML = "&#xf01c;");
+}
+
+/* line 12, ../../../styles/sass/icons/_settings.scss */
+.foundicon-refresh {
+  *zoom: expression(this.runtimeStyle['zoom'] = "1", this.innerHTML = "&#xf01d;");
+}
+
+/* line 12, ../../../styles/sass/icons/_settings.scss */
+.foundicon-paper-clip {
+  *zoom: expression(this.runtimeStyle['zoom'] = "1", this.innerHTML = "&#xf01e;");
+}
+
+/* line 12, ../../../styles/sass/icons/_settings.scss */
+.foundicon-video {
+  *zoom: expression(this.runtimeStyle['zoom'] = "1", this.innerHTML = "&#xf01f;");
+}
+
+/* line 12, ../../../styles/sass/icons/_settings.scss */
+.foundicon-photo {
+  *zoom: expression(this.runtimeStyle['zoom'] = "1", this.innerHTML = "&#xf020;");
+}
+
+/* line 12, ../../../styles/sass/icons/_settings.scss */
+.foundicon-graph {
+  *zoom: expression(this.runtimeStyle['zoom'] = "1", this.innerHTML = "&#xf021;");
+}
+
+/* line 12, ../../../styles/sass/icons/_settings.scss */
+.foundicon-idea {
+  *zoom: expression(this.runtimeStyle['zoom'] = "1", this.innerHTML = "&#xf022;");
+}
+
+/* line 12, ../../../styles/sass/icons/_settings.scss */
+.foundicon-mic {
+  *zoom: expression(this.runtimeStyle['zoom'] = "1", this.innerHTML = "&#xf023;");
+}
+
+/* line 12, ../../../styles/sass/icons/_settings.scss */
+.foundicon-cart {
+  *zoom: expression(this.runtimeStyle['zoom'] = "1", this.innerHTML = "&#xf024;");
+}
+
+/* line 12, ../../../styles/sass/icons/_settings.scss */
+.foundicon-address-book {
+  *zoom: expression(this.runtimeStyle['zoom'] = "1", this.innerHTML = "&#xf025;");
+}
+
+/* line 12, ../../../styles/sass/icons/_settings.scss */
+.foundicon-compass {
+  *zoom: expression(this.runtimeStyle['zoom'] = "1", this.innerHTML = "&#xf026;");
+}
+
+/* line 12, ../../../styles/sass/icons/_settings.scss */
+.foundicon-flag {
+  *zoom: expression(this.runtimeStyle['zoom'] = "1", this.innerHTML = "&#xf027;");
+}
+
+/* line 12, ../../../styles/sass/icons/_settings.scss */
+.foundicon-location {
+  *zoom: expression(this.runtimeStyle['zoom'] = "1", this.innerHTML = "&#xf028;");
+}
+
+/* line 12, ../../../styles/sass/icons/_settings.scss */
+.foundicon-clock {
+  *zoom: expression(this.runtimeStyle['zoom'] = "1", this.innerHTML = "&#xf029;");
+}
+
+/* line 12, ../../../styles/sass/icons/_settings.scss */
+.foundicon-folder {
+  *zoom: expression(this.runtimeStyle['zoom'] = "1", this.innerHTML = "&#xf02a;");
+}
+
+/* line 12, ../../../styles/sass/icons/_settings.scss */
+.foundicon-inbox {
+  *zoom: expression(this.runtimeStyle['zoom'] = "1", this.innerHTML = "&#xf02b;");
+}
+
+/* line 12, ../../../styles/sass/icons/_settings.scss */
+.foundicon-website {
+  *zoom: expression(this.runtimeStyle['zoom'] = "1", this.innerHTML = "&#xf02c;");
+}
+
+/* line 12, ../../../styles/sass/icons/_settings.scss */
+.foundicon-smiley {
+  *zoom: expression(this.runtimeStyle['zoom'] = "1", this.innerHTML = "&#xf02d;");
+}
+
+/* line 12, ../../../styles/sass/icons/_settings.scss */
+.foundicon-search {
+  *zoom: expression(this.runtimeStyle['zoom'] = "1", this.innerHTML = "&#xf02e;");
+}
+
+/* line 15, ../../../styles/sass/app.scss */
 .hidden {
   display: none;
 }
 
-/* line 16, ../../../styles/sass/app.scss */
+/* line 19, ../../../styles/sass/app.scss */
 .alignright {
   text-align: right;
 }
 
-/* line 20, ../../../styles/sass/app.scss */
+/* line 23, ../../../styles/sass/app.scss */
 .left-1em {
   padding-left: 1em !important;
 }
 
-/* line 29, ../../../styles/sass/app.scss */
+/* line 32, ../../../styles/sass/app.scss */
 .button,
 .panel,
 fieldset,
@@ -7244,54 +7753,54 @@ input[type='text'] {
   border-radius: 3px;
 }
 
-/* line 35, ../../../styles/sass/app.scss */
+/* line 38, ../../../styles/sass/app.scss */
 .cke_ltr {
   width: 100% !important;
 }
 
-/* line 39, ../../../styles/sass/app.scss */
+/* line 42, ../../../styles/sass/app.scss */
 .cke_combopanel__format {
   width: 200px !important;
 }
 
-/* line 45, ../../../styles/sass/app.scss */
+/* line 48, ../../../styles/sass/app.scss */
 .buttonHolder {
   text-align: right;
 }
-/* line 47, ../../../styles/sass/app.scss */
+/* line 50, ../../../styles/sass/app.scss */
 .buttonHolder #advanced, .buttonHolder .cancel {
   float: left;
 }
 
-/* line 55, ../../../styles/sass/app.scss */
+/* line 58, ../../../styles/sass/app.scss */
 form label {
   display: inline-block;
 }
-/* line 58, ../../../styles/sass/app.scss */
+/* line 61, ../../../styles/sass/app.scss */
 form input[type='checkbox'] {
   margin: 0 3px 0 0;
 }
-/* line 61, ../../../styles/sass/app.scss */
+/* line 64, ../../../styles/sass/app.scss */
 form .ctrlHolder {
   margin-bottom: 0.9375em;
 }
-/* line 64, ../../../styles/sass/app.scss */
+/* line 67, ../../../styles/sass/app.scss */
 form .formHint {
   font-size: 11px;
   color: #777777;
   margin: 0;
   padding: 0.1875em 0;
 }
-/* line 70, ../../../styles/sass/app.scss */
+/* line 73, ../../../styles/sass/app.scss */
 form .control-group {
   margin-bottom: 0.9375em;
 }
-/* line 73, ../../../styles/sass/app.scss */
+/* line 76, ../../../styles/sass/app.scss */
 form .asteriskField {
   color: red;
 }
 
-/* line 80, ../../../styles/sass/app.scss */
+/* line 83, ../../../styles/sass/app.scss */
 .error-panel {
   border-style: solid;
   border-width: 1px;
@@ -7327,31 +7836,36 @@ form .asteriskField {
   line-height: 1.4;
 }
 
-/* line 87, ../../../styles/sass/app.scss */
+/* line 90, ../../../styles/sass/app.scss */
+.top-bar {
+  overflow: hidden;
+}
+
+/* line 94, ../../../styles/sass/app.scss */
 .header h1 a {
   font-family: sans-serif;
   color: #111111;
   letter-spacing: -0.0625em;
   text-shadow: #aaaaaa 1px 1px 0, #dddddd 2px 2px 0, white 3px 3px 0, white 4px 4px 0;
 }
-/* line 97, ../../../styles/sass/app.scss */
+/* line 104, ../../../styles/sass/app.scss */
 .header h1 a:hover {
   color: #2b2b2b;
 }
 
-/* line 102, ../../../styles/sass/app.scss */
+/* line 109, ../../../styles/sass/app.scss */
 .header .buttons-padding {
   display: block;
   width: 100%;
   padding: 2.5em 0 0 0;
 }
 
-/* line 108, ../../../styles/sass/app.scss */
+/* line 115, ../../../styles/sass/app.scss */
 .header .buttons .button {
   margin-bottom: 0;
 }
 
-/* line 114, ../../../styles/sass/app.scss */
+/* line 121, ../../../styles/sass/app.scss */
 .problem-list-item {
   margin-top: 5px !important;
   margin-bottom: 5px !important;
@@ -7359,29 +7873,29 @@ form .asteriskField {
   padding-bottom: 5px;
   border-bottom: 1px solid #dddddd;
 }
-/* line 120, ../../../styles/sass/app.scss */
+/* line 127, ../../../styles/sass/app.scss */
 .problem-list-item h4 {
   margin: 3px 0;
   color: #444444;
   line-height: 1;
   text-shadow: #dddddd 1px 1px 0, white 2px 2px 0;
 }
-/* line 129, ../../../styles/sass/app.scss */
+/* line 136, ../../../styles/sass/app.scss */
 .problem-list-item h6.subheader {
   margin: 0;
   font-size: 0.875em;
 }
-/* line 133, ../../../styles/sass/app.scss */
+/* line 140, ../../../styles/sass/app.scss */
 .problem-list-item .problem-counter {
   text-align: center;
   background: #eaeaea;
   padding: 8px 5px;
 }
-/* line 137, ../../../styles/sass/app.scss */
+/* line 144, ../../../styles/sass/app.scss */
 .problem-list-item .problem-counter span {
   display: block;
 }
-/* line 140, ../../../styles/sass/app.scss */
+/* line 147, ../../../styles/sass/app.scss */
 .problem-list-item .problem-counter .number {
   color: #444444;
   font-weight: bold;
@@ -7389,13 +7903,13 @@ form .asteriskField {
   letter-spacing: -0.0625em;
   line-height: 1;
 }
-/* line 147, ../../../styles/sass/app.scss */
+/* line 154, ../../../styles/sass/app.scss */
 .problem-list-item .problem-counter .description {
   color: #777777;
   font-size: 0.75em;
 }
 
-/* line 154, ../../../styles/sass/app.scss */
+/* line 161, ../../../styles/sass/app.scss */
 .problem-tag-select {
   background-color: white;
   font-family: inherit;
@@ -7409,8 +7923,8 @@ form .asteriskField {
   padding: 0.5em;
   height: 2.3125em;
   width: 100%;
-  -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
   box-sizing: border-box;
   -webkit-transition: -webkit-box-shadow 0.45s, border-color 0.45s ease-in-out;
   -moz-transition: -moz-box-shadow 0.45s, border-color 0.45s ease-in-out;
@@ -7440,11 +7954,11 @@ form .asteriskField {
 .problem-tag-select[disabled] {
   background-color: #dddddd;
 }
-/* line 159, ../../../styles/sass/app.scss */
+/* line 166, ../../../styles/sass/app.scss */
 .problem-tag-select .button {
   margin: 2px 3px;
 }
-/* line 162, ../../../styles/sass/app.scss */
+/* line 169, ../../../styles/sass/app.scss */
 .problem-tag-select .text {
   display: inline-block;
   width: 5%;
@@ -7452,16 +7966,16 @@ form .asteriskField {
   margin: 0 3px;
 }
 
-/* line 170, ../../../styles/sass/app.scss */
+/* line 177, ../../../styles/sass/app.scss */
 .problem-tag-result {
   display: none;
   margin-top: 5px;
 }
-/* line 173, ../../../styles/sass/app.scss */
+/* line 180, ../../../styles/sass/app.scss */
 .problem-tag-result .button {
   margin-bottom: 5px;
 }
-/* line 176, ../../../styles/sass/app.scss */
+/* line 183, ../../../styles/sass/app.scss */
 .problem-tag-result .description {
   display: block;
   font-size: 0.8125em;
@@ -7469,12 +7983,12 @@ form .asteriskField {
   color: #777777;
 }
 
-/* line 185, ../../../styles/sass/app.scss */
+/* line 192, ../../../styles/sass/app.scss */
 .problem-detail .description {
   margin: 5px 0;
 }
 
-/* line 191, ../../../styles/sass/app.scss */
+/* line 198, ../../../styles/sass/app.scss */
 .user-box {
   border-style: solid;
   border-width: 1px;
@@ -7509,7 +8023,7 @@ form .asteriskField {
 .user-box h1.subheader, .user-box h2.subheader, .user-box h3.subheader, .user-box h4.subheader, .user-box h5.subheader, .user-box h6.subheader {
   line-height: 1.4;
 }
-/* line 194, ../../../styles/sass/app.scss */
+/* line 201, ../../../styles/sass/app.scss */
 .user-box .avatar {
   line-height: 0;
   display: inline-block;
@@ -7522,85 +8036,87 @@ form .asteriskField {
   -webkit-box-shadow: 0 0 6px 1px rgba(43, 166, 203, 0.5);
   box-shadow: 0 0 6px 1px rgba(43, 166, 203, 0.5);
 }
-/* line 197, ../../../styles/sass/app.scss */
+/* line 204, ../../../styles/sass/app.scss */
 .user-box .contributed {
   color: #777777;
   font-size: 0.75em;
 }
-/* line 201, ../../../styles/sass/app.scss */
+/* line 208, ../../../styles/sass/app.scss */
 .user-box a.username {
   font-weight: bold;
   margin: 5px 0 0 0;
 }
 
-/* line 209, ../../../styles/sass/app.scss */
+/* line 216, ../../../styles/sass/app.scss */
 .problem-idea-button {
   margin: 0;
 }
 
-/* line 212, ../../../styles/sass/app.scss */
+/* line 219, ../../../styles/sass/app.scss */
 .problem-idea-form {
   display: none;
 }
 
-/* line 218, ../../../styles/sass/app.scss */
+/* line 225, ../../../styles/sass/app.scss */
 .idea-content {
   margin: 0 0 1em 0;
 }
 
-/* line 224, ../../../styles/sass/app.scss */
+/* line 231, ../../../styles/sass/app.scss */
 .comment-content {
   padding: 0.7em 0.5em;
   border-top: 1px dotted #cccccc;
   font-size: 0.85em;
   color: #777777;
 }
-/* line 229, ../../../styles/sass/app.scss */
+/* line 236, ../../../styles/sass/app.scss */
 .comment-content .comment-author {
   background: #f7f7f7;
   padding: 2px 5px;
 }
-/* line 233, ../../../styles/sass/app.scss */
+/* line 240, ../../../styles/sass/app.scss */
 .comment-content a.comment-modified {
   color: #aaaaaa;
 }
-/* line 236, ../../../styles/sass/app.scss */
+/* line 243, ../../../styles/sass/app.scss */
 .comment-content a.comment-delete {
   font-size: 0.85em;
   padding: 2px 5px;
   color: #ff6666;
 }
-/* line 240, ../../../styles/sass/app.scss */
+/* line 247, ../../../styles/sass/app.scss */
 .comment-content a.comment-delete:hover {
   background-color: #ff6666;
   color: white;
 }
 
-/* line 250, ../../../styles/sass/app.scss */
+/* line 257, ../../../styles/sass/app.scss */
 .revision del {
   color: red;
   background-color: white;
 }
-/* line 254, ../../../styles/sass/app.scss */
+/* line 261, ../../../styles/sass/app.scss */
 .revision ins {
   color: #099c00;
   background-color: #d2ffcf;
   text-decoration: none;
 }
-/* line 259, ../../../styles/sass/app.scss */
+/* line 266, ../../../styles/sass/app.scss */
 .revision .raw {
   display: none;
 }
 
-/* line 264, ../../../styles/sass/app.scss */
+/* line 271, ../../../styles/sass/app.scss */
 .voting {
   text-align: center;
 }
-/* line 266, ../../../styles/sass/app.scss */
-.voting a {
+/* line 273, ../../../styles/sass/app.scss */
+.voting a.button {
   margin: 0;
+  font-size: 1.5em;
+  padding: 10px 5px 5px;
 }
-/* line 269, ../../../styles/sass/app.scss */
+/* line 278, ../../../styles/sass/app.scss */
 .voting .vote-count {
   color: #444444;
   display: block;
@@ -7609,14 +8125,14 @@ form .asteriskField {
   margin: 7px 0;
 }
 
-/* line 278, ../../../styles/sass/app.scss */
+/* line 287, ../../../styles/sass/app.scss */
 a.problem-action {
   color: #777777;
   font-size: 0.9em;
   padding: 0.1em 0.2em;
   text-transform: lowercase;
 }
-/* line 283, ../../../styles/sass/app.scss */
+/* line 292, ../../../styles/sass/app.scss */
 a.problem-action:hover {
   background: #777777;
   color: white;

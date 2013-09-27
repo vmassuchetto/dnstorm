@@ -1,6 +1,7 @@
 from django import forms
-from django.conf.global_settings import LANGUAGES
 from django.utils.translation import ugettext as _
+
+from settings import LANGUAGES
 
 from dnstorm.models import Problem, Idea, Comment
 from crispy_forms.helper import FormHelper
@@ -11,21 +12,22 @@ class RowCollapse(Row):
     css_class = 'row collapse'
 
 class OptionsForm(forms.Form):
-    language = forms.ChoiceField(label=_('Language'), choices=map(lambda (k,v): (k, _(v)), LANGUAGES), required=False)
+    site_title = forms.CharField(label=_('Site title'), initial='DNStorm')
+    site_description = forms.CharField(label=_('Site description'), initial=_('An idea-generation platform'))
 
     def __init__(self, *args, **kwargs):
         self.helper = FormHelper()
         self.helper.form_action = '.'
         self.helper.layout = Layout(
             Fieldset(u'Site',
-                'language',
+                'site_title',
+                'site_description'
             ),
             ButtonHolder(
                 Submit('submit', _('Save')),
             ),
         )
         super(OptionsForm, self).__init__(*args, **kwargs)
-        self.fields['language'].required = False
 
 
 class ProblemForm(forms.ModelForm):

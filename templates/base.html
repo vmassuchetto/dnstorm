@@ -27,7 +27,7 @@
             {% if user.is_authenticated %}
                 <li><a href="">{{ user }}</a></li>
                 <li class="divider"></li>
-                <li><a href="{% url "options" %}">{% trans 'Options' %}</a></li>
+                <li><a href="{% url "options" %}"><i class="foundicon-settings"></i></a></li>
                 <li class="divider"></li>
                 <li><a href="{% url "django.contrib.auth.views.logout" %}?next=/">{% trans 'Logout' %}</a></li>
             {% else %}

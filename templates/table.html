@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block "bodyclass" %}table{% endblock %}
+
+{% block "content" %}
+
+    <div class="row problem-detail-title">
+    <div class="columns content large-12">
+        <h4><a href="{% url "problem" problem.id %}">{{ problem.title }}</a></h4>
+    </div>
+    </div>
+
+    <div class="row">
+    <div class="columns large-12">
+    <table>
+
+        <thead>
+            <tr>
+                <th></th>
+                <th>um</th>
+                <th>dois</th>
+                <th>três</th>
+                <th>quatro</th>
+                <th></th>
+            </tr>
+        </thead>
+
+        <tr>
+            <td></td>
+            <td>um</td>
+            <td>dois</td>
+            <td>três</td>
+            <td>quatro</td>
+            <td rowspan="3"><a class="button secondary vertical-expand">Lala</a></td>
+        </tr>
+
+        <tr>
+            <td></td>
+            <td>um</td>
+            <td>dois</td>
+            <td>três</td>
+            <td>quatro</td>
+        </tr>
+
+        <tr>
+            <td></td>
+            <td>um</td>
+            <td>dois</td>
+            <td>três</td>
+            <td>quatro</td>
+        </tr>
+
+        <tr>
+            <td></td>
+            <td colspan="4"><a class="button secondary expand">{% trans "Add alternative" %}</a></td>
+        </tr>
+
+    </table>
+    </div>
+    </div>
+
+{% endblock %}

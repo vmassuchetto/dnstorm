@@ -2,16 +2,17 @@
 
 {% if perms.problem.can_edit %}
     <a class="button small radius expand" href="{% url 'problem_edit' problem.id %}">
-        <i class="foundicon-page"></i> {% trans 'Edit this problem' %}
+        <i class="foundicon-edit"></i> {% trans 'Edit this problem' %}
+    </a>
+    <a class="button small radius expand" href="{% url 'table' problem.id %}">
+        <i class="foundicon-inbox"></i> {% trans 'Build problem table' %}
     </a>
 {% endif %}
 
-<a class="button small secondary expand show-on-click hide-after-click" data-show-on-click="short-link-url" href="javascript:void(0);">{% trans "Short Link" %}</a>
+<a class="button small secondary expand show-on-click hide-after-click" data-show-on-click="short-link-url" href="javascript:void(0);"><i class="foundicon-paper-clip"></i> {% trans "Short Link" %}</a>
 <div id="short-link-url" class="hidden"><input type="text" class="select-on-click" value="{% absolute "problem_short" problem.id %}" /></div>
 
-<p>
-    {% trans "Last updated in" %} {{ problem.modified }}
-</p>
+<p>{% trans "Last updated in" %} {{ problem.modified }}</p>
 
 {% if problem.revision_count or problem.idea_count %}
 <div class="info">

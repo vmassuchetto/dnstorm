@@ -28,7 +28,7 @@
 
             {% else %}{% if user_ideas_left > 0 %}
 
-                <a class="problem-idea-button problem-idea-form-button large button expand">{% trans "Submit your idea to this problem" %}{% if problem.max %}<br/><small>{% blocktrans count user_ideas_left as ideas %}you have {{ ideas }} idea left{% plural %}you have {{ ideas }} ideas left{% endblocktrans %}</small>{% endif %}</a>
+                <a class="problem-idea-button problem-idea-form-button button expand"><i class="foundicon-idea"></i> {% trans "Submit your idea to this problem" %}{% if problem.max %}<br/><small>{% blocktrans count user_ideas_left as ideas %}you have {{ ideas }} idea left{% plural %}you have {{ ideas }} ideas left{% endblocktrans %}</small>{% endif %}</a>
 
             {% else %}
 

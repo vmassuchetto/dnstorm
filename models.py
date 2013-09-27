@@ -120,3 +120,20 @@ class Vote(models.Model):
     class Meta:
         db_table = settings.DNSTORM['table_prefix'] + '_vote'
 
+class Criteria(models.Model):
+    problem = models.ForeignKey(Problem)
+    label = models.TextField(verbose_name=_('Label'))
+    description = models.TextField(verbose_name=_('Description'))
+    order = models.IntegerField()
+
+class Alternative(models.Model):
+    problem = models.ForeignKey(Problem)
+    label = models.TextField(verbose_name=_('Label'))
+    description = models.TextField(verbose_name=_('Description'))
+    order = models.IntegerField()
+
+class AlternativeItem(models.Model):
+    criteria = models.ForeignKey(Criteria)
+    alternative = models.ForeignKey(Alternative)
+    idea = models.ForeignKey(Idea)
+    label = models.TextField(verbose_name=_('Label'))

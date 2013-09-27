@@ -7,10 +7,10 @@
         {% if problem.voting %}
             <div class="columns large-1 small-2 voting">
 
-                <a{% if not request.user.is_authenticated %} data-reveal-id="login-modal"{% endif %} class="button secondary upvote{% if idea.user_vote.weight == 1 %} success{% endif %}" data-idea="{{ idea.id }}"{% if idea.author == request.user %} disabled="disabled"{% endif %}><i class="foundicon-thumb-up"></i></a>
+                <a{% if not request.user.is_authenticated %} data-reveal-id="login-modal"{% endif %} class="button secondary upvote{% if idea.user_vote.weight == 1 %} success{% endif %}" data-idea="{{ idea.id }}"{% if idea.author == request.user %} disabled="disabled"{% endif %}><i class="foundicon-up-arrow"></i></a>
                 {% if problem.vote_count %}<span class="vote-count">{% if problem.vote_author %}<a href="javascript:void(0);" data-reveal-id="idea-{{ idea.id }}-vote-history-modal">{% endif %}{{ idea.vote_count }}{% if problem.vote_author %}</a>{% endif %}</span>{% else %}{% endif %}
 
-                <a{% if not request.user.is_authenticated %} data-reveal-id="login-modal"{% endif %} class="button secondary downvote{% if idea.user_vote.weight == -1 %} alert{% endif %}" data-idea="{{ idea.id }}"{% if idea.author == request.user %} disabled="disabled"{% endif %}><i class="foundicon-thumb-down"></i></a>
+                <a{% if not request.user.is_authenticated %} data-reveal-id="login-modal"{% endif %} class="button secondary downvote{% if idea.user_vote.weight == -1 %} alert{% endif %}" data-idea="{{ idea.id }}"{% if idea.author == request.user %} disabled="disabled"{% endif %}><i class="foundicon-down-arrow"></i></a>
 
             </div>
         {% endif %}
