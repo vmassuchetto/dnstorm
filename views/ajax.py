@@ -6,23 +6,60 @@ from django.utils.translation import ugettext_lazy as _
 from django.shortcuts import get_object_or_404
 from django.template import loader, Context
 
-from dnstorm.models import Tag, Vote, Idea, Comment
+from dnstorm.models import Problem, Tag, Vote, Idea, Comment, Criteria, Alternative, AlternativeItem
 import json
 
 class AjaxView(View):
 
     def get(self, *args, **kwargs):
+
+        # Search for tags
+
         if 'term' in self.request.GET:
             return self.tag_search()
+
+        # Vote
+
         elif 'idea' and 'weight' in self.request.GET:
             return self.submit_vote()
+
+        # Delete comments
+
         elif 'delete_comment' in self.request.GET:
             return self.delete_comment()
+
+        # Failure
+
         return HttpResponseForbidden()
 
     def post(self, *args, **kwargs):
+
+        # New comment
+
         if 'idea' and 'content' in self.request.POST:
             return self.submit_comment()
+
+        # New criteria
+
+        elif 'mode' in self.request.POST and 'criteria' == self.request.POST['mode'] \
+            and 'object' in self.request.POST and 'new' == self.request.POST['object']:
+            return self.table_new_criteria()
+
+        # New alternative
+
+        elif 'mode' in self.request.POST and 'alternative' == self.request.POST['mode'] \
+            and 'object' in self.request.POST and 'new' == self.request.POST['object']:
+            return self.table_new_alternative()
+
+        # New item
+
+        elif 'alternative' in self.request.POST \
+            and 'criteria' in self.request.POST \
+            and 'idea' in self.request.POST:
+            return self.table_new_item()
+
+        # Failure
+
         return HttpResponseForbidden()
 
     def tag_search(self):
@@ -71,3 +108,44 @@ class AjaxView(View):
         except ObjectDoesNotExist:
             result = 0
         return HttpResponse(result)
+
+    def table_new_criteria(self):
+        p = Problem.objects.get(pk=self.request.POST['problem'])
+        n = Criteria.objects.filter(problem=self.request.POST['problem']).count()
+        criteria = Criteria(
+            problem=p,
+            title=self.request.POST['title'],
+            description=self.request.POST['description'],
+            order = n)
+        criteria.save()
+        output = {
+            'id': criteria.id,
+            'title': criteria.title,
+            'description': criteria.description
+        }
+        return HttpResponse(json.dumps(output))
+
+    def table_new_alternative(self):
+        p = Problem.objects.get(pk=self.request.POST['problem'])
+        n = Alternative.objects.filter(problem=self.request.POST['problem']).count()
+        alternative = Alternative(
+            problem=p,
+            title=self.request.POST['title'],
+            description=self.request.POST['description'],
+            order = n)
+        alternative.save()
+        output = {
+            'id': alternative.id,
+            'title': alternative.title,
+            'description': alternative.description
+        }
+        return HttpResponse(json.dumps(output))
+
+    def table_new_item(self):
+        c = Criteria.objects.get(pk=self.request.POST['criteria'])
+        a = Alternative.objects.get(pk=self.request.POST['alternative'])
+        i = Idea.objects.get(pk=self.request.POST['idea'])
+        item = AlternativeItem(criteria=c, alternative=a, idea=i)
+        item.save()
+        output = { 'id': i.id  }
+        return HttpResponse(json.dumps(output))

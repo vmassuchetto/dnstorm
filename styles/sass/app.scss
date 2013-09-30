@@ -24,6 +24,26 @@
     padding-left: 1em !important;
 }
 
+.no-margin-bottom {
+    margin-bottom: 0 !important;
+}
+
+.rotate {
+  -webkit-transform: rotate(-90deg);
+  -moz-transform: rotate(-90deg);
+  -ms-transform: rotate(-90deg);
+  -o-transform: rotate(-90deg);
+  transform: rotate(-90deg);
+
+  -webkit-transform-origin: 50% 50%;
+  -moz-transform-origin: 50% 50%;
+  -ms-transform-origin: 50% 50%;
+  -o-transform-origin: 50% 50%;
+  transform-origin: 50% 50%;
+
+  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+}
+
 // Mandatory global radius
 
 .button,
@@ -226,7 +246,7 @@ form {
     margin: 0 0 1em 0;
 }
 
-// Comment list
+// Idea comment list
 
 .comment-content {
     padding: 0.7em 0.5em;
@@ -248,6 +268,17 @@ form {
             background-color: $light-red;
             color: $white;
         }
+    }
+}
+
+// Idea modal
+
+.problem-idea-modal {
+    padding: 0.6em 0;
+    transition: background-color 300ms ease-out 0s;
+    &:hover {
+        cursor: pointer;
+        background-color: darken($secondary-color, 20%);
     }
 }
 
@@ -292,5 +323,48 @@ a.problem-action {
     &:hover {
         background: $light-black;
         color: $white;
+    }
+}
+
+.problem-table-wrap {
+    margin-bottom: 1em;
+    .problem-table {
+        a.button {
+            margin-bottom: 0;
+            padding-left: 1em;
+            padding-right: 1em;
+        }
+        input[type='text'] {
+            margin-bottom: 0;
+        }
+        th.criteria {
+            text-align:center;
+        }
+        td.vertical-title {
+            background-color: $light-grey;
+            font-weight: bold;
+        }
+        .title-admin {
+            padding-bottom: 30px;
+            position: relative;
+        }
+        .table-actions {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+        }
+        tr.alternative td {
+            text-align: center;
+        }
+    }
+}
+
+#table-title-modal {
+    .buttonHolder {
+        padding: 0;
+        margin: 0;
+        border: 0;
+        background-color: transparent;
     }
 }

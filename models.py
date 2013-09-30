@@ -122,18 +122,51 @@ class Vote(models.Model):
 
 class Criteria(models.Model):
     problem = models.ForeignKey(Problem)
-    label = models.TextField(verbose_name=_('Label'))
+    title = models.TextField(verbose_name=_('Label'))
     description = models.TextField(verbose_name=_('Description'))
     order = models.IntegerField()
 
+    def __unicode__(self):
+        return '%s (Problem: %s)' % (self.title, self.problem.title)
+
+    class Meta:
+        db_table = settings.DNSTORM['table_prefix'] + '_criteria'
+
 class Alternative(models.Model):
     problem = models.ForeignKey(Problem)
-    label = models.TextField(verbose_name=_('Label'))
+    title = models.TextField(verbose_name=_('Label'))
     description = models.TextField(verbose_name=_('Description'))
     order = models.IntegerField()
+
+    def __unicode__(self):
+        return '%s (Problem: %s)' % (self.title, self.problem.title)
+
+    class Meta:
+        db_table = settings.DNSTORM['table_prefix'] + '_alternative'
+
+    def get_items(self):
+        items = list()
+        criterias = Criteria.objects.filter(problem=self.problem)
+        for criteria in criterias:
+            try:
+                items.append({
+                    'criteria': criteria,
+                    'object': AlternativeItem.objects.get(criteria=criteria, alternative=self) })
+            except:
+                items.append({
+                    'criteria': criteria,
+                    'object': False })
+        return items
+
 
 class AlternativeItem(models.Model):
     criteria = models.ForeignKey(Criteria)
     alternative = models.ForeignKey(Alternative)
     idea = models.ForeignKey(Idea)
-    label = models.TextField(verbose_name=_('Label'))
+    title = models.TextField(verbose_name=_('Label'))
+
+    def __unicode__(self):
+        return '%d (Criteria: %s) (Alternative: %s)' % (self.id, self.criteria.title, self.alternative.title)
+
+    class Meta:
+        db_table = settings.DNSTORM['table_prefix'] + '_alternative_item'

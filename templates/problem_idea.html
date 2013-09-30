@@ -1,10 +1,10 @@
 {% load problem crispy_forms_tags gravatar humanize i18n %}
 
-<div class="problem-idea" id="idea-{{ idea.id }}">
+<div class="problem-idea{% if ideas_modal %} problem-idea-modal{% endif %}" id="idea-{{ idea.id }}" data-idea="{{ idea.id }}">
 
-    <div class="row collapse">
+    <div class="row{% if not ideas_modal %} collapse{% endif %}">
 
-        {% if problem.voting %}
+        {% if problem.voting and not ideas_modal %}
             <div class="columns large-1 small-2 voting">
 
                 <a{% if not request.user.is_authenticated %} data-reveal-id="login-modal"{% endif %} class="button secondary upvote{% if idea.user_vote.weight == 1 %} success{% endif %}" data-idea="{{ idea.id }}"{% if idea.author == request.user %} disabled="disabled"{% endif %}><i class="foundicon-up-arrow"></i></a>
@@ -15,7 +15,7 @@
             </div>
         {% endif %}
 
-        {% if problem.vote_author %}
+        {% if problem.vote_author and not ideas_modal %}
             <div id="idea-{{ idea.id }}-vote-history-modal" class="reveal-modal medium">
                 {% for vote in idea.votes %}
                     <div class="row vote" id="vote-{{ vote.id }}">
@@ -34,17 +34,17 @@
             </div>
         {% endif %}
 
-        <div class="columns {% if problem.voting %}large-11 small-10 left-1em{% else %}large-12 small-12{% endif %}">
+        <div class="columns {% if problem.voting and not ideas_modal %}large-11 small-10 left-1em{% else %}large-12 small-12{% endif %}">
 
-            <div class="row collapse">
+            <div class="row{% if not ideas_modal %} collapse{% endif %}">
                 <div class="columns large-12 idea-content">
                     {{ idea.content|safe }}
                 </div>
             </div>
 
-            <div class="row collapse">
+            <div class="row{% if not ideas_modal %} collapse{% endif %}">
                 <div class="columns large-7">
-                    <a class="problem-action{% if request.user.is_authenticated %} show-on-click{% endif %}" {% if request.user.is_authenticated %}data-show-on-click="comment-form-{{ idea.id }}"{% else %}data-reveal-id="login-modal"{% endif %} href="javascript:void(0);" >{% trans "Comment" context "verb" %}</a>
+                    {% if idea.comment_form %}<a class="problem-action{% if request.user.is_authenticated %} show-on-click{% endif %}" {% if request.user.is_authenticated %}data-show-on-click="comment-form-{{ idea.id }}"{% else %}data-reveal-id="login-modal"{% endif %} href="javascript:void(0);" >{% trans "Comment" context "verb" %}</a>{% endif %}
                     {% if idea.author == request.user %}<a class="problem-action problem-idea-edit" href="{% url "idea_edit" idea.id %}">{% trans "Edit" %}</a>{% endif %}
                     {% if idea.revision_count > 1 %}<a class="problem-action problem-idea-revision" href="{% url "idea_revision" idea.id %}">{{ idea.revision_count }} {% trans "revisions" %}</a>{% endif %}
                 </div>
@@ -64,7 +64,7 @@
                 </div>
             </div>
 
-            {% if request.user.is_authenticated %}
+            {% if request.user.is_authenticated and idea.comment_form %}
                 <div class="comment-form hidden" id="comment-form-{{ idea.id }}" data-idea="{{ idea.id }}">
                     {% crispy idea.comment_form %}
                 </div>

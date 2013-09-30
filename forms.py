@@ -102,3 +102,25 @@ class CommentForm(forms.ModelForm):
         )
         super(CommentForm, self).__init__(*args, **kwargs)
         self.fields['content'].label = ''
+
+class TableTitleForm(forms.Form):
+    problem = forms.IntegerField()
+    title = forms.CharField(label=_('Title'))
+    description = forms.CharField(label=_('Description'), widget=forms.Textarea)
+    mode = forms.CharField()
+    object = forms.CharField()
+
+    def __init__(self, *args, **kwargs):
+        self.helper = FormHelper()
+        self.helper.form_action = '.'
+        self.helper.layout = Layout(
+            'title',
+            'description',
+            Field('mode', type='hidden'),
+            Field('object', type='hidden'),
+            Field('problem', type='hidden'),
+            ButtonHolder(
+                Submit('submit', _('Save')),
+            ),
+        )
+        super(TableTitleForm, self).__init__(*args, **kwargs)

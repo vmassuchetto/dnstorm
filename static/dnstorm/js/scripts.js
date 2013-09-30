@@ -1,3 +1,6 @@
+jQuery.noConflict();
+(function($){
+
 // Tag renderer
 
 function tag_field(id, label, description) {
@@ -7,10 +10,23 @@ function tag_field(id, label, description) {
         + '</li>';
 }
 
-// jQuery calls
+// Cookies
 
-jQuery.noConflict();
-(function($){
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie != '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
 
 // Foundation
 
@@ -30,6 +46,13 @@ $.fn.highlight = function (color) {
     });
 };
 
+// Modal cancel button
+// When we want to use a button instead of the "X" at the top
+
+$('.close-reveal-modal-button').click(function(){
+    $(this).parents('.reveal-modal').foundation('reveal', 'close');
+});
+
 // Problem tags autocomplete
 
 $('.problem-tag-select .text').autocomplete({
@@ -40,7 +63,6 @@ $('.problem-tag-select .text').autocomplete({
         results: function() {}
     },
     response: function(event, ui) {
-        console.log(ui);
         output = '';
         if (ui.content.length > 0) {
             for (i in ui.content) {
@@ -85,7 +107,6 @@ $('.problem-tag-select .text').autocomplete({
 
 $('.problem-tag-select').on('click', 'a.button', function(){
     id = $(this).remove().data('id');
-    console.log(id);
     $('.problem-tag input').filter('[name=tag]').filter('[value="' + id + '"]').remove();
 });
 
@@ -156,7 +177,6 @@ $('.comment-form form').submit(function(e){
         type: 'POST',
         data: $(this).serialize(),
         complete: function(xhr, data) {
-            console.log(xhr);
             if (data == 'success') {
                 var c = comments.append(xhr.responseText);
                 $('.comment-form').fadeOut(300);
@@ -262,6 +282,146 @@ $('.voting a').click(function() {
         }
     });
 
+});
+
+
+// Table section
+
+var table = $('.problem-table');
+var table_title_modal = $('#table-title-modal');
+
+// Table overflow adjust
+
+function adjust_table_overflow() {
+    if ($('.problem-table-wrap').lenght <= 0 || !table)
+        return;
+    if (table.width() > $('.problem-table-wrap').width())
+        $('.problem-table-wrap').css('overflow-x', 'scroll');
+}
+
+adjust_table_overflow();
+
+// New criteria
+
+$('.add-criteria').click(function(){
+    table_title_modal.find('input#id_title').val('');
+    table_title_modal.find('textarea#id_description').val('');
+    table_title_modal.find('input#id_mode').val('criteria');
+    table_title_modal.find('input#id_object').val('new');
+    table_title_modal.foundation('reveal', 'open');
+});
+
+// New alternative
+
+$('.add-alternative').click(function(){
+    table_title_modal.find('input#id_title').val('');
+    table_title_modal.find('textarea#id_description').val('');
+    table_title_modal.find('input#id_mode').val('alternative');
+    table_title_modal.find('input#id_object').val('new');
+    table_title_modal.foundation('reveal', 'open');
+});
+
+// Table title modal submit
+
+$('#table-title-modal form').submit(function(e){
+    e.preventDefault();
+    var form = $(this);
+
+    // New criteria
+
+    if ('new' == form.find('input[name="object"]').val()
+        && 'criteria' == form.find('input[name="mode"]').val()) {
+        $.ajax({
+            url: '/ajax/',
+            type: 'POST',
+            data: form.serialize(),
+            complete: function(xhr, data) {
+                criteria = $.parseJSON(xhr.responseText);
+                if (isNaN(criteria.id))
+                    return;
+                if (table.find('thead th').length <= 0)
+                    table.find('thead tr').append('<th></th>');
+                new_criteria = '<th class="criteria" id="criteria-' + criteria.id + '" data-criteria="' + criteria.id + '">'
+                    + criteria.title
+                    + '&nbsp;<a class="foundicon-edit edit-table-title" data-reveal-id="edit-title-modal"></a>'
+                    + '&nbsp;<a class="foundicon-remove" data-reveal-id="remove-title-modal"></a>'
+                    + '</th>';
+                table.find('thead tr').append(new_criteria);
+                table.find('tbody tr.alternative').append('<td><a class="button expand secondary select-idea">' + gettext('Select idea') + '</a></td>');
+                adjust_table_overflow();
+                table_title_modal.foundation('reveal', 'close');
+                table.find('#criteria-' + criteria.id).highlight();
+            }
+        });
+
+    // New alternative
+
+    } else if ('new' == form.find('input[name="object"]').val()
+        && 'alternative' == form.find('input[name="mode"]').val()) {
+        $.ajax({
+            url: '/ajax/',
+            type: 'POST',
+            data: form.serialize(),
+            complete: function(xhr, data) {
+                alternative = $.parseJSON(xhr.responseText);
+                if (isNaN(alternative.id))
+                    return;
+                new_alternative = '<tr class="alternative" id="alternative-' + alternative.id + '" data-alternative="' + alternative.id + '">'
+                    + '<td class="vertical-title">'
+                    + alternative.title
+                    + '&nbsp;<a class="foundicon-edit edit-table-title" data-reveal-id="edit-title-modal"></a>'
+                    + '&nbsp;<a class="foundicon-remove" data-reveal-id="remove-title-modal"></a>'
+                    + '</td>';
+                n_criteria = table.find('th.criteria').length;
+                for (i = 0; i < n_criteria; i++) {
+                    new_alternative += '<td><a class="button expand secondary select-idea">' + gettext('Select idea') + '</a></td>';
+                }
+                new_alternative += '</tr>';
+                table.find('tbody').append(new_alternative);
+                adjust_table_overflow();
+                table_title_modal.foundation('reveal', 'close');
+                table.find('#alternative-' + alternative.id).highlight();
+            }
+        });
+    }
+});
+
+$('.problem-idea').click(function(){
+    var modal = $('#table-idea-modal');
+    var criteria = modal.data('criteria');
+    var alternative = modal.data('alternative');
+    var idea = $(this).data('idea');
+    var item_object = modal.data('item');
+    $.ajax({
+        url: '/ajax/',
+        type: 'POST',
+        data: {
+            'criteria': criteria,
+            'alternative': alternative,
+            'idea': idea
+        },
+        beforeSend: function(xhr, settings) {
+            xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+        },
+        complete: function(xhr, data) {
+            item = $.parseJSON(xhr.responseText);
+            if (isNaN(item.id))
+                return;
+            console.log(item.id);
+            item_object.html('#' + item.id).highlight();
+            modal.foundation('reveal', 'close');
+        }
+    });
+});
+
+// Select idea in the problem table
+
+$(document.body).on('click', '.select-idea', function(){
+    var modal = $('#table-idea-modal');
+    modal.data('criteria', $(this).data('criteria'));
+    modal.data('alternative', $(this).data('alternative'));
+    modal.data('item', $(this).parent());
+    modal.foundation('reveal', 'open');
 });
 
 })(jQuery);

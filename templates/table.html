@@ -1,61 +1,99 @@
 {% extends "base.html" %}
-{% load i18n %}
+{% load crispy_forms_tags i18n %}
 
 {% block "bodyclass" %}table{% endblock %}
 
+{% block "modals" %}
+    <div id="table-title-modal" class="reveal-modal tiny">
+        <a class="close-reveal-modal">&#215;</a>
+        {% crispy table_title_form %}
+    </div>
+
+    <div id="table-title-remove-modal" class="reveal-modal tiny">
+        <div class="row">
+        <div class="columns large-12">
+            <p>{% trans "Remove this item?" %}</p>
+        </div>
+        </div>
+        <div class="row">
+        <div class="columns large-6">
+            <a class="close-reveal-modal-button button secondary no-margin-bottom">{% trans "Cancel" %}</a>
+        </div>
+        <div class="columns large-6 alignright">
+            <a class="remove button alert no-margin-bottom">{% trans "Remove" %}</a>
+        </div>
+        </div>
+    </div>
+
+    <div id="table-idea-modal" class="reveal-modal large">
+        <a class="close-reveal-modal">&#215;</a>
+        <h4>{% trans "Select an idea" %}</h4>
+        <hr/>
+        {% for idea in ideas %}
+            {% include "problem_idea.html" %}
+            <hr/>
+        {% endfor %}
+    </div>
+
+{% endblock %}
+
 {% block "content" %}
 
-    <div class="row problem-detail-title">
-    <div class="columns content large-12">
-        <h4><a href="{% url "problem" problem.id %}">{{ problem.title }}</a></h4>
+    <div class="row collapse">
+    <div class="columns content large-8">
+        <h4><a href="{% url "problem" problem.slug %}">{{ problem.title }}</a></h4>
+    </div>
+    <div class="columns large-4 alignright">
+        <a class="button secondary small add-criteria">{% trans "Add criteria" %}</a>
+        <a class="button secondary small add-alternative">{% trans "Add alternative" %}</a>
     </div>
     </div>
 
-    <div class="row">
-    <div class="columns large-12">
-    <table>
-
+    <div class="row collapse">
+    <div class="columns large-12 problem-table-wrap">
+    <table class="problem-table" data-problem="{{ problem.id }}">
         <thead>
             <tr>
+            {% if criterias %}
                 <th></th>
-                <th>um</th>
-                <th>dois</th>
-                <th>três</th>
-                <th>quatro</th>
-                <th></th>
+                {% for criteria in criterias %}
+                    <th class="criteria" data-criteria="{{ criteria.id }}">
+                        <div class="title-inner title-admin">
+                            {{ criteria.title }}
+                            <div class="table-actions">
+                                <a class="foundicon-edit edit-table-title" data-reveal-id="edit-title-modal"></a>
+                                &nbsp;<a class="foundicon-remove" data-reveal-id="table-title-remove-modal"></a>
+                            </div>
+                        </div>
+                    </th>
+                {% endfor %}
+            {% endif %}
             </tr>
         </thead>
-
-        <tr>
-            <td></td>
-            <td>um</td>
-            <td>dois</td>
-            <td>três</td>
-            <td>quatro</td>
-            <td rowspan="3"><a class="button secondary vertical-expand">Lala</a></td>
-        </tr>
-
-        <tr>
-            <td></td>
-            <td>um</td>
-            <td>dois</td>
-            <td>três</td>
-            <td>quatro</td>
-        </tr>
-
-        <tr>
-            <td></td>
-            <td>um</td>
-            <td>dois</td>
-            <td>três</td>
-            <td>quatro</td>
-        </tr>
-
-        <tr>
-            <td></td>
-            <td colspan="4"><a class="button secondary expand">{% trans "Add alternative" %}</a></td>
-        </tr>
-
+        <tbody>
+            {% for alternative in alternatives %}
+                <tr class="alternative" data-alternative="{{ alternative.id }}">
+                    <td class="vertical-title">
+                        <div class="title-inner title-admin">
+                            {{ alternative.title }}
+                            <div class="table-actions">
+                                <a class="foundicon-edit edit-table-title" data-reveal-id="edit-title-modal"></a>
+                                &nbsp;<a class="foundicon-remove" data-reveal-id="table-title-remove-modal"></a>
+                            </div>
+                        </div>
+                    </td>
+                    {% for item in alternative.get_items %}
+                        <td>
+                        {% if item.object %}
+                            <p>#{{ item.object.idea.id }}</p>
+                        {% else %}
+                            <a class="button expand secondary select-idea" data-criteria="{{ item.criteria.id }}" data-alternative="{{ alternative.id }}">{% trans "Select idea" %}</a>
+                        {% endif %}
+                        </td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </tbody>
     </table>
     </div>
     </div>

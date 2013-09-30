@@ -7741,7 +7741,27 @@ a.th {
   padding-left: 1em !important;
 }
 
-/* line 32, ../../../styles/sass/app.scss */
+/* line 27, ../../../styles/sass/app.scss */
+.no-margin-bottom {
+  margin-bottom: 0 !important;
+}
+
+/* line 31, ../../../styles/sass/app.scss */
+.rotate {
+  -webkit-transform: rotate(-90deg);
+  -moz-transform: rotate(-90deg);
+  -ms-transform: rotate(-90deg);
+  -o-transform: rotate(-90deg);
+  transform: rotate(-90deg);
+  -webkit-transform-origin: 50% 50%;
+  -moz-transform-origin: 50% 50%;
+  -ms-transform-origin: 50% 50%;
+  -o-transform-origin: 50% 50%;
+  transform-origin: 50% 50%;
+  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+}
+
+/* line 52, ../../../styles/sass/app.scss */
 .button,
 .panel,
 fieldset,
@@ -7753,54 +7773,54 @@ input[type='text'] {
   border-radius: 3px;
 }
 
-/* line 38, ../../../styles/sass/app.scss */
+/* line 58, ../../../styles/sass/app.scss */
 .cke_ltr {
   width: 100% !important;
 }
 
-/* line 42, ../../../styles/sass/app.scss */
+/* line 62, ../../../styles/sass/app.scss */
 .cke_combopanel__format {
   width: 200px !important;
 }
 
-/* line 48, ../../../styles/sass/app.scss */
+/* line 68, ../../../styles/sass/app.scss */
 .buttonHolder {
   text-align: right;
 }
-/* line 50, ../../../styles/sass/app.scss */
+/* line 70, ../../../styles/sass/app.scss */
 .buttonHolder #advanced, .buttonHolder .cancel {
   float: left;
 }
 
-/* line 58, ../../../styles/sass/app.scss */
+/* line 78, ../../../styles/sass/app.scss */
 form label {
   display: inline-block;
 }
-/* line 61, ../../../styles/sass/app.scss */
+/* line 81, ../../../styles/sass/app.scss */
 form input[type='checkbox'] {
   margin: 0 3px 0 0;
 }
-/* line 64, ../../../styles/sass/app.scss */
+/* line 84, ../../../styles/sass/app.scss */
 form .ctrlHolder {
   margin-bottom: 0.9375em;
 }
-/* line 67, ../../../styles/sass/app.scss */
+/* line 87, ../../../styles/sass/app.scss */
 form .formHint {
   font-size: 11px;
   color: #777777;
   margin: 0;
   padding: 0.1875em 0;
 }
-/* line 73, ../../../styles/sass/app.scss */
+/* line 93, ../../../styles/sass/app.scss */
 form .control-group {
   margin-bottom: 0.9375em;
 }
-/* line 76, ../../../styles/sass/app.scss */
+/* line 96, ../../../styles/sass/app.scss */
 form .asteriskField {
   color: red;
 }
 
-/* line 83, ../../../styles/sass/app.scss */
+/* line 103, ../../../styles/sass/app.scss */
 .error-panel {
   border-style: solid;
   border-width: 1px;
@@ -7836,36 +7856,36 @@ form .asteriskField {
   line-height: 1.4;
 }
 
-/* line 90, ../../../styles/sass/app.scss */
+/* line 110, ../../../styles/sass/app.scss */
 .top-bar {
   overflow: hidden;
 }
 
-/* line 94, ../../../styles/sass/app.scss */
+/* line 114, ../../../styles/sass/app.scss */
 .header h1 a {
   font-family: sans-serif;
   color: #111111;
   letter-spacing: -0.0625em;
   text-shadow: #aaaaaa 1px 1px 0, #dddddd 2px 2px 0, white 3px 3px 0, white 4px 4px 0;
 }
-/* line 104, ../../../styles/sass/app.scss */
+/* line 124, ../../../styles/sass/app.scss */
 .header h1 a:hover {
   color: #2b2b2b;
 }
 
-/* line 109, ../../../styles/sass/app.scss */
+/* line 129, ../../../styles/sass/app.scss */
 .header .buttons-padding {
   display: block;
   width: 100%;
   padding: 2.5em 0 0 0;
 }
 
-/* line 115, ../../../styles/sass/app.scss */
+/* line 135, ../../../styles/sass/app.scss */
 .header .buttons .button {
   margin-bottom: 0;
 }
 
-/* line 121, ../../../styles/sass/app.scss */
+/* line 141, ../../../styles/sass/app.scss */
 .problem-list-item {
   margin-top: 5px !important;
   margin-bottom: 5px !important;
@@ -7873,29 +7893,29 @@ form .asteriskField {
   padding-bottom: 5px;
   border-bottom: 1px solid #dddddd;
 }
-/* line 127, ../../../styles/sass/app.scss */
+/* line 147, ../../../styles/sass/app.scss */
 .problem-list-item h4 {
   margin: 3px 0;
   color: #444444;
   line-height: 1;
   text-shadow: #dddddd 1px 1px 0, white 2px 2px 0;
 }
-/* line 136, ../../../styles/sass/app.scss */
+/* line 156, ../../../styles/sass/app.scss */
 .problem-list-item h6.subheader {
   margin: 0;
   font-size: 0.875em;
 }
-/* line 140, ../../../styles/sass/app.scss */
+/* line 160, ../../../styles/sass/app.scss */
 .problem-list-item .problem-counter {
   text-align: center;
   background: #eaeaea;
   padding: 8px 5px;
 }
-/* line 144, ../../../styles/sass/app.scss */
+/* line 164, ../../../styles/sass/app.scss */
 .problem-list-item .problem-counter span {
   display: block;
 }
-/* line 147, ../../../styles/sass/app.scss */
+/* line 167, ../../../styles/sass/app.scss */
 .problem-list-item .problem-counter .number {
   color: #444444;
   font-weight: bold;
@@ -7903,13 +7923,13 @@ form .asteriskField {
   letter-spacing: -0.0625em;
   line-height: 1;
 }
-/* line 154, ../../../styles/sass/app.scss */
+/* line 174, ../../../styles/sass/app.scss */
 .problem-list-item .problem-counter .description {
   color: #777777;
   font-size: 0.75em;
 }
 
-/* line 161, ../../../styles/sass/app.scss */
+/* line 181, ../../../styles/sass/app.scss */
 .problem-tag-select {
   background-color: white;
   font-family: inherit;
@@ -7954,11 +7974,11 @@ form .asteriskField {
 .problem-tag-select[disabled] {
   background-color: #dddddd;
 }
-/* line 166, ../../../styles/sass/app.scss */
+/* line 186, ../../../styles/sass/app.scss */
 .problem-tag-select .button {
   margin: 2px 3px;
 }
-/* line 169, ../../../styles/sass/app.scss */
+/* line 189, ../../../styles/sass/app.scss */
 .problem-tag-select .text {
   display: inline-block;
   width: 5%;
@@ -7966,16 +7986,16 @@ form .asteriskField {
   margin: 0 3px;
 }
 
-/* line 177, ../../../styles/sass/app.scss */
+/* line 197, ../../../styles/sass/app.scss */
 .problem-tag-result {
   display: none;
   margin-top: 5px;
 }
-/* line 180, ../../../styles/sass/app.scss */
+/* line 200, ../../../styles/sass/app.scss */
 .problem-tag-result .button {
   margin-bottom: 5px;
 }
-/* line 183, ../../../styles/sass/app.scss */
+/* line 203, ../../../styles/sass/app.scss */
 .problem-tag-result .description {
   display: block;
   font-size: 0.8125em;
@@ -7983,12 +8003,12 @@ form .asteriskField {
   color: #777777;
 }
 
-/* line 192, ../../../styles/sass/app.scss */
+/* line 212, ../../../styles/sass/app.scss */
 .problem-detail .description {
   margin: 5px 0;
 }
 
-/* line 198, ../../../styles/sass/app.scss */
+/* line 218, ../../../styles/sass/app.scss */
 .user-box {
   border-style: solid;
   border-width: 1px;
@@ -8023,7 +8043,7 @@ form .asteriskField {
 .user-box h1.subheader, .user-box h2.subheader, .user-box h3.subheader, .user-box h4.subheader, .user-box h5.subheader, .user-box h6.subheader {
   line-height: 1.4;
 }
-/* line 201, ../../../styles/sass/app.scss */
+/* line 221, ../../../styles/sass/app.scss */
 .user-box .avatar {
   line-height: 0;
   display: inline-block;
@@ -8036,87 +8056,98 @@ form .asteriskField {
   -webkit-box-shadow: 0 0 6px 1px rgba(43, 166, 203, 0.5);
   box-shadow: 0 0 6px 1px rgba(43, 166, 203, 0.5);
 }
-/* line 204, ../../../styles/sass/app.scss */
+/* line 224, ../../../styles/sass/app.scss */
 .user-box .contributed {
   color: #777777;
   font-size: 0.75em;
 }
-/* line 208, ../../../styles/sass/app.scss */
+/* line 228, ../../../styles/sass/app.scss */
 .user-box a.username {
   font-weight: bold;
   margin: 5px 0 0 0;
 }
 
-/* line 216, ../../../styles/sass/app.scss */
+/* line 236, ../../../styles/sass/app.scss */
 .problem-idea-button {
   margin: 0;
 }
 
-/* line 219, ../../../styles/sass/app.scss */
+/* line 239, ../../../styles/sass/app.scss */
 .problem-idea-form {
   display: none;
 }
 
-/* line 225, ../../../styles/sass/app.scss */
+/* line 245, ../../../styles/sass/app.scss */
 .idea-content {
   margin: 0 0 1em 0;
 }
 
-/* line 231, ../../../styles/sass/app.scss */
+/* line 251, ../../../styles/sass/app.scss */
 .comment-content {
   padding: 0.7em 0.5em;
   border-top: 1px dotted #cccccc;
   font-size: 0.85em;
   color: #777777;
 }
-/* line 236, ../../../styles/sass/app.scss */
+/* line 256, ../../../styles/sass/app.scss */
 .comment-content .comment-author {
   background: #f7f7f7;
   padding: 2px 5px;
 }
-/* line 240, ../../../styles/sass/app.scss */
+/* line 260, ../../../styles/sass/app.scss */
 .comment-content a.comment-modified {
   color: #aaaaaa;
 }
-/* line 243, ../../../styles/sass/app.scss */
+/* line 263, ../../../styles/sass/app.scss */
 .comment-content a.comment-delete {
   font-size: 0.85em;
   padding: 2px 5px;
   color: #ff6666;
 }
-/* line 247, ../../../styles/sass/app.scss */
+/* line 267, ../../../styles/sass/app.scss */
 .comment-content a.comment-delete:hover {
   background-color: #ff6666;
   color: white;
 }
 
-/* line 257, ../../../styles/sass/app.scss */
+/* line 276, ../../../styles/sass/app.scss */
+.problem-idea-modal {
+  padding: 0.6em 0;
+  transition: background-color 300ms ease-out 0s;
+}
+/* line 279, ../../../styles/sass/app.scss */
+.problem-idea-modal:hover {
+  cursor: pointer;
+  background-color: #b6b6b6;
+}
+
+/* line 288, ../../../styles/sass/app.scss */
 .revision del {
   color: red;
   background-color: white;
 }
-/* line 261, ../../../styles/sass/app.scss */
+/* line 292, ../../../styles/sass/app.scss */
 .revision ins {
   color: #099c00;
   background-color: #d2ffcf;
   text-decoration: none;
 }
-/* line 266, ../../../styles/sass/app.scss */
+/* line 297, ../../../styles/sass/app.scss */
 .revision .raw {
   display: none;
 }
 
-/* line 271, ../../../styles/sass/app.scss */
+/* line 302, ../../../styles/sass/app.scss */
 .voting {
   text-align: center;
 }
-/* line 273, ../../../styles/sass/app.scss */
+/* line 304, ../../../styles/sass/app.scss */
 .voting a.button {
   margin: 0;
   font-size: 1.5em;
   padding: 10px 5px 5px;
 }
-/* line 278, ../../../styles/sass/app.scss */
+/* line 309, ../../../styles/sass/app.scss */
 .voting .vote-count {
   color: #444444;
   display: block;
@@ -8125,15 +8156,63 @@ form .asteriskField {
   margin: 7px 0;
 }
 
-/* line 287, ../../../styles/sass/app.scss */
+/* line 318, ../../../styles/sass/app.scss */
 a.problem-action {
   color: #777777;
   font-size: 0.9em;
   padding: 0.1em 0.2em;
   text-transform: lowercase;
 }
-/* line 292, ../../../styles/sass/app.scss */
+/* line 323, ../../../styles/sass/app.scss */
 a.problem-action:hover {
   background: #777777;
   color: white;
+}
+
+/* line 329, ../../../styles/sass/app.scss */
+.problem-table-wrap {
+  margin-bottom: 1em;
+}
+/* line 332, ../../../styles/sass/app.scss */
+.problem-table-wrap .problem-table a.button {
+  margin-bottom: 0;
+  padding-left: 1em;
+  padding-right: 1em;
+}
+/* line 337, ../../../styles/sass/app.scss */
+.problem-table-wrap .problem-table input[type='text'] {
+  margin-bottom: 0;
+}
+/* line 340, ../../../styles/sass/app.scss */
+.problem-table-wrap .problem-table th.criteria {
+  text-align: center;
+}
+/* line 343, ../../../styles/sass/app.scss */
+.problem-table-wrap .problem-table td.vertical-title {
+  background-color: whitesmoke;
+  font-weight: bold;
+}
+/* line 347, ../../../styles/sass/app.scss */
+.problem-table-wrap .problem-table .title-admin {
+  padding-bottom: 30px;
+  position: relative;
+}
+/* line 351, ../../../styles/sass/app.scss */
+.problem-table-wrap .problem-table .table-actions {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+}
+/* line 357, ../../../styles/sass/app.scss */
+.problem-table-wrap .problem-table tr.alternative td {
+  text-align: center;
+}
+
+/* line 364, ../../../styles/sass/app.scss */
+#table-title-modal .buttonHolder {
+  padding: 0;
+  margin: 0;
+  border: 0;
+  background-color: transparent;
 }
