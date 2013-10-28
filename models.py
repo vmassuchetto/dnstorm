@@ -106,6 +106,19 @@ class Comment(models.Model):
 
 reversion.register(Comment)
 
+class Message(models.Model):
+    problem = models.ForeignKey(Problem)
+    content = models.TextField(verbose_name=_('Content'))
+    modified = models.DateTimeField(auto_now=True, editable=False)
+
+    def __unicode__(self):
+        return u'%s (Problem: %d)' % (self.subject, self.problem.id)
+
+    class Meta:
+        db_table = settings.DNSTORM['table_prefix'] + '_message'
+
+reversion.register(Message)
+
 class Vote(models.Model):
     idea = models.ForeignKey(Idea)
     author = models.ForeignKey(User)

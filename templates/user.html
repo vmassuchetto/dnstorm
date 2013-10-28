@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% load gravatar i18n %}
+
+{% block "content" %}
+    <div class="row problem-detail-title content">
+        <div class="columns large-2">
+            <a class="th radius" href="{% url "user" user %}">
+                <img class="thumbnail" src="{% gravatar_for_user user 128 %}" alt="{{ user.get_full_name|default:user.username }}" />
+            </a>
+        </div>
+        <div class="columns large-6">
+            <h4>{{ user.get_full_name|default:user.username }}</h4>
+        </div>
+        <div class="columns large-4">
+            0 {% trans "problems" %}<br/>
+            0 {% trans "ideas" %}<br/>
+            0 {% trans "comments" %}
+        </div>
+    </div>
+{% endblock %}

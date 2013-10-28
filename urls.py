@@ -1,5 +1,5 @@
 from django.conf.urls import patterns, include
-from dnstorm.views import base, ajax, problem, idea, table, user
+from dnstorm.views import base, ajax, problem, idea, table
 
 js_info_dict = {
     'packages': ('dnstorm',),
@@ -9,9 +9,7 @@ urlpatterns = patterns('',
     (r'^$', base.HomeView.as_view(), {}, 'home'),
     (r'^jsi18n/$', 'django.views.i18n.javascript_catalog', js_info_dict, 'jsi18n'),
     (r'^ckeditor/', include('ckeditor.urls')),
-    (r'^accounts/login/$', 'django.contrib.auth.views.login'),
-    (r'^accounts/logout/$', 'django.contrib.auth.views.logout'),
-    (r'^profile/(?P<username>[^/]+)/$', base.ProfileView.as_view(), {}, 'profile'),
+    (r'^accounts/', include('registration.backends.simple.urls')),
     (r'^ajax/$', ajax.AjaxView.as_view(), {}, 'ajax'),
     (r'^options/$', base.OptionsView.as_view(), {}, 'options'),
     (r'^problem/new/$', problem.ProblemCreateView.as_view(), {}, 'problem_new'),
@@ -22,5 +20,5 @@ urlpatterns = patterns('',
     (r'^idea/edit/(?P<pk>[^/]+)/$', idea.IdeaUpdateView.as_view(), {}, 'idea_edit'),
     (r'^idea/revisions/(?P<pk>[^/]+)/$', idea.IdeaRevisionView.as_view(), {}, 'idea_revision'),
     (r'^table/(?P<problem>[^/]+)/$', table.TableView.as_view(), {}, 'table'),
-    (r'^user/(?P<username>[^/]+)/$', user.UserDetailView.as_view(), {}, 'user'),
+    (r'^users/(?P<username>[^/]+)/$', base.UserView.as_view(), {}, 'user'),
 )

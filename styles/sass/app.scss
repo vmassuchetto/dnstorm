@@ -72,6 +72,14 @@ input[type='text'] {
     }
 }
 
+.button-facebook {
+  @include button($button-med, #3B5998, $button-radius, true, false, false);
+}
+
+.button-google {
+  @include button($button-med, #DD4C39, $button-radius, true, false, false);
+}
+
 // Forms
 
 form {

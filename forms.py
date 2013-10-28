@@ -19,7 +19,7 @@ class OptionsForm(forms.Form):
         self.helper = FormHelper()
         self.helper.form_action = '.'
         self.helper.layout = Layout(
-            Fieldset(u'Site',
+            Fieldset(_('Site'),
                 'site_title',
                 'site_description'
             ),
@@ -29,6 +29,23 @@ class OptionsForm(forms.Form):
         )
         super(OptionsForm, self).__init__(*args, **kwargs)
 
+class AccountCreateForm(forms.Form):
+    username = forms.CharField(label=_('Username'))
+    email = forms.EmailField(label=_('E-mail'))
+    password = forms.CharField(label=_('Password'), widget=forms.PasswordInput)
+    password_repeat = forms.CharField(label=_('Repeat password'), widget=forms.PasswordInput)
+
+    def __init__(self, *args, **kwargs):
+        self.helper = FormHelper()
+        self.helper.form_action = '.'
+        self.helper.layout = Layout(
+            'username',
+            'email',
+            'password',
+            'password_repeat',
+            Submit('submit', _('Create account'), css_class='expand success'),
+        )
+        super(AccountCreateForm, self).__init__(*args, **kwargs)
 
 class ProblemForm(forms.ModelForm):
     tag = forms.Field(_('Tags'), help_text=_('Type to search for tags.'))

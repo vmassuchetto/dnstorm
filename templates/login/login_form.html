@@ -16,17 +16,8 @@
     <hr/>
     <div class="row">
         <div class="columns large-12">
-            <a class="button secondary expand" href="javascript:void(0);">{% trans "Create an account" %}</a>
+            <a class="button secondary expand" href="#">{% trans "Create a DNStorm account" %}</a>
         </div>
     </div>
-    <div class="row">
-        <div class="columns large-12">
-            <a class="button secondary expand" href="javascript:void(0);">{% trans "Connect with Facebook" %}</a>
-        </div>
-    </div>
-    <div class="row">
-        <div class="columns large-12">
-            <a class="button secondary expand" href="javascript:void(0);">{% trans "Connect with Google" %}</a>
-        </div>
-    </div>
+    {% include "login/connect_buttons.html" %}
 </form>
