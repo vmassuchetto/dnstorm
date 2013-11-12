@@ -32,13 +32,17 @@
 
         {% endfor %}
         {% else %}
-            <div class="panel">
-                {% if user.is_authenticated %}
-                    {% trans "No problem here. You can start by" %} <a href="{% url "problem_new" %}">{% trans "creating a new one" %}</a>.
-                {% else %}
-                    <a href="{% url "django.contrib.auth.views.login" %}?next={{ request.get_full_path }}">{% trans "Log in" context "imperative" %}</a> {% trans "to view and create problems" %}.
-                {% endif %}
-            </div>
+            {% if user.is_authenticated %}
+                {% url "problem_new" as url_problem_new %}
+                {% blocktrans %}
+                    No problem here. You can start by <a href="{{ url_problem_new }}">creating a new one</a>.
+                {% endblocktrans %}
+            {% else %}
+                {% url "django.contrib.auth.views.login" as url_login %}
+                {% blocktrans %}
+                    <a href="{{ url_login }}">Log in</a> to view and create problems.
+                {% endblocktrans %}
+            {% endif %}
         {% endif %}
     </div>
 

@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block "content" %}
+    <p>{% trans "Your username was activated succesfully." %} <a href="{% url "home" %}">{% trans "You can now start discussing some problems and ideas." %}</a>.</p>
+{% endblock %}

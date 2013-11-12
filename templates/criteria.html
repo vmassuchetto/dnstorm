@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags i18n %}
+
+{% block "title" %}Problem criterias{% endblock %}
+
+{% block "bodyclass" %}criteria{% endblock %}
+
+{% block "content" %}
+    <div class="row">
+    <div class="columns large-12">
+        {% if criterias %}
+            <table>
+            <tr><th>{% trans "Name" %}</th><th>{% trans "Description" %}</th></tr>
+            {% for criteria in criterias %}
+                <tr><td>{{ criteria.name }}</td><td>{{ criteria.description }}</td></tr>
+            {% endfor %}
+            </table>
+        {% endif %}
+    </div>
+    </div>
+{% endblock %}

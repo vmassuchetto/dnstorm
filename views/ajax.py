@@ -6,17 +6,21 @@ from django.utils.translation import ugettext_lazy as _
 from django.shortcuts import get_object_or_404
 from django.template import loader, Context
 
-from dnstorm.models import Problem, Tag, Vote, Idea, Comment, Criteria, Alternative, AlternativeItem
+from dnstorm.models import Problem, Criteria, Vote, Idea, Comment, Alternative, AlternativeItem
+from dnstorm.forms import CriteriaForm
+
+from lib.slug import unique_slugify
+
 import json
 
 class AjaxView(View):
 
     def get(self, *args, **kwargs):
 
-        # Search for tags
+        # Search for criterias in problem edition
 
         if 'term' in self.request.GET:
-            return self.tag_search()
+            return self.problem_criteria_search()
 
         # Vote
 
@@ -38,6 +42,12 @@ class AjaxView(View):
 
         if 'idea' and 'content' in self.request.POST:
             return self.submit_comment()
+
+        # New criteria in problem edition
+
+        elif 'mode' in self.request.POST and 'problem_criteria_create' == self.request.POST['mode'] \
+            and 'name' in self.request.POST and 'description' in self.request.POST:
+            return self.problem_criteria_create()
 
         # New criteria
 
@@ -62,16 +72,28 @@ class AjaxView(View):
 
         return HttpResponseForbidden()
 
-    def tag_search(self):
-        tags = Tag.objects.filter(slug__icontains = self.request.GET['term'])[:5]
+    def problem_criteria_search(self):
+        criterias = Criteria.objects.filter(slug__icontains = self.request.GET['term'])[:5]
         response = []
-        for t in tags:
+        for c in criterias:
             response.append({
-                'id': t.id,
-                'label': t.name,
-                'description': t.description
+                'id': c.id,
+                'label': c.name,
+                'description': c.description
             })
-        return HttpResponse(json.dumps(response, sort_keys=True))
+        return HttpResponse(json.dumps(response), content_type="application/json")
+
+    def problem_criteria_create(self):
+        criteria = CriteriaForm(self.request.POST)
+        if not criteria.is_valid():
+            raise Http404()
+        c = criteria.save()
+        response = {
+            'id': c.id,
+            'name': c.name,
+            'description': c.description,
+        }
+        return HttpResponse(json.dumps(response), content_type="application/json")
 
     def submit_vote(self):
         idea = get_object_or_404(Idea, pk=self.request.GET['idea'])
@@ -90,7 +112,7 @@ class AjaxView(View):
         if not cancel_vote:
             Vote(idea=idea, weight=weight, user=self.request.user).save()
         count = Vote.objects.filter(idea=idea).aggregate(Sum('weight'))['weight__sum']
-        return HttpResponse(json.dumps(count if count else 0))
+        return HttpResponse(json.dumps(count if count else 0), content_type="application/json")
 
     def submit_comment(self):
         idea = get_object_or_404(Idea, pk=self.request.POST['idea'])
@@ -123,7 +145,7 @@ class AjaxView(View):
             'title': criteria.title,
             'description': criteria.description
         }
-        return HttpResponse(json.dumps(output))
+        return HttpResponse(json.dumps(output), content_type="application/json")
 
     def table_new_alternative(self):
         p = Problem.objects.get(pk=self.request.POST['problem'])
@@ -139,7 +161,7 @@ class AjaxView(View):
             'title': alternative.title,
             'description': alternative.description
         }
-        return HttpResponse(json.dumps(output))
+        return HttpResponse(json.dumps(output), content_type="application/json")
 
     def table_new_item(self):
         c = Criteria.objects.get(pk=self.request.POST['criteria'])
@@ -148,4 +170,4 @@ class AjaxView(View):
         item = AlternativeItem(criteria=c, alternative=a, idea=i)
         item.save()
         output = { 'id': i.id  }
-        return HttpResponse(json.dumps(output))
+        return HttpResponse(json.dumps(output), content_type="application/json")

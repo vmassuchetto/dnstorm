@@ -11,10 +11,11 @@ import reversion
 
 from ckeditor.fields import RichTextField
 
-class Tag(models.Model):
+class Criteria(models.Model):
     name = models.CharField(verbose_name=_('Name'), max_length=90)
     slug = models.CharField(max_length=90, unique=True)
     description = models.TextField(verbose_name=_('Description'), blank=True)
+    order = models.IntegerField()
     created = models.DateTimeField(auto_now=True, editable=False)
     updated = models.DateTimeField(editable=False)
 
@@ -22,7 +23,7 @@ class Tag(models.Model):
         return self.slug
 
     class Meta:
-        db_table = settings.DNSTORM['table_prefix'] + '_tag'
+        db_table = settings.DNSTORM['table_prefix'] + '_criteria'
 
     def get_absolute_url(self, *args, **kwargs):
         return reverse('problem', args=[self.slug])
@@ -31,14 +32,16 @@ class Tag(models.Model):
         if not self.id:
             self.created = datetime.today()
         self.updated = datetime.today()
-        unique_slugify(self, self.title)
-        super(Tag, self).save(*args, **kwargs)
+        self.slug = unique_slugify(self, self.name)
+        if not self.order:
+            self.order = 0
+        super(Criteria, self).save(*args, **kwargs)
 
 class Problem(models.Model):
     title = models.CharField(verbose_name=_('Title'), max_length=90)
     slug = models.SlugField(max_length=90, unique=True, editable=False)
     description = RichTextField(verbose_name=_('Description'), blank=True)
-    tag = models.ManyToManyField(Tag, verbose_name=_('Tags'), editable=False, blank=True, null=True)
+    criteria = models.ManyToManyField(Criteria, verbose_name=_('Criterias'), editable=False, blank=True, null=True)
     author = models.ForeignKey(User, related_name='author', editable=False)
     contributor = models.ManyToManyField(User, related_name='contributor', verbose_name=_('Contributors'), help_text=_('Users with permission to contribute to this problem.'), blank=True, null=True)
     manager = models.ManyToManyField(User, related_name='manager', verbose_name=_('Managers'), help_text=_('Users with permission to manage this problem.'), blank=True, null=True)
@@ -132,18 +135,6 @@ class Vote(models.Model):
 
     class Meta:
         db_table = settings.DNSTORM['table_prefix'] + '_vote'
-
-class Criteria(models.Model):
-    problem = models.ForeignKey(Problem)
-    title = models.TextField(verbose_name=_('Label'))
-    description = models.TextField(verbose_name=_('Description'))
-    order = models.IntegerField()
-
-    def __unicode__(self):
-        return '%s (Problem: %s)' % (self.title, self.problem.title)
-
-    class Meta:
-        db_table = settings.DNSTORM['table_prefix'] + '_criteria'
 
 class Alternative(models.Model):
     problem = models.ForeignKey(Problem)

@@ -1,3 +1,4 @@
+import re
 from datetime import datetime
 from lib.diff import inline_diff
 
@@ -8,18 +9,25 @@ from django.views.generic import DetailView
 from django.views.generic.edit import FormView, CreateView, UpdateView
 from django.views.generic.base import RedirectView
 from django.contrib.auth.decorators import login_required
+from django.utils.translation import ugettext as _
 from django.utils.decorators import method_decorator
 from django.utils.html import strip_tags
 
 import reversion
 
-from dnstorm.models import Problem, Idea, Vote, Comment
-from dnstorm.forms import ProblemForm, IdeaForm, CommentForm
+from dnstorm.models import Problem, Idea, Criteria, Vote, Comment
+from dnstorm.forms import ProblemForm, IdeaForm, CommentForm, CriteriaForm
 
 class ProblemCreateView(CreateView):
     template_name = 'problem_edit.html'
     form_class = ProblemForm
     model = Problem
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(ProblemCreateView, self).get_context_data(**kwargs)
+        context['title'] = _('Create new problem')
+        context['criteria_form'] = CriteriaForm()
+        return context
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
@@ -27,8 +35,12 @@ class ProblemCreateView(CreateView):
 
     @reversion.create_revision()
     def form_valid(self, form):
+        print 'kajsnad'
         self.object = form.save(commit=False)
         self.object.author = self.request.user
+        self.object.save()
+        for c in self.request.POST.getlist('criteria'):
+            self.object.criteria.add(c)
         self.object.save()
         return HttpResponseRedirect(reverse('problem', kwargs={'slug':self.object.slug}))
 
@@ -37,14 +49,30 @@ class ProblemUpdateView(UpdateView):
     form_class = ProblemForm
     model = Problem
 
+    def get_context_data(self, *args, **kwargs):
+        context = super(ProblemUpdateView, self).get_context_data(**kwargs)
+        context['title'] = _('Edit problem')
+        context['criteria_form'] = CriteriaForm()
+        return context
+
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
         return super(ProblemUpdateView, self).dispatch(*args, **kwargs)
 
     @reversion.create_revision()
     def form_valid(self, form):
+        print 'kanskjnasd'
+        # Save first
         self.object = form.save(commit=False)
         self.object.author = self.request.user
+        self.object.save()
+
+        # Then fit the criterias in
+        self.object.criteria.clear()
+        regex = re.compile('^criteria_([0-9]+)$')
+        criteria = Criteria.objects.filter(id__in=[m.group(1) for m in [regex.match(p) for p in self.request.POST] if m])
+        for c in criteria:
+            self.object.criteria.add(c)
         self.object.save()
         return HttpResponseRedirect(reverse('problem', kwargs={'slug':self.object.slug}))
 
@@ -86,6 +114,7 @@ class ProblemView(FormView):
 
     def get_context_data(self, *args, **kwargs):
         context = super(ProblemView, self).get_context_data(**kwargs)
+        context['title'] = self.problem.title
         context['problem'] = self.problem
         context['ideas'] = Idea.objects.filter(problem=self.problem)
         if not self.request.user.is_authenticated():

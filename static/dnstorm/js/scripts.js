@@ -1,15 +1,6 @@
 jQuery.noConflict();
 (function($){
 
-// Tag renderer
-
-function tag_field(id, label, description) {
-    return '<li class="problem-tag-item">'
-        + '<a href="javascript:void(0);" contenteditable="false" class="button small" data-id="' + id + '"><i class="foundicon-plus"></i> ' + label + '</a>'
-        + '<span class="description">' + description + '</span>'
-        + '</li>';
-}
-
 // Cookies
 
 function getCookie(name) {
@@ -53,9 +44,31 @@ $('.close-reveal-modal-button').click(function(){
     $(this).parents('.reveal-modal').foundation('reveal', 'close');
 });
 
-// Problem tags autocomplete
+// Criteria tag button renderer
 
-$('.problem-tag-select .text').autocomplete({
+function criteria_field(id, label, description) {
+    return '<li class="problem-criteria-item">'
+        + '<a href="javascript:void(0);" contenteditable="false" class="button small" data-id="' + id + '"><i class="foundicon-plus"></i> ' + label + '</a>'
+        + '<span class="description">' + description + '</span>'
+        + '</li>';
+}
+
+function criteria_add_button(button) {
+
+    // Empty search input
+    $('.problem-criteria-select .text').text('');
+
+    // Create hidden field
+    b = button.clone();
+    b.html(b.html().replace(/foundicon-plus/, 'foundicon-remove'));
+    $('.problem-criteria-select .text').before(b);
+    $('.problem-form').append('<input type="hidden" name="criteria_' + b.data('id') + '" value="' + b.data('id') + '">');
+
+}
+
+// Problem criterias autocomplete
+
+$('.problem-criteria-select .text').autocomplete({
     minLength: 2,
     source: '/ajax/',
     messages: {
@@ -67,52 +80,80 @@ $('.problem-tag-select .text').autocomplete({
         if (ui.content.length > 0) {
             for (i in ui.content) {
                 item = ui.content[i];
-                output += tag_field(item.id, item.label, item.description)
+                output += criteria_field(item.id, item.label, item.description)
             }
         } else {
-            output += tag_field(0, $('.problem-tag-select .text').text(), '');
+            output += criteria_field(0, $('.problem-criteria-select .text').text(), 'Click above to create this criteria.');
         }
 
-        result = $('.problem-tag-result');
+        result = $('.problem-criteria-result');
         result.html(output);
         if (result.css('display') == 'none') {
             result.fadeIn(200);
         }
         $('.ui-front,.ui-helper-hidden-accessible').remove();
 
-        // Problem tags select
-        $('.problem-tag-item').on('click', 'a.button', function(){
+        // Problem criteria select
+        $('.problem-criteria-item').on('click', 'a.button', function(){ 
             id = $(this).data('id');
-            if ($('.problem-tag-select .button[data-id="' + id + '"]').length > 0)
+
+            // Already selected
+            if ($('.problem-criteria-select .button[data-id="' + id + '"]').length > 0)
                 return;
 
-            tag = $('.problem-tag');
-            select = $('.problem-tag-select');
+            // Existing criteria, just append the button
+            if (id != 0) {
+                criteria_add_button($(this));
 
-            // Add tag and input data
-            button = $(this).clone();
-            button.html(button.html().replace(/foundicon-plus/, 'foundicon-remove'));
-            select.append(button);
-            tag.append('<input type="hidden" name="tag" value="' + id + '">');
+            // Otherwise, call the new criteria form
+            } else {
+                modal = $('#criteria-modal');
+                modal.find('#id_name').val($('.problem-criteria-select .text').text());
+                modal.foundation('reveal', 'open');
+            }
 
-            // Clear text
-            select.find('.text').html('');
-            select.find('.text').remove().insertAfter(select.find('.button:last'));
         });
     }
-
 });
 
-// Remove tag and input data
+// Criteria modal form
 
-$('.problem-tag-select').on('click', 'a.button', function(){
+$('#criteria-modal form').submit(function(e){
+    e.preventDefault();
+    $.ajax({
+        url: '/ajax/',
+        type: 'POST',
+        dataType: 'json',
+        data: $(this).serialize(),
+        success: function(data) {
+
+            // Clear and hide form for future use
+            modal.foundation('reveal', 'close');
+            modal.find('#id_name').val('');
+            modal.find('#criteria_description').val('');
+
+            // Insert button
+            button = $('.problem-criteria-result li a[data-id="0"]');
+            button.data('id', data.id);
+            button.attr('data-id', data.id);
+            button.siblings('.description').text(data.description);
+            criteria_add_button(button);
+
+        }
+    });
+});
+
+// Remove criteria and input data
+
+$('.problem-criteria-select').on('click', 'a.button', function(){
     id = $(this).remove().data('id');
-    $('.problem-tag input').filter('[name=tag]').filter('[value="' + id + '"]').remove();
+    $('.problem-form input').filter(function() { return this.name.match(/^criteria_[0-9]+$/); }).filter('[value="' + id + '"]').remove();
+    $('.tooltip').fadeOut();
 });
 
 // Focus writable area to simulate an input box
 
-$('.problem-tag-select').click(function(){
+$('.problem-criteria-select').click(function(){
     $(this).find('.text').focus();
 });
 
@@ -407,7 +448,6 @@ $('.problem-idea').click(function(){
             item = $.parseJSON(xhr.responseText);
             if (isNaN(item.id))
                 return;
-            console.log(item.id);
             item_object.html('#' + item.id).highlight();
             modal.foundation('reveal', 'close');
         }

@@ -23,10 +23,11 @@
 
 <hr/>
 
-{% if problem.tag.all %}
-    <div class="tags">
-        {% for tag in problem.tag.all %}
-            <a class="button small" href="#">{{ tag.slug }}</a>
+{% if problem.criteria.all %}
+    <div class="criterias">
+        <h5>{% trans "Criterias for this problem" %}</h5>
+        {% for criteria in problem.criteria.all %}
+            <a class="button small tip-top" href="#" data-tooltip title="{{ criteria.description }}">{{ criteria.name }}</a>
         {% endfor %}
     </div>
     <hr/>

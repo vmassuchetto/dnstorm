@@ -9,7 +9,6 @@ from django.core.urlresolvers import reverse
 
 from dnstorm.models import Problem
 from dnstorm.forms import OptionsForm, AccountCreateForm
-from registration.views import RegistrationView
 
 class HomeView(TemplateView):
     template_name = 'home.html'

@@ -1,12 +1,16 @@
 from django import forms
+from django.core.urlresolvers import reverse
+from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
 
 from settings import LANGUAGES
 
-from dnstorm.models import Problem, Idea, Comment
+from dnstorm.models import Problem, Idea, Comment, Criteria
 from crispy_forms.helper import FormHelper
 from crispy_forms_foundation.layout import Fieldset, Field, \
     Row, HTML, ButtonHolder, Submit, Layout, Column
+
+from lib.slug import unique_slugify
 
 class RowCollapse(Row):
     css_class = 'row collapse'
@@ -48,7 +52,7 @@ class AccountCreateForm(forms.Form):
         super(AccountCreateForm, self).__init__(*args, **kwargs)
 
 class ProblemForm(forms.ModelForm):
-    tag = forms.Field(_('Tags'), help_text=_('Type to search for tags.'))
+    criteria = forms.Field(_('Criterias'))
 
     class Meta:
         model = Problem
@@ -56,11 +60,12 @@ class ProblemForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.helper = FormHelper()
         self.helper.form_action = '.'
+        self.helper.form_class = 'problem-form'
         self.helper.layout = Layout(
             Fieldset(_('Problem description'),
                 'title',
                 'description',
-                Field('tag', css_class='problem-tag', template='field_tag.html')
+                Field('criteria', css_class='problem-criteria', template='field_criteria.html')
             ),
             Fieldset(_('Permissions'),
                 'contributor',
@@ -84,7 +89,37 @@ class ProblemForm(forms.ModelForm):
             ),
         )
         super(ProblemForm, self).__init__(*args, **kwargs)
-        self.fields['tag'].required = False
+
+        # Format criteria field
+        self.fields['criteria'].required = False
+        self.fields['criteria'].help_text = mark_safe(_('Type the name of the criteria to search. Go to the <a href="%s">criterias page</a> if you want to edit them.' % reverse('criteria')))
+
+        # Add criteria fields
+        instance = kwargs.pop('instance')
+        criteria = Criteria.objects.filter(problem=instance)
+        for c in criteria:
+            self.fields['criteria_{i}'.format(i=c.id)] = forms.CharField(widget = forms.HiddenInput(), initial=c.id, label=c.name, help_text=mark_safe(c.description), required=False)
+            self.helper.layout.append((Field('criteria_{i}'.format(i=c.id), type='hidden', value=c.id)))
+
+class CriteriaForm(forms.ModelForm):
+    description = forms.CharField(widget=forms.Textarea(attrs={'id': 'criteria_description'}))
+    mode = forms.CharField()
+
+    class Meta:
+        model = Criteria
+        exclude = ['slug', 'order']
+
+    def __init__(self, *args, **kwargs):
+        self.helper = FormHelper()
+        self.helper.form_action = '.'
+        self.helper.layout = Layout(
+            Field('mode', type='hidden'),
+            Row(Column('name', css_class='large-12')),
+            Row(Column('description', css_class='large-12')),
+            Row(Column(Submit('submit', _('Save'), css_class='small'), css_class='large-6 large-offset-6 alignright')),
+        )
+        super(CriteriaForm, self).__init__(*args, **kwargs)
+        self.fields['mode'].initial = 'problem_criteria_create'
 
 class IdeaForm(forms.ModelForm):
 

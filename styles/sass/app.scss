@@ -186,7 +186,7 @@ form {
     }
 }
 
-.problem-tag-select {
+.problem-criteria-select {
     @include form-element;
     @include border-radius($global-radius);
     cursor: text;
@@ -202,7 +202,7 @@ form {
     }
 }
 
-.problem-tag-result {
+.problem-criteria-result {
     display: none;
     margin-top: 5px;
     .button {

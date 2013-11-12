@@ -3,6 +3,6 @@ from forms import AccountCreateForm
 
 def base(request):
     context = dict()
-    context['login_form'] = AuthenticationForm()
-    context['register_form'] = AccountCreateForm()
+    if not request.user.is_authenticated():
+        context['login_form'] = AuthenticationForm()
     return context

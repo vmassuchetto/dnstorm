@@ -1,6 +1,15 @@
 {% load i18n %}
 
 <form method="post" action="{% url "django.contrib.auth.views.login" %}">
+
+    {% if form.errors %}
+    <div class="row">
+        <div class="columns large-12 error-panel">
+            {% trans "Wrong username and password." %}
+        </div>
+    </div>
+    {% endif %}
+
     {% csrf_token %}
     <input type="hidden" name="next" value="{% if request.GET.next %}{{ request.GET.next }}{% else %}{{ request.get_full_path }}{% endif %}" />
     <div class="row">
@@ -13,11 +22,9 @@
             <input type="submit" class="button success expand" value="{% trans 'Login' %}" />
         </div>
     </div>
-    <hr/>
     <div class="row">
         <div class="columns large-12">
-            <a class="button secondary expand" href="#">{% trans "Create a DNStorm account" %}</a>
+            <a class="button secondary expand" href="{% url "registration_register" %}">{% trans "Create a DNStorm account" %}</a>
         </div>
     </div>
-    {% include "login/connect_buttons.html" %}
 </form>

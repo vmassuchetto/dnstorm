@@ -8006,7 +8006,7 @@ form .asteriskField {
 }
 
 /* line 189, ../../../styles/sass/app.scss */
-.problem-tag-select {
+.problem-criteria-select {
   background-color: white;
   font-family: inherit;
   border: 1px solid #cccccc;
@@ -8034,28 +8034,28 @@ form .asteriskField {
   height: auto;
 }
 /* line 134, ../../../../../../../../var/lib/gems/2.0.0/gems/zurb-foundation-4.3.1/scss/foundation/components/_global.scss */
-.problem-tag-select:focus {
+.problem-criteria-select:focus {
   -webkit-box-shadow: 0 0 5px #999999;
   -moz-box-shadow: 0 0 5px #999999;
   box-shadow: 0 0 5px #999999;
   border-color: #999999;
 }
 /* line 107, ../../../../../../../../var/lib/gems/2.0.0/gems/zurb-foundation-4.3.1/scss/foundation/components/_forms.scss */
-.problem-tag-select:focus {
+.problem-criteria-select:focus {
   background: #fafafa;
   border-color: #999999;
   outline: none;
 }
 /* line 114, ../../../../../../../../var/lib/gems/2.0.0/gems/zurb-foundation-4.3.1/scss/foundation/components/_forms.scss */
-.problem-tag-select[disabled] {
+.problem-criteria-select[disabled] {
   background-color: #dddddd;
 }
 /* line 194, ../../../styles/sass/app.scss */
-.problem-tag-select .button {
+.problem-criteria-select .button {
   margin: 2px 3px;
 }
 /* line 197, ../../../styles/sass/app.scss */
-.problem-tag-select .text {
+.problem-criteria-select .text {
   display: inline-block;
   width: 5%;
   height: 1em;
@@ -8063,16 +8063,16 @@ form .asteriskField {
 }
 
 /* line 205, ../../../styles/sass/app.scss */
-.problem-tag-result {
+.problem-criteria-result {
   display: none;
   margin-top: 5px;
 }
 /* line 208, ../../../styles/sass/app.scss */
-.problem-tag-result .button {
+.problem-criteria-result .button {
   margin-bottom: 5px;
 }
 /* line 211, ../../../styles/sass/app.scss */
-.problem-tag-result .description {
+.problem-criteria-result .description {
   display: block;
   font-size: 0.8125em;
   line-height: 1.1;
