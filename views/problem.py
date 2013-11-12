@@ -35,11 +35,21 @@ class ProblemCreateView(CreateView):
 
     @reversion.create_revision()
     def form_valid(self, form):
-        print 'kajsnad'
+        """
+        Save the object, clear the criterias and add the submited ones in
+        `request.POST`. This method will be the same for ProblemCreateView and
+        ProblemUpdateView.
+        """
+        # Save first
         self.object = form.save(commit=False)
         self.object.author = self.request.user
         self.object.save()
-        for c in self.request.POST.getlist('criteria'):
+
+        # Then fit the criterias in
+        self.object.criteria.clear()
+        regex = re.compile('^criteria_([0-9]+)$')
+        criteria = Criteria.objects.filter(id__in=[m.group(1) for m in [regex.match(p) for p in self.request.POST] if m])
+        for c in criteria:
             self.object.criteria.add(c)
         self.object.save()
         return HttpResponseRedirect(reverse('problem', kwargs={'slug':self.object.slug}))
@@ -61,7 +71,11 @@ class ProblemUpdateView(UpdateView):
 
     @reversion.create_revision()
     def form_valid(self, form):
-        print 'kanskjnasd'
+        """
+        Save the object, clear the criterias and add the submited ones in
+        `request.POST`. This method will be the same for ProblemCreateView and
+        ProblemUpdateView.
+        """
         # Save first
         self.object = form.save(commit=False)
         self.object.author = self.request.user
