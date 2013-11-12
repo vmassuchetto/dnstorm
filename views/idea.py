@@ -1,5 +1,5 @@
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import get_object_or_404
 from django.views.generic import DetailView
 from django.views.generic.edit import UpdateView
@@ -27,6 +27,9 @@ class IdeaUpdateView(UpdateView):
 
     @reversion.create_revision()
     def form_valid(self, form):
+        # Don't save if the problem is locked
+        if self.object.problem.locked:
+            raise Http404()
         self.object = form.save(commit=False)
         self.object.author = self.request.user
         self.object.save()

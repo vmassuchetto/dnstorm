@@ -26,7 +26,11 @@
 
                 <a class="large button expand secondary" data-reveal-id="login-modal">{% trans "Log in and submit your idea" %}</a>
 
-            {% else %}{% if user_ideas_left > 0 %}
+            {% else %} {% if problem.locked %}
+
+                <a class="large button expand secondary" disabled="disabled">{% trans "This problem is currently locked for new ideas" %}</a>
+
+            {% else %} {% if user_ideas_left > 0 %}
 
                 <a class="problem-idea-button problem-idea-form-button button expand"><i class="foundicon-idea"></i> {% trans "Submit your idea to this problem" %}{% if problem.max %}<br/><small>{% blocktrans count user_ideas_left as ideas %}you have {{ ideas }} idea left{% plural %}you have {{ ideas }} ideas left{% endblocktrans %}</small>{% endif %}</a>
 
@@ -34,7 +38,7 @@
 
                 <a class="problem-idea-button large button expand secondary" disabled="disabled">{% trans "You contributed with the maximum ideas allowed for this problem" %}<br/><small>{% trans "edit or delete your existing ideas if you change your mind about them" %}</small></a>
 
-            {% endif %} {% endif %}
+            {% endif %} {% endif %} {% endif %}
 
             <div class="problem-idea-form" id="problem-idea-form">
                 <h5>{% trans "Your idea" %}</h5>
