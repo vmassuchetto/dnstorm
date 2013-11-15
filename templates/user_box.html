@@ -1,0 +1,28 @@
+{% load i18n gravatar %}
+
+<div class="user-box alignright">
+    <div class="row collapse">
+    <div class="columns large-10">
+
+        {% if date %}<span class="contributed">{% endif %}
+        {% if date and link %}
+            <a href="{{ link }}">
+        {% endif %}
+        {% if date %}
+            {{ date|date:"d b Y" }} {% trans "at" %} {{ problem.modified|date:"H:i" }}
+        {% endif %}
+        {% if date and link %}
+            </a>
+        {% endif %}
+        {% if date %}</span><br/>{% endif %}
+
+        <a class="username" href="{% url "user" user.username %}">{{ user.username }}</a>
+
+    </div>
+
+    <div class="columns large-2">
+        <a class="avatar"><img src="{% gravatar_for_user user 32 %}" /></a>
+    </div>
+    </div>
+
+</div>

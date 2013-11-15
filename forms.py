@@ -5,7 +5,7 @@ from django.utils.translation import ugettext as _
 
 from settings import LANGUAGES
 
-from dnstorm.models import Problem, Idea, Comment, Criteria
+from dnstorm.models import Problem, Idea, Comment, Criteria, Message
 from crispy_forms.helper import FormHelper
 from crispy_forms_foundation.layout import Fieldset, Field, \
     Row, HTML, ButtonHolder, Submit, Layout, Column
@@ -156,9 +156,30 @@ class CommentForm(forms.ModelForm):
         super(CommentForm, self).__init__(*args, **kwargs)
         self.fields['content'].label = ''
 
-class TableTitleForm(forms.Form):
+class MessageForm(forms.ModelForm):
+    subject = forms.CharField(label=_('Subject'), widget=forms.TextInput)
+
+    class Meta:
+        model = Message
+        exclude = ['problem', 'sender']
+
+    def __init__(self, *args, **kwargs):
+        self.helper = FormHelper()
+        self.helper.form_action = '.'
+        self.helper.layout = Layout(
+            Fieldset(_('Send message'),
+                'subject',
+                'content',
+                ButtonHolder(Submit('submit', _('Send message')), css_class='alignright'),
+            )
+        )
+        super(MessageForm, self).__init__(*args, **kwargs)
+        self.fields['subject'].help_text = _('The subject of the mail message to be sent.')
+        self.fields['content'].help_text = _('This message will be sent in plain text to everyone envolved with this problem (managers, invited users, idea contributors and commenters).')
+
+class AlternativeForm(forms.Form):
     problem = forms.IntegerField()
-    title = forms.CharField(label=_('Title'))
+    name = forms.CharField(label=_('Title'))
     description = forms.CharField(label=_('Description'), widget=forms.Textarea)
     mode = forms.CharField()
     object = forms.CharField()
@@ -167,7 +188,7 @@ class TableTitleForm(forms.Form):
         self.helper = FormHelper()
         self.helper.form_action = '.'
         self.helper.layout = Layout(
-            'title',
+            'name',
             'description',
             Field('mode', type='hidden'),
             Field('object', type='hidden'),
@@ -176,4 +197,4 @@ class TableTitleForm(forms.Form):
                 Submit('submit', _('Save')),
             ),
         )
-        super(TableTitleForm, self).__init__(*args, **kwargs)
+        super(AlternativeForm, self).__init__(*args, **kwargs)

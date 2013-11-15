@@ -15,7 +15,7 @@ from django.utils.html import strip_tags
 
 import reversion
 
-from dnstorm.models import Problem, Idea, Criteria, Vote, Comment
+from dnstorm.models import Problem, Idea, Criteria, Vote, Comment, Message
 from dnstorm.forms import ProblemForm, IdeaForm, CommentForm, CriteriaForm
 
 class ProblemCreateView(CreateView):
@@ -23,15 +23,15 @@ class ProblemCreateView(CreateView):
     form_class = ProblemForm
     model = Problem
 
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(ProblemCreateView, self).dispatch(*args, **kwargs)
+
     def get_context_data(self, *args, **kwargs):
         context = super(ProblemCreateView, self).get_context_data(**kwargs)
         context['title'] = _('Create new problem')
         context['criteria_form'] = CriteriaForm()
         return context
-
-    @method_decorator(login_required)
-    def dispatch(self, *args, **kwargs):
-        return super(ProblemCreateView, self).dispatch(*args, **kwargs)
 
     @reversion.create_revision()
     def form_valid(self, form):
@@ -59,15 +59,15 @@ class ProblemUpdateView(UpdateView):
     form_class = ProblemForm
     model = Problem
 
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(ProblemUpdateView, self).dispatch(*args, **kwargs)
+
     def get_context_data(self, *args, **kwargs):
         context = super(ProblemUpdateView, self).get_context_data(**kwargs)
         context['title'] = _('Edit problem')
         context['criteria_form'] = CriteriaForm()
         return context
-
-    @method_decorator(login_required)
-    def dispatch(self, *args, **kwargs):
-        return super(ProblemUpdateView, self).dispatch(*args, **kwargs)
 
     @reversion.create_revision()
     def form_valid(self, form):
@@ -120,16 +120,14 @@ class ProblemView(FormView):
     form_class = IdeaForm
 
     def dispatch(self, request, *args, **kwargs):
-        try:
-            self.problem = Problem.objects.get(slug=self.kwargs['slug'])
-        except Problem.DoesNotExist:
-            raise Http404()
+        self.problem = get_object_or_404(Problem, slug=self.kwargs['slug'])
         return super(ProblemView, self).dispatch(request, *args, **kwargs)
 
     def get_context_data(self, *args, **kwargs):
         context = super(ProblemView, self).get_context_data(**kwargs)
         context['title'] = self.problem.title
         context['problem'] = self.problem
+        context['bulletin'] = Message.objects.filter(problem=self.problem).order_by('-modified')[:4]
         context['ideas'] = Idea.objects.filter(problem=self.problem)
         if not self.request.user.is_authenticated():
             return context

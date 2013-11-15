@@ -1,5 +1,5 @@
 from django.conf.urls import patterns, include
-from dnstorm.views import base, ajax, problem, criteria, idea, table
+from dnstorm.views import base, ajax, problem, criteria, message, idea, table
 
 js_info_dict = {
     'packages': ('dnstorm',),
@@ -17,9 +17,12 @@ urlpatterns = patterns('',
     (r'^p/(?P<pk>[^/]+)/$', problem.ProblemShortView.as_view(), {}, 'problem_short'),
     (r'^problem/edit/(?P<pk>[^/]+)/$', problem.ProblemUpdateView.as_view(), {}, 'problem_edit'),
     (r'^problem/revisions/(?P<pk>[^/]+)/$', problem.ProblemRevisionView.as_view(), {}, 'problem_revision'),
+    (r'^message/new/(?P<problem_id>[^/]+)/$', message.MessageCreateView.as_view(), {}, 'message_new'),
+    (r'^message/(?P<pk>[^/]+)/$', message.MessageView.as_view(), {}, 'message'),
+    (r'^message/problem/(?P<problem_id>[^/]+)/$', message.MessageProblemListView.as_view(), {}, 'message_problem'),
     (r'^idea/edit/(?P<pk>[^/]+)/$', idea.IdeaUpdateView.as_view(), {}, 'idea_edit'),
     (r'^idea/revisions/(?P<pk>[^/]+)/$', idea.IdeaRevisionView.as_view(), {}, 'idea_revision'),
     (r'^criteria/$', criteria.CriteriaView.as_view(), {}, 'criteria'),
-    (r'^table/(?P<problem>[^/]+)/$', table.TableView.as_view(), {}, 'table'),
+    (r'^table/(?P<problem_id>[^/]+)/$', table.TableView.as_view(), {}, 'table'),
     (r'^users/(?P<username>[^/]+)/$', base.UserView.as_view(), {}, 'user'),
 )

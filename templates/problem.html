@@ -16,7 +16,15 @@
     <div class="row">
     <div class="columns large-9 problem-detail">
 
-        {% include "problem_content.html" %}
+        <div class="description">
+            {{ problem.description|safe }}
+        </div>
+
+        <div class="row">
+            <div class="columns large-5 large-offset-7">
+                {% include "user_box.html" with user=problem.author date=problem.modified link=problem.get_absolute_url %}
+            </div>
+        </div>
 
         <hr/>
 

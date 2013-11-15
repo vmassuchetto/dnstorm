@@ -73,6 +73,16 @@ class Problem(models.Model):
     def idea_count(self):
         return Idea.objects.filter(problem=self).count()
 
+    def get_message_recipients(self):
+        recipients = [self.author]
+        recipients = recipients + [user for user in self.contributor.all()]
+        recipients = recipients + [user for user in self.manager.all()]
+        for idea in Idea.objects.filter(problem=self):
+            recipients.append(idea.author)
+            for comment in Comment.objects.filter(idea=idea):
+                recipients.append(comment.author)
+        return sorted(set(recipients))
+
 reversion.register(Problem)
 
 class Idea(models.Model):
@@ -86,6 +96,9 @@ class Idea(models.Model):
 
     class Meta:
         db_table = settings.DNSTORM['table_prefix'] + '_idea'
+
+    def get_absolute_url(self, *args, **kwargs):
+        return '%s#idea-%d' % (reverse('problem', args=[self.problem.slug]), self.id)
 
     def revision_count(self):
         return reversion.get_for_object(self).count()
@@ -112,6 +125,8 @@ reversion.register(Comment)
 
 class Message(models.Model):
     problem = models.ForeignKey(Problem)
+    sender = models.ForeignKey(User)
+    subject = models.TextField(verbose_name=_('Subject'))
     content = models.TextField(verbose_name=_('Content'))
     modified = models.DateTimeField(auto_now=True, editable=False)
 
@@ -120,6 +135,9 @@ class Message(models.Model):
 
     class Meta:
         db_table = settings.DNSTORM['table_prefix'] + '_message'
+
+    def get_absolute_url(self, *args, **kwargs):
+        return reverse('message', args=[self.id])
 
 reversion.register(Message)
 
@@ -139,9 +157,11 @@ class Vote(models.Model):
 
 class Alternative(models.Model):
     problem = models.ForeignKey(Problem)
-    title = models.TextField(verbose_name=_('Label'))
+    name = models.TextField(verbose_name=_('Name'))
     description = models.TextField(verbose_name=_('Description'))
     order = models.IntegerField()
+    created = models.DateTimeField(auto_now=True, editable=False)
+    updated = models.DateTimeField(editable=False)
 
     def __unicode__(self):
         return '%s (Problem: %s)' % (self.title, self.problem.title)
@@ -156,12 +176,21 @@ class Alternative(models.Model):
             try:
                 items.append({
                     'criteria': criteria,
-                    'object': AlternativeItem.objects.get(criteria=criteria, alternative=self) })
+                    'object': AlternativeItem.objects.get(criteria=criteria, alternative=self)
+                })
             except:
                 items.append({
                     'criteria': criteria,
                     'object': False })
         return items
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.created = datetime.today()
+        self.updated = datetime.today()
+        if not self.order:
+            self.order = 0
+        super(Alternative, self).save(*args, **kwargs)
 
 
 class AlternativeItem(models.Model):

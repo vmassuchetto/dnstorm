@@ -353,14 +353,13 @@ a.problem-action {
             font-weight: bold;
         }
         .title-admin {
-            padding-bottom: 30px;
+            padding-right: 20px;
             position: relative;
         }
         .table-actions {
             position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
+            top: 1px;
+            right: 0;
         }
         tr.alternative td {
             text-align: center;
@@ -368,7 +367,7 @@ a.problem-action {
     }
 }
 
-#table-title-modal {
+#alternative-add-modal {
     .buttonHolder {
         padding: 0;
         margin: 0;

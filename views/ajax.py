@@ -131,7 +131,7 @@ class AjaxView(View):
             result = 0
         return HttpResponse(result)
 
-    def table_new_criteria(self):
+    '''def table_new_criteria(self):
         p = Problem.objects.get(pk=self.request.POST['problem'])
         n = Criteria.objects.filter(problem=self.request.POST['problem']).count()
         criteria = Criteria(
@@ -145,20 +145,20 @@ class AjaxView(View):
             'title': criteria.title,
             'description': criteria.description
         }
-        return HttpResponse(json.dumps(output), content_type="application/json")
+        return HttpResponse(json.dumps(output), content_type="application/json")'''
 
     def table_new_alternative(self):
         p = Problem.objects.get(pk=self.request.POST['problem'])
         n = Alternative.objects.filter(problem=self.request.POST['problem']).count()
         alternative = Alternative(
             problem=p,
-            title=self.request.POST['title'],
+            name=self.request.POST['name'],
             description=self.request.POST['description'],
             order = n)
         alternative.save()
         output = {
             'id': alternative.id,
-            'title': alternative.title,
+            'name': alternative.name,
             'description': alternative.description
         }
         return HttpResponse(json.dumps(output), content_type="application/json")

@@ -329,7 +329,7 @@ $('.voting a').click(function() {
 // Table section
 
 var table = $('.problem-table');
-var table_title_modal = $('#table-title-modal');
+var alternative_add_modal = $('#alternative-add-modal');
 
 // Table overflow adjust
 
@@ -344,27 +344,27 @@ adjust_table_overflow();
 
 // New criteria
 
-$('.add-criteria').click(function(){
-    table_title_modal.find('input#id_title').val('');
-    table_title_modal.find('textarea#id_description').val('');
-    table_title_modal.find('input#id_mode').val('criteria');
-    table_title_modal.find('input#id_object').val('new');
-    table_title_modal.foundation('reveal', 'open');
-});
+/*$('.add-criteria').click(function(){
+    alternative_modal.find('input#id_title').val('');
+    alternative_modal.find('textarea#id_description').val('');
+    alternative_modal.find('input#id_mode').val('criteria');
+    alternative_modal.find('input#id_object').val('new');
+    alternative_modal.foundation('reveal', 'open');
+});*/
 
 // New alternative
 
 $('.add-alternative').click(function(){
-    table_title_modal.find('input#id_title').val('');
-    table_title_modal.find('textarea#id_description').val('');
-    table_title_modal.find('input#id_mode').val('alternative');
-    table_title_modal.find('input#id_object').val('new');
-    table_title_modal.foundation('reveal', 'open');
+    alternative_add_modal.find('input#id_title').val('');
+    alternative_add_modal.find('textarea#id_description').val('');
+    alternative_add_modal.find('input#id_mode').val('alternative');
+    alternative_add_modal.find('input#id_object').val('new');
+    alternative_add_modal.foundation('reveal', 'open');
 });
 
 // Table title modal submit
 
-$('#table-title-modal form').submit(function(e){
+$('#alternative-add-modal form').submit(function(e){
     e.preventDefault();
     var form = $(this);
 
@@ -384,7 +384,7 @@ $('#table-title-modal form').submit(function(e){
                     table.find('thead tr').append('<th></th>');
                 new_criteria = '<th class="criteria" id="criteria-' + criteria.id + '" data-criteria="' + criteria.id + '">'
                     + criteria.title
-                    + '&nbsp;<a class="foundicon-edit edit-table-title" data-reveal-id="edit-title-modal"></a>'
+                    + '&nbsp;<a class="foundicon-edit" data-reveal-id="edit-title-modal"></a>'
                     + '&nbsp;<a class="foundicon-remove" data-reveal-id="remove-title-modal"></a>'
                     + '</th>';
                 table.find('thead tr').append(new_criteria);
@@ -409,9 +409,9 @@ $('#table-title-modal form').submit(function(e){
                     return;
                 new_alternative = '<tr class="alternative" id="alternative-' + alternative.id + '" data-alternative="' + alternative.id + '">'
                     + '<td class="vertical-title">'
-                    + alternative.title
-                    + '&nbsp;<a class="foundicon-edit edit-table-title" data-reveal-id="edit-title-modal"></a>'
-                    + '&nbsp;<a class="foundicon-remove" data-reveal-id="remove-title-modal"></a>'
+                    + alternative.name
+                    + '&nbsp;<a class="foundicon-edit edit-table-title" data-reveal-id="alternative-edit-modal"></a>'
+                    + '&nbsp;<a class="foundicon-remove" data-reveal-id="alternative-remove-modal"></a>'
                     + '</td>';
                 n_criteria = table.find('th.criteria').length;
                 for (i = 0; i < n_criteria; i++) {
@@ -420,7 +420,7 @@ $('#table-title-modal form').submit(function(e){
                 new_alternative += '</tr>';
                 table.find('tbody').append(new_alternative);
                 adjust_table_overflow();
-                table_title_modal.foundation('reveal', 'close');
+                alternative_add_modal.foundation('reveal', 'close');
                 table.find('#alternative-' + alternative.id).highlight();
             }
         });

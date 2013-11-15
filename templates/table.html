@@ -4,12 +4,12 @@
 {% block "bodyclass" %}table{% endblock %}
 
 {% block "modals" %}
-    <div id="table-title-modal" class="reveal-modal tiny">
+    <div id="alternative-add-modal" class="reveal-modal tiny">
         <a class="close-reveal-modal">&#215;</a>
-        {% crispy table_title_form %}
+        {% crispy alternative_form %}
     </div>
 
-    <div id="table-title-remove-modal" class="reveal-modal tiny">
+    <div id="alternative-remove-modal" class="reveal-modal tiny">
         <div class="row">
         <div class="columns large-12">
             <p>{% trans "Remove this item?" %}</p>
@@ -25,7 +25,7 @@
         </div>
     </div>
 
-    <div id="table-idea-modal" class="reveal-modal large">
+    <div id="select-idea-modal" class="reveal-modal large">
         <a class="close-reveal-modal">&#215;</a>
         <h4>{% trans "Select an idea" %}</h4>
         <hr/>
@@ -44,7 +44,6 @@
         <h4><a href="{% url "problem" problem.slug %}">{{ problem.title }}</a></h4>
     </div>
     <div class="columns large-4 alignright">
-        <a class="button secondary small add-criteria">{% trans "Add criteria" %}</a>
         <a class="button secondary small add-alternative">{% trans "Add alternative" %}</a>
     </div>
     </div>
@@ -59,11 +58,7 @@
                 {% for criteria in criterias %}
                     <th class="criteria" data-criteria="{{ criteria.id }}">
                         <div class="title-inner title-admin">
-                            {{ criteria.title }}
-                            <div class="table-actions">
-                                <a class="foundicon-edit edit-table-title" data-reveal-id="edit-title-modal"></a>
-                                &nbsp;<a class="foundicon-remove" data-reveal-id="table-title-remove-modal"></a>
-                            </div>
+                            {{ criteria.name }}
                         </div>
                     </th>
                 {% endfor %}
@@ -75,10 +70,9 @@
                 <tr class="alternative" data-alternative="{{ alternative.id }}">
                     <td class="vertical-title">
                         <div class="title-inner title-admin">
-                            {{ alternative.title }}
+                            {{ alternative.name }}
                             <div class="table-actions">
-                                <a class="foundicon-edit edit-table-title" data-reveal-id="edit-title-modal"></a>
-                                &nbsp;<a class="foundicon-remove" data-reveal-id="table-title-remove-modal"></a>
+                                <a class="foundicon-remove" data-reveal-id="alternative-remove-modal"></a>
                             </div>
                         </div>
                     </td>

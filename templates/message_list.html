@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block "bodyclass" %}message-problem-list{% endblock %}
+
+{% block "content" %}
+
+    <div class="row message-problem-list-title">
+    <div class="columns content large-12">
+        <h4>{% trans "Bulletin for problem" %} <a href="{% url "problem" problem.slug %}">#{{ problem.id }}</a></h4>
+    </div>
+    </div>
+
+    <div class="row">
+    <div class="columns large-9">
+
+        <table width="100%">
+            <thead>
+            <tr>
+                <th>{% trans "Sender" %}</th>
+                <th>{% trans "Subject" %}</th>
+                <th>{% trans "Date" %}</th>
+            </tr>
+            </thead>
+
+        {% for b in bulletin %}
+            <tr>
+                <td><a href="{% url "user" b.sender.username %}">{{ b.sender }}</a></td>
+                <td><a href="{% url "message" b.id %}">{{ b.subject }}</a></td>
+                <td>{{ b.modified }}</td>
+            </tr>
+        {% endfor %}
+
+        </table>
+
+    </div>
+
+    <div class="columns sidebar large-3">
+        {% include "problem_sidebar.html" %}
+    </div>
+
+    </div>
+
+
+{% endblock %}

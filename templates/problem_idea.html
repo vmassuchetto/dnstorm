@@ -43,24 +43,17 @@
             </div>
 
             <div class="row{% if not ideas_modal %} collapse{% endif %}">
+
                 <div class="columns large-7">
-                    {% if idea.comment_form %}<a class="problem-action{% if request.user.is_authenticated %} show-on-click{% endif %}" {% if request.user.is_authenticated %}data-show-on-click="comment-form-{{ idea.id }}"{% else %}data-reveal-id="login-modal"{% endif %} href="javascript:void(0);" >{% trans "Comment" context "verb" %}</a>{% endif %}
-                    {% if idea.author == request.user %}<a class="problem-action problem-idea-edit" href="{% url "idea_edit" idea.id %}">{% trans "Edit" %}</a>{% endif %}
-                    {% if idea.revision_count > 1 %}<a class="problem-action problem-idea-revision" href="{% url "idea_revision" idea.id %}">{{ idea.revision_count }} {% trans "revisions" %}</a>{% endif %}
+                    {% if idea_actions %}
+                        {% if idea.comment_form %}<a class="problem-action{% if request.user.is_authenticated %} show-on-click{% endif %}" {% if request.user.is_authenticated %}data-show-on-click="comment-form-{{ idea.id }}"{% else %}data-reveal-id="login-modal"{% endif %} href="javascript:void(0);" >{% trans "Comment" context "verb" %}</a>{% endif %}
+                        {% if idea.author == request.user %}<a class="problem-action problem-idea-edit" href="{% url "idea_edit" idea.id %}">{% trans "Edit" %}</a>{% endif %}
+                        {% if idea.revision_count > 1 %}<a class="problem-action problem-idea-revision" href="{% url "idea_revision" idea.id %}">{{ idea.revision_count }} {% trans "revisions" %}</a>{% endif %}
+                    {% endif %}
                 </div>
 
                 <div class="columns large-5">
-                    <div class="user-box alignright">
-                        <div class="row collapse">
-                        <div class="columns large-10">
-                            <a class="contributed" href="{{ request.get_full_path }}#idea-{{ idea.id }}">{% trans "contributed" %} {{ idea.modified|date:"d b Y" }} {% trans "at" %} {{ idea.modified|date:"H:i" }}</a><br/>
-                            <a class="username" href="{% url "user" idea.author %}">{{ idea.author.username }}</a>
-                        </div>
-                        <div class="columns large-2">
-                            <a class="avatar"><img src="{% gravatar_for_user idea.author 32 %}" /></a>
-                        </div>
-                        </div>
-                    </div>
+                    {% include "user_box.html" with user=idea.author date=idea.modified link=idea.get_absolute_url %}
                 </div>
             </div>
 

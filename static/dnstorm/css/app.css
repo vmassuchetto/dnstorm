@@ -8270,23 +8270,22 @@ a.problem-action:hover {
 }
 /* line 355, ../../../styles/sass/app.scss */
 .problem-table-wrap .problem-table .title-admin {
-  padding-bottom: 30px;
+  padding-right: 20px;
   position: relative;
 }
 /* line 359, ../../../styles/sass/app.scss */
 .problem-table-wrap .problem-table .table-actions {
   position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
+  top: 1px;
+  right: 0;
 }
-/* line 365, ../../../styles/sass/app.scss */
+/* line 364, ../../../styles/sass/app.scss */
 .problem-table-wrap .problem-table tr.alternative td {
   text-align: center;
 }
 
-/* line 372, ../../../styles/sass/app.scss */
-#table-title-modal .buttonHolder {
+/* line 371, ../../../styles/sass/app.scss */
+#alternative-add-modal .buttonHolder {
   padding: 0;
   margin: 0;
   border: 0;
