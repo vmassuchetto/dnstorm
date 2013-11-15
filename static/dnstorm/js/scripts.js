@@ -368,36 +368,9 @@ $('#alternative-add-modal form').submit(function(e){
     e.preventDefault();
     var form = $(this);
 
-    // New criteria
-
-    if ('new' == form.find('input[name="object"]').val()
-        && 'criteria' == form.find('input[name="mode"]').val()) {
-        $.ajax({
-            url: '/ajax/',
-            type: 'POST',
-            data: form.serialize(),
-            complete: function(xhr, data) {
-                criteria = $.parseJSON(xhr.responseText);
-                if (isNaN(criteria.id))
-                    return;
-                if (table.find('thead th').length <= 0)
-                    table.find('thead tr').append('<th></th>');
-                new_criteria = '<th class="criteria" id="criteria-' + criteria.id + '" data-criteria="' + criteria.id + '">'
-                    + criteria.title
-                    + '&nbsp;<a class="foundicon-edit" data-reveal-id="edit-title-modal"></a>'
-                    + '&nbsp;<a class="foundicon-remove" data-reveal-id="remove-title-modal"></a>'
-                    + '</th>';
-                table.find('thead tr').append(new_criteria);
-                table.find('tbody tr.alternative').append('<td><a class="button expand secondary select-idea">' + gettext('Select idea') + '</a></td>');
-                adjust_table_overflow();
-                table_title_modal.foundation('reveal', 'close');
-                table.find('#criteria-' + criteria.id).highlight();
-            }
-        });
-
     // New alternative
 
-    } else if ('new' == form.find('input[name="object"]').val()
+    if ('new' == form.find('input[name="object"]').val()
         && 'alternative' == form.find('input[name="mode"]').val()) {
         $.ajax({
             url: '/ajax/',
@@ -409,7 +382,7 @@ $('#alternative-add-modal form').submit(function(e){
                     return;
                 new_alternative = '<tr class="alternative" id="alternative-' + alternative.id + '" data-alternative="' + alternative.id + '">'
                     + '<td class="vertical-title">'
-                    + alternative.name
+                    + '<span data-tooltip title="' + alternative.description + '">' + alternative.title + '</span>'
                     + '&nbsp;<a class="foundicon-edit edit-table-title" data-reveal-id="alternative-edit-modal"></a>'
                     + '&nbsp;<a class="foundicon-remove" data-reveal-id="alternative-remove-modal"></a>'
                     + '</td>';
