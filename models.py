@@ -86,6 +86,7 @@ class Problem(models.Model):
 reversion.register(Problem)
 
 class Idea(models.Model):
+    title = models.CharField(verbose_name=_('Title'), max_length=90)
     content = RichTextField(config_name='idea_content')
     problem = models.ForeignKey(Problem, editable=False)
     author = models.ForeignKey(User, editable=False)

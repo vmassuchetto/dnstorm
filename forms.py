@@ -131,7 +131,8 @@ class IdeaForm(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.form_action = '.'
         self.helper.layout = Layout(
-            Row(Column('content', css_class='large-12')),
+            'title',
+            'content',
             Row(Column(Submit('submit', _('Submit')), css_class='large-2 large-offset-10')),
         )
         super(IdeaForm, self).__init__(*args, **kwargs)
