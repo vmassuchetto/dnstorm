@@ -1,4 +1,5 @@
 import re
+import time
 from datetime import datetime
 from lib.diff import inline_diff
 
@@ -12,11 +13,71 @@ from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _
 from django.utils.decorators import method_decorator
 from django.utils.html import strip_tags
+from django.template.loader import render_to_string
+from django.db.models import Q
 
+import settings
+
+from django_options import get_option
 import reversion
 
 from dnstorm.models import Problem, Idea, Criteria, Vote, Comment, Message
 from dnstorm.forms import ProblemForm, IdeaForm, CommentForm, CriteriaForm
+
+def problem_form_valid(obj, form):
+    """
+    Save the object, clear the criterias and add the submited ones in
+    `request.POST`. This method will be the same for ProblemCreateView and
+    ProblemUpdateView.
+    """
+    # Save first
+    obj.object = form.save(commit=False)
+    obj.object.author = obj.request.user
+    obj.object.save()
+
+    # Then fit the criterias in
+    obj.object.criteria.clear()
+    regex = re.compile('^criteria_([0-9]+)$')
+    criteria = Criteria.objects.filter(id__in=[m.group(1) for m in [regex.match(p) for p in obj.request.POST] if m])
+    for c in criteria:
+        obj.object.criteria.add(c)
+    obj.object.save()
+
+    # Mailing options
+    if form.cleaned_data['notice'] or form.cleaned_data['invite']:
+        site_name = get_option('site_name') if get_option('site_name') else settings.DNSTORM['site_name']
+
+    # Notice mailing
+    if form.cleaned_data['notice']:
+        recipients = [u.email for u in obj.object.get_message_recipients()]
+        subject = _('%(site_name)s: Problem updated' % { 'site_name': site_name})
+        context = {
+            'site_name': site_name,
+            'problem_url': reverse('problem', kwargs={'slug': obj.object.slug}),
+            'problem_revision_url': reverse('problem_revision', kwargs={'pk': obj.object.id})
+        }
+        content = render_to_string('mail/notice.txt', context)
+        if settings.DEBUG:
+            print '[%s] "MAIL would be sent to %s"' % (time.strftime('%d/%b/%Y %H:%M:%S'), ', '.join(recipients))
+        else:
+            send_mail(subject, content, settings.EMAIL_HOST_USER, recipients)
+
+    # Invite mailing
+    if form.cleaned_data['invite']:
+        recipients = form.cleaned_data['invite']
+        subject = _('%(site_name)s: Invitation' % { 'site_name': site_name})
+        context = {
+            'user': obj.request.user.get_full_name(),
+            'site_name': site_name,
+            'problem_url': reverse('problem', kwargs={'slug': obj.object.slug})
+        }
+        content = render_to_string('mail/invite.txt', context)
+        if settings.DEBUG:
+            print '[%s] "MAIL would be sent to %s"' % (time.strftime('%d/%b/%Y %H:%M:%S'), recipients)
+        else:
+            send_mail(subject, content, settings.EMAIL_HOST_USER, recipients)
+
+    return HttpResponseRedirect(reverse('problem', kwargs={'slug':obj.object.slug}))
 
 class ProblemCreateView(CreateView):
     template_name = 'problem_edit.html'
@@ -35,24 +96,7 @@ class ProblemCreateView(CreateView):
 
     @reversion.create_revision()
     def form_valid(self, form):
-        """
-        Save the object, clear the criterias and add the submited ones in
-        `request.POST`. This method will be the same for ProblemCreateView and
-        ProblemUpdateView.
-        """
-        # Save first
-        self.object = form.save(commit=False)
-        self.object.author = self.request.user
-        self.object.save()
-
-        # Then fit the criterias in
-        self.object.criteria.clear()
-        regex = re.compile('^criteria_([0-9]+)$')
-        criteria = Criteria.objects.filter(id__in=[m.group(1) for m in [regex.match(p) for p in self.request.POST] if m])
-        for c in criteria:
-            self.object.criteria.add(c)
-        self.object.save()
-        return HttpResponseRedirect(reverse('problem', kwargs={'slug':self.object.slug}))
+        return problem_form_valid(self, form)
 
 class ProblemUpdateView(UpdateView):
     template_name = 'problem_edit.html'
@@ -71,24 +115,7 @@ class ProblemUpdateView(UpdateView):
 
     @reversion.create_revision()
     def form_valid(self, form):
-        """
-        Save the object, clear the criterias and add the submited ones in
-        `request.POST`. This method will be the same for ProblemCreateView and
-        ProblemUpdateView.
-        """
-        # Save first
-        self.object = form.save(commit=False)
-        self.object.author = self.request.user
-        self.object.save()
-
-        # Then fit the criterias in
-        self.object.criteria.clear()
-        regex = re.compile('^criteria_([0-9]+)$')
-        criteria = Criteria.objects.filter(id__in=[m.group(1) for m in [regex.match(p) for p in self.request.POST] if m])
-        for c in criteria:
-            self.object.criteria.add(c)
-        self.object.save()
-        return HttpResponseRedirect(reverse('problem', kwargs={'slug':self.object.slug}))
+        return problem_form_valid(self, form)
 
 class ProblemRevisionView(DetailView):
     template_name = 'problem_revision.html'

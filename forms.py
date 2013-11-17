@@ -53,6 +53,8 @@ class AccountCreateForm(forms.Form):
 
 class ProblemForm(forms.ModelForm):
     criteria = forms.Field(_('Criterias'))
+    notice = forms.BooleanField(_('Mail an update notice to participants'))
+    invite = forms.Field(_('Invite people to participate'))
 
     class Meta:
         model = Problem
@@ -85,6 +87,12 @@ class ProblemForm(forms.ModelForm):
                     Column('vote_author', css_class='large-4'),
                 ),
             ),
+            Fieldset(_('Mailing'),
+                Row(
+                    Column('notice', css_class='large-4'),
+                    Column('invite', css_class='large-8'),
+                ),
+            ),
             ButtonHolder(
                 HTML('<a id="advanced" class="button secondary">' + _('Advanced options') + '</a>'),
                 Submit('submit', _('Save')),
@@ -102,6 +110,14 @@ class ProblemForm(forms.ModelForm):
         for c in criteria:
             self.fields['criteria_{i}'.format(i=c.id)] = forms.CharField(widget = forms.HiddenInput(), initial=c.id, label=c.name, help_text=mark_safe(c.description), required=False)
             self.helper.layout.append((Field('criteria_{i}'.format(i=c.id), type='hidden', value=c.id)))
+
+        # Notices field
+        self.fields['notice'].required = False
+        self.fields['notice'].help_text = _('Send a mail notice to the participants of this problem about the updates.')
+
+        # Invites field
+        self.fields['invite'].required = False
+        self.fields['invite'].help_text = _('Comma-separated e-mails of users that will receive an invitation to participate in this problem.')
 
 class CriteriaForm(forms.ModelForm):
     description = forms.CharField(widget=forms.Textarea(attrs={'id': 'criteria_description'}))
