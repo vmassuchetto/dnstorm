@@ -29,6 +29,7 @@
         <a class="close-reveal-modal">&#215;</a>
         <h4>{% trans "Select ideas" %}</h4>
         <hr/>
+        <div class="problem-ideas-modal">
         {% for idea in ideas %}
             <div class="row problem-idea-modal">
                 <div class="columns large-1">
@@ -38,9 +39,10 @@
                     {% include "problem_idea.html" %}
                 </div>
             </div>
-            <hr/>
         {% endfor %}
-        <div class="row fixed-buttons">
+        </div>
+        <hr/>
+        <div class="row problem-ideas-modal-buttons">
             <div class="large-12 alignright">
                 <a class="button success problem-idea-modal-save">{% trans "Done" %}</a>
             </div>

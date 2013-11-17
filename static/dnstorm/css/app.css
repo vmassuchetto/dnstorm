@@ -8298,38 +8298,37 @@ a.problem-action:hover {
 }
 
 /* line 383, ../../../styles/sass/app.scss */
-.problem-idea-modal {
+#select-idea-modal {
+  top: 40px;
+}
+/* line 385, ../../../styles/sass/app.scss */
+#select-idea-modal .problem-ideas-modal {
+  height: 25em;
+  overflow-y: scroll;
+}
+/* line 388, ../../../styles/sass/app.scss */
+#select-idea-modal .problem-ideas-modal .problem-idea-modal {
   padding: 0.6em 0;
   transition: background-color 300ms ease-out 0s;
 }
-/* line 386, ../../../styles/sass/app.scss */
-.problem-idea-modal:hover {
+/* line 391, ../../../styles/sass/app.scss */
+#select-idea-modal .problem-ideas-modal .problem-idea-modal:hover {
   cursor: pointer;
   background-color: #dddddd;
 }
-/* line 390, ../../../styles/sass/app.scss */
-.problem-idea-modal i.idea-status {
+/* line 395, ../../../styles/sass/app.scss */
+#select-idea-modal .problem-ideas-modal .problem-idea-modal i.idea-status {
   font-size: 3em;
   color: #b7b7b7;
   display: block;
   padding-top: 0.2em;
 }
-/* line 396, ../../../styles/sass/app.scss */
-.problem-idea-modal i.idea-status.checked {
+/* line 401, ../../../styles/sass/app.scss */
+#select-idea-modal .problem-ideas-modal .problem-idea-modal i.idea-status.checked {
   color: #099c00;
 }
 
-/* line 401, ../../../styles/sass/app.scss */
-#select-idea-modal .fixed-buttons {
-  position: fixed;
-  width: 65%;
-  bottom: 0;
-  background-color: white;
-  border-top: 1px solid #dddddd;
-  padding-top: 1em;
-}
-
-/* line 411, ../../../styles/sass/app.scss */
+/* line 409, ../../../styles/sass/app.scss */
 #alternative-add-modal .buttonHolder {
   padding: 0;
   margin: 0;

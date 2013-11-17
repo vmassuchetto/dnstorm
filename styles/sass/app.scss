@@ -380,31 +380,29 @@ a.problem-action {
 
 // Idea modal
 
-.problem-idea-modal {
-    padding: 0.6em 0;
-    transition: background-color 300ms ease-out 0s;
-    &:hover {
-        cursor: pointer;
-        background-color: $light-grey;
+#select-idea-modal {
+    top: 40px;
+    .problem-ideas-modal {
+        height: 25em;
+        overflow-y: scroll;
+        .problem-idea-modal {
+            padding: 0.6em 0;
+            transition: background-color 300ms ease-out 0s;
+            &:hover {
+                cursor: pointer;
+                background-color: $light-grey;
+            }
+            i.idea-status {
+                font-size: 3em;
+                color: darken($light-grey, 15%);
+                display: block;
+                padding-top: 0.2em;
+            }
+            i.idea-status.checked {
+                color: $green;
+            }
+        }
     }
-    i.idea-status {
-        font-size: 3em;
-        color: darken($light-grey, 15%);
-        display: block;
-        padding-top: 0.2em;
-    }
-    i.idea-status.checked {
-        color: $green;
-    }
-}
-
-#select-idea-modal .fixed-buttons {
-    position: fixed;
-    width: 65%;
-    bottom: 0;
-    background-color: $white;
-    border-top: 1px solid $light-grey;
-    padding-top: 1em;
 }
 
 #alternative-add-modal {
