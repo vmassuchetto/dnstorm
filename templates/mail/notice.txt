@@ -1,0 +1,9 @@
+{% load i18n %}
+
+{% blocktrans %}The problem you were participating in {{ site_name }} was updated by the manager.
+
+Check the problem here:
+{{ problem_url }}
+
+You can also view the modification history of this problem here:
+{{ problem_revision_url }}{% endblocktrans %}
