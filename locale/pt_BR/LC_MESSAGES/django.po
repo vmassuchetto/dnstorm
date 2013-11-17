@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DNStorm\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-11-16 16:25-0200\n"
-"PO-Revision-Date: 2013-11-16 16:17-0300\n"
+"POT-Creation-Date: 2013-11-16 22:44-0200\n"
+"PO-Revision-Date: 2013-11-16 22:49-0300\n"
 "Last-Translator: Vinicius Massuchetto <vmassuchetto@gmail.com>\n"
 "Language-Team: \n"
 "Language: pt_BR\n"
@@ -34,7 +34,7 @@ msgstr "Uma plataforma para geração de ideias"
 msgid "Site"
 msgstr "Site"
 
-#: forms.py:31 forms.py:89 forms.py:120 forms.py:198
+#: forms.py:31 forms.py:98 forms.py:137 forms.py:215
 msgid "Save"
 msgstr "Salvar"
 
@@ -62,23 +62,35 @@ msgstr "Criar conta"
 msgid "Criterias"
 msgstr "Critérios"
 
-#: forms.py:65
+#: forms.py:56
+msgid "Mail an update notice to participants"
+msgstr "Enviar uma notificação de atualização para os participantes"
+
+#: forms.py:57
+msgid "Invite people to participate"
+msgstr "Convidar pessoas para participar"
+
+#: forms.py:67
 msgid "Problem description"
 msgstr "Descrição do problema"
 
-#: forms.py:70
+#: forms.py:72
 msgid "Permissions"
 msgstr "Permissões"
 
-#: forms.py:80
+#: forms.py:83
 msgid "Voting"
 msgstr "Votação"
 
-#: forms.py:88
+#: forms.py:90
+msgid "Mailing"
+msgstr "E-mails"
+
+#: forms.py:97
 msgid "Advanced options"
 msgstr "Opções avançadas"
 
-#: forms.py:96
+#: forms.py:105
 #, python-format
 msgid ""
 "Type the name of the criteria to search. Go to the <a href=\"%s\">criterias "
@@ -87,23 +99,38 @@ msgstr ""
 "Digite o nome do critério que você quer procurar. Vá para a <a href=\"%s"
 "\">página dos critérios</a> se você quiser editá-los."
 
-#: forms.py:136 forms.py:154 templates/registration/registration_form.html:13
+#: forms.py:116
+msgid ""
+"Send a mail notice to the participants of this problem about the updates."
+msgstr ""
+"Enviar um e-mail para os participantes informando-os das atualizações deste "
+"problema."
+
+#: forms.py:120
+msgid ""
+"Comma-separated e-mails of users that will receive an invitation to "
+"participate in this problem."
+msgstr ""
+"E-mails separados por vírgulas dos usuários que irão receber um convite para "
+"participar deste problema."
+
+#: forms.py:153 forms.py:171 templates/registration/registration_form.html:13
 msgid "Submit"
 msgstr "Enviar"
 
-#: forms.py:161 models.py:134 templates/message_list.html:21
+#: forms.py:178 models.py:135 templates/message_list.html:21
 msgid "Subject"
 msgstr "Assunto"
 
-#: forms.py:171 forms.py:174
+#: forms.py:188 forms.py:191
 msgid "Send message"
 msgstr "Enviar mensagem"
 
-#: forms.py:178
+#: forms.py:195
 msgid "The subject of the mail message to be sent."
 msgstr "O assunto da mensagem a ser enviada."
 
-#: forms.py:179
+#: forms.py:196
 msgid ""
 "This message will be sent in plain text to everyone envolved with this "
 "problem (managers, invited users, idea contributors and commenters)."
@@ -112,16 +139,16 @@ msgstr ""
 "com o problema (gerentes, convidados, colaboradores de ideias e "
 "comentaristas)."
 
-#: forms.py:183 models.py:42 models.py:93
+#: forms.py:200 models.py:42 models.py:94
 msgid "Title"
 msgstr "Título"
 
-#: forms.py:184 models.py:18 models.py:44 models.py:166
+#: forms.py:201 models.py:18 models.py:44 models.py:167
 #: templates/criteria.html:13
 msgid "Description"
 msgstr "Descrição"
 
-#: models.py:16 models.py:165 models.py:210 templates/criteria.html:13
+#: models.py:16 models.py:166 models.py:211 templates/criteria.html:13
 msgid "Name"
 msgstr "Nome"
 
@@ -158,59 +185,70 @@ msgid "The problem will be publicy available to anyone."
 msgstr "Este problema ficará disponível publicamente para qualquer pessoa."
 
 #: models.py:51
-msgid "Max ideas per user"
-msgstr "Máximo de ideias por usuário"
-
-#: models.py:51
-msgid "Leave 0 for unlimited ideas per user."
-msgstr "Deixe 0 para não estipular um limite"
-
-#: models.py:52
 msgid "Locked"
 msgstr "Travado"
 
+#: models.py:51
+msgid ""
+"Lock the problem so it will be kept visible but no one will be able to "
+"contribute."
+msgstr ""
+"Trava o problema e o mantém visível, mas ninguém mais poderá contribuir."
+
 #: models.py:52
-msgid "Lock the problem so no one will be able to contribute."
-msgstr "Trave o problema para que ninguém mais possa contribuir."
+msgid "Blind contributions"
+msgstr "Contribuições às cegas"
+
+#: models.py:52
+msgid "People can only see their own ideas."
+msgstr "As pessoas podem somente ver as suas próprias ideias."
 
 #: models.py:53
+msgid "Max ideas per user"
+msgstr "Máximo de ideias por usuário"
+
+#: models.py:53
+msgid "Leave 0 for unlimited ideas per user."
+msgstr "Deixe 0 para não estipular um limite"
+
+#: models.py:54
 msgid "Enable voting for ideas"
 msgstr "Habilitar as votações de ideias"
 
-#: models.py:53
+#: models.py:54
 msgid "Users will be able to vote for the ideas."
 msgstr "Usuários poderão votar nas ideias."
 
-#: models.py:54
+#: models.py:55
 msgid "Display vote counts"
 msgstr "Mostrar contador de votos"
 
-#: models.py:54
+#: models.py:55
 msgid "Users will be able to see how many votes each idea had."
 msgstr ""
 "Usuários poderão ver quantos votos positivos ou negativos cada ideia recebeu."
 
-#: models.py:55
+#: models.py:56
 msgid "Display vote authors"
 msgstr "Mostrar autores dos votos"
 
-#: models.py:55
+#: models.py:56
 msgid "Ideas voting will be completely transparent."
 msgstr "A votação de ideias será completamente transparente."
 
-#: models.py:119
+#: models.py:120
 msgid "Comment"
 msgstr "Comentário"
 
-#: models.py:135
+#: models.py:136
 msgid "Content"
 msgstr "Conteúdo"
 
-#: models.py:153
+#: models.py:154
 msgid "Upvote"
 msgstr "Aprovar"
 
-#: models.py:154
+#: models.py:155
 msgid "Downvote"
 msgstr "Reprovar"
 
@@ -238,7 +276,7 @@ msgstr "editado"
 msgid "at"
 msgstr "em"
 
-#: templates/home.html:9 views/problem.py:32
+#: templates/home.html:9 views/problem.py:93
 msgid "Create new problem"
 msgstr "Criar novo problema"
 
@@ -331,6 +369,15 @@ msgstr "edite ou delete suas ideias existentes se você mudou de ideia"
 #: templates/problem.html:52
 msgid "Your idea"
 msgstr "Sua ideia"
+
+#: templates/problem.html:57
+msgid ""
+"This problem is in blind contribution mode. That means you can't see the "
+"other users ideas until the manager turns the option off."
+msgstr ""
+"Este problema está no modo de contribuição às cegas. Isto significa que você "
+"não poderá ver as ideias dos outros usuários até que o gestor do problema "
+"desligue esta opção."
 
 #: templates/problem_idea.html:50
 msgctxt "verb"
@@ -434,6 +481,48 @@ msgstr "problemas"
 msgid "comments"
 msgstr "comentários"
 
+#: templates/mail/invite.txt:3
+#, python-format
+msgid ""
+"%(user)s is inviting you to participate in a problem discussion in "
+"%(site_name)s.\n"
+"\n"
+"Click here to signup in %(site_name)s:\n"
+"%(signup_url)s\n"
+"\n"
+"Check the problem and start contributing here:\n"
+"%(problem_url)s"
+msgstr ""
+"%(user)s está convidando você participar da discussão de um problema em "
+"%(site_name)s.\n"
+"\n"
+"Clique aqui para se cadastrar no %(site_name)s:\n"
+"%(signup_url)s\n"
+"\n"
+"Veja o problema e comece a contribuir aqui:\n"
+"%(problem_url)s"
+
+#: templates/mail/notice.txt:3
+#, python-format
+msgid ""
+"The problem you were participating in %(site_name)s was updated by the "
+"manager.\n"
+"\n"
+"Check the problem here:\n"
+"%(problem_url)s\n"
+"\n"
+"You can also view the modification history of this problem here:\n"
+"%(problem_revision_url)s"
+msgstr ""
+"O problema em que você está participando em %(site_name)s foi atualizado "
+"pelo gestor.\n"
+"\n"
+"Veja o problema aqui:\n"
+"%(problem_url)s\n"
+"\n"
+"Você pode ver também o histórico de modificações deste problema aqui:\n"
+"%(problem_revision_url)s"
+
 #: templates/registration/activate.html:5
 msgid ""
 "The activation key you tried to use is no longer valid. Try to reset your "
@@ -522,11 +611,21 @@ msgid "Options"
 msgstr "Opções"
 
 #: views/message.py:33
-#, fuzzy, python-format
+#, python-format
 msgid "Compose new message for problem <a href=\"%(url)s\">#%(id)d</a>"
-msgstr "Nova mensagem para o problema <a href=\"%(url)\">#%(id)</a>"
+msgstr "Nova mensagem para o problema <a href=\"%(url)s\">#%(id)d</a>"
+
+#: views/problem.py:53
+#, python-format
+msgid "%(site_name)s: Problem updated"
+msgstr "%(site_name)s: Problema atualizado"
 
 #: views/problem.py:68
+#, python-format
+msgid "%(site_name)s: Invitation"
+msgstr "%(site_name)s: Convite"
+
+#: views/problem.py:112
 msgid "Edit problem"
 msgstr "Editar problema"
 
