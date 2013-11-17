@@ -20,12 +20,20 @@
     text-align: right;
 }
 
+.aligncenter {
+    text-align: center;
+}
+
 .left-1em {
     padding-left: 1em !important;
 }
 
 .no-margin-bottom {
     margin-bottom: 0 !important;
+}
+
+.line-height-1 {
+    line-height: 1;
 }
 
 .rotate {
@@ -166,9 +174,11 @@ form {
         font-size: emCalc(14px);
     }
     .problem-counter {
-        text-align:center;
+        text-align: center;
         background: lighten($black, 65%);
         padding: 8px 5px;
+        border-left: 2px solid $white;
+        border-right: 2px solid $white;
         span {
             display: block;
         }
@@ -244,8 +254,9 @@ form {
 .problem-idea-button {
     margin: 0;
 }
-.problem-idea-form {
-    display: none;
+
+.problem-idea-button-panel {
+    margin: 1em 0 0 0;
 }
 
 // Idea list
@@ -276,17 +287,6 @@ form {
             background-color: $light-red;
             color: $white;
         }
-    }
-}
-
-// Idea modal
-
-.problem-idea-modal {
-    padding: 0.6em 0;
-    transition: background-color 300ms ease-out 0s;
-    &:hover {
-        cursor: pointer;
-        background-color: darken($secondary-color, 20%);
     }
 }
 
@@ -338,12 +338,22 @@ a.problem-action {
     margin-bottom: 1em;
     .problem-table {
         a.button {
+            height: 100%;
             margin-bottom: 0;
             padding-left: 1em;
             padding-right: 1em;
+            position: absolute;
+            left: 0;
+            top: 0;
         }
         input[type='text'] {
             margin-bottom: 0;
+        }
+        .cell-wrap {
+            display: block;
+            position: relative;
+            padding: 1em 4em;
+            min-height: 60px;
         }
         th.criteria {
             text-align:center;
@@ -363,8 +373,38 @@ a.problem-action {
         }
         tr.alternative td {
             text-align: center;
+            position: relative;
         }
     }
+}
+
+// Idea modal
+
+.problem-idea-modal {
+    padding: 0.6em 0;
+    transition: background-color 300ms ease-out 0s;
+    &:hover {
+        cursor: pointer;
+        background-color: $light-grey;
+    }
+    i.idea-status {
+        font-size: 3em;
+        color: darken($light-grey, 15%);
+        display: block;
+        padding-top: 0.2em;
+    }
+    i.idea-status.checked {
+        color: $green;
+    }
+}
+
+#select-idea-modal .fixed-buttons {
+    position: fixed;
+    width: 65%;
+    bottom: 0;
+    background-color: $white;
+    border-top: 1px solid $light-grey;
+    padding-top: 1em;
 }
 
 #alternative-add-modal {

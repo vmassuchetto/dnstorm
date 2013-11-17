@@ -20,13 +20,17 @@
         {% for problem in problems %}
 
             <div class="row problem-list-item">
-                <div class="columns large-1 problem-counter">
+                <div class="columns large-1 problem-counter problem-idea-counter">
                     <span class="number">{{ problem.idea_count }}</span>
                     <span class="description">{% if problem.idea_count > 1 or problem.idea_count = 0 %}{% trans "ideas" %}{% else %}{% trans "idea" %}{% endif %}</span>
                 </div>
-                <div class="columns large-11">
+                <div class="columns large-1 problem-counter problem-alternative-counter">
+                    <span class="number">{{ problem.alternative_count }}</span>
+                    <span class="description">{% if problem.alternative_count > 1 or problem.alternative_count = 0 %}{% trans "alternatives" %}{% else %}{% trans "alternative" %}{% endif %}</span>
+                </div>
+                <div class="columns large-10">
                     <h4><a href="{% url "problem" problem.slug %}">{{ problem.title }}</a></h4>
-                    <h6 class="subheader">{% trans "modified" %} {{ problem.updated|naturaltime }}</h6>
+                    <h6 class="subheader">{% trans "modified" %} {{ problem.modified|naturaltime }}</h6>
                 </div>
             </div>
 
@@ -34,14 +38,10 @@
         {% else %}
             {% if user.is_authenticated %}
                 {% url "problem_new" as url_problem_new %}
-                {% blocktrans %}
-                    No problem here. You can start by <a href="{{ url_problem_new }}">creating a new one</a>.
-                {% endblocktrans %}
+                {% blocktrans %}No problem here. You can start by <a href="{{ url_problem_new }}">creating a new one</a>.{% endblocktrans %}
             {% else %}
                 {% url "django.contrib.auth.views.login" as url_login %}
-                {% blocktrans %}
-                    <a href="{{ url_login }}">Log in</a> to view and create problems.
-                {% endblocktrans %}
+                {% blocktrans %}<a href="{{ url_login }}">Log in</a> to view and create problems.{% endblocktrans %}
             {% endif %}
         {% endif %}
     </div>

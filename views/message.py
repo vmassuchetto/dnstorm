@@ -30,7 +30,7 @@ class MessageCreateView(CreateView):
 
     def get_context_data(self, *args, **kwargs):
         context = super(MessageCreateView, self).get_context_data(*args, **kwargs)
-        context['title'] = mark_safe(_('Compose new message for problem <a href="%s">#%d</a>' % (reverse('problem', args=[self.problem.slug]), self.problem.id)))
+        context['title'] = mark_safe(_('Compose new message for problem <a href="%(url)s">#%(id)d</a>' % { 'url': reverse('problem', args=[self.problem.slug]), 'id': self.problem.id}))
         context['problem'] = self.problem
         return context
 

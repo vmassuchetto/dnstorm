@@ -1,6 +1,6 @@
 {% load problem crispy_forms_tags gravatar humanize i18n %}
 
-<div class="problem-idea{% if ideas_modal %} problem-idea-modal{% endif %}" id="idea-{{ idea.id }}" data-idea="{{ idea.id }}">
+<div class="problem-idea" id="idea-{{ idea.id }}" data-idea="{{ idea.id }}">
 
     <div class="row{% if not ideas_modal %} collapse{% endif %}">
 
@@ -38,6 +38,7 @@
 
             <div class="row{% if not ideas_modal %} collapse{% endif %}">
                 <div class="columns large-12 idea-content">
+                    <h5><a href="{{ idea.get_absolute_url }}">{{ idea.title }}</a></h5>
                     {{ idea.content|safe }}
                 </div>
             </div>

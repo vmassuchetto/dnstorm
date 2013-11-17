@@ -25,26 +25,28 @@ $(document).foundation();
 
 // Highlight
 
-$.fn.highlight = function (color) {
+$.fn.highlight = function (color, duration) {
+    if (!duration)
+        duration = 1000;
     if (color == 'red')
         color = '#FF6666';
     else
         color = '#A8FFA2';
     var e = $(this[0]);
     var original = e.css('backgroundColor');
-    return e.animate({ backgroundColor: color }, 1000, null, function(){
+    return e.animate({ backgroundColor: color }, duration, null, function(){
         e.animate({ backgroundColor:original });
     });
 };
 
 // Modal cancel button
-// When we want to use a button instead of the "X" at the top
+// When we want to use a "Cancel" button instead of the "X" at the top
 
 $('.close-reveal-modal-button').click(function(){
     $(this).parents('.reveal-modal').foundation('reveal', 'close');
 });
 
-// Criteria tag button renderer
+// Criteria tag button renderers
 
 function criteria_field(id, label, description) {
     return '<li class="problem-criteria-item">'
@@ -66,7 +68,7 @@ function criteria_add_button(button) {
 
 }
 
-// Problem criterias autocomplete
+// Problem criterias autocomplete in ProblemCreateView and ProblemUpdateView
 
 $('.problem-criteria-select .text').autocomplete({
     minLength: 2,
@@ -83,7 +85,7 @@ $('.problem-criteria-select .text').autocomplete({
                 output += criteria_field(item.id, item.label, item.description)
             }
         } else {
-            output += criteria_field(0, $('.problem-criteria-select .text').text(), 'Click above to create this criteria.');
+            output += criteria_field(0, $('.problem-criteria-select .text').text(), gettext('Click above to create this criteria.'));
         }
 
         result = $('.problem-criteria-result');
@@ -116,7 +118,7 @@ $('.problem-criteria-select .text').autocomplete({
     }
 });
 
-// Criteria modal form
+// Criteria modal form in ProblemCreateView and ProblemUpdateView
 
 $('#criteria-modal form').submit(function(e){
     e.preventDefault();
@@ -143,7 +145,7 @@ $('#criteria-modal form').submit(function(e){
     });
 });
 
-// Remove criteria and input data
+// Remove criteria and input data in ProblemCreateView and ProblemUpdateView
 
 $('.problem-criteria-select').on('click', 'a.button', function(){
     id = $(this).remove().data('id');
@@ -151,20 +153,20 @@ $('.problem-criteria-select').on('click', 'a.button', function(){
     $('.tooltip').fadeOut();
 });
 
-// Focus writable area to simulate an input box
+// Focus writable area to simulate an input box in ProblemCreateView and ProblemUpdateView
 
 $('.problem-criteria-select').click(function(){
     $(this).find('.text').focus();
 });
 
-// Show advanced options
+// Show advanced options in ProblemCreateView and ProblemUpdateView
 
 $('.problem-edit fieldset:gt(0)').hide();
 $('#advanced').click(function(){
     $('.problem-edit fieldset:gt(0)').each(function(){ $(this).fadeIn(300); });
 });
 
-// Revision rendering
+// Revision rendering in ProblemRevisionView
 
 $('.revisions').ready(function(){
     var raw = $('.raw');
@@ -206,6 +208,13 @@ $('.problem-idea-form-button').click(function(){
     CKEDITOR.instances.id_content.resize('100', '340');
     $('.problem-idea-form').delay(300).fadeIn(300);
 });
+
+// When accessing the URL directly to an idea in ProblemView
+
+if (window.location.hash.match(/#idea-[0-9]+/)) {
+    var target = $(window.location.hash);
+    target.highlight('green', 2000);
+}
 
 // Comment form submit
 
@@ -326,12 +335,13 @@ $('.voting a').click(function() {
 });
 
 
-// Table section
+// TableView section
 
 var table = $('.problem-table');
 var alternative_add_modal = $('#alternative-add-modal');
+var alternative_remove_modal = $('#alternative-remove-modal');
 
-// Table overflow adjust
+// Table overflow adjust in TableView
 
 function adjust_table_overflow() {
     if ($('.problem-table-wrap').lenght <= 0 || !table)
@@ -342,17 +352,34 @@ function adjust_table_overflow() {
 
 adjust_table_overflow();
 
-// New criteria
+table.find('.cell-wrap').hover(function(){
+    if ($(this).find('a,p').length > 1)
+        $(this).find('a.button').fadeIn();
+}, function(){
+    if ($(this).find('a,p').length > 1)
+        $(this).find('a.button').stop().fadeOut();
+});
 
-/*$('.add-criteria').click(function(){
-    alternative_modal.find('input#id_title').val('');
-    alternative_modal.find('textarea#id_description').val('');
-    alternative_modal.find('input#id_mode').val('criteria');
-    alternative_modal.find('input#id_object').val('new');
-    alternative_modal.foundation('reveal', 'open');
-});*/
+// New column when there's no criterias in TableView
 
-// New alternative
+$('.add-column').click(function(){
+    var table = $('.problem-table');
+    var i = $('.problem-table tbody tr:first-child td').length
+    var x = 0;
+    table.find('tbody tr').each(function(){
+        if ($(this).find('td').length > x)
+            x = $(this).find('td').length;
+    });
+    table.find('tbody tr').each(function(){
+        y = x - $(this).find('td').length;
+        for (yy = 0; yy <= y; yy++) {
+            $(this).append('<td><div class="cell-wrap"><a class="button secondary select-idea expand" data-alternative="' + $(this).data('alternative') + '" data-criteria="0">' + gettext('Select idea') + '</a></div></td>');
+        }
+        $(this).find('td:last-child').highlight();
+    });
+});
+
+// New alternative in TableView
 
 $('.add-alternative').click(function(){
     alternative_add_modal.find('input#id_title').val('');
@@ -362,7 +389,32 @@ $('.add-alternative').click(function(){
     alternative_add_modal.foundation('reveal', 'open');
 });
 
-// Table title modal submit
+// Remove alternative in TableView
+
+$('.remove-alternative').click(function(){
+    alternative_remove_modal.data('alternative', $(this).data('alternative'));
+    alternative_remove_modal.foundation('reveal', 'open');
+});
+
+$('.remove-alternative-confirm').click(function(){
+    $.ajax({
+        url: '/ajax/',
+        type: 'POST',
+        data: {
+            'mode': 'remove-alternative',
+            'object': alternative_remove_modal.data('alternative')
+        },
+        beforeSend: function(xhr, settings) {
+            xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+        },
+        complete: function(xhr, data) {
+            alternative_remove_modal.foundation('reveal', 'close');
+            $('#alternative-' + alternative_remove_modal.data('alternative')).highlight('red').delay(1000).fadeOut(500).delay(500).remove();
+        }
+    });
+});
+
+// Submit new alternative in TableView
 
 $('#alternative-add-modal form').submit(function(e){
     e.preventDefault();
@@ -382,7 +434,7 @@ $('#alternative-add-modal form').submit(function(e){
                     return;
                 new_alternative = '<tr class="alternative" id="alternative-' + alternative.id + '" data-alternative="' + alternative.id + '">'
                     + '<td class="vertical-title">'
-                    + '<span data-tooltip title="' + alternative.description + '">' + alternative.title + '</span>'
+                    + '<span data-tooltip title="' + alternative.description + '">' + alternative.name + '</span>'
                     + '&nbsp;<a class="foundicon-edit edit-table-title" data-reveal-id="alternative-edit-modal"></a>'
                     + '&nbsp;<a class="foundicon-remove" data-reveal-id="alternative-remove-modal"></a>'
                     + '</td>';
@@ -400,41 +452,67 @@ $('#alternative-add-modal form').submit(function(e){
     }
 });
 
-$('.problem-idea').click(function(){
-    var modal = $('#table-idea-modal');
-    var criteria = modal.data('criteria');
-    var alternative = modal.data('alternative');
-    var idea = $(this).data('idea');
-    var item_object = modal.data('item');
+// Select idea in the problem table
+
+$(document.body).on('click', '.select-idea', function(){
+    var modal = $('#select-idea-modal');
+    modal.data('problem', $(this).data('problem'));
+    modal.data('criteria', $(this).data('criteria'));
+    modal.data('alternative', $(this).data('alternative'));
+    modal.data('item', $(this).parent());
+    modal.data('idea', {});
+    modal.find('i.idea-status').each(function(){
+        $(this).removeClass('checked');
+    });
+    modal.foundation('reveal', 'open');
+});
+
+// Select ideas in the select modal in TableView
+
+$('.problem-idea-modal').click(function(){
+    var m = $('#select-idea-modal');
+    var i = $(this).find('.problem-idea').data('idea');
+    var s = $(this).find('i.idea-status');
+
+    if (m.data('idea') == undefined)
+        m.data('idea', {});
+
+    if (s.hasClass('checked')) {
+        s.removeClass('checked');
+        delete m.data('idea')[i];
+    } else {
+        s.addClass('checked');
+        m.data('idea')[i] = i;
+    }
+});
+
+$('.problem-idea-modal-save').click(function(){
+    var m = $('#select-idea-modal');
     $.ajax({
         url: '/ajax/',
         type: 'POST',
         data: {
-            'criteria': criteria,
-            'alternative': alternative,
-            'idea': idea
+            'problem': m.data('problem'),
+            'criteria': m.data('criteria'),
+            'alternative': m.data('alternative'),
+            'idea': m.data('idea')
         },
         beforeSend: function(xhr, settings) {
             xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
         },
         complete: function(xhr, data) {
-            item = $.parseJSON(xhr.responseText);
-            if (isNaN(item.id))
+            items = $.parseJSON(xhr.responseText);
+            if (items.length <= 0)
                 return;
-            item_object.html('#' + item.id).highlight();
-            modal.foundation('reveal', 'close');
+            m.data('item').html('');
+            for (i in items) {
+                m.data('item').append('<p>' + items[i].title + '</p>');
+            }
+            m.data('item').append('<a class="button secondary expand select-idea hidden">' + gettext('Select idea') + '</a>');
+            m.foundation('reveal', 'close');
+            m.data('item').highlight();
         }
     });
-});
-
-// Select idea in the problem table
-
-$(document.body).on('click', '.select-idea', function(){
-    var modal = $('#table-idea-modal');
-    modal.data('criteria', $(this).data('criteria'));
-    modal.data('alternative', $(this).data('alternative'));
-    modal.data('item', $(this).parent());
-    modal.foundation('reveal', 'open');
 });
 
 })(jQuery);

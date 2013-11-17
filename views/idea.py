@@ -33,7 +33,7 @@ class IdeaUpdateView(UpdateView):
         self.object = form.save(commit=False)
         self.object.author = self.request.user
         self.object.save()
-        return HttpResponseRedirect('%s#idea-%d' % (reverse('problem', kwargs={'slug':self.object.problem.slug}), self.object.id))
+        return HttpResponseRedirect(self.object.get_absolute_url())
 
 class IdeaRevisionView(DetailView):
     template_name = 'idea_revision.html'

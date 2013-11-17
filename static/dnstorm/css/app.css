@@ -7737,16 +7737,26 @@ a.th {
 }
 
 /* line 23, ../../../styles/sass/app.scss */
+.aligncenter {
+  text-align: center;
+}
+
+/* line 27, ../../../styles/sass/app.scss */
 .left-1em {
   padding-left: 1em !important;
 }
 
-/* line 27, ../../../styles/sass/app.scss */
+/* line 31, ../../../styles/sass/app.scss */
 .no-margin-bottom {
   margin-bottom: 0 !important;
 }
 
-/* line 31, ../../../styles/sass/app.scss */
+/* line 35, ../../../styles/sass/app.scss */
+.line-height-1 {
+  line-height: 1;
+}
+
+/* line 39, ../../../styles/sass/app.scss */
 .rotate {
   -webkit-transform: rotate(-90deg);
   -moz-transform: rotate(-90deg);
@@ -7761,7 +7771,7 @@ a.th {
   filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
 }
 
-/* line 52, ../../../styles/sass/app.scss */
+/* line 60, ../../../styles/sass/app.scss */
 .button,
 .panel,
 fieldset,
@@ -7773,26 +7783,26 @@ input[type='text'] {
   border-radius: 3px;
 }
 
-/* line 58, ../../../styles/sass/app.scss */
+/* line 66, ../../../styles/sass/app.scss */
 .cke_ltr {
   width: 100% !important;
 }
 
-/* line 62, ../../../styles/sass/app.scss */
+/* line 70, ../../../styles/sass/app.scss */
 .cke_combopanel__format {
   width: 200px !important;
 }
 
-/* line 68, ../../../styles/sass/app.scss */
+/* line 76, ../../../styles/sass/app.scss */
 .buttonHolder {
   text-align: right;
 }
-/* line 70, ../../../styles/sass/app.scss */
+/* line 78, ../../../styles/sass/app.scss */
 .buttonHolder #advanced, .buttonHolder .cancel {
   float: left;
 }
 
-/* line 75, ../../../styles/sass/app.scss */
+/* line 83, ../../../styles/sass/app.scss */
 .button-facebook {
   border-style: solid;
   border-width: 1px;
@@ -7830,7 +7840,7 @@ input[type='text'] {
   color: white;
 }
 
-/* line 79, ../../../styles/sass/app.scss */
+/* line 87, ../../../styles/sass/app.scss */
 .button-google {
   border-style: solid;
   border-width: 1px;
@@ -7868,35 +7878,35 @@ input[type='text'] {
   color: white;
 }
 
-/* line 86, ../../../styles/sass/app.scss */
+/* line 94, ../../../styles/sass/app.scss */
 form label {
   display: inline-block;
 }
-/* line 89, ../../../styles/sass/app.scss */
+/* line 97, ../../../styles/sass/app.scss */
 form input[type='checkbox'] {
   margin: 0 3px 0 0;
 }
-/* line 92, ../../../styles/sass/app.scss */
+/* line 100, ../../../styles/sass/app.scss */
 form .ctrlHolder {
   margin-bottom: 0.9375em;
 }
-/* line 95, ../../../styles/sass/app.scss */
+/* line 103, ../../../styles/sass/app.scss */
 form .formHint {
   font-size: 11px;
   color: #777777;
   margin: 0;
   padding: 0.1875em 0;
 }
-/* line 101, ../../../styles/sass/app.scss */
+/* line 109, ../../../styles/sass/app.scss */
 form .control-group {
   margin-bottom: 0.9375em;
 }
-/* line 104, ../../../styles/sass/app.scss */
+/* line 112, ../../../styles/sass/app.scss */
 form .asteriskField {
   color: red;
 }
 
-/* line 111, ../../../styles/sass/app.scss */
+/* line 119, ../../../styles/sass/app.scss */
 .error-panel {
   border-style: solid;
   border-width: 1px;
@@ -7932,36 +7942,36 @@ form .asteriskField {
   line-height: 1.4;
 }
 
-/* line 118, ../../../styles/sass/app.scss */
+/* line 126, ../../../styles/sass/app.scss */
 .top-bar {
   overflow: hidden;
 }
 
-/* line 122, ../../../styles/sass/app.scss */
+/* line 130, ../../../styles/sass/app.scss */
 .header h1 a {
   font-family: sans-serif;
   color: #111111;
   letter-spacing: -0.0625em;
   text-shadow: #aaaaaa 1px 1px 0, #dddddd 2px 2px 0, white 3px 3px 0, white 4px 4px 0;
 }
-/* line 132, ../../../styles/sass/app.scss */
+/* line 140, ../../../styles/sass/app.scss */
 .header h1 a:hover {
   color: #2b2b2b;
 }
 
-/* line 137, ../../../styles/sass/app.scss */
+/* line 145, ../../../styles/sass/app.scss */
 .header .buttons-padding {
   display: block;
   width: 100%;
   padding: 2.5em 0 0 0;
 }
 
-/* line 143, ../../../styles/sass/app.scss */
+/* line 151, ../../../styles/sass/app.scss */
 .header .buttons .button {
   margin-bottom: 0;
 }
 
-/* line 149, ../../../styles/sass/app.scss */
+/* line 157, ../../../styles/sass/app.scss */
 .problem-list-item {
   margin-top: 5px !important;
   margin-bottom: 5px !important;
@@ -7969,29 +7979,31 @@ form .asteriskField {
   padding-bottom: 5px;
   border-bottom: 1px solid #dddddd;
 }
-/* line 155, ../../../styles/sass/app.scss */
+/* line 163, ../../../styles/sass/app.scss */
 .problem-list-item h4 {
   margin: 3px 0;
   color: #444444;
   line-height: 1;
   text-shadow: #dddddd 1px 1px 0, white 2px 2px 0;
 }
-/* line 164, ../../../styles/sass/app.scss */
+/* line 172, ../../../styles/sass/app.scss */
 .problem-list-item h6.subheader {
   margin: 0;
   font-size: 0.875em;
 }
-/* line 168, ../../../styles/sass/app.scss */
+/* line 176, ../../../styles/sass/app.scss */
 .problem-list-item .problem-counter {
   text-align: center;
   background: #eaeaea;
   padding: 8px 5px;
+  border-left: 2px solid white;
+  border-right: 2px solid white;
 }
-/* line 172, ../../../styles/sass/app.scss */
+/* line 182, ../../../styles/sass/app.scss */
 .problem-list-item .problem-counter span {
   display: block;
 }
-/* line 175, ../../../styles/sass/app.scss */
+/* line 185, ../../../styles/sass/app.scss */
 .problem-list-item .problem-counter .number {
   color: #444444;
   font-weight: bold;
@@ -7999,13 +8011,13 @@ form .asteriskField {
   letter-spacing: -0.0625em;
   line-height: 1;
 }
-/* line 182, ../../../styles/sass/app.scss */
+/* line 192, ../../../styles/sass/app.scss */
 .problem-list-item .problem-counter .description {
   color: #777777;
   font-size: 0.75em;
 }
 
-/* line 189, ../../../styles/sass/app.scss */
+/* line 199, ../../../styles/sass/app.scss */
 .problem-criteria-select {
   background-color: white;
   font-family: inherit;
@@ -8050,11 +8062,11 @@ form .asteriskField {
 .problem-criteria-select[disabled] {
   background-color: #dddddd;
 }
-/* line 194, ../../../styles/sass/app.scss */
+/* line 204, ../../../styles/sass/app.scss */
 .problem-criteria-select .button {
   margin: 2px 3px;
 }
-/* line 197, ../../../styles/sass/app.scss */
+/* line 207, ../../../styles/sass/app.scss */
 .problem-criteria-select .text {
   display: inline-block;
   width: 5%;
@@ -8062,16 +8074,16 @@ form .asteriskField {
   margin: 0 3px;
 }
 
-/* line 205, ../../../styles/sass/app.scss */
+/* line 215, ../../../styles/sass/app.scss */
 .problem-criteria-result {
   display: none;
   margin-top: 5px;
 }
-/* line 208, ../../../styles/sass/app.scss */
+/* line 218, ../../../styles/sass/app.scss */
 .problem-criteria-result .button {
   margin-bottom: 5px;
 }
-/* line 211, ../../../styles/sass/app.scss */
+/* line 221, ../../../styles/sass/app.scss */
 .problem-criteria-result .description {
   display: block;
   font-size: 0.8125em;
@@ -8079,12 +8091,12 @@ form .asteriskField {
   color: #777777;
 }
 
-/* line 220, ../../../styles/sass/app.scss */
+/* line 230, ../../../styles/sass/app.scss */
 .problem-detail .description {
   margin: 5px 0;
 }
 
-/* line 226, ../../../styles/sass/app.scss */
+/* line 236, ../../../styles/sass/app.scss */
 .user-box {
   border-style: solid;
   border-width: 1px;
@@ -8119,7 +8131,7 @@ form .asteriskField {
 .user-box h1.subheader, .user-box h2.subheader, .user-box h3.subheader, .user-box h4.subheader, .user-box h5.subheader, .user-box h6.subheader {
   line-height: 1.4;
 }
-/* line 229, ../../../styles/sass/app.scss */
+/* line 239, ../../../styles/sass/app.scss */
 .user-box .avatar {
   line-height: 0;
   display: inline-block;
@@ -8132,69 +8144,58 @@ form .asteriskField {
   -webkit-box-shadow: 0 0 6px 1px rgba(43, 166, 203, 0.5);
   box-shadow: 0 0 6px 1px rgba(43, 166, 203, 0.5);
 }
-/* line 232, ../../../styles/sass/app.scss */
+/* line 242, ../../../styles/sass/app.scss */
 .user-box .contributed {
   color: #777777;
   font-size: 0.75em;
 }
-/* line 236, ../../../styles/sass/app.scss */
+/* line 246, ../../../styles/sass/app.scss */
 .user-box a.username {
   font-weight: bold;
   margin: 5px 0 0 0;
 }
 
-/* line 244, ../../../styles/sass/app.scss */
+/* line 254, ../../../styles/sass/app.scss */
 .problem-idea-button {
   margin: 0;
 }
 
-/* line 247, ../../../styles/sass/app.scss */
-.problem-idea-form {
-  display: none;
+/* line 258, ../../../styles/sass/app.scss */
+.problem-idea-button-panel {
+  margin: 1em 0 0 0;
 }
 
-/* line 253, ../../../styles/sass/app.scss */
+/* line 264, ../../../styles/sass/app.scss */
 .idea-content {
   margin: 0 0 1em 0;
 }
 
-/* line 259, ../../../styles/sass/app.scss */
+/* line 270, ../../../styles/sass/app.scss */
 .comment-content {
   padding: 0.7em 0.5em;
   border-top: 1px dotted #cccccc;
   font-size: 0.85em;
   color: #777777;
 }
-/* line 264, ../../../styles/sass/app.scss */
+/* line 275, ../../../styles/sass/app.scss */
 .comment-content .comment-author {
   background: #f7f7f7;
   padding: 2px 5px;
 }
-/* line 268, ../../../styles/sass/app.scss */
+/* line 279, ../../../styles/sass/app.scss */
 .comment-content a.comment-modified {
   color: #aaaaaa;
 }
-/* line 271, ../../../styles/sass/app.scss */
+/* line 282, ../../../styles/sass/app.scss */
 .comment-content a.comment-delete {
   font-size: 0.85em;
   padding: 2px 5px;
   color: #ff6666;
 }
-/* line 275, ../../../styles/sass/app.scss */
+/* line 286, ../../../styles/sass/app.scss */
 .comment-content a.comment-delete:hover {
   background-color: #ff6666;
   color: white;
-}
-
-/* line 284, ../../../styles/sass/app.scss */
-.problem-idea-modal {
-  padding: 0.6em 0;
-  transition: background-color 300ms ease-out 0s;
-}
-/* line 287, ../../../styles/sass/app.scss */
-.problem-idea-modal:hover {
-  cursor: pointer;
-  background-color: #b6b6b6;
 }
 
 /* line 296, ../../../styles/sass/app.scss */
@@ -8251,40 +8252,84 @@ a.problem-action:hover {
 }
 /* line 340, ../../../styles/sass/app.scss */
 .problem-table-wrap .problem-table a.button {
+  height: 100%;
   margin-bottom: 0;
   padding-left: 1em;
   padding-right: 1em;
+  position: absolute;
+  left: 0;
+  top: 0;
 }
-/* line 345, ../../../styles/sass/app.scss */
+/* line 349, ../../../styles/sass/app.scss */
 .problem-table-wrap .problem-table input[type='text'] {
   margin-bottom: 0;
 }
-/* line 348, ../../../styles/sass/app.scss */
+/* line 352, ../../../styles/sass/app.scss */
+.problem-table-wrap .problem-table .cell-wrap {
+  display: block;
+  position: relative;
+  padding: 1em 4em;
+  min-height: 60px;
+}
+/* line 358, ../../../styles/sass/app.scss */
 .problem-table-wrap .problem-table th.criteria {
   text-align: center;
 }
-/* line 351, ../../../styles/sass/app.scss */
+/* line 361, ../../../styles/sass/app.scss */
 .problem-table-wrap .problem-table td.vertical-title {
-  background-color: whitesmoke;
+  background-color: #dddddd;
   font-weight: bold;
 }
-/* line 355, ../../../styles/sass/app.scss */
+/* line 365, ../../../styles/sass/app.scss */
 .problem-table-wrap .problem-table .title-admin {
   padding-right: 20px;
   position: relative;
 }
-/* line 359, ../../../styles/sass/app.scss */
+/* line 369, ../../../styles/sass/app.scss */
 .problem-table-wrap .problem-table .table-actions {
   position: absolute;
   top: 1px;
   right: 0;
 }
-/* line 364, ../../../styles/sass/app.scss */
+/* line 374, ../../../styles/sass/app.scss */
 .problem-table-wrap .problem-table tr.alternative td {
   text-align: center;
+  position: relative;
 }
 
-/* line 371, ../../../styles/sass/app.scss */
+/* line 383, ../../../styles/sass/app.scss */
+.problem-idea-modal {
+  padding: 0.6em 0;
+  transition: background-color 300ms ease-out 0s;
+}
+/* line 386, ../../../styles/sass/app.scss */
+.problem-idea-modal:hover {
+  cursor: pointer;
+  background-color: #dddddd;
+}
+/* line 390, ../../../styles/sass/app.scss */
+.problem-idea-modal i.idea-status {
+  font-size: 3em;
+  color: #b7b7b7;
+  display: block;
+  padding-top: 0.2em;
+}
+/* line 396, ../../../styles/sass/app.scss */
+.problem-idea-modal i.idea-status.checked {
+  color: #099c00;
+}
+
+/* line 401, ../../../styles/sass/app.scss */
+#select-idea-modal .fixed-buttons {
+  position: fixed;
+  width: 65%;
+  bottom: 0;
+  background-color: white;
+  border-top: 1px solid #dddddd;
+  padding-top: 1em;
+}
+
+/* line 411, ../../../styles/sass/app.scss */
 #alternative-add-modal .buttonHolder {
   padding: 0;
   margin: 0;

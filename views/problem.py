@@ -177,8 +177,13 @@ class ProblemView(FormView):
 
     @reversion.create_revision()
     def form_valid(self, form):
+        """
+        That' actually an Idea object creation procedure, since the form in
+        this view is meant to show problem information but to save Idea
+        information.
+        """
         obj = form.save(commit=False)
         obj.problem = self.problem
         obj.author = self.request.user
         obj.save()
-        return HttpResponseRedirect(reverse('problem', kwargs={'slug':self.problem.slug}))
+        return HttpResponseRedirect(obj.get_absolute_url())

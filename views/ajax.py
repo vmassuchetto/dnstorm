@@ -1,3 +1,5 @@
+import re
+
 from django.http import Http404, HttpResponse, HttpResponseForbidden
 from django.db.models import Sum
 from django.core.exceptions import ObjectDoesNotExist
@@ -39,7 +41,6 @@ class AjaxView(View):
     def post(self, *args, **kwargs):
 
         # New comment
-
         if 'idea' and 'content' in self.request.POST:
             return self.submit_comment()
 
@@ -61,16 +62,29 @@ class AjaxView(View):
             and 'object' in self.request.POST and 'new' == self.request.POST['object']:
             return self.table_new_alternative()
 
-        # New item
+        # Remove alternative
+
+        elif 'mode' in self.request.POST and 'remove-alternative' == self.request.POST['mode'] \
+            and 'object' in self.request.POST:
+            return self.table_remove_alternative()
+
+        # New alternative item
 
         elif 'alternative' in self.request.POST \
             and 'criteria' in self.request.POST \
-            and 'idea' in self.request.POST:
+            and self.has_regex_key('idea\[[0-9]+\]', dict(self.request.POST.iterlists())):
             return self.table_new_item()
 
         # Failure
 
         return HttpResponseForbidden()
+
+    def has_regex_key(self, regex, dictionary):
+        r = re.compile(regex)
+        for key in dictionary:
+            if r.match(key):
+                return True
+        return False
 
     def problem_criteria_search(self):
         criterias = Criteria.objects.filter(slug__icontains = self.request.GET['term'])[:5]
@@ -131,22 +145,6 @@ class AjaxView(View):
             result = 0
         return HttpResponse(result)
 
-    '''def table_new_criteria(self):
-        p = Problem.objects.get(pk=self.request.POST['problem'])
-        n = Criteria.objects.filter(problem=self.request.POST['problem']).count()
-        criteria = Criteria(
-            problem=p,
-            title=self.request.POST['title'],
-            description=self.request.POST['description'],
-            order = n)
-        criteria.save()
-        output = {
-            'id': criteria.id,
-            'title': criteria.title,
-            'description': criteria.description
-        }
-        return HttpResponse(json.dumps(output), content_type="application/json")'''
-
     def table_new_alternative(self):
         p = Problem.objects.get(pk=self.request.POST['problem'])
         n = Alternative.objects.filter(problem=self.request.POST['problem']).count()
@@ -163,11 +161,41 @@ class AjaxView(View):
         }
         return HttpResponse(json.dumps(output), content_type="application/json")
 
+    def table_remove_alternative(self):
+        a = Alternative.objects.get(id=int(self.request.POST['object']))
+        AlternativeItem.objects.filter(alternative=a).delete()
+        a.delete()
+        output = {
+            'deleted': a.id
+        }
+        return HttpResponse(json.dumps(output), content_type='application/json')
+
     def table_new_item(self):
-        c = Criteria.objects.get(pk=self.request.POST['criteria'])
+        ideas = list()
+        r = re.compile('idea\[[0-9]+\]')
+        for key in self.request.POST:
+            if r.match(key) and int(self.request.POST[key]):
+                ideas.append(int(self.request.POST[key]))
+        if not len(ideas):
+            raise Http404
+
+        c = None if not int(self.request.POST['criteria']) else Criteria.objects.get(pk=self.request.POST['criteria'])
         a = Alternative.objects.get(pk=self.request.POST['alternative'])
-        i = Idea.objects.get(pk=self.request.POST['idea'])
-        item = AlternativeItem(criteria=c, alternative=a, idea=i)
+        ideas = Idea.objects.filter(id__in=ideas)
+        try:
+            item = AlternativeItem.objects.get(criteria=c, alternative=a)
+            item.idea.clear()
+        except:
+            item = AlternativeItem(criteria=c, alternative=a)
         item.save()
-        output = { 'id': i.id  }
+        for i in ideas:
+            item.idea.add(i)
+        item.save()
+
+        output = list()
+        for i in ideas:
+            output.append({
+                'id': i.id,
+                'title': i.title
+            });
         return HttpResponse(json.dumps(output), content_type="application/json")

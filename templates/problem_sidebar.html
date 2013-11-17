@@ -46,7 +46,7 @@
     <div class="messages">
         <h5>{% trans "Bulletin" %}</h5>
         {% for b in bulletin %}
-            <p>
+            <p class="line-height-1">
                 <b><a href="{{ b.get_absolute_url }}">{{ b.subject }}</a></b><br/>
                 <small>{{ b.modified }}</small>
             </p>

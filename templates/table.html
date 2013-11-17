@@ -17,22 +17,34 @@
         </div>
         <div class="row">
         <div class="columns large-6">
-            <a class="close-reveal-modal-button button secondary no-margin-bottom">{% trans "Cancel" %}</a>
+            <a class="close-reveal-modal-button button small secondary no-margin-bottom">{% trans "Cancel" %}</a>
         </div>
         <div class="columns large-6 alignright">
-            <a class="remove button alert no-margin-bottom">{% trans "Remove" %}</a>
+            <a class="remove button alert no-margin-bottom remove-alternative-confirm">{% trans "Remove" %}</a>
         </div>
         </div>
     </div>
 
     <div id="select-idea-modal" class="reveal-modal large">
         <a class="close-reveal-modal">&#215;</a>
-        <h4>{% trans "Select an idea" %}</h4>
+        <h4>{% trans "Select ideas" %}</h4>
         <hr/>
         {% for idea in ideas %}
-            {% include "problem_idea.html" %}
+            <div class="row problem-idea-modal">
+                <div class="columns large-1">
+                    <i class="foundicon-checkmark idea-status"></i>
+                </div>
+                <div class="columns large-11">
+                    {% include "problem_idea.html" %}
+                </div>
+            </div>
             <hr/>
         {% endfor %}
+        <div class="row fixed-buttons">
+            <div class="large-12 alignright">
+                <a class="button success problem-idea-modal-save">{% trans "Done" %}</a>
+            </div>
+        </div>
     </div>
 
 {% endblock %}
@@ -41,10 +53,13 @@
 
     <div class="row collapse">
     <div class="columns content large-8">
-        <h4><a href="{% url "problem" problem.slug %}">{{ problem.title }}</a></h4>
+        <h4>{% trans "Strategy table" %}: <a href="{% url "problem" problem.slug %}">{{ problem.title }}</a></h4>
     </div>
     <div class="columns large-4 alignright">
         <a class="button secondary small add-alternative">{% trans "Add alternative" %}</a>
+        {% if not criterias %}
+            &nbsp;<a class="button secondary small add-column">{% trans "Add column" %}</a>
+        {% endif %}
     </div>
     </div>
 
@@ -56,39 +71,71 @@
             {% if criterias %}
                 <th></th>
                 {% for criteria in criterias %}
-                    <th class="criteria" data-criteria="{{ criteria.id }}">
-                        <div class="title-inner title-admin">
-                            <span title="{{ criteria.description }}" data-tooltip>{{ criteria.name }}</a>
-                        </div>
+
+                    {# Criteria column #}
+
+                    <th class="criteria" data-criteria="{{ criteria.id }}" title="{{ criteria.description }}" data-tooltip>
+                        <div class="title-inner title-admin">{{ criteria.name }}</div>
                     </th>
+
                 {% endfor %}
             {% endif %}
             </tr>
         </thead>
         <tbody>
             {% for alternative in alternatives %}
-                <tr class="alternative" data-alternative="{{ alternative.id }}">
-                    <td class="vertical-title">
+                <tr class="alternative" id="alternative-{{ alternative.id }}" data-alternative="{{ alternative.id }}">
+
+                    {# Alternative title #}
+
+                    <td class="vertical-title" title="{{ alternative.description }}" data-tooltip>
                         <div class="title-inner title-admin">
-                            <span title="{{ alternative.description }}" data-tooltip>{{ alternative.name }}</a>
-                            <div class="table-actions">
-                                <a class="foundicon-remove" data-reveal-id="alternative-remove-modal"></a>
-                            </div>
+                            {{ alternative.name }}
+                            <div class="table-actions"><a class="foundicon-remove remove-alternative" data-alternative="{{ alternative.id }}"></a></div>
                         </div>
                     </td>
-                    {% for item in alternative.get_items %}
-                        <td>
-                        {% if item.object %}
-                            <p>#{{ item.object.idea.id }}</p>
-                        {% else %}
-                            <a class="button expand secondary select-idea" data-criteria="{{ item.criteria.id }}" data-alternative="{{ alternative.id }}">{% trans "Select idea" %}</a>
-                        {% endif %}
-                        </td>
-                    {% endfor %}
+
+                    {# Items #}
+
+                    {% if criterias %}
+
+                        {% for item in alternative.get_items %}
+                            <td>
+                            <div class="cell-wrap">
+                            {% if item.objects %}
+                                {% for object in item.objects %}
+                                    {% for idea in object.idea.all %}
+                                        <p>{{ idea.title }}</p>
+                                    {% endfor %}
+                                {% endfor %}
+                            {% endif %}
+                            <a class="button expand secondary select-idea{% if item.objects %} hidden{% endif %}" data-problem="{{ problem.id }}" data-criteria="{{ item.criteria.id }}" data-alternative="{{ alternative.id }}">{% trans "Select ideas" %}</a>
+                            </div>
+                            </td>
+                        {% endfor %}
+
+                    {% else %}
+
+                        {% for item in alternative.get_items %}
+                            {% for object in item.objects %}
+                                {% for idea in object.idea.all %}
+                                    <td>
+                                    <div class="cell-wrap">
+                                    <p>{{ idea.title }}</p>
+                                    <a class="button expand secondary select-idea hidden" data-problem="{{ problem.id }}" data-criteria="0" data-alternative="{{ alternative.id }}">{% trans "Select ideas" %}</a>
+                                    </div>
+                                    </td>
+                                {% endfor %}
+                            {% endfor %}
+                        {% endfor %}
+
+                    {% endif %}
+
                 </tr>
             {% endfor %}
         </tbody>
     </table>
+    <small>{% trans "Click on the table cells to select ideas." %}
     </div>
     </div>
 

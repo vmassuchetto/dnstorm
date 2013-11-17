@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from django.utils.safestring import mark_safe
 
 import settings
 import reversion
@@ -19,11 +20,11 @@ class Criteria(models.Model):
     created = models.DateTimeField(auto_now=True, editable=False)
     updated = models.DateTimeField(editable=False)
 
-    def __unicode__(self):
-        return self.slug
-
     class Meta:
         db_table = settings.DNSTORM['table_prefix'] + '_criteria'
+
+    def __unicode__(self):
+        return '<Criteria: %d>' % self.id
 
     def get_absolute_url(self, *args, **kwargs):
         return reverse('problem', args=[self.slug])
@@ -55,11 +56,11 @@ class Problem(models.Model):
     vote_author = models.BooleanField(verbose_name=_('Display vote authors'), help_text=_('Ideas voting will be completely transparent.'), default=False, blank=True)
     modified = models.DateTimeField(auto_now=True, editable=False)
 
-    def __unicode__(self):
-        return self.title
-
     class Meta:
         db_table = settings.DNSTORM['table_prefix'] + '_problem'
+
+    def __unicode__(self):
+        return '<Problem: %d>' % self.id
 
     def get_absolute_url(self, *args, **kwargs):
         return reverse('problem', args=[self.slug])
@@ -73,6 +74,9 @@ class Problem(models.Model):
 
     def idea_count(self):
         return Idea.objects.filter(problem=self).count()
+
+    def alternative_count(self):
+        return Alternative.objects.filter(problem=self).count()
 
     def get_message_recipients(self):
         recipients = [self.author]
@@ -93,14 +97,14 @@ class Idea(models.Model):
     author = models.ForeignKey(User, editable=False)
     modified = models.DateTimeField(auto_now=True, editable=False)
 
-    def __unicode__(self):
-        return u'%s' % self.id
-
     class Meta:
         db_table = settings.DNSTORM['table_prefix'] + '_idea'
 
+    def __unicode__(self):
+        return '<Idea: %d>' % self.id
+
     def get_absolute_url(self, *args, **kwargs):
-        return '%s#idea-%d' % (reverse('problem', args=[self.problem.slug]), self.id)
+        return mark_safe('%s#idea-%d' % (reverse('problem', args=[self.problem.slug]), self.id))
 
     def revision_count(self):
         return reversion.get_for_object(self).count()
@@ -117,11 +121,11 @@ class Comment(models.Model):
     author = models.ForeignKey(User, editable=False)
     modified = models.DateTimeField(auto_now=True, editable=False)
 
-    def __unicode__(self):
-        return u'%s (Idea: %s)' % (self.author.username, self.idea.id)
-
     class Meta:
         db_table = settings.DNSTORM['table_prefix'] + '_comment'
+
+    def __unicode__(self):
+        return '<Comment: %d>' % self.id
 
 reversion.register(Comment)
 
@@ -132,11 +136,11 @@ class Message(models.Model):
     content = models.TextField(verbose_name=_('Content'))
     modified = models.DateTimeField(auto_now=True, editable=False)
 
-    def __unicode__(self):
-        return u'%s (Problem: %d)' % (self.subject, self.problem.id)
-
     class Meta:
         db_table = settings.DNSTORM['table_prefix'] + '_message'
+
+    def __unicode__(self):
+        return '<Message: %d>' % self.id
 
     def get_absolute_url(self, *args, **kwargs):
         return reverse('message', args=[self.id])
@@ -151,11 +155,11 @@ class Vote(models.Model):
         (-1, _('Downvote'))))
     date = models.DateTimeField(auto_now=True)
 
-    def __unicode__(self):
-        return '%s (Idea: %s) (Type: %d)' % (self.user, self.idea, self.weight)
-
     class Meta:
         db_table = settings.DNSTORM['table_prefix'] + '_vote'
+
+    def __unicode__(self):
+        return '<Vote: %d>' % self.id
 
 class Alternative(models.Model):
     problem = models.ForeignKey(Problem)
@@ -165,25 +169,30 @@ class Alternative(models.Model):
     created = models.DateTimeField(auto_now=True, editable=False)
     updated = models.DateTimeField(editable=False)
 
-    def __unicode__(self):
-        return '%s (Problem: %s)' % (self.title, self.problem.title)
-
     class Meta:
         db_table = settings.DNSTORM['table_prefix'] + '_alternative'
+
+    def __unicode__(self):
+        return '<Alternative: %d>' % self.id
 
     def get_items(self):
         items = list()
         criterias = Criteria.objects.filter(problem=self.problem)
-        for criteria in criterias:
-            try:
-                items.append({
-                    'criteria': criteria,
-                    'object': AlternativeItem.objects.get(criteria=criteria, alternative=self)
-                })
-            except:
-                items.append({
-                    'criteria': criteria,
-                    'object': False })
+        if criterias:
+            for criteria in criterias:
+                try:
+                    items.append({
+                        'criteria': criteria,
+                        'objects': AlternativeItem.objects.filter(criteria=criteria, alternative=self)
+                    })
+                except:
+                    pass
+
+        else:
+            items.append({
+                'criteria': None,
+                'objects': AlternativeItem.objects.filter(criteria=None, alternative=self)
+            })
         return items
 
     def save(self, *args, **kwargs):
@@ -196,13 +205,18 @@ class Alternative(models.Model):
 
 
 class AlternativeItem(models.Model):
-    criteria = models.ForeignKey(Criteria)
+    criteria = models.ForeignKey(Criteria, blank=True, null=True)
     alternative = models.ForeignKey(Alternative)
-    idea = models.ForeignKey(Idea)
-    title = models.TextField(verbose_name=_('Label'))
-
-    def __unicode__(self):
-        return '%d (Criteria: %s) (Alternative: %s)' % (self.id, self.criteria.title, self.alternative.title)
+    idea = models.ManyToManyField(Idea)
+    name = models.TextField(verbose_name=_('Name'))
+    order = models.IntegerField()
 
     class Meta:
         db_table = settings.DNSTORM['table_prefix'] + '_alternative_item'
+
+    def __unicode__(self):
+        return '<AlternativeItem>'
+
+    def save(self, *args, **kwargs):
+        self.order = self.order if self.order else 0
+        super(AlternativeItem, self).save(*args, **kwargs)
