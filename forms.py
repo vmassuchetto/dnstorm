@@ -72,9 +72,10 @@ class ProblemForm(forms.ModelForm):
                 'manager',
                 Row(
                     Column('open', css_class='large-3'),
-                    Column('public', css_class='large-3'),
-                    Column('locked', css_class='large-3'),
-                    Column('max', css_class='large-3'),
+                    Column('public', css_class='large-2'),
+                    Column('locked', css_class='large-2'),
+                    Column('blind', css_class='large-3'),
+                    Column('max', css_class='large-2'),
                 ),
             ),
             Fieldset(_('Voting'),

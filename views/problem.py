@@ -128,7 +128,11 @@ class ProblemView(FormView):
         context['title'] = self.problem.title
         context['problem'] = self.problem
         context['bulletin'] = Message.objects.filter(problem=self.problem).order_by('-modified')[:4]
-        context['ideas'] = Idea.objects.filter(problem=self.problem)
+        ideas_qs = Q(problem=self.problem)
+        if self.problem.blind:
+            ideas_qs |= Q(author=self.request.user)
+        context['ideas'] = Idea.objects.filter(ideas_qs)
+        context['idea_actions'] = True
         if not self.request.user.is_authenticated():
             return context
         if self.problem.max > 0:
