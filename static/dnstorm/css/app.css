@@ -7972,6 +7972,12 @@ form .asteriskField {
 }
 
 /* line 157, ../../../styles/sass/app.scss */
+p.pagination {
+  color: #777777;
+  margin-top: 1em;
+}
+
+/* line 164, ../../../styles/sass/app.scss */
 .problem-list-item {
   margin-top: 5px !important;
   margin-bottom: 5px !important;

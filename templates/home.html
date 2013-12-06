@@ -35,6 +35,9 @@
             </div>
 
         {% endfor %}
+
+        {% include "pagination.html" with items=problems %}
+
         {% else %}
             {% if user.is_authenticated %}
                 {% url "problem_new" as url_problem_new %}
