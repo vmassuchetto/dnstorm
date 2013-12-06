@@ -11,6 +11,7 @@ import settings
 import reversion
 
 from ckeditor.fields import RichTextField
+from registration.signals import user_activated
 
 class Criteria(models.Model):
     name = models.CharField(verbose_name=_('Name'), max_length=90)
@@ -88,7 +89,27 @@ class Problem(models.Model):
                 recipients.append(comment.author)
         return sorted(set(recipients))
 
+    def invites_handler(sender, user, request, *args, **kwargs):
+        """ After the user is activated we need to search for previous invites
+        for participating in problems he received and then add it back as a
+        contributor. """
+        invites = Invite.objects.filter(email=user.email)
+        for i in invites:
+            i.problem.contributor.add(user)
+        invites.delete()
+
 reversion.register(Problem)
+user_activated.connect(Problem.invites_handler)
+
+class Invite(models.Model):
+    problem = models.ForeignKey(Problem)
+    email = models.TextField()
+
+    class Meta:
+        db_table = settings.DNSTORM['table_prefix'] + '_problem_invite'
+
+    def __unicode__(self):
+        return '<ProblemInvite>'
 
 class Idea(models.Model):
     title = models.CharField(verbose_name=_('Title'), max_length=90)

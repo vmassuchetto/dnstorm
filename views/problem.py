@@ -15,13 +15,14 @@ from django.utils.decorators import method_decorator
 from django.utils.html import strip_tags
 from django.template.loader import render_to_string
 from django.db.models import Q
+from django.db.models.query import EmptyQuerySet
 
 import settings
 
 from django_options import get_option
 import reversion
 
-from dnstorm.models import Problem, Idea, Criteria, Vote, Comment, Message
+from dnstorm.models import Problem, Invite, Idea, Criteria, Vote, Comment, Message
 from dnstorm.forms import ProblemForm, IdeaForm, CommentForm, CriteriaForm
 
 def problem_form_valid(obj, form):
@@ -64,7 +65,13 @@ def problem_form_valid(obj, form):
 
     # Invite mailing
     if form.cleaned_data['invite']:
+
+        # Save invites to give permissions for these users when they login
         recipients = form.cleaned_data['invite']
+        for r in recipients.split(','):
+            Invite(problem=obj.object, email=r).save()
+
+        # Send the e-mails
         subject = _('%(site_name)s: Invitation' % { 'site_name': site_name})
         context = {
             'user': obj.request.user.get_full_name(),
@@ -176,6 +183,9 @@ class ProblemView(FormView):
         context['title'] = self.problem.title
         context['problem'] = self.problem
         context['bulletin'] = Message.objects.filter(problem=self.problem).order_by('-modified')[:4]
+
+        # Ideas
+
         ideas_qs = Q(problem=self.problem)
         if not self.request.user.is_authenticated():
             ideas_qs = False
@@ -199,6 +209,7 @@ class ProblemView(FormView):
             idea.comment_form = CommentForm(initial={'idea': idea.id})
             if self.problem.vote_author:
                 idea.votes = Vote.objects.filter(idea=idea).order_by('date')
+
         return context
 
     def get_breadcrumbs(self):
