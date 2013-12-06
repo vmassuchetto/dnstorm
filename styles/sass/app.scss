@@ -36,22 +36,6 @@
     line-height: 1;
 }
 
-.rotate {
-  -webkit-transform: rotate(-90deg);
-  -moz-transform: rotate(-90deg);
-  -ms-transform: rotate(-90deg);
-  -o-transform: rotate(-90deg);
-  transform: rotate(-90deg);
-
-  -webkit-transform-origin: 50% 50%;
-  -moz-transform-origin: 50% 50%;
-  -ms-transform-origin: 50% 50%;
-  -o-transform-origin: 50% 50%;
-  transform-origin: 50% 50%;
-
-  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
-}
-
 // Mandatory global radius
 
 .button,
@@ -123,8 +107,9 @@ form {
 
 // Header
 
-.top-bar {
+.contain-to-grid .top-bar {
     overflow: hidden;
+    margin-bottom: 1em;
 }
 
 .header h1 a {
@@ -150,6 +135,12 @@ form {
 
 .header .buttons .button {
     margin-bottom: 0;
+}
+
+// Breadcrumbs
+
+.breadcrumbs {
+    margin-bottom: 1em;
 }
 
 // Pagination
@@ -254,6 +245,10 @@ p.pagination {
         font-weight: bold;
         margin: 5px 0 0 0;
     }
+}
+
+.user-labels span {
+    margin: emCalc(4px) 0;
 }
 
 // Idea form
