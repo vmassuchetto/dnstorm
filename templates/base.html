@@ -50,7 +50,22 @@
 </nav>
 </div>
 
-<div class="row header">
+{% if breadcrumbs %}
+<div class="row collapse">
+    <div class="columns large-12">
+        {% block "breadcrumbs" %}
+            <nav class="breadcrumbs">
+                <a href="{% url "home" %}">{% trans "Home" %}</a>
+                {% for b in breadcrumbs %}
+                    <a href="{{ b.url }}" {% if b.classes %}class="{{ b.classes }}"{% endif %}>{{ b.title }}</a>
+                {% endfor %}
+            </nav>
+        {% endblock %}
+    </div>
+</div>
+{% endif %}
+
+<div class="row">
     <div class="columns large-6 large-offset-6 alignright buttons">
         {% block "topright" %}{% endblock %}
     </div>

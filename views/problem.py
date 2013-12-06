@@ -90,9 +90,15 @@ class ProblemCreateView(CreateView):
 
     def get_context_data(self, *args, **kwargs):
         context = super(ProblemCreateView, self).get_context_data(**kwargs)
+        context['breadcrumbs'] = self.get_breadcrumbs()
         context['title'] = _('Create new problem')
         context['criteria_form'] = CriteriaForm()
         return context
+
+    def get_breadcrumbs(self):
+        return [
+            { 'title': _('Problems'), 'url': reverse('home') },
+            { 'title': _('Create new problem'), 'url': reverse('problem_new'), 'classes': 'current' } ]
 
     @reversion.create_revision()
     def form_valid(self, form):
@@ -109,9 +115,16 @@ class ProblemUpdateView(UpdateView):
 
     def get_context_data(self, *args, **kwargs):
         context = super(ProblemUpdateView, self).get_context_data(**kwargs)
+        context['breadcrumbs'] = self.get_breadcrumbs()
         context['title'] = _('Edit problem')
         context['criteria_form'] = CriteriaForm()
         return context
+
+    def get_breadcrumbs(self):
+        return [
+            { 'title': _('Problems'), 'url': reverse('home') },
+            { 'title': self.object.title, 'url': self.object.get_absolute_url() },
+            { 'title': _('Update'), 'url': reverse('problem_edit', kwargs={'pk':self.object.id}), 'classes': 'current' } ]
 
     @reversion.create_revision()
     def form_valid(self, form):
@@ -123,6 +136,7 @@ class ProblemRevisionView(DetailView):
 
     def get_context_data(self, *args, **kwargs):
         context = super(ProblemRevisionView, self).get_context_data(**kwargs)
+        context['breadcrumbs'] = self.get_breadcrumbs()
         context['revisions'] = list()
         revisions = reversion.get_for_object(self.object)
         for rev in revisions:
@@ -134,6 +148,12 @@ class ProblemRevisionView(DetailView):
                 'modified': r.modified
             })
         return context
+
+    def get_breadcrumbs(self):
+        return [
+            { 'title': _('Problems'), 'url': reverse('home') },
+            { 'title': self.object.title, 'url': self.object.get_absolute_url() },
+            { 'title': _('Revisions'), 'url': reverse('problem_revision', kwargs={'pk':self.object.id}), 'classes': 'current' } ]
 
 class ProblemShortView(RedirectView):
     permanent = True
@@ -152,6 +172,7 @@ class ProblemView(FormView):
 
     def get_context_data(self, *args, **kwargs):
         context = super(ProblemView, self).get_context_data(**kwargs)
+        context['breadcrumbs'] = self.get_breadcrumbs()
         context['title'] = self.problem.title
         context['problem'] = self.problem
         context['bulletin'] = Message.objects.filter(problem=self.problem).order_by('-modified')[:4]
@@ -179,6 +200,11 @@ class ProblemView(FormView):
             if self.problem.vote_author:
                 idea.votes = Vote.objects.filter(idea=idea).order_by('date')
         return context
+
+    def get_breadcrumbs(self):
+        return [
+            { 'title': _('Problems'), 'url': reverse('home') },
+            { 'title': self.problem.title, 'url': self.problem.get_absolute_url(), 'classes': 'current' } ]
 
     @reversion.create_revision()
     def form_valid(self, form):

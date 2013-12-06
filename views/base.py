@@ -28,13 +28,24 @@ class OptionsView(FormView):
 
     def get_context_data(self, *args, **kwargs):
         context = super(OptionsView, self).get_context_data(**kwargs)
+        context['breadcrumbs'] = self.get_breadcrumbs()
         context['title'] = _('Options')
         return context
+
+    def get_breadcrumbs(self):
+        return [
+            { 'title': _('Options'), 'classes': 'current' } ]
 
 class UserView(TemplateView):
     template_name = 'user.html'
 
     def get_context_data(self, *args, **kwargs):
         context = super(UserView, self).get_context_data(**kwargs)
-        context['user'] = get_object_or_404(User, username=kwargs['username'])
+        self.user = get_object_or_404(User, username=kwargs['username'])
+        context['breadcrumbs'] = self.get_breadcrumbs()
         return context
+
+    def get_breadcrumbs(self):
+        return [
+            { 'title': _('Users'), 'classes': 'unavailable' },
+            { 'title': self.user.username, 'classes': 'current' } ]

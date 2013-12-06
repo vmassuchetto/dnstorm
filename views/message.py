@@ -30,9 +30,17 @@ class MessageCreateView(CreateView):
 
     def get_context_data(self, *args, **kwargs):
         context = super(MessageCreateView, self).get_context_data(*args, **kwargs)
+        context['breadcrumbs'] = self.get_breadcrumbs()
         context['title'] = mark_safe(_('Compose new message for problem <a href="%(url)s">#%(id)d</a>' % { 'url': reverse('problem', args=[self.problem.slug]), 'id': self.problem.id}))
         context['problem'] = self.problem
         return context
+
+    def get_breadcrumbs(self):
+        return [
+            { 'title': _('Problem'), 'url': self.problem.get_absolute_url() },
+            { 'title': self.problem.title, 'url': reverse('problem', kwargs={'slug':self.problem.slug}) },
+            { 'title': _('Messages'), 'url': reverse('message_problem', kwargs={'problem_id':self.problem.id}) },
+            { 'title': _('Compose new message'), 'classes': 'current' } ]
 
     def form_valid(self, form):
         self.object = form.save(commit=False)
@@ -54,9 +62,19 @@ class MessageView(DetailView):
 
     def get_context_data(self, *args, **kwargs):
         context = super(MessageView, self).get_context_data(*args, **kwargs)
+        self.problem = context['message'].problem
+        self.message = context['message']
+        context['breadcrumbs'] = self.get_breadcrumbs()
         context['problem'] = context['message'].problem
         context['bulletin'] = Message.objects.filter(problem=context['problem']).order_by('-modified')[:4]
         return context
+
+    def get_breadcrumbs(self):
+        return [
+            { 'title': _('Problems'), 'url': self.problem.get_absolute_url() },
+            { 'title': self.problem.title, 'url': reverse('problem', kwargs={'slug':self.problem.slug}) },
+            { 'title': _('Messages'), 'url': reverse('message_problem', kwargs={'problem_id':self.problem.id}) },
+            { 'title': _('Message #%(id)d' % {'id':self.message.id}), 'classes': 'current' } ]
 
 class MessageProblemListView(ListView):
     model = Message
@@ -68,7 +86,14 @@ class MessageProblemListView(ListView):
 
     def get_context_data(self, *args, **kwargs):
         context = super(MessageProblemListView, self).get_context_data(*args, **kwargs)
+        context['breadcrumbs'] = self.get_breadcrumbs()
         context['problem'] = self.problem
         context['bulletin'] = Message.objects.filter(problem=context['problem']).order_by('-modified')
         context['message'] = True
         return context
+
+    def get_breadcrumbs(self):
+        return [
+            { 'title': _('Problems'), 'url': self.problem.get_absolute_url() },
+            { 'title': self.problem.title, 'url': reverse('problem', kwargs={'slug':self.problem.slug}) },
+            { 'title': _('Messages'), 'classes': 'current' } ]
