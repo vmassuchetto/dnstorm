@@ -2,40 +2,44 @@
 
 {% if message %}
 <p>
-    <a class="button small secondary expand" href="{% url 'problem' problem.slug %}"><i class="foundicon-left-arrow"></i> {% trans 'Back to problem' %}</a>
+    <a class="button small secondary expand" href="{% url "problem" problem.slug %}"><i class="foundicon-left-arrow"></i> {% trans 'Back to problem' %}</a>
 </p>
 {% endif %}
 
 {% if perms.problem.can_edit %}
-    <p>
-    <a class="button small expand" href="{% url 'problem_edit' problem.id %}"><i class="foundicon-edit"></i> {% trans 'Edit this problem' %}</a>
-    <a class="button small expand" href="{% url 'table' problem.id %}"><i class="foundicon-inbox"></i> {% trans 'Problem table' %}</a>
-    <a class="button small expand" href="{% url 'message_new' problem.id %}"><i class="foundicon-mail"></i> {% trans 'Send mail to participants' %}</a>
+    <a class="button small expand radius" href="{% url "problem_edit" problem.slug %}"><i class="foundicon-edit"></i> {% trans 'Edit this problem' %}</a>
+    <a class="button small expand radius" href="{% url "table" problem.slug %}"><i class="foundicon-inbox"></i> {% trans 'Problem table' %}</a>
+    <a class="button small expand radius" href="{% url "message_new" problem.slug %}"><i class="foundicon-mail"></i> {% trans 'New message' %}</a>
+{% endif %}
+
+<a class="button small secondary expand radius show-on-click hide-after-click" data-show-on-click="short-link-url" href="javascript:void(0);"><i class="foundicon-paper-clip"></i> {% trans "Short Link" %}</a>
+<div id="short-link-url" class="hide"><input type="text" class="select-on-click" value="{% absolute "problem_short" problem.id %}" /></div>
+
+{% if problem.public or problem.open or problem.locked or problem.blind or problem.voting %}
+    <p class="problem-icons text-center">
+        {% if problem.public %}<i class="foundicon-globe" data-tooltip title="{% trans "This problem is public. Anyone on the Internet can read it." %}"></i>{% endif %}
+        {% if problem.open %}<i class="foundicon-mic" data-tooltip title="{% trans "This problem is opened. Any logged user will be able to contribute." %}"></i>{% endif %}
+        {% if problem.locked %}<i class="foundicon-lock" data-tooltip title="{% trans "This problem is locked. No one can contribute with any more ideas until a manager opens it." %}"></i>{% endif %}
+        {% if problem.blind %}<i class="foundicon-compass" data-tooltip title="{% trans "This problem is in blind contribution mode. You can only see your own ideas." %}"></i>{% endif %}
+        {% if problem.voting %}<i class="foundicon-idea" data-tooltip title="{% trans "Ideas voting are opened. You can vote and downvote ideas." %}"></i>{% endif %}
     </p>
 {% endif %}
 
-<p>
-<a class="button small secondary expand show-on-click hide-after-click" data-show-on-click="short-link-url" href="javascript:void(0);"><i class="foundicon-paper-clip"></i> {% trans "Short Link" %}</a>
-<div id="short-link-url" class="hidden"><input type="text" class="select-on-click" value="{% absolute "problem_short" problem.id %}" /></div>
-</p>
-
-<p>
 {% if problem.revision_count or problem.idea_count %}
 <div class="info">
-    {% if problem.revision_count > 1 %}<b><a href="{% url "problem_revision" problem.id %}">{{ problem.revision_count }} {% trans "revisions" %}</a></b><br/>{% endif %}
-    {% if problem.idea_count > 0 %}<b><a href="#problem-ideas">{{ problem.idea_count }} {% if problem.idea_count > 1 %}{% trans "idea contributions" %}{% else %}{% trans "idea contribution" %}{% endif %}</a></b>{% endif %}
+    {% if problem.revision_count > 1 %}<b><a href="{% url "problem_revision" problem.slug %}">{{ problem.revision_count }} {% trans "revisions" %}</a></b><br/>{% endif %}
+    {% if problem.idea_count > 0 %}<b><a href="{% url "problem_ideas" problem.slug %}">{{ problem.idea_count }} {% if problem.idea_count > 1 %}{% trans "idea contributions" %}{% else %}{% trans "idea contribution" %}{% endif %}</a></b>{% endif %}
 </div>
 {% endif %}
-</p>
 
 <hr/>
 
 {% if problem.criteria.all %}
     <div class="criterias">
-        <h5>{% trans "Criterias for this problem" %}</h5>
+        <h4>{% trans "Criterias for this problem" %}</h4>
         <p>
         {% for criteria in problem.criteria.all %}
-            <a class="button small tip-top" href="#" data-tooltip title="{{ criteria.description }}">{{ criteria.name }}</a>
+            <a class="button-criteria" href="#" data-tooltip title="{{ criteria.description }}">{{ criteria.name }}</a>
         {% endfor %}
         </p>
     </div>
@@ -44,14 +48,16 @@
 
 {% if bulletin %}
     <div class="messages">
-        <h5>{% trans "Bulletin" %}</h5>
+        <h4>{% trans "Bulletin" %}</h4>
+        <div class="panel round">
         {% for b in bulletin %}
             <p class="line-height-1">
                 <b><a href="{{ b.get_absolute_url }}">{{ b.subject }}</a></b><br/>
                 <small>{{ b.modified }}</small>
             </p>
         {% endfor %}
-        <p><a class="button small secondary" href="{% url "message_problem" problem.id %}">{% trans "View all" %}</a>
+        <p class="text-right"><a class="button tiny radius no-margin-bottom" href="{% url "messages" problem.slug %}">{% trans "View all" %}</a>
+        </div>
     </div>
     <hr/>
 {% endif %}

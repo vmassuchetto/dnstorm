@@ -15,23 +15,36 @@
 
     <div class="row">
 
-    <div class="large-12 columns content problem-list">
+    <div class="large-9 columns content problem-list">
+
+        {% if criteria %}
+            <h2>{% blocktrans with criteria.name as criteria_name %}Problems with the criteria "{{ criteria_name }}"{% endblocktrans %}</h2>
+            {% if criteria.description %}<div class="panel radius secondary">{{ criteria.description }}</div>{% endif %}
+        {% endif %}
+
         {% if problems %}
         {% for problem in problems %}
 
-            <div class="row problem-list-item">
-                <div class="columns large-1 problem-counter problem-idea-counter">
+            <div class="row collapse problem-list-item">
+            <div class="columns large-12">
+                <div class="problem-counter problem-idea-counter left">
                     <span class="number">{{ problem.idea_count }}</span>
                     <span class="description">{% if problem.idea_count > 1 or problem.idea_count = 0 %}{% trans "ideas" %}{% else %}{% trans "idea" %}{% endif %}</span>
                 </div>
-                <div class="columns large-1 problem-counter problem-alternative-counter">
+                <div class="problem-counter problem-alternative-counter left">
                     <span class="number">{{ problem.alternative_count }}</span>
                     <span class="description">{% if problem.alternative_count > 1 or problem.alternative_count = 0 %}{% trans "alternatives" %}{% else %}{% trans "alternative" %}{% endif %}</span>
                 </div>
-                <div class="columns large-10">
+                <div class="problem-info">
                     <h4><a href="{% url "problem" problem.slug %}">{{ problem.title }}</a></h4>
-                    <h6 class="subheader">{% trans "modified" %} {{ problem.modified|naturaltime }}</h6>
+                    <p class="problem-criteria left no-margin-bottom">
+                        {% for c in problem.criteria.all %}
+                            <a class="button-criteria" data-tooltip title="{{ c.description }}" href="{% url "criteria" c.slug %}">{{ c.name }}</a>
+                        {% endfor %}
+                    </p>
+                    <h6 class="subheader right">{{ problem.modified|naturaltime }}</h6>
                 </div>
+            </div>
             </div>
 
         {% endfor %}
@@ -47,6 +60,10 @@
                 {% blocktrans %}<a href="{{ url_login }}">Log in</a> to view and create problems.{% endblocktrans %}
             {% endif %}
         {% endif %}
+    </div>
+
+    <div class="large-3 columns sidebar">
+        {% include "home_sidebar.html" %}
     </div>
 
     </div>

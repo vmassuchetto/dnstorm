@@ -70,30 +70,49 @@
 {% endif %}
 
 <div class="row">
-    <div class="columns large-6 large-offset-6 alignright buttons">
-        {% block "topright" %}{% endblock %}
+    <div class="columns large-4 text-left">
+        <h1><a href="{% url "home" %}">DNStorm</a></h1>
+    </div>
+    <div class="columns large-8">
+        <div class="right">
+            {% block "topright" %}{% endblock %}
+        </div>
+        <div class="row collapse right">
+            <div class="columns large-8">
+                <input type="text" name="q" placeholder="{% trans "Search everything" %}" />
+            </div>
+            <div class="columns large-2">
+                <a class="button secondary tiny postfix" data-dropdown="search-options"><i class="foundicon-settings"></i></a>
+                <ul id="search-options" class="f-dropdown" data-dropdown-content>
+                    <li><a href="#">{% trans "Everything" %}</a></li>
+                    <li><a href="#">{% trans "Problems" %}</a></li>
+                    <li><a href="#">{% trans "Criterias" %}</a></li>
+                    <li><a href="#">{% trans "Ideas" %}</a></li>
+                    <li><a href="#">{% trans "Comments" %}</a></li>
+                </ul>
+            </div>
+            <div class="columns large-2">
+                <a class="button postfix secondary radius"><i class="foundicon-search"></i></a>
+            </div>
+        </div>
     </div>
 </div>
 
 {% block "content" %}{% endblock %}
 
-<script src="{% static "dnstorm/js/vendor/custom.modernizr.js" %}"></script>
-<script src="{% static "dnstorm/js/vendor/jquery.js" %}"></script>
-<script src="{% static "dnstorm/js/vendor/jquery.ui.custom.js" %}"></script>
-<script src="{% static "dnstorm/js/foundation/foundation.js" %}"></script>
-<script src="{% static "dnstorm/js/foundation/foundation.alerts.js" %}"></script>
-<script src="{% static "dnstorm/js/foundation/foundation.clearing.js" %}"></script>
-<script src="{% static "dnstorm/js/foundation/foundation.cookie.js" %}"></script>
-<script src="{% static "dnstorm/js/foundation/foundation.dropdown.js" %}"></script>
-<script src="{% static "dnstorm/js/foundation/foundation.forms.js" %}"></script>
-<script src="{% static "dnstorm/js/foundation/foundation.joyride.js" %}"></script>
-<script src="{% static "dnstorm/js/foundation/foundation.magellan.js" %}"></script>
-<script src="{% static "dnstorm/js/foundation/foundation.orbit.js" %}"></script>
-<script src="{% static "dnstorm/js/foundation/foundation.placeholder.js" %}"></script>
-<script src="{% static "dnstorm/js/foundation/foundation.reveal.js" %}"></script>
-<script src="{% static "dnstorm/js/foundation/foundation.section.js" %}"></script>
-<script src="{% static "dnstorm/js/foundation/foundation.tooltips.js" %}"></script>
-<script src="{% static "dnstorm/js/foundation/foundation.topbar.js" %}"></script>
+<footer>
+    <div class="row">
+        <div class="columns large-12 text-center">
+            <p class="text-center">{{ options.site_title }} &mdash; {{ options.site_description }}</p>
+            <p class="text-center">{% blocktrans with "http://www.gnu.org/licenses/gpl.html" as gpl_url %}DNStorm is a free softwares licensed under the <a href="{{ gpl_url }}">GPL3</a> license{% endblocktrans %}</p>
+        </div>
+    </div>
+</footer>
+
+<script src="{% static "dnstorm/js/modernizr.js" %}"></script>
+<script src="{% static "dnstorm/js/jquery.js" %}"></script>
+<script src="{% static "dnstorm/js/jquery.ui.custom.js" %}"></script>
+<script src="{% static "dnstorm/js/foundation.min.js" %}"></script>
 {% block "scripts" %}{% endblock %}
 <script src="{% url "jsi18n" %}"></script>
 <script src="{% static "dnstorm/js/scripts.js" %}"></script>

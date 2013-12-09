@@ -19,7 +19,7 @@
         <div class="columns large-6">
             <a class="close-reveal-modal-button button small secondary no-margin-bottom">{% trans "Cancel" %}</a>
         </div>
-        <div class="columns large-6 alignright">
+        <div class="columns large-6 text-right">
             <a class="remove button alert no-margin-bottom remove-alternative-confirm">{% trans "Remove" %}</a>
         </div>
         </div>
@@ -43,7 +43,7 @@
         </div>
         <hr/>
         <div class="row problem-ideas-modal-buttons">
-            <div class="large-12 alignright">
+            <div class="large-12 text-right">
                 <a class="button success problem-idea-modal-save">{% trans "Done" %}</a>
             </div>
         </div>
@@ -57,7 +57,7 @@
     <div class="columns content large-8">
         <h4>{{ problem.title }}</h4>
     </div>
-    <div class="columns large-4 alignright">
+    <div class="columns large-4 text-right">
         <a class="button secondary small add-alternative">{% trans "Add alternative" %}</a>
         {% if not criterias %}
             &nbsp;<a class="button secondary small add-column">{% trans "Add column" %}</a>
@@ -111,7 +111,7 @@
                                     {% endfor %}
                                 {% endfor %}
                             {% endif %}
-                            <a class="button expand secondary select-idea{% if item.objects %} hidden{% endif %}" data-problem="{{ problem.id }}" data-criteria="{{ item.criteria.id }}" data-alternative="{{ alternative.id }}">{% trans "Select ideas" %}</a>
+                            <a class="button expand secondary select-idea{% if item.objects %} hide{% endif %}" data-problem="{{ problem.id }}" data-criteria="{{ item.criteria.id }}" data-alternative="{{ alternative.id }}">{% trans "Select ideas" %}</a>
                             </div>
                             </td>
                         {% endfor %}
@@ -124,7 +124,7 @@
                                     <td>
                                     <div class="cell-wrap">
                                     <p>{{ idea.title }}</p>
-                                    <a class="button expand secondary select-idea hidden" data-problem="{{ problem.id }}" data-criteria="0" data-alternative="{{ alternative.id }}">{% trans "Select ideas" %}</a>
+                                    <a class="button expand secondary select-idea hide" data-problem="{{ problem.id }}" data-criteria="0" data-alternative="{{ alternative.id }}">{% trans "Select ideas" %}</a>
                                     </div>
                                     </td>
                                 {% endfor %}
