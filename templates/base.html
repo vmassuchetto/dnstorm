@@ -109,9 +109,9 @@
 <footer>
 <div class="row">
     <div class="columns large-12 text-center">
-        <p class="text-center"><a class="logo-faded" href="{% url "home" %}">DNStorm</a></p>
+        <p class="text-center"><a class="logo-faded" href="{{ dnstorm_url }}">DNStorm</a></p>
         <p class="text-center">{{ options.site_title }} &mdash; {{ options.site_description }}</p>
-        <p class="text-center">{% blocktrans with "http://www.gnu.org/licenses/gpl.html" as gpl_url %}DNStorm is a free softwares licensed under the <a href="{{ gpl_url }}">GPL3</a> license{% endblocktrans %}</p>
+        <p class="text-center">{% blocktrans with "http://www.gnu.org/licenses/gpl.html" as gpl_url %}<a href="{{ dnstorm_url }}">DNStorm</a> is a free softwares licensed under the <a href="{{ gpl_url }}">GPL3</a> license{% endblocktrans %}</p>
         </div>
     </div>
 </footer>
