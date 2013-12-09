@@ -79,14 +79,18 @@ $('.problem-criteria-select .text').autocomplete({
     },
     response: function(event, ui) {
         output = '';
+        exact_match = false;
         if (ui.content.length > 0) {
             for (i in ui.content) {
                 item = ui.content[i];
                 output += criteria_field(item.id, item.label, item.description)
             }
-        } else {
-            output += criteria_field(0, $('.problem-criteria-select .text').text(), gettext('Click above to create this criteria.'));
+            if (event.target.innerHTML == item.label)
+                exact_match = true;
         }
+
+        if (!exact_match)
+            output += criteria_field(0, $('.problem-criteria-select .text').text(), gettext('Click above to create this criteria.'));
 
         result = $('.problem-criteria-result');
         result.html(output);
