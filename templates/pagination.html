@@ -1,7 +1,9 @@
 {% load i18n %}
 
+{% if items.has_previous or items.has_next %}
+
 <div class="row">
-<div class="columns large-12 aligncenter">
+<div class="columns large-12 text-center">
     <p class="pagination">
         {% if items.has_previous %}<a href="?page={{ items.previous_page_number }}">&laquo; previous</a> &mdash; {% endif %}
         {% blocktrans with items.number as number and items.paginator.num_pages as total %}Page {{ number }} of {{ total }}{% endblocktrans %}
@@ -9,3 +11,5 @@
     </p>
 </div>
 </div>
+
+{% endif %}
