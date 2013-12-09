@@ -13,6 +13,47 @@ import reversion
 from ckeditor.fields import RichTextField
 from registration.signals import user_activated
 
+class Option(models.Model):
+    name = models.TextField(verbose_name=_('Name'), blank=False, unique=True)
+    value = models.TextField(verbose_name=_('Value'), blank=False)
+
+    class Meta:
+        db_table = settings.DNSTORM['table_prefix'] + '_option'
+
+    def __unicode__(self):
+        return '<Option: %d>' % self.id
+
+    def get(self, *args):
+        """ The site options are defined and saved by the OptionsForm fields,
+        and this method ensures that some value or a default value will be
+        returned when querying for an option value. `None` is returned if the
+        option name is invalid. """
+
+        if len(args) <= 0:
+            return None
+        try:
+            option = self.objects.get(name=args[0])
+            value = option.value
+        except:
+            defaults = self.get_defaults()
+            if args[0] not in defaults:
+                return None
+            value = defaults[args[0]]
+        return value
+
+    def get_defaults(self, *args, **kwargs):
+        return {
+            'site_title': 'DNStorm',
+            'site_description': _('An idea-generation platform')
+        }
+
+    def get_all(self):
+        options = dict()
+        defaults = self.get_defaults()
+        for default in defaults:
+            options[default] = self.get(default)
+        return options
+
 class Criteria(models.Model):
     name = models.CharField(verbose_name=_('Name'), max_length=90)
     slug = models.CharField(max_length=90, unique=True)

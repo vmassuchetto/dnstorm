@@ -6,23 +6,37 @@ js_info_dict = {
 }
 
 urlpatterns = patterns('',
+
+    # DNStorm
+
     (r'^$', base.HomeView.as_view(), {}, 'home'),
+    (r'^ajax/$', ajax.AjaxView.as_view(), {}, 'ajax'),
+    (r'^options/$', base.OptionsView.as_view(), {}, 'options'),
+    (r'^p/(?P<pk>[^/]+)/$', problem.ProblemShortView.as_view(), {}, 'problem_short'),
+    (r'^problem/new/$', problem.ProblemCreateView.as_view(), {}, 'problem_new'),
+    (r'^problem/search/$', problem.ProblemSearchView.as_view(), {}, 'problem_search'),
+    (r'^problem/(?P<slug>[^/]+)/$', problem.ProblemView.as_view(), {}, 'problem'),
+    (r'^problem/(?P<slug>[^/]+)/edit/$', problem.ProblemUpdateView.as_view(), {}, 'problem_edit'),
+    (r'^problem/(?P<slug>[^/]+)/#ideas$', problem.ProblemUpdateView.as_view(), {}, 'problem_ideas'),
+    (r'^problem/(?P<slug>[^/]+)/revisions/$', problem.ProblemRevisionView.as_view(), {}, 'problem_revision'),
+    (r'^problem/(?P<slug>[^/]+)/revisions/#revision-(?P<revision_id>[^/]+)$', problem.ProblemRevisionItemView.as_view(), {}, 'problem_revision_item'),
+    (r'^problem/(?P<slug>[^/]+)/#idea-(?P<pk>[^/]+)$', idea.IdeaView.as_view(), {}, 'idea'),
+    (r'^problem/(?P<slug>[^/]+)/idea/(?P<pk>[^/]+)/edit/$', idea.IdeaUpdateView.as_view(), {}, 'idea_edit'),
+    (r'^problem/(?P<slug>[^/]+)/idea/(?P<pk>[^/]+)/revisions/$', idea.IdeaRevisionView.as_view(), {}, 'idea_revision'),
+    (r'^problem/(?P<slug>[^/]+)/message/new/$', message.MessageCreateView.as_view(), {}, 'message_new'),
+    (r'^problem/(?P<slug>[^/]+)/message/(?P<pk>[^/]+)/$', message.MessageView.as_view(), {}, 'message'),
+    (r'^problem/(?P<slug>[^/]+)/messages/$', message.MessageProblemListView.as_view(), {}, 'messages'),
+    (r'^problem/(?P<slug>[^/]+)/table/$', table.TableView.as_view(), {}, 'table'),
+    (r'^comment/(?P<pk>[^/]+)/$', base.CommentView.as_view(), {}, 'comment'),
+    (r'^criteria/$', criteria.CriteriaListView.as_view(), {}, 'criteria_list'),
+    (r'^criteria/(?P<slug>[^/]+)$', criteria.CriteriaProblemView.as_view(), {}, 'criteria'),
+    (r'^users/(?P<username>[^/]+)/$', base.UserView.as_view(), {}, 'user'),
+    (r'^activity/$', base.ActivityView.as_view(), {}, 'activity'),
+
+    # Apps
+
     (r'^jsi18n/$', 'django.views.i18n.javascript_catalog', js_info_dict, 'jsi18n'),
     (r'^ckeditor/', include('ckeditor.urls')),
     (r'^accounts/', include('registration.backends.simple.urls')),
-    (r'^ajax/$', ajax.AjaxView.as_view(), {}, 'ajax'),
-    (r'^options/$', base.OptionsView.as_view(), {}, 'options'),
-    (r'^problem/new/$', problem.ProblemCreateView.as_view(), {}, 'problem_new'),
-    (r'^problem/(?P<slug>[^/]+)/$', problem.ProblemView.as_view(), {}, 'problem'),
-    (r'^p/(?P<pk>[^/]+)/$', problem.ProblemShortView.as_view(), {}, 'problem_short'),
-    (r'^problem/edit/(?P<pk>[^/]+)/$', problem.ProblemUpdateView.as_view(), {}, 'problem_edit'),
-    (r'^problem/revisions/(?P<pk>[^/]+)/$', problem.ProblemRevisionView.as_view(), {}, 'problem_revision'),
-    (r'^message/new/(?P<problem_id>[^/]+)/$', message.MessageCreateView.as_view(), {}, 'message_new'),
-    (r'^message/(?P<pk>[^/]+)/$', message.MessageView.as_view(), {}, 'message'),
-    (r'^message/problem/(?P<problem_id>[^/]+)/$', message.MessageProblemListView.as_view(), {}, 'message_problem'),
-    (r'^idea/edit/(?P<pk>[^/]+)/$', idea.IdeaUpdateView.as_view(), {}, 'idea_edit'),
-    (r'^idea/revisions/(?P<pk>[^/]+)/$', idea.IdeaRevisionView.as_view(), {}, 'idea_revision'),
-    (r'^criteria/$', criteria.CriteriaView.as_view(), {}, 'criteria'),
-    (r'^table/(?P<problem_id>[^/]+)/$', table.TableView.as_view(), {}, 'table'),
-    (r'^users/(?P<username>[^/]+)/$', base.UserView.as_view(), {}, 'user'),
+
 )

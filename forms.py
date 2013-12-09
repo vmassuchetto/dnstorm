@@ -5,19 +5,16 @@ from django.utils.translation import ugettext as _
 
 from settings import LANGUAGES
 
-from dnstorm.models import Problem, Idea, Comment, Criteria, Message
+from dnstorm.models import Option, Problem, Idea, Comment, Criteria, Message
 from crispy_forms.helper import FormHelper
 from crispy_forms_foundation.layout import Fieldset, Field, \
     Row, HTML, ButtonHolder, Submit, Layout, Column
 
 from lib.slug import unique_slugify
 
-class RowCollapse(Row):
-    css_class = 'row collapse'
-
 class OptionsForm(forms.Form):
-    site_title = forms.CharField(label=_('Site title'), initial='DNStorm')
-    site_description = forms.CharField(label=_('Site description'), initial=_('An idea-generation platform'))
+    site_title = forms.CharField(label=_('Site title'))
+    site_description = forms.CharField(label=_('Site description'))
 
     def __init__(self, *args, **kwargs):
         self.helper = FormHelper()
@@ -32,6 +29,14 @@ class OptionsForm(forms.Form):
             ),
         )
         super(OptionsForm, self).__init__(*args, **kwargs)
+
+        # Form default or saved values
+
+        option = Option()
+        for field in self.fields:
+            self.fields[field].initial = option.get(field)
+
+
 
 class AccountCreateForm(forms.Form):
     username = forms.CharField(label=_('Username'))
@@ -100,9 +105,11 @@ class ProblemForm(forms.ModelForm):
         )
         super(ProblemForm, self).__init__(*args, **kwargs)
 
+        self.fields['max'].label = ''
+
         # Format criteria field
         self.fields['criteria'].required = False
-        self.fields['criteria'].help_text = mark_safe(_('Type the name of the criteria to search. Go to the <a href="%s">criterias page</a> if you want to edit them.' % reverse('criteria')))
+        self.fields['criteria'].help_text = mark_safe(_('Type the name of the criteria to search. Go to the <a href="%s">criterias page</a> if you want to edit them.' % reverse('criteria_list')))
 
         # Add criteria fields
         instance = kwargs.pop('instance')
