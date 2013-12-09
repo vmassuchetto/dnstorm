@@ -12,6 +12,7 @@ from dnstorm.models import Problem, Criteria, Vote, Idea, Comment, Alternative, 
 from dnstorm.forms import CriteriaForm
 
 from lib.slug import unique_slugify
+from lib.utils import get_object_or_none
 
 import json
 
@@ -41,7 +42,9 @@ class AjaxView(View):
     def post(self, *args, **kwargs):
 
         # New comment
-        if 'idea' and 'content' in self.request.POST:
+
+        if 'idea' and 'content' in self.request.POST or \
+            'problem' and 'content' in self.request.POST:
             return self.submit_comment()
 
         # New criteria in problem edition
@@ -129,9 +132,16 @@ class AjaxView(View):
         return HttpResponse(json.dumps(count if count else 0), content_type="application/json")
 
     def submit_comment(self):
-        idea = get_object_or_404(Idea, pk=self.request.POST['idea'])
+        try:
+            problem = get_object_or_none(Problem, id=int(self.request.POST['problem']))
+        except ValueError:
+            problem = None
+        try:
+            idea = get_object_or_none(Idea, id=int(self.request.POST['idea']))
+        except ValueError:
+            idea = None
         content = self.request.POST['content']
-        comment = Comment(idea=idea, content=content, author=self.request.user)
+        comment = Comment(problem=problem, idea=idea, content=content, author=self.request.user)
         comment.save()
         t = loader.get_template('comment.html')
         c = Context({'comment': comment})

@@ -178,6 +178,7 @@ class Idea(models.Model):
 reversion.register(Idea)
 
 class Comment(models.Model):
+    problem = models.ForeignKey(Problem, editable=False, blank=True, null=True)
     idea = models.ForeignKey(Idea, editable=False, blank=True, null=True)
     content = models.TextField(verbose_name=_('Comment'))
     author = models.ForeignKey(User, editable=False)

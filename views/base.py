@@ -54,6 +54,14 @@ class UserView(TemplateView):
             { 'title': _('Users'), 'classes': 'unavailable' },
             { 'title': self.user.username, 'classes': 'current' } ]
 
+class CommentView(RedirectView):
+    permanent = True
+
+    def get_redirect_url(self, *args, **kwargs):
+        comment = get_object_or_404(Comment, id=kwargs['pk'])
+        problem = comment.problem if comment.problem else comment.idea.problem
+        return reverse('problem', kwargs={'slug':problem.slug}) + '#comment-' + str(comment.id)
+
 class ActivityView(TemplateView):
     template_name = 'activity.html'
 

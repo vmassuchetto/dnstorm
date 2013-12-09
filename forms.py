@@ -140,6 +140,7 @@ class CriteriaForm(forms.ModelForm):
         self.helper.layout = Layout(
             Field('mode', type='hidden'),
             Row(Column('name', css_class='large-12')),
+            Row(Column('parent', css_class='large-12')),
             Row(Column('description', css_class='large-12')),
             Row(Column(Submit('submit', _('Save'), css_class='small'), css_class='large-6 large-offset-6 alignright')),
         )
@@ -164,6 +165,8 @@ class IdeaForm(forms.ModelForm):
 
 class CommentForm(forms.ModelForm):
     idea = forms.IntegerField()
+    problem = forms.IntegerField()
+    content = forms.CharField(widget=forms.Textarea(attrs={'id': 'comment_content'}))
 
     class Meta:
         model = Comment
@@ -172,8 +175,9 @@ class CommentForm(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.form_action = '.'
         self.helper.layout = Layout(
+            Field('problem', type='hidden'),
             Field('idea', type='hidden'),
-            RowCollapse(
+            Row(
                 Column('content', css_class='large-10'),
                 Column(Submit('submit', _('Submit'), css_class='button small'), css_class='large-2 alignright'),
             )
