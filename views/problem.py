@@ -1,14 +1,13 @@
 import re
 import time
 from datetime import datetime
-from lib.diff import inline_diff
 
 from django.shortcuts import get_object_or_404
 from django.core.urlresolvers import reverse
 from django.http import Http404, HttpResponseRedirect
 from django.views.generic import DetailView
 from django.views.generic.edit import FormView, CreateView, UpdateView
-from django.views.generic.base import RedirectView
+from django.views.generic.base import TemplateView, RedirectView
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _
 from django.utils.decorators import method_decorator
@@ -21,8 +20,10 @@ import settings
 
 from django_options import get_option
 import reversion
+import diff_match_patch as _dmp
+from lib.diff import diff_prettyHtml
 
-from dnstorm.models import Problem, Invite, Idea, Criteria, Vote, Comment, Message
+from dnstorm.models import Problem, Invite, Idea, Criteria, Vote, Comment, Message, ActivityManager
 from dnstorm.forms import ProblemForm, IdeaForm, CommentForm, CriteriaForm
 
 def problem_form_valid(obj, form):
@@ -247,7 +248,9 @@ class ProblemView(FormView):
         context['activities'] = ActivityManager().get(limit=4)
         context['title'] = self.problem.title
         context['problem'] = self.problem
+        context['comments'] = Comment.objects.filter(problem=self.problem)
         context['bulletin'] = Message.objects.filter(problem=self.problem).order_by('-modified')[:4]
+        context['problem_comment_form'] = CommentForm(initial={'problem': self.problem.id})
 
         # Ideas
 
@@ -294,3 +297,6 @@ class ProblemView(FormView):
         obj.author = self.request.user
         obj.save()
         return HttpResponseRedirect(obj.get_absolute_url())
+
+class ProblemSearchView(TemplateView):
+    pass

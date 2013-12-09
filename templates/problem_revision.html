@@ -5,4 +5,43 @@
 
 {% block "title" %}<h3>{% trans "Revisions for the problem" %} <a href="{% url "problem" problem.slug %}">#{{ problem.id }}</a></h3>{% endblock %}
 
-{% block "sidebar" %}{% include "problem_sidebar.html" %}{% endblock %}
+{% block "content" %}
+
+    {% url "problem" problem.slug as problem_url %}
+
+    <div class="row">
+
+    <div class="columns large-9">
+
+    <h3>{% blocktrans with problem.id as problem_id %}Revisions for the problem <a href="{{ problem_url }}">#{{ problem_id }}</a>{% endblocktrans %}</h3>
+
+    {% for r in revisions %}
+
+        {% url "problem_revision_item" problem.id r.id as revision_url %}
+
+        <div class="revision">
+
+            <div class="detail html-diff">
+                {{ r.detail|safe }}
+            </div>
+
+            <div class="row">
+                <div class="columns large-5 large-offset-7">
+                    {% include "user_box.html" with user=r.author date=r.modified link=revision_url %}
+                </div>
+            </div>
+
+        </div>
+        <hr/>
+
+    {% endfor %}
+    </div>
+
+    <div class="columns large-3">
+        {% include "problem_sidebar.html" %}
+    </div>
+
+    </div>
+
+{% endblock %}
+
