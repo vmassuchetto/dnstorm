@@ -59,6 +59,7 @@ class UserView(TemplateView):
         context = super(UserView, self).get_context_data(**kwargs)
         self.user = get_object_or_404(User, username=kwargs['username'])
         context['breadcrumbs'] = self.get_breadcrumbs()
+        context['activities'] = ActivityManager().get(user=self.user.id, limit=20)
         context['user'] = self.user
         context['problem_count'] = Problem.objects.filter(author=self.user).count()
         context['idea_count'] = Idea.objects.filter(author=self.user).count()

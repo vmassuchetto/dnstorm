@@ -62,10 +62,4 @@
     <hr/>
 {% endif %}
 
- <h4>{% trans "Latest activity" %}</h4>
- {% for activity in activities %}
-    {% include "activity_item.html" with item=activity sidebar=True %}
- {% endfor %}
- <p class="text-right">
-    <a class="button tiny radius" href="{% url "activity" %}">{% trans "View all activities" %}</a>
-</p>
+{% include "activity_loop.html" with sidebar=True %}
