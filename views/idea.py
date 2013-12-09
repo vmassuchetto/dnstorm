@@ -1,7 +1,7 @@
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import get_object_or_404
-from django.views.generic import DetailView
+from django.views.generic import DetailView, RedirectView
 from django.views.generic.edit import UpdateView
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
@@ -10,6 +10,13 @@ from dnstorm.models import Problem, Idea
 from dnstorm.forms import IdeaForm
 
 import reversion
+
+class IdeaView(RedirectView):
+    permanent = True
+
+    def get_redirect_url(self, *args, **kwargs):
+        idea = get_object_or_404(Idea, id=kwargs['pk'])
+        return reverse('problem', kwargs={'slug':idea.problem.slug}) + '#idea-' + str(idea.id)
 
 class IdeaUpdateView(UpdateView):
     template_name = 'idea_edit.html'

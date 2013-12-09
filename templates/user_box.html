@@ -21,7 +21,7 @@
     </div>
 
     <div class="columns large-2">
-        <a class="avatar"><img src="{% gravatar_for_user user 32 %}" /></a>
+        <a class="avatar" href="{% url "user" user.username %}"><img src="{% gravatar_for_user user 32 %}" /></a>
     </div>
     </div>
 

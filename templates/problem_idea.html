@@ -48,8 +48,8 @@
                 <div class="columns large-7">
                     {% if idea_actions %}
                         {% if idea.comment_form %}<a class="problem-action{% if request.user.is_authenticated %} show-on-click{% endif %}" {% if request.user.is_authenticated %}data-show-on-click="comment-form-{{ idea.id }}"{% else %}data-reveal-id="login-modal"{% endif %} href="javascript:void(0);" >{% trans "Comment" context "verb" %}</a>{% endif %}
-                        {% if idea.author == request.user %}<a class="problem-action problem-idea-edit" href="{% url "idea_edit" idea.id %}">{% trans "Edit" %}</a>{% endif %}
-                        {% if idea.revision_count > 1 %}<a class="problem-action problem-idea-revision" href="{% url "idea_revision" idea.id %}">{{ idea.revision_count }} {% trans "revisions" %}</a>{% endif %}
+                        {% if idea.author == request.user %}<a class="problem-action problem-idea-edit" href="{% url "idea_edit" problem.slug idea.id %}">{% trans "Edit" %}</a>{% endif %}
+                        {% if idea.revision_count > 1 %}<a class="problem-action problem-idea-revision" href="{% url "idea_revision" problem.slug idea.id %}">{{ idea.revision_count }} {% trans "revisions" %}</a>{% endif %}
                     {% endif %}
                 </div>
 
@@ -59,12 +59,12 @@
             </div>
 
             {% if request.user.is_authenticated and idea.comment_form %}
-                <div class="comment-form hidden" id="comment-form-{{ idea.id }}" data-idea="{{ idea.id }}">
+                <div class="comment-form hide" id="comment-form-{{ idea.id }}" data-idea="{{ idea.id }}">
                     {% crispy idea.comment_form %}
                 </div>
             {% endif %}
 
-            <div class="comments" id="comments-{{ idea.id }}">
+            <div class="comments" id="comments-idea-{{ idea.id }}">
                 {% if idea.comments %}
                     {% for comment in idea.comments %}
                         {% include "comment.html" %}

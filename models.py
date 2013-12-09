@@ -59,6 +59,7 @@ class Option(models.Model):
 
 class Criteria(models.Model):
     name = models.CharField(verbose_name=_('Name'), max_length=90)
+    parent = models.ForeignKey('self', verbose_name=_('Parent'))
     slug = models.CharField(max_length=90, unique=True)
     description = models.TextField(verbose_name=_('Description'), blank=True)
     order = models.IntegerField()
@@ -72,7 +73,7 @@ class Criteria(models.Model):
         return '<Criteria: %d>' % self.id
 
     def get_absolute_url(self, *args, **kwargs):
-        return reverse('problem', args=[self.slug])
+        return reverse('criteria', args=[self.slug])
 
     def save(self, *args, **kwargs):
         if not self.id:
@@ -169,7 +170,7 @@ class Idea(models.Model):
         return '<Idea: %d>' % self.id
 
     def get_absolute_url(self, *args, **kwargs):
-        return mark_safe('%s#idea-%d' % (reverse('problem', args=[self.problem.slug]), self.id))
+        return reverse('idea', kwargs={'slug':self.problem.slug, 'pk': self.id})
 
     def revision_count(self):
         return reversion.get_for_object(self).count()
