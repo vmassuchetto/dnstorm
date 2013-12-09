@@ -51,7 +51,8 @@
 </div>
 
 {% if breadcrumbs %}
-<div class="row collapse">
+<div class="breadcrumbs-wrap">
+<div class="row">
     <div class="columns large-12">
         {% block "breadcrumbs" %}
             <nav class="breadcrumbs">
@@ -63,6 +64,9 @@
         {% endblock %}
     </div>
 </div>
+</div>
+{% else %}
+<div class="bottom-1em"></div>
 {% endif %}
 
 <div class="row">

@@ -131,7 +131,7 @@ class ProblemUpdateView(UpdateView):
         return [
             { 'title': _('Problems'), 'url': reverse('home') },
             { 'title': self.object.title, 'url': self.object.get_absolute_url() },
-            { 'title': _('Update'), 'url': reverse('problem_edit', kwargs={'pk':self.object.id}), 'classes': 'current' } ]
+            { 'title': _('Update'), 'url': reverse('problem_edit', kwargs={'slug':self.object.slug}), 'classes': 'current' } ]
 
     @reversion.create_revision()
     def form_valid(self, form):
@@ -144,23 +144,87 @@ class ProblemRevisionView(DetailView):
     def get_context_data(self, *args, **kwargs):
         context = super(ProblemRevisionView, self).get_context_data(**kwargs)
         context['breadcrumbs'] = self.get_breadcrumbs()
-        context['revisions'] = list()
-        revisions = reversion.get_for_object(self.object)
-        for rev in revisions:
-            r = rev.object_version.object
-            context['revisions'].append({
-                'title': r.title,
-                'description': r.description,
-                'author': r.author,
-                'modified': r.modified
+
+        dmp = _dmp.diff_match_patch()
+
+        checkboxes = ('blind', 'locked', 'max', 'open', 'public', 'voting', 'vote_count', 'vote_author')
+        true_messages = {
+            'blind': _('The problem was set to blind contribution mode.'),
+            'locked': _('The problem was locked for contributions.'),
+            'max': _('Max ideas per user set to %d.'),
+            'open': _('Contributions opened for any logged user.'),
+            'public': _('Problem set to be publicly available.'),
+            'voting': _('Ideas votation were opened.'),
+            'vote_count': _('Vote counts will be displayed.'),
+            'vote_author': _('Vote authors will be displayed.')
+        }
+        false_messages = {
+            'blind': _('No longer in blind contribution mode.'),
+            'locked': _('Problem unlocked for contributions.'),
+            'max': _('Untilimed ideas per user.'),
+            'open': _('Only participants will be able to contribute.'),
+            'public': _('The problem is no longer public.'),
+            'voting': _('Ideas votation were closed.'),
+            'vote_count': _('Vote counts will no longer be displayed.'),
+            'vote_author': _('Vote authors will no longer be displayed.')
+        }
+
+        revisions = list()
+        versions = reversion.get_for_object(self.object)
+        for i in range(0, len(versions) - 1):
+            new = versions[i].object_version.object
+            old = versions[i+1].object_version.object
+            detail = ''
+
+            if new.title != old.title or new.description != old.description:
+                diff = dmp.diff_main('<h3>' + old.title + '</h3>' + old.description, '<h3>' + new.title + '</h3>' + new.description)
+                dmp.diff_cleanupSemantic(diff)
+                detail += diff_prettyHtml(diff)
+
+            checkboxes_detail = ''
+            for c in checkboxes:
+                if getattr(new, c) != getattr(old, c):
+                    checkboxes_detail += '<li>%s%s%s</li>' % (
+                        '<ins>' if c else '<del>',
+                        true_messages[c] if c else false_messages[c],
+                        '</ins>' if c else '</del>')
+
+            if checkboxes_detail:
+                detail += '<h5>' + _('Advanced options') + '</h5><ul>%s</ul>' % checkboxes_detail
+
+            revisions.append({
+                'id': versions[i].id,
+                'detail': detail,
+                'author': versions[i].revision.user,
+                'modified': versions[i].object_version
             })
+
+        first = versions[len(versions)-1]
+        detail = '<h3>' + first.object_version.object.title + '</h3>' + first.object_version.object.description
+        for c in first.object_version.object.criteria.all():
+            detail += '<a class="button-criteria" data-tooltip title="%s">%s</a>&nbsp;' % (c.description, c.name)
+
+        revisions.append({
+            'id': first.id,
+            'detail': detail,
+            'author': first.revision.user,
+            'modified': first.object_version
+        })
+        context['revisions'] = revisions
         return context
 
     def get_breadcrumbs(self):
         return [
             { 'title': _('Problems'), 'url': reverse('home') },
             { 'title': self.object.title, 'url': self.object.get_absolute_url() },
-            { 'title': _('Revisions'), 'url': reverse('problem_revision', kwargs={'pk':self.object.id}), 'classes': 'current' } ]
+            { 'title': _('Revisions'), 'url': reverse('problem_revision', kwargs={'slug':self.object.slug}), 'classes': 'current' } ]
+
+class ProblemRevisionItemView(RedirectView):
+    permanent = True
+
+    def get_redirect_url(self, *args, **kwargs):
+        revision = get_object_or_404(reversion.models.Version, id=kwargs['pk'])
+        return reverse('problem_revision', kwargs={'id':revision.object.id}) + '#revision-' + str(revision.id)
 
 class ProblemShortView(RedirectView):
     permanent = True
