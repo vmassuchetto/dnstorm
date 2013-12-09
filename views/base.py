@@ -8,7 +8,7 @@ from django.utils.translation import ugettext as _
 from django.core.urlresolvers import reverse
 from django.core.paginator import Paginator
 
-from dnstorm.models import Problem, Idea, Comment
+from dnstorm.models import Option, Problem, Idea, Comment, ActivityManager
 from dnstorm.forms import OptionsForm, AccountCreateForm
 
 class HomeView(TemplateView):
@@ -53,3 +53,11 @@ class UserView(TemplateView):
         return [
             { 'title': _('Users'), 'classes': 'unavailable' },
             { 'title': self.user.username, 'classes': 'current' } ]
+
+class ActivityView(TemplateView):
+    template_name = 'activity.html'
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(ActivityView, self).get_context_data(**kwargs)
+        context['activities'] = ActivityManager().get(limit=20)
+        return context

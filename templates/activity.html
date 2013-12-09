@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% load humanize i18n %}
+
+{% block "bodyclass" %}activity{% endblock %}
+
+{% block "content" %}
+
+    <div class="row">
+
+    <div class="large-12 columns">
+
+        <h3>{% trans "Activity" %}</h3>
+
+        {% for activity in activities %}
+            {% include "activity_item.html" with item=activity %}
+            <hr/>
+        {% endfor %}
+
+    </div>
+
+    </div>
+
+{% endblock %}

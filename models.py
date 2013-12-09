@@ -241,3 +241,142 @@ class AlternativeItem(models.Model):
     def save(self, *args, **kwargs):
         self.order = self.order if self.order else 0
         super(AlternativeItem, self).save(*args, **kwargs)
+
+class Activity(models.Model):
+    problem = models.ForeignKey(Problem, blank=True, null=True)
+    idea = models.ForeignKey(Idea, blank=True, null=True)
+    comment = models.ForeignKey(Comment, blank=True, null=True)
+    detail = models.TextField(blank=True, null=True)
+    user = models.ForeignKey(User, blank=True, null=True)
+    date = models.DateTimeField(blank=True, null=True)
+
+    class Meta:
+        abstract = True
+        managed = False
+
+class ActivityManager(models.Manager):
+
+    def get(self, *args, **kwargs):
+        """ Fetchs activities related to problems, ideas and comments that can
+        be publicy visible or can be accessed by the current user. """
+        user = kwargs['user'] if 'user' in kwargs and int(kwargs['user']) else 0
+        offset = kwargs['offset'] if 'offset' in kwargs and int(kwargs['offset']) else 0
+        limit = kwargs['limit'] if 'limit' in kwargs and int(kwargs['limit']) else 10
+        cursor = connection.cursor()
+        cursor.execute("""
+                SELECT
+                    'problem_' || p.id AS type,
+                    p.id AS id,
+                    p.modified AS date
+                FROM
+                    %(dnstorm)s_problem p
+                LEFT JOIN
+                    %(dnstorm)s_problem_contributor pc
+                    ON p.id = pc.problem_id
+                LEFT JOIN
+                    %(dnstorm)s_problem_manager pm
+                    ON p.id = pm.problem_id
+                WHERE 1=1
+                    OR p.public = 1
+                    OR p.author_id = %(user)d
+                    OR pc.user_id = %(user)d
+                    OR pm.user_id = %(user)d
+            UNION
+                SELECT
+                    'idea_' || i.id as type,
+                    i.id AS id,
+                    i.modified AS date
+                FROM
+                    %(dnstorm)s_idea i
+                LEFT JOIN
+                    %(dnstorm)s_problem p
+                    ON p.id = i.problem_id
+                LEFT JOIN
+                    %(dnstorm)s_problem_contributor pc
+                    ON p.id = pc.problem_id
+                LEFT JOIN
+                    %(dnstorm)s_problem_manager pm
+                    ON p.id = pm.problem_id
+                WHERE 1=1
+                    OR i.author_id = %(user)d
+                    OR p.public = 1
+                    OR p.author_id = %(user)d
+                    OR pc.user_id = %(user)d
+                    OR pm.user_id = %(user)d
+            UNION
+                SELECT
+                    'comment_' || c.id as type,
+                    c.id AS id,
+                    c.modified AS date
+                FROM
+                    %(dnstorm)s_comment c
+                LEFT JOIN
+                    %(dnstorm)s_problem p
+                    ON p.id = c.problem_id
+                LEFT JOIN
+                    %(dnstorm)s_idea i
+                    ON i.id = c.idea_id
+                LEFT JOIN
+                    %(dnstorm)s_problem_contributor pc
+                    ON p.id = pc.problem_id
+                LEFT JOIN
+                    %(dnstorm)s_problem_manager pm
+                    ON p.id = pm.problem_id
+                LEFT JOIN
+                    %(dnstorm)s_problem p2
+                    ON p2.id = i.problem_id
+                LEFT JOIN
+                    %(dnstorm)s_problem_contributor pc2
+                    ON p2.id = pc2.problem_id
+                LEFT JOIN
+                    %(dnstorm)s_problem_manager pm2
+                    ON p2.id = pm2.problem_id
+                WHERE 1=1
+                    OR c.author_id = %(user)d
+                    OR i.author_id = %(user)d
+                    OR p.public = %(user)d
+                    OR p.author_id = %(user)d
+                    OR pc.user_id = %(user)d
+                    OR pm.user_id = %(user)d
+                    OR p2.public = %(user)d
+                    OR p2.author_id = %(user)d
+                    OR pc2.user_id = %(user)d
+                    OR pm2.user_id = %(user)d
+            ORDER BY date DESC
+            LIMIT %(offset)d, %(limit)d
+        """ % {
+            'dnstorm': settings.DNSTORM['table_prefix'],
+            'user': user,
+            'offset': offset,
+            'limit': limit
+        })
+
+        dmp = _dmp.diff_match_patch()
+
+        re_problem = re.compile('^problem_[0-9]+')
+        re_idea = re.compile('^idea_[0-9]+')
+        re_comment = re.compile('^comment_[0-9]+')
+
+        activities = list()
+        for q in cursor.fetchall():
+            a = Activity()
+            if re_problem.match(q[0]):
+                a.problem = Problem.objects.get(id=q[1])
+                obj = a.problem
+            elif re_idea.match(q[0]):
+                a.idea = Idea.objects.get(id=q[1])
+                obj = a.idea
+            elif re_comment.match(q[0]):
+                a.comment = Comment.objects.get(id=q[1])
+                obj = a.comment
+            versions = reversion.get_for_object(obj)
+            a.status = 'updated' if len(versions) > 1 else 'created'
+            a.user = versions[1].revision.user if len(versions) > 1 else obj.author
+            a.date = obj.modified
+            if len(versions) > 1 and a.problem:
+                diff = dmp.diff_main('<h3>' + versions[1].object_version.object.title + '</h3>' + versions[1].object_version.object.description, '<h3>' + a.problem.title + '</h3>' + a.problem.description)
+                dmp.diff_cleanupSemantic(diff)
+                a.detail = diff_prettyHtml(diff)
+            activities.append(a)
+
+        return activities

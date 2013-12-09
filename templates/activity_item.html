@@ -1,0 +1,84 @@
+{% load gravatar humanize i18n %}
+
+{% with item.user as user and item.date|naturaltime as item_date %}
+{% url "user" item.user.username as user_url %}
+
+<div class="activity-item bottom-1em row{% if sidebar %} collapse{% endif %}">
+
+    <div class="activity-avatar columns large-{% if sidebar %}3{% else %}1{% endif %}">
+        <a class="th radius left" href="{{ user_url }}"><img src="{% if sidebar %}{% gravatar_for_user item.user 32 %}{% else %}{% gravatar_for_user item.user 64 %}{% endif %}" /></a>
+    </div>
+
+    <div class="activity-info columns large-{% if sidebar %}9{% else %}11{% endif %}">
+    <p class="no-margin-bottom">
+
+    {% if item.problem %}
+
+        {% with item.problem.title as problem_title %}
+        {% url "problem" item.problem.slug as problem_url %}
+
+        {% if item.status == "created" %}
+            {% blocktrans %}<a href="{{ user_url }}">{{ user }}</a> created the problem <a href="{{ problem_url }}">{{ problem_title }}</a>{% endblocktrans %}
+        {% else %} {% if item.status == "updated" %}
+            {% blocktrans %}<a href="{{ user_url }}">{{ user }}</a> updated the problem <a href="{{ problem_url }}">{{ problem_title }}</a>{% endblocktrans %}
+        {% endif %} {% endif %}
+
+        {% endwith %}
+
+    {% else %} {% if item.idea %}
+
+        {% with item.idea.title as idea_title and item.idea.problem.title as problem_title %}
+        {% url "problem" item.idea.problem.slug as problem_url %}
+        {% url "idea" item.idea.problem.slug item.idea.id as idea_url %}
+
+        {% if item.status == "created" %}
+            {% blocktrans %}<a href="{{ user_url }}">{{ user }}</a> contributed with the idea <a href="{{ idea_url }}">{{ idea_title }}</a> if the problem <a href="{{ problem_url }}">{{ problem_title }}</a>{% endblocktrans %}
+        {% else %} {% if item.status == "updated" %}
+            {% blocktrans %}<a href="{{ user_url }}">{{ user }}</a> updated the idea <a href="{{ idea_url }}">{{ idea_title }}</a> of the problem <a href="{{ problem_url }}">{{ problem_title }}</a>{% endblocktrans %}
+        {% endif %} {% endif %}
+
+        {% endwith %}
+
+
+    {% else %} {% if item.comment %}
+
+        {% url "comment" item.comment.id as comment_url %}
+
+        {% if item.comment.problem %}
+
+            {% with item.comment.problem.title as problem_title %}
+            {% url "problem" item.problem.slug as problem_url %}
+
+            {% blocktrans %}<a href="{{ user_url }}">{{ user }}</a> <a href="{{ comment_url }}">commented</a> the problem <a href="{{ problem_url }}">{{ problem_title }}</a>{% endblocktrans %}
+
+            {% endwith %}
+
+        {% else %} {% if item.comment.idea %}
+
+            {% with item.comment.idea.problem.title as problem_title and item.comment.idea.title as idea_title %}
+            {% url "problem" item.idea.problem.slug as problem_url %}
+            {% url "idea" item.comment.idea.problem.slug item.comment.idea.id as idea_url %}
+
+            {% blocktrans %}<a href="{{ user_url }}">{{ user }}</a> <a href="{{ comment_url }}">commented</a> the idea <a href="{{ idea_url }}">{{ idea_title }}</a> of the problem <a href="{{ problem_url }}">{{ problem_title }}</a>{% endblocktrans %}
+
+            {% endwith %}
+
+        {% endif %} {% endif %}
+
+    {% endif %} {% endif %} {% endif %}
+
+    </p>
+
+    <span class="label secondary radius no-margin-bottom">{{ item_date }}</span>
+
+    {% if not sidebar and item.detail %}
+        <div class="detail html-diff">
+            {{ item.detail|safe }}
+        </div>
+    {% endif %}
+
+    </div>
+
+</div>
+
+{% endwith %}
