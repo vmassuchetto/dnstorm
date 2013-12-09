@@ -28,7 +28,13 @@
     <section class="top-bar-section">
         <ul class="left">
             <li class="divider hide-for-small"></li>
-            <li><a href="{% url "home" %}">DNStorm</a></li>
+            <li><a href="{% url "home" %}">{% trans "Home" %}</a></li>
+            <li class="divider"></li>
+            <li><a href="{% url "home" %}">{% trans "Problems" %}</a></li>
+            <li class="divider"></li>
+            <li><a href="{% url "criteria_list" %}">{% trans "Criterias" %}</a></li>
+            <li class="divider"></li>
+            <li><a href="{% url "activity" %}">{% trans "Activity" %}</a></li>
             <li class="divider hide-for-small"></li>
         </ul>
         <ul class="right">
@@ -101,10 +107,11 @@
 {% block "content" %}{% endblock %}
 
 <footer>
-    <div class="row">
-        <div class="columns large-12 text-center">
-            <p class="text-center">{{ options.site_title }} &mdash; {{ options.site_description }}</p>
-            <p class="text-center">{% blocktrans with "http://www.gnu.org/licenses/gpl.html" as gpl_url %}DNStorm is a free softwares licensed under the <a href="{{ gpl_url }}">GPL3</a> license{% endblocktrans %}</p>
+<div class="row">
+    <div class="columns large-12 text-center">
+        <p class="text-center"><a class="logo-faded" href="{% url "home" %}">DNStorm</a></p>
+        <p class="text-center">{{ options.site_title }} &mdash; {{ options.site_description }}</p>
+        <p class="text-center">{% blocktrans with "http://www.gnu.org/licenses/gpl.html" as gpl_url %}DNStorm is a free softwares licensed under the <a href="{{ gpl_url }}">GPL3</a> license{% endblocktrans %}</p>
         </div>
     </div>
 </footer>

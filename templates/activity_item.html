@@ -42,12 +42,11 @@
 
     {% else %} {% if item.comment %}
 
-        {% url "comment" item.comment.id as comment_url %}
-
         {% if item.comment.problem %}
 
             {% with item.comment.problem.title as problem_title %}
-            {% url "problem" item.problem.slug as problem_url %}
+            {% url "problem" item.comment.problem.slug as problem_url %}
+            {% url "comment" item.comment.problem.slug item.comment.id as comment_url %}
 
             {% blocktrans %}<a href="{{ user_url }}">{{ user }}</a> <a href="{{ comment_url }}">commented</a> the problem <a href="{{ problem_url }}">{{ problem_title }}</a>{% endblocktrans %}
 
@@ -56,8 +55,9 @@
         {% else %} {% if item.comment.idea %}
 
             {% with item.comment.idea.problem.title as problem_title and item.comment.idea.title as idea_title %}
-            {% url "problem" item.idea.problem.slug as problem_url %}
+            {% url "problem" item.comment.idea.problem.slug as problem_url %}
             {% url "idea" item.comment.idea.problem.slug item.comment.idea.id as idea_url %}
+            {% url "comment" item.comment.idea.problem.slug item.comment.id as comment_url %}
 
             {% blocktrans %}<a href="{{ user_url }}">{{ user }}</a> <a href="{{ comment_url }}">commented</a> the idea <a href="{{ idea_url }}">{{ idea_title }}</a> of the problem <a href="{{ problem_url }}">{{ problem_title }}</a>{% endblocktrans %}
 

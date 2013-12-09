@@ -31,7 +31,7 @@ $.fn.highlight = function (color, duration) {
     if (color == 'red')
         color = '#FF6666';
     else
-        color = '#A8FFA2';
+        color = '#CCCCCC';
     var e = $(this[0]);
     var original = e.css('backgroundColor');
     return e.animate({ backgroundColor: color }, duration, null, function(){
@@ -209,9 +209,9 @@ $('.problem-idea-form-button').click(function(){
     $('.problem-idea-form').delay(300).fadeIn(300);
 });
 
-// When accessing the URL directly to an idea in ProblemView
+// When accessing the URL directly to an idea or comment in ProblemView
 
-if (window.location.hash.match(/#idea-[0-9]+/)) {
+if (window.location.hash.match(/#(idea|comment)-[0-9]+/)) {
     var target = $(window.location.hash);
     target.highlight('green', 2000);
 }

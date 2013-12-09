@@ -145,6 +145,20 @@ h1 {
     }
 }
 
+a.logo-faded {
+    font-family: 'Montserrat Subrayada', sans-serif;
+    font-size: emCalc(25px);
+    color: lighten($black, 30%);
+    letter-spacing: emCalc(-1px);
+    @include text-shadow(
+        lighten($black, 60%) 1px 1px 0,
+        lighten($black, 80%) 2px 2px 0
+    );
+    &:hover {
+        color: darken($black, 40%);
+    }
+}
+
 .problem-new-button {
     margin-left: 1em;
 }
