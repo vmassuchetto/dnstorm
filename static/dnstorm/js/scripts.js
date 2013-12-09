@@ -220,8 +220,13 @@ if (window.location.hash.match(/#idea-[0-9]+/)) {
 
 $('.comment-form form').submit(function(e){
     e.preventDefault();
+    var problem = $(this).parent().data('problem');
     var idea = $(this).parent().data('idea');
-    var comments = $('#comments-' + idea);
+    var comments;
+    if (problem)
+        comments = $('#comments-problem-' + problem);
+    else if (idea)
+        comments = $('#comments-idea-' + idea);
     $.ajax({
         url: '/ajax/',
         type: 'POST',

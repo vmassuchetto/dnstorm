@@ -10,22 +10,23 @@
 @import "icons/general_foundicons.scss";
 @import "icons/general_foundicons_ie7.scss";
 
+// Fonts
+
+@font-face {
+  font-family: 'Montserrat Subrayada';
+  font-style: normal;
+  font-weight: 700;
+  src: local('MontserratSubrayada-Bold'), url(../fonts/MontserratSubrayada-Bold.woff) format('woff');
+}
+
 // General
-
-.hidden {
-    display: none;
-}
-
-.alignright {
-    text-align: right;
-}
-
-.aligncenter {
-    text-align: center;
-}
 
 .left-1em {
     padding-left: 1em !important;
+}
+
+.bottom-1em {
+    padding-bottom: 1em !important;
 }
 
 .no-margin-bottom {
@@ -36,13 +37,8 @@
     line-height: 1;
 }
 
-// Mandatory global radius
-
-.button,
-.panel,
-fieldset,
-input[type='text'] {
-    @include border-radius($global-radius);
+hr {
+    border-color: lighten($black, 65%);
 }
 
 // CKEditor
@@ -64,12 +60,17 @@ input[type='text'] {
     }
 }
 
-.button-facebook {
-  @include button($button-med, #3B5998, $button-radius, true, false, false);
-}
-
-.button-google {
-  @include button($button-med, #DD4C39, $button-radius, true, false, false);
+.button-criteria {
+    @include button(rem-calc(2px), #FFF7B2, $button-radius, false, false, false);
+    padding-left: rem-calc(6px);
+    padding-right: rem-calc(6px);
+    color: #675D00;
+    font-size: emCalc(12px);
+    margin: 0;
+    &:hover {
+        background-color: #675D00;
+        color: #FFFFFF;
+    }
 }
 
 // Forms
@@ -105,42 +106,51 @@ form {
     @include border-radius($global-radius);
 }
 
-// Header
+// Top bar
 
 .contain-to-grid .top-bar {
     overflow: hidden;
-    margin-bottom: 1em;
-}
-
-.header h1 a {
-    font-family: sans-serif;
-    color: $dark-black;
-    letter-spacing: emCalc(-1px);
-    @include text-shadow(
-        lighten($black, 40%) 1px 1px 0,
-        lighten($black, 60%) 2px 2px 0,
-        lighten($black, 80%) 3px 3px 0,
-        lighten($black, 100%) 4px 4px 0
-    );
-    &:hover {
-        color: darken($black, 10%);
-    }
-}
-
-.header .buttons-padding {
-    display: block;
-    width: 100%;
-    padding: emCalc(40px) 0 0 0;
-}
-
-.header .buttons .button {
-    margin-bottom: 0;
 }
 
 // Breadcrumbs
 
-.breadcrumbs {
+.breadcrumbs-wrap {
+    @include crumb-container;
+    width: 100%;
     margin-bottom: 1em;
+    .breadcrumbs {
+        border: 0;
+        margin: 0;
+        padding: 0;
+    }
+}
+
+// Header
+
+h1 {
+    line-height: 1;
+    a {
+        font-family: 'Montserrat Subrayada', sans-serif;
+        color: lighten($black, 10%);
+        letter-spacing: emCalc(-3px);
+        @include text-shadow(
+            lighten($black, 40%) 1px 1px 0,
+            lighten($black, 60%) 2px 2px 0,
+            lighten($black, 80%) 3px 3px 0,
+            lighten($black, 100%) 4px 4px 0
+        );
+        &:hover {
+            color: darken($black, 20%);
+        }
+    }
+}
+
+.problem-new-button {
+    margin-left: 1em;
+}
+
+#search-options.f-dropdown {
+    width: auto;
 }
 
 // Pagination
@@ -150,14 +160,18 @@ p.pagination {
     margin-top: 1em;
 }
 
-// Problem listing
+.problem-form {
+    #id_max {
+        margin-bottom: 0;
+    }
+}
 
 .problem-list-item {
     margin-top: 5px !important;
     margin-bottom: 5px !important;
     padding-top: 5px;
     padding-bottom: 5px;
-    border-bottom: 1px solid lighten($black, 60%);
+    border-bottom: 1px solid lighten($black, 65%);
     h4 {
         margin: 3px 0;
         color: $black;
@@ -177,13 +191,17 @@ p.pagination {
         padding: 8px 5px;
         border-left: 2px solid $white;
         border-right: 2px solid $white;
+        width: 80px;
+        @include text-shadow(
+            lighten($black, 50%) 1px 1px 0,
+            lighten($black, 70%) 2px 2px 0
+        );
         span {
             display: block;
         }
         .number {
             color: $black;
-            font-weight: bold;
-            font-size: emCalc(25px);
+            font-size: emCalc(30px);
             letter-spacing: emCalc(-1px);
             line-height: 1;
         }
@@ -191,6 +209,9 @@ p.pagination {
             color: $light-black;
             font-size: emCalc(12px);
         }
+    }
+    .problem-alternative-counter {
+        margin-right: 1em;
     }
 }
 
@@ -230,6 +251,10 @@ p.pagination {
     }
 }
 
+.problem-icons {
+    margin: 0;
+    font-size: emCalc(50px);
+}
 
 .user-box {
     @include panel(lighten($black, 70%), 5px);
@@ -274,12 +299,13 @@ p.pagination {
     border-top: 1px dotted $dark-white;
     font-size: 0.85em;
     color: $light-black;
+    line-height: 1.5;
     .comment-author {
         background: lighten($black, 70%);
         padding: 2px 5px;
     }
     a.comment-modified {
-        color: $light2-black;
+        color: lighten($black, 40%);
     }
     a.comment-delete {
         font-size:0.85em;
@@ -292,20 +318,18 @@ p.pagination {
     }
 }
 
-// Revisions
-
-.revision {
-    del {
+.html-diff {
+    span, span * {
+        color: $grey;
+    }
+    del, del * {
         color: $red;
         background-color: lighten($red, 60%);
     }
-    ins {
+    ins, ins * {
         color: $green;
-        background-color: lighten($green, 60%);
+        background-color: lighten($green, 60%) !important;
         text-decoration: none;
-    }
-    .raw {
-        display: none;
     }
 }
 
@@ -414,4 +438,40 @@ a.problem-action {
         border: 0;
         background-color: transparent;
     }
+}
+
+.activity-item {
+    .label {
+        margin-top: 0.5em;
+    }
+    .detail {
+        margin: 1em 0 0;
+        padding: 0 0 0 1em;
+        border-left: 5px solid lighten($black, 65%);
+    }
+}
+
+.sidebar {
+    .activity-item {
+        .activity-info p {
+            font-size: 95%;
+            line-height: 1.2;
+        }
+    }
+    .button-criteria {
+        margin: emCalc(4px) 0;
+    }
+}
+
+footer {
+  @include panel($light-grey, 1em);
+  width: 100%;
+  height: 180px;
+  margin: 2em 0 0;
+  bottom: 0;
+  p {
+    color: $light-black;
+    font-size: 90%;
+    line-height: 1;
+  }
 }
