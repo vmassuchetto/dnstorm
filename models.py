@@ -59,7 +59,7 @@ class Option(models.Model):
 
 class Criteria(models.Model):
     name = models.CharField(verbose_name=_('Name'), max_length=90)
-    parent = models.ForeignKey('self', verbose_name=_('Parent'))
+    parent = models.ForeignKey('self', verbose_name=_('Parent'), blank=True, null=True)
     slug = models.CharField(max_length=90, unique=True)
     description = models.TextField(verbose_name=_('Description'), blank=True)
     order = models.IntegerField()
@@ -70,7 +70,7 @@ class Criteria(models.Model):
         db_table = settings.DNSTORM['table_prefix'] + '_criteria'
 
     def __unicode__(self):
-        return '<Criteria: %d>' % self.id
+        return self.name
 
     def get_absolute_url(self, *args, **kwargs):
         return reverse('criteria', args=[self.slug])
