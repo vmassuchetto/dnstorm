@@ -1,12 +1,14 @@
 from django.contrib.auth.models import User
-from django.views.generic import DetailView
+from django.views.generic import DetailView, RedirectView
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
-from django.http import Http404
+from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
 from django.core.urlresolvers import reverse
 from django.core.paginator import Paginator
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import login_required
 
 from dnstorm.models import Option, Problem, Idea, Comment, ActivityManager
 from dnstorm.forms import OptionsForm, AccountCreateForm
@@ -16,15 +18,19 @@ class HomeView(TemplateView):
 
     def get_context_data(self, *args, **kwargs):
         context = super(HomeView, self).get_context_data(**kwargs)
-        problems = Paginator(Problem.objects.all(), 25)
+        problems = Paginator(Problem.objects.all().order_by('-modified'), 25)
         page = self.request.GET['page'] if 'page' in self.request.GET else 1
         context['problems'] = problems.page(page)
-        context['problems_total'] = Problem.objects.all().count()
+        context['activities'] = ActivityManager().get(limit=4)
         return context
 
 class OptionsView(FormView):
     template_name = 'options.html'
     form_class = OptionsForm
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(OptionsView, self).dispatch(*args, **kwargs)
 
     def get_context_data(self, *args, **kwargs):
         context = super(OptionsView, self).get_context_data(**kwargs)
@@ -35,6 +41,16 @@ class OptionsView(FormView):
     def get_breadcrumbs(self):
         return [
             { 'title': _('Options'), 'classes': 'current' } ]
+
+    def form_valid(self, form):
+        for name in form.cleaned_data:
+            try:
+                option = Option.objects.get(name=name)
+                option.value = form.cleaned_data[name]
+            except:
+                option = Option(name=name, value=form.cleaned_data[name])
+            option.save()
+        return HttpResponseRedirect(reverse('options'))
 
 class UserView(TemplateView):
     template_name = 'user.html'

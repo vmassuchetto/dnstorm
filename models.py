@@ -1,14 +1,17 @@
+import re
 from datetime import datetime
 from lib.slug import unique_slugify
 
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
-from django.db import models
+from django.db import models, connection
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 
 import settings
 import reversion
+import diff_match_patch as _dmp
+from lib.diff import diff_prettyHtml
 
 from ckeditor.fields import RichTextField
 from registration.signals import user_activated
@@ -92,7 +95,7 @@ class Problem(models.Model):
     public = models.BooleanField(verbose_name=_('Public'), help_text=_('The problem will be publicy available to anyone.'), default=True)
     locked = models.BooleanField(verbose_name=_('Locked'), help_text=_('Lock the problem so it will be kept visible but no one will be able to contribute.'), default=False, blank=True)
     blind = models.BooleanField(verbose_name=_('Blind contributions'), help_text=_('People can only see their own ideas.'), default=False, blank=True)
-    max = models.IntegerField(verbose_name=_('Max ideas per user'), help_text=_('Leave 0 for unlimited ideas per user.'), default=0, blank=True)
+    max = models.IntegerField(verbose_name=_('Max ideas per user'), help_text=_('Maximum number of ideas an user will be able to contribute to this problem. Leave 0 for unlimited.'), default=0, blank=True)
     voting = models.BooleanField(verbose_name=_('Enable voting for ideas'), help_text=_('Users will be able to vote for the ideas.'), default=True, blank=True)
     vote_count = models.BooleanField(verbose_name=_('Display vote counts'), help_text=_('Users will be able to see how many votes each idea had.'), default=True, blank=True)
     vote_author = models.BooleanField(verbose_name=_('Display vote authors'), help_text=_('Ideas voting will be completely transparent.'), default=False, blank=True)
