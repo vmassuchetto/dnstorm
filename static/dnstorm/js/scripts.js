@@ -84,9 +84,9 @@ $('.problem-criteria-select .text').autocomplete({
             for (i in ui.content) {
                 item = ui.content[i];
                 output += criteria_field(item.id, item.label, item.description)
+                if (event.target.innerHTML == item.label)
+                    exact_match = true;
             }
-            if (event.target.innerHTML == item.label)
-                exact_match = true;
         }
 
         if (!exact_match)
