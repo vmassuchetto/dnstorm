@@ -77,7 +77,12 @@
                     {# Criteria column #}
 
                     <th class="criteria text-center" data-criteria="{{ criteria.id }}">
-                        <div class="title-inner title-admin"><a class="button-criteria" href="{% url "criteria" criteria.slug %}" title="{{ criteria.description }}" data-tooltip>{{ criteria.name }}</a><div class="table-actions"><a class="foundicon-remove remove-alternative" data-alternative="{{ alternative.id }}"></a></div>
+                        <div class="title-inner title-admin">
+                            {% if criteria.parent %}<span class="button-criteria">{{ criteria.parent.name }} &raquo; {% endif %}
+                            <a class="button-criteria" href="{% url "criteria" criteria.slug %}" title="{{ criteria.description }}" data-tooltip>{{ criteria.name }}</a>
+                            {% if criteria.parent %}</span>{% endif %}
+                            <div class="table-actions"><a class="foundicon-remove remove-alternative" data-alternative="{{ alternative.id }}"></a>
+                        </div>
                         </div>
                     </th>
 
