@@ -4,12 +4,12 @@
 {% block "bodyclass" %}table{% endblock %}
 
 {% block "modals" %}
-    <div id="alternative-add-modal" class="reveal-modal tiny">
+    <div id="alternative-add-modal" class="reveal-modal tiny" data-reveal>
         <a class="close-reveal-modal">&#215;</a>
         {% crispy alternative_form %}
     </div>
 
-    <div id="alternative-remove-modal" class="reveal-modal tiny">
+    <div id="alternative-remove-modal" class="reveal-modal tiny" data-reveal>
         <div class="row">
         <div class="columns large-12">
             <p>{% trans "Remove this item?" %}</p>
@@ -17,17 +17,17 @@
         </div>
         <div class="row">
         <div class="columns large-6">
-            <a class="close-reveal-modal-button button small secondary no-margin-bottom">{% trans "Cancel" %}</a>
+            <a class="close-reveal-modal-button button small secondary radius no-margin-bottom">{% trans "Cancel" %}</a>
         </div>
         <div class="columns large-6 text-right">
-            <a class="remove button alert no-margin-bottom remove-alternative-confirm">{% trans "Remove" %}</a>
+            <a class="remove button alert radius no-margin-bottom remove-alternative-confirm">{% trans "Remove" %}</a>
         </div>
         </div>
     </div>
 
-    <div id="select-idea-modal" class="reveal-modal large">
+    <div id="select-idea-modal" class="reveal-modal large" data-reveal>
         <a class="close-reveal-modal">&#215;</a>
-        <h4>{% trans "Select ideas" %}</h4>
+        <h5>{% trans "Select ideas" %}</h5>
         <hr/>
         <div class="problem-ideas-modal">
         {% for idea in ideas %}
@@ -44,7 +44,7 @@
         <hr/>
         <div class="row problem-ideas-modal-buttons">
             <div class="large-12 text-right">
-                <a class="button success problem-idea-modal-save">{% trans "Done" %}</a>
+                <a class="button small success radius problem-idea-modal-save">{% trans "Done" %}</a>
             </div>
         </div>
     </div>
@@ -53,19 +53,19 @@
 
 {% block "content" %}
 
-    <div class="row collapse">
+    <div class="row">
     <div class="columns content large-8">
         <h4>{{ problem.title }}</h4>
     </div>
     <div class="columns large-4 text-right">
-        <a class="button secondary small add-alternative">{% trans "Add alternative" %}</a>
+        <a class="button secondary small radius add-alternative">{% trans "Add alternative" %}</a>
         {% if not criterias %}
-            &nbsp;<a class="button secondary small add-column">{% trans "Add column" %}</a>
+            &nbsp;<a class="button secondary small radius add-column">{% trans "Add column" %}</a>
         {% endif %}
     </div>
     </div>
 
-    <div class="row collapse">
+    <div class="row">
     <div class="columns large-12 problem-table-wrap">
     <table class="problem-table" data-problem="{{ problem.id }}">
         <thead>
@@ -76,8 +76,9 @@
 
                     {# Criteria column #}
 
-                    <th class="criteria" data-criteria="{{ criteria.id }}" title="{{ criteria.description }}" data-tooltip>
-                        <div class="title-inner title-admin">{{ criteria.name }}</div>
+                    <th class="criteria text-center" data-criteria="{{ criteria.id }}">
+                        <div class="title-inner title-admin"><a class="button-criteria" href="{% url "criteria" criteria.slug %}" title="{{ criteria.description }}" data-tooltip>{{ criteria.name }}</a><div class="table-actions"><a class="foundicon-remove remove-alternative" data-alternative="{{ alternative.id }}"></a></div>
+                        </div>
                     </th>
 
                 {% endfor %}
@@ -111,7 +112,7 @@
                                     {% endfor %}
                                 {% endfor %}
                             {% endif %}
-                            <a class="button expand secondary select-idea{% if item.objects %} hide{% endif %}" data-problem="{{ problem.id }}" data-criteria="{{ item.criteria.id }}" data-alternative="{{ alternative.id }}">{% trans "Select ideas" %}</a>
+                            <a class="button expand radius secondary select-idea{% if item.objects %} hide{% endif %}" data-problem="{{ problem.id }}" data-criteria="{{ item.criteria.id }}" data-alternative="{{ alternative.id }}">{% trans "Select ideas" %}</a>
                             </div>
                             </td>
                         {% endfor %}
@@ -124,7 +125,7 @@
                                     <td>
                                     <div class="cell-wrap">
                                     <p>{{ idea.title }}</p>
-                                    <a class="button expand secondary select-idea hide" data-problem="{{ problem.id }}" data-criteria="0" data-alternative="{{ alternative.id }}">{% trans "Select ideas" %}</a>
+                                    <a class="button expand radius secondary select-idea hide" data-problem="{{ problem.id }}" data-criteria="0" data-alternative="{{ alternative.id }}">{% trans "Select ideas" %}</a>
                                     </div>
                                     </td>
                                 {% endfor %}

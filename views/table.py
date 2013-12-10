@@ -11,7 +11,7 @@ class TableView(TemplateView):
     template_name = 'table.html'
 
     def dispatch(self, *args, **kwargs):
-        self.problem = get_object_or_404(Problem, id=self.kwargs['problem_id'])
+        self.problem = get_object_or_404(Problem, slug=self.kwargs['slug'])
         return super(TableView, self).dispatch(*args, **kwargs)
 
     def get_context_data(self, *args, **kwargs):
@@ -29,4 +29,4 @@ class TableView(TemplateView):
         return [
             { 'title': _('Problems'), 'url': reverse('home') },
             { 'title': self.problem.title, 'url': self.problem.get_absolute_url() },
-            { 'title': _('Strategy table'), 'url': reverse('table', kwargs={'problem_id':self.problem.id}), 'classes': 'current' } ]
+            { 'title': _('Strategy table'), 'url': reverse('table', kwargs={'slug':self.problem.slug}), 'classes': 'current' } ]
