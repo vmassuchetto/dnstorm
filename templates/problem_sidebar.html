@@ -39,7 +39,9 @@
         <h4>{% trans "Criterias for this problem" %}</h4>
         <p>
         {% for criteria in problem.criteria.all %}
-            <a class="button-criteria" href="#" data-tooltip title="{{ criteria.description }}">{{ criteria.name }}</a>
+            {% if criteria.parent %}<span class="button-criteria">{{ criteria.parent.name }} &raquo; {% endif %}
+            <a class="button-criteria" href="{% url "criteria" criteria.slug %}" data-tooltip title="{{ criteria.description }}">{{ criteria.name }}</a>
+            {% if criteria.parent %}</span>{% endif %}
         {% endfor %}
         </p>
     </div>

@@ -19,7 +19,12 @@
 
         {% if criteria %}
             <h2>{% blocktrans with criteria.name as criteria_name %}Problems with the criteria "{{ criteria_name }}"{% endblocktrans %}</h2>
-            {% if criteria.description %}<div class="panel radius secondary">{{ criteria.description }}</div>{% endif %}
+            {% if criteria.description %}
+                <div class="panel radius secondary">
+                    <p>{{ criteria.description }}</p>
+                    {% if criteria.parent %}<p>{% trans "Parent:" %}&nbsp;<a class="button-criteria" href="{% url "criteria" criteria.parent.slug %}" title="{{ criteria.parent.description }}" data-tooltip>{{ criteria.parent.name }}</a></p>{% endif %}
+                </div>
+            {% endif %}
         {% endif %}
 
         {% if problems %}
@@ -38,8 +43,10 @@
                 <div class="problem-info">
                     <h4><a href="{% url "problem" problem.slug %}">{{ problem.title }}</a></h4>
                     <p class="problem-criteria left no-margin-bottom">
-                        {% for c in problem.criteria.all %}
-                            <a class="button-criteria" data-tooltip title="{{ c.description }}" href="{% url "criteria" c.slug %}">{{ c.name }}</a>
+                        {% for criteria in problem.criteria.all %}
+                            {% if criteria.parent %}<span class="button-criteria">{{ criteria.parent.name }} &raquo; {% endif %}
+                            <a class="button-criteria" href="{% url "criteria" criteria.slug %}" data-tooltip title="{{ criteria.description }}">{{ criteria.name }}</a>
+                            {% if criteria.parent %}</span>{% endif %}
                         {% endfor %}
                     </p>
                     <h6 class="subheader right">{{ problem.modified|naturaltime }}</h6>

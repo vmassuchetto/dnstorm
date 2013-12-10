@@ -132,19 +132,25 @@ $('#criteria-modal form').submit(function(e){
         dataType: 'json',
         data: $(this).serialize(),
         success: function(data) {
-
-            // Clear and hide form for future use
-            modal.foundation('reveal', 'close');
-            modal.find('#id_name').val('');
-            modal.find('#criteria_description').val('');
-
-            // Insert button
-            button = $('.problem-criteria-result li a[data-id="0"]');
-            button.data('id', data.id);
-            button.attr('data-id', data.id);
-            button.siblings('.description').text(data.description);
-            criteria_add_button(button);
-
+            modal = $('#criteria-modal');
+            if (data.errors) {
+                for (e in data.errors) {
+                    elem = modal.find('#div_id_' + e);
+                    if (!elem.hasClass('error'))
+                        elem.addClass('error').append('<small class="error">' + data.errors[e] + '</small>')
+                }
+            } else {
+                // Clear and hide form for future use
+                modal.foundation('reveal', 'close');
+                modal.find('#id_name').val('');
+                modal.find('#criteria_description').val('');
+                // Insert button
+                button = $('.problem-criteria-result li a[data-id="0"]');
+                button.data('id', data.id);
+                button.attr('data-id', data.id);
+                button.siblings('.description').text(data.description);
+                criteria_add_button(button);
+            }
         }
     });
 });

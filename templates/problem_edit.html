@@ -6,7 +6,8 @@
 {% block "head" %}{{ form.media }}{% endblock %}
 
 {% block "modals" %}
-    <div id="criteria-modal" class="reveal-modal tiny">
+    <div id="criteria-modal" class="reveal-modal tiny" data-reveal>
+        <a class="close-reveal-modal">&#215;</a>
         {% crispy criteria_form %}
     </div>
 {% endblock %}

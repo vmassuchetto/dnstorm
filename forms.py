@@ -128,7 +128,7 @@ class ProblemForm(forms.ModelForm):
 
 class CriteriaForm(forms.ModelForm):
     description = forms.CharField(widget=forms.Textarea(attrs={'id': 'criteria_description'}))
-    parent = forms.ChoiceField(choices=[(c.id, c.name) for c in Criteria.objects.filter(parent=None)])
+    parent = forms.ModelChoiceField(queryset=Criteria.objects.filter(parent=None))
     mode = forms.CharField()
 
     class Meta:

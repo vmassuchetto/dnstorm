@@ -102,14 +102,16 @@ class AjaxView(View):
 
     def problem_criteria_create(self):
         criteria = CriteriaForm(self.request.POST)
-        if not criteria.is_valid():
-            raise Http404()
-        c = criteria.save()
-        response = {
-            'id': c.id,
-            'name': c.name,
-            'description': c.description,
-        }
+        if criteria.is_valid():
+            c = criteria.save()
+            response = {
+                'id': c.id,
+                'name': c.name,
+                'parent': c.parent.name,
+                'description': c.description
+            }
+        else:
+            response = { 'errors': criteria.errors }
         return HttpResponse(json.dumps(response), content_type="application/json")
 
     def submit_vote(self):
