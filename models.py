@@ -24,7 +24,7 @@ class Option(models.Model):
         db_table = settings.DNSTORM['table_prefix'] + '_option'
 
     def __unicode__(self):
-        return '<Option: %d>' % self.id
+        return '<Option: %s>' % self.name
 
     def get(self, *args):
         """ The site options are defined and saved by the OptionsForm fields,
@@ -35,7 +35,7 @@ class Option(models.Model):
         if len(args) <= 0:
             return None
         try:
-            option = self.objects.get(name=args[0])
+            option = Option.objects.get(name=args[0])
             value = option.value
         except:
             defaults = self.get_defaults()

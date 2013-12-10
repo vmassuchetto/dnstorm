@@ -25,12 +25,12 @@ class OptionsForm(forms.Form):
                 'site_description'
             ),
             ButtonHolder(
-                Submit('submit', _('Save')),
+                Submit('submit', _('Save'), css_class='radius'),
             ),
         )
         super(OptionsForm, self).__init__(*args, **kwargs)
 
-        # Form default or saved values
+        # Form defaults or saved values
 
         option = Option()
         for field in self.fields:
