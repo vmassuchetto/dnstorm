@@ -8,11 +8,11 @@ from django.utils.translation import ugettext_lazy as _
 from django.shortcuts import get_object_or_404
 from django.template import loader, Context
 
-from dnstorm.models import Problem, Criteria, Vote, Idea, Comment, Alternative, AlternativeItem
-from dnstorm.forms import CriteriaForm
+from app.models import Problem, Criteria, Vote, Idea, Comment, Alternative, AlternativeItem
+from app.forms import CriteriaForm
 
-from dnstorm.lib.slug import unique_slugify
-from dnstorm.lib.utils import get_object_or_none
+from app.lib.slug import unique_slugify
+from app.lib.utils import get_object_or_none
 
 import json
 

@@ -16,15 +16,14 @@ from django.template.loader import render_to_string
 from django.db.models import Q
 from django.db.models.query import EmptyQuerySet
 
-import settings
+from config import settings
 
-from django_options import get_option
 import reversion
 import diff_match_patch as _dmp
-from dnstorm.lib.diff import diff_prettyHtml
+from app.lib.diff import diff_prettyHtml
 
-from dnstorm.models import Problem, Invite, Idea, Criteria, Vote, Comment, Message, ActivityManager
-from dnstorm.forms import ProblemForm, IdeaForm, CommentForm, CriteriaForm
+from app.models import Problem, Invite, Idea, Criteria, Vote, Comment, Message, ActivityManager
+from app.forms import ProblemForm, IdeaForm, CommentForm, CriteriaForm
 
 def problem_form_valid(obj, form):
     """
@@ -47,7 +46,9 @@ def problem_form_valid(obj, form):
 
     # Mailing options
     if form.cleaned_data['notice'] or form.cleaned_data['invite']:
-        site_name = get_option('site_name') if get_option('site_name') else settings.DNSTORM['site_name']
+        pass
+        # TODO
+        #site_name = get_option('site_name') if get_option('site_name') else settings.DNSTORM['site_name']
 
     # Notice mailing
     if form.cleaned_data['notice']:

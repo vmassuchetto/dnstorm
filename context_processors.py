@@ -1,7 +1,7 @@
 from django.contrib.auth.forms import AuthenticationForm
-from dnstorm.forms import AccountCreateForm
-from dnstorm.models import Option
-from dnstorm import DNSTORM_URL
+from app.forms import AccountCreateForm
+from app.models import Option
+from app import DNSTORM_URL
 
 def base(request):
     context = dict()

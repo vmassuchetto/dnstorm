@@ -1,6 +1,6 @@
 import re
 from datetime import datetime
-from dnstorm.lib.slug import unique_slugify
+from app.lib.slug import unique_slugify
 
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
@@ -8,10 +8,10 @@ from django.db import models, connection
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 
-import settings
 import reversion
 import diff_match_patch as _dmp
-from dnstorm.lib.diff import diff_prettyHtml
+from config import settings
+from app.lib.diff import diff_prettyHtml
 
 from ckeditor.fields import RichTextField
 from registration.signals import user_activated

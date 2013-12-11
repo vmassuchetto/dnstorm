@@ -6,8 +6,8 @@ from django.views.generic.edit import UpdateView
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 
-from dnstorm.models import Problem, Idea
-from dnstorm.forms import IdeaForm
+from app.models import Problem, Idea
+from app.forms import IdeaForm
 
 import reversion
 

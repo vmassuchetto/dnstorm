@@ -11,12 +11,10 @@ from django.utils.decorators import method_decorator
 from django.utils.safestring import mark_safe
 from django.core.mail import send_mail
 
-import settings
+from config import settings
 
-from django_options import get_option
-
-from dnstorm.models import Problem, Message
-from dnstorm.forms import MessageForm
+from app.models import Problem, Message
+from app.forms import MessageForm
 
 class MessageCreateView(CreateView):
     model = Message
@@ -47,7 +45,9 @@ class MessageCreateView(CreateView):
         self.object.problem = self.problem
         self.object.sender = self.request.user
         self.object.save()
-        site_name = get_option('site_name') if get_option('site_name') else settings.DNSTORM['site_name']
+        # TODO
+        #site_name = get_option('site_name') if get_option('site_name') else settings.DNSTORM['site_name']
+        site_name = ''
         subject = '[%s] %s' % (site_name, form.cleaned_data['subject'])
         recipients = [r.email for r in self.problem.get_message_recipients()]
         if settings.DEBUG:
