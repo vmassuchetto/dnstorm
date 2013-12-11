@@ -100,7 +100,7 @@ class ProblemForm(forms.ModelForm):
             ),
             ButtonHolder(
                 HTML('<a id="advanced" class="button secondary radius">' + _('Advanced options') + '</a>'),
-                Submit('submit', _('Save')),
+                Submit('submit', _('Save'), css_class='radius'),
             ),
         )
         super(ProblemForm, self).__init__(*args, **kwargs)
@@ -159,6 +159,10 @@ class IdeaForm(forms.ModelForm):
         self.helper.layout = Layout(
             'title',
             'content',
+            Row(
+                Column('cost', css_class='large-6'),
+                Column('deadline', css_class='large-6')
+            ),
             Submit('submit', _('Submit'), css_class='right radius'),
         )
         super(IdeaForm, self).__init__(*args, **kwargs)
@@ -224,7 +228,7 @@ class AlternativeForm(forms.Form):
             Field('object', type='hidden'),
             Field('problem', type='hidden'),
             ButtonHolder(
-                Submit('submit', _('Save')),
+                Submit('submit', _('Save'), css_class='radius'),
             ),
         )
         super(AlternativeForm, self).__init__(*args, **kwargs)

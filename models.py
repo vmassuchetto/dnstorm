@@ -160,6 +160,8 @@ class Idea(models.Model):
     title = models.CharField(verbose_name=_('Title'), max_length=90)
     content = RichTextField(config_name='idea_content')
     problem = models.ForeignKey(Problem, editable=False)
+    cost = models.IntegerField(verbose_name=_('Cost'), blank=True, null=True)
+    deadline = models.IntegerField(verbose_name=_('Deadline'), blank=True, null=True)
     author = models.ForeignKey(User, editable=False)
     modified = models.DateTimeField(auto_now=True, editable=False)
 

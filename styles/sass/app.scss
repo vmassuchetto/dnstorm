@@ -53,6 +53,12 @@ hr {
 
 // Buttons
 
+.button i {
+    font-size: emCalc(15px);
+    vertical-align: middle;
+    margin-right: emCalc(4px);
+}
+
 .buttonHolder {
     text-align: right;
     #advanced, .cancel {
@@ -307,6 +313,24 @@ p.pagination {
 
 .idea-content {
     margin: 0 0 1em 0;
+}
+
+.idea-attrs {
+    margin-top: emCalc(5px);
+    span.secondary {
+        height: 24px;
+        line-height: 1;
+        color: lighten($black, 20%);
+        font-size: emCalc(13px);
+        font-weight: bold;
+        &:hover {
+            color: $black;
+        }
+        i {
+            vertical-align: middle;
+            font-size: emCalc(15px);
+        }
+    }
 }
 
 // Idea comment list

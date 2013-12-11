@@ -2,7 +2,7 @@
 
 <div class="problem-idea" id="idea-{{ idea.id }}" data-idea="{{ idea.id }}">
 
-    <div class="row{% if not ideas_modal %} collapse{% endif %}">
+    <div class="row">
 
         {% if problem.voting and not ideas_modal %}
             <div class="columns large-1 small-2 voting">
@@ -36,21 +36,35 @@
 
         <div class="columns {% if problem.voting and not ideas_modal %}large-11 small-10 left-1em{% else %}large-12 small-12{% endif %}">
 
-            <div class="row{% if not ideas_modal %} collapse{% endif %}">
+            <div class="row">
                 <div class="columns large-12 idea-content">
                     <h5><a href="{{ idea.get_absolute_url }}">{{ idea.title }}</a></h5>
                     {{ idea.content|safe }}
                 </div>
             </div>
 
-            <div class="row{% if not ideas_modal %} collapse{% endif %}">
+            <div class="row">
 
                 <div class="columns large-7">
-                    {% if idea_actions %}
-                        {% if idea.comment_form %}<a class="problem-action{% if request.user.is_authenticated %} show-on-click{% endif %}" {% if request.user.is_authenticated %}data-show-on-click="comment-form-{{ idea.id }}"{% else %}data-reveal-id="login-modal"{% endif %} href="javascript:void(0);" >{% trans "Comment" context "verb" %}</a>{% endif %}
-                        {% if idea.author == request.user %}<a class="problem-action problem-idea-edit" href="{% url "idea_edit" problem.slug idea.id %}">{% trans "Edit" %}</a>{% endif %}
-                        {% if idea.revision_count > 1 %}<a class="problem-action problem-idea-revision" href="{% url "idea_revision" problem.slug idea.id %}">{{ idea.revision_count }} {% trans "revisions" %}</a>{% endif %}
+                    <div class="row">
+                        <div class="large-12">
+                            {% if idea_actions %}
+                                {% if idea.comment_form %}<a class="problem-action{% if request.user.is_authenticated %} show-on-click{% endif %}" {% if request.user.is_authenticated %}data-show-on-click="comment-form-{{ idea.id }}"{% else %}data-reveal-id="login-modal"{% endif %} href="javascript:void(0);" >{% trans "Comment" context "verb" %}</a>{% endif %}
+                                {% if idea.author == request.user %}<a class="problem-action problem-idea-edit" href="{% url "idea_edit" problem.slug idea.id %}">{% trans "Edit" %}</a>{% endif %}
+                                {% if idea.revision_count > 1 %}<a class="problem-action problem-idea-revision" href="{% url "idea_revision" problem.slug idea.id %}">{{ idea.revision_count }} {% trans "revisions" %}</a>{% endif %}
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    {% if idea.cost or idea.deadline %}
+                    <div class="row">
+                        <div class="large-12 idea-attrs">
+                            {% if idea.cost %}<span class="label secondary radius">$ {{ idea.cost }}</span>{% endif %}
+                            {% if idea.deadline %}<span class="label secondary radius"><i class="foundicon-clock icon"></i> {{ idea.deadline }}</span>{% endif %}
+                        </div>
+                    </div>
                     {% endif %}
+
                 </div>
 
                 <div class="columns large-5">
