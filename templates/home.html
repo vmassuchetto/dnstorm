@@ -76,3 +76,35 @@
     </div>
 
 {% endblock %}
+
+
+{% block "afterfooter" %}
+
+{% if request.GET.help %}
+
+    <ol class="joyride-list" data-joyride>
+        <li data-button="{% trans "Start" %}">
+            <h4>{% trans "Help" %}</h4>
+            <p>{% trans "Hello! Let's start a help section for you. This will show you how to use this screen." %}</p>
+        </li>
+        <li data-button="{% trans "Next" %}" data-class="top-bar">
+            <h4>{% trans "Top menu" %}</h4>
+            <p>{% trans "The top menu contains the key entities that users will interact in this application. Use it as a main navigation." %}</p>
+        </li>
+        <li data-button="{% trans "Next" %}" data-class="problem-list-item">
+            <h4>{% trans "Problems" %}</h4>
+            <p>{% trans "Problems are the general interface for discussion. The number of ideas and alternatives are also displayed." %}</p>
+        </li>
+        <li data-button="{% trans "Next" %}" data-class="problem-new-button">
+            <h4>{% trans "Create a problem" %}</h4>
+            <p>{% trans "You can create a new problem by clicking here." %}</p>
+        </li>
+        <li data-button="{% trans "Finish" %}" data-class="activity-item">
+            <h4>{% trans "Activity" %}</h4>
+            <p>{% trans "Latest activity of the application will be displayed in sidebars like this." %}</p>
+        </li>
+    </ol>
+
+{% endif %}
+
+{% endblock %}

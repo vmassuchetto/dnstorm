@@ -22,6 +22,7 @@ function getCookie(name) {
 // Foundation
 
 $(document).foundation();
+$(document).foundation('joyride', 'start');
 
 // Highlight
 

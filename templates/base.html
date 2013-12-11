@@ -35,6 +35,8 @@
             <li><a href="{% url "criteria_list" %}">{% trans "Criterias" %}</a></li>
             <li class="divider"></li>
             <li><a href="{% url "activity" %}">{% trans "Activity" %}</a></li>
+            <li class="divider"></li>
+            <li><a href="/?help=1">{% trans "Help" %}</a></li>
             <li class="divider hide-for-small"></li>
         </ul>
         <ul class="right">
@@ -116,6 +118,8 @@
     </div>
 </footer>
 
+{% block "afterfooter" %}{% endblock %}
+
 <script src="{% static "dnstorm/js/modernizr.js" %}"></script>
 <script src="{% static "dnstorm/js/jquery.js" %}"></script>
 <script src="{% static "dnstorm/js/jquery.ui.custom.js" %}"></script>
@@ -123,5 +127,6 @@
 {% block "scripts" %}{% endblock %}
 <script src="{% url "jsi18n" %}"></script>
 <script src="{% static "dnstorm/js/scripts.js" %}"></script>
+
 </body>
 </html>
