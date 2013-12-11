@@ -21,7 +21,7 @@ import settings
 from django_options import get_option
 import reversion
 import diff_match_patch as _dmp
-from lib.diff import diff_prettyHtml
+from dnstorm.lib.diff import diff_prettyHtml
 
 from dnstorm.models import Problem, Invite, Idea, Criteria, Vote, Comment, Message, ActivityManager
 from dnstorm.forms import ProblemForm, IdeaForm, CommentForm, CriteriaForm

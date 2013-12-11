@@ -11,8 +11,8 @@ from django.template import loader, Context
 from dnstorm.models import Problem, Criteria, Vote, Idea, Comment, Alternative, AlternativeItem
 from dnstorm.forms import CriteriaForm
 
-from lib.slug import unique_slugify
-from lib.utils import get_object_or_none
+from dnstorm.lib.slug import unique_slugify
+from dnstorm.lib.utils import get_object_or_none
 
 import json
 

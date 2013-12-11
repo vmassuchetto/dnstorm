@@ -10,7 +10,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms_foundation.layout import Fieldset, Field, \
     Row, HTML, ButtonHolder, Submit, Layout, Column
 
-from lib.slug import unique_slugify
+from dnstorm.lib.slug import unique_slugify
 
 class OptionsForm(forms.Form):
     site_title = forms.CharField(label=_('Site title'))
