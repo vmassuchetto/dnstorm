@@ -1,4 +1,5 @@
 from django.conf.urls import patterns, include
+from dnstorm import settings
 from dnstorm.app.views import base, ajax, problem, criteria, message, idea, table
 
 js_info_dict = {
@@ -40,3 +41,10 @@ urlpatterns = patterns('',
     (r'^accounts/', include('registration.backends.simple.urls')),
 
 )
+
+# Static files
+
+if not settings.DEBUG:
+    urlpatterns += patterns('',
+        (r'^static/(?P<path>.*)$', 'django.views.static.serve', { 'document_root': settings.STATIC_ROOT }),
+    )
