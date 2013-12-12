@@ -1,5 +1,5 @@
 from django.conf.urls import patterns, include
-from dnstorm.views import base, ajax, problem, criteria, message, idea, table
+from dnstorm.app.views import base, ajax, problem, criteria, message, idea, table
 
 js_info_dict = {
     'packages': ('dnstorm',),

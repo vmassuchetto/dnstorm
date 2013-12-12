@@ -4,7 +4,7 @@ from django.shortcuts import get_object_or_404
 from django.core.urlresolvers import reverse
 from django.core.paginator import Paginator
 
-from dnstorm.models import Problem, Criteria, ActivityManager
+from dnstorm.app.models import Problem, Criteria, ActivityManager
 
 class CriteriaListView(TemplateView):
     template_name = 'criteria.html'

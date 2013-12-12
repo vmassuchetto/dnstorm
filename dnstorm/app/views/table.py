@@ -2,8 +2,8 @@ from django.shortcuts import get_object_or_404
 from django.views.generic.base import TemplateView
 from django.core.urlresolvers import reverse
 
-from dnstorm.models import Problem, Idea, Criteria, Alternative, AlternativeItem
-from dnstorm.forms import AlternativeForm
+from dnstorm.app.models import Problem, Idea, Criteria, Alternative, AlternativeItem
+from dnstorm.app.forms import AlternativeForm
 
 from django.utils.translation import ugettext_lazy as _
 

@@ -3,14 +3,14 @@ from django.core.urlresolvers import reverse
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
 
-from settings import LANGUAGES
+from dnstorm.settings import LANGUAGES
 
-from dnstorm.models import Option, Problem, Idea, Comment, Criteria, Message
+from dnstorm.app.models import Option, Problem, Idea, Comment, Criteria, Message
 from crispy_forms.helper import FormHelper
 from crispy_forms_foundation.layout import Fieldset, Field, \
     Row, HTML, ButtonHolder, Submit, Layout, Column
 
-from dnstorm.lib.slug import unique_slugify
+from dnstorm.app.lib.slug import unique_slugify
 
 class OptionsForm(forms.Form):
     site_title = forms.CharField(label=_('Site title'))

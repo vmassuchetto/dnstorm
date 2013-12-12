@@ -11,10 +11,7 @@
 env
 
 # Django
-help
-manage.py
-settings.py
-migrations # by now
+staticfiles
 
 # Migrations
 migrations

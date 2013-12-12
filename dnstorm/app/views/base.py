@@ -10,8 +10,8 @@ from django.core.paginator import Paginator
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 
-from dnstorm.models import Option, Problem, Idea, Comment, ActivityManager
-from dnstorm.forms import OptionsForm, AccountCreateForm
+from dnstorm.app.models import Option, Problem, Idea, Comment, ActivityManager
+from dnstorm.app.forms import OptionsForm, AccountCreateForm
 
 class HomeView(TemplateView):
     template_name = 'home.html'
