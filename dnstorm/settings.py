@@ -2,8 +2,7 @@
 import os
 import dj_database_url
 
-DEBUG = True
-TEMPLATE_DEBUG = DEBUG
+LOCALENV = False
 
 ADMINS = (
     ('Vinicius Massuchetto', 'vmassuchetto@gmail.com'),
@@ -11,9 +10,8 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
-LOCALENV = False
-
 if LOCALENV:
+    DEBUG = True
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
@@ -21,8 +19,10 @@ if LOCALENV:
         }
     }
 else :
+    DEBUG = False
     DATABASES = { 'default': dj_database_url.config() }
 
+TEMPLATE_DEBUG = DEBUG
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
