@@ -391,7 +391,8 @@ class ActivityManager(models.Manager):
                     OR pc2.user_id = %(user)d
                     OR pm2.user_id = %(user)d
             ORDER BY date DESC
-            LIMIT %(offset)d, %(limit)d
+            LIMIT %(limit)d
+            OFFSET %(offset)d
         """ % {
             'dnstorm': settings.DNSTORM['table_prefix'],
             'user': user,
