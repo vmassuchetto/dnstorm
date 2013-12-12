@@ -393,11 +393,11 @@ class ActivityManager(models.Manager):
                 WHERE 1=1
                     OR c.author_id = %(user)d
                     OR i.author_id = %(user)d
-                    OR p.public = %(user)d
+                    OR p.public = %(public)s
                     OR p.author_id = %(user)d
                     OR pc.user_id = %(user)d
                     OR pm.user_id = %(user)d
-                    OR p2.public = %(user)d
+                    OR p2.public = %(public)s
                     OR p2.author_id = %(user)d
                     OR pc2.user_id = %(user)d
                     OR pm2.user_id = %(user)d
