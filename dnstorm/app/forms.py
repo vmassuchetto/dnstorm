@@ -147,6 +147,7 @@ class CriteriaForm(forms.ModelForm):
         )
         super(CriteriaForm, self).__init__(*args, **kwargs)
         self.fields['mode'].initial = 'problem_criteria_create'
+        self.fields['parent'].required = False
 
 class IdeaForm(forms.ModelForm):
 

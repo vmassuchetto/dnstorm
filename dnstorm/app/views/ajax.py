@@ -107,7 +107,7 @@ class AjaxView(View):
             response = {
                 'id': c.id,
                 'name': c.name,
-                'parent': c.parent.name,
+                'parent': c.parent.name if c.parent else '',
                 'description': c.description
             }
         else:
