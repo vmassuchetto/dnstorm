@@ -11,7 +11,7 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
-LOCALENV = True
+LOCALENV = False
 
 if LOCALENV:
     DATABASES = {
