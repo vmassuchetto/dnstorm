@@ -307,9 +307,20 @@ class ActivityManager(models.Manager):
     def get(self, *args, **kwargs):
         """ Fetchs activities related to problems, ideas and comments that can
         be publicy visible or can be accessed by the current user. """
+
         user = kwargs['user'] if 'user' in kwargs and int(kwargs['user']) else 0
         offset = kwargs['offset'] if 'offset' in kwargs and int(kwargs['offset']) else 0
         limit = kwargs['limit'] if 'limit' in kwargs and int(kwargs['limit']) else 10
+
+        db_engine = ''
+        engine = settings.DATABASES['default']['ENGINE']
+        if re.match('.*sqlite3$', engine):
+            db_engine = 'sqlite3'
+        elif re.match('.*psycopg2$', engine):
+            db_engine = 'postgresql'
+        elif re.match('.*mysql$', engine):
+            db_engine = 'mysql'
+
         cursor = connection.cursor()
         cursor.execute("""
                 SELECT
@@ -325,7 +336,7 @@ class ActivityManager(models.Manager):
                     %(dnstorm)s_problem_manager pm
                     ON p.id = pm.problem_id
                 WHERE 1=1
-                    OR p.public = 1
+                    OR p.public = %(public)s
                     OR p.author_id = %(user)d
                     OR pc.user_id = %(user)d
                     OR pm.user_id = %(user)d
@@ -347,7 +358,7 @@ class ActivityManager(models.Manager):
                     ON p.id = pm.problem_id
                 WHERE 1=1
                     OR i.author_id = %(user)d
-                    OR p.public = 1
+                    OR p.public = %(public)s
                     OR p.author_id = %(user)d
                     OR pc.user_id = %(user)d
                     OR pm.user_id = %(user)d
@@ -397,7 +408,8 @@ class ActivityManager(models.Manager):
             'dnstorm': settings.DNSTORM['table_prefix'],
             'user': user,
             'offset': offset,
-            'limit': limit
+            'limit': limit,
+            'public': 'TRUE' if db_engine == 'postgresql' else '1'
         })
 
         dmp = _dmp.diff_match_patch()
