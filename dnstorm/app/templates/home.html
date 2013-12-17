@@ -44,9 +44,7 @@
                     <h4><a href="{% url "problem" problem.slug %}">{{ problem.title }}</a></h4>
                     <p class="problem-criteria left no-margin-bottom">
                         {% for criteria in problem.criteria.all %}
-                            {% if criteria.parent %}<span class="button-criteria">{{ criteria.parent.name }} &raquo; {% endif %}
-                            <a class="button-criteria" href="{% url "criteria" criteria.slug %}" data-tooltip title="{{ criteria.description }}">{{ criteria.name }}</a>
-                            {% if criteria.parent %}</span>{% endif %}
+                            {% include "criteria_button.html" %}
                         {% endfor %}
                     </p>
                     <h6 class="subheader right">{{ problem.modified|naturaltime }}</h6>

@@ -1,0 +1,1 @@
+<a class="button-criteria" href="{% url "criteria" criteria.slug %}" data-tooltip title="{{ criteria.description }}">{% if criteria.parent %}{{ criteria.parent.name }} &raquo; {% endif %}{{ criteria.name }}</a>
