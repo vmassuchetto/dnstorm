@@ -25,9 +25,21 @@
 
 <div class="contain-to-grid">
 <nav class="top-bar">
-    <section class="top-bar-section">
+
+    {# Small section #}
+
+    <section class="hide-for-medium-up">
+        <a class="left-off-canvas-toggle menu-icon"><span></span></a>
+    </section>
+    <section class="middle tab-bar-section hide-for-medium-up">
+        <h1><a id="logo" href="{% url "home" %}">DNStorm</a></h1>
+    </section>
+
+    {# Medium and large section #}
+
+    <section class="top-bar-section hide-for-small">
         <ul class="left">
-            <li class="divider hide-for-small"></li>
+            <li class="divider"></li>
             <li><a href="{% url "home" %}">{% trans "Home" %}</a></li>
             <li class="divider"></li>
             <li><a href="{% url "home" %}">{% trans "Problems" %}</a></li>
@@ -37,10 +49,10 @@
             <li><a href="{% url "activity" %}">{% trans "Activity" %}</a></li>
             <li class="divider"></li>
             <li><a href="/?help=1">{% trans "Help" %}</a></li>
-            <li class="divider hide-for-small"></li>
+            <li class="divider"></li>
         </ul>
         <ul class="right">
-            <li class="divider hide-for-small"></li>
+            <li class="divider"></li>
             {% if user.is_authenticated %}
                 <li><a href="{% url "user" user %}">{{ user.get_full_name|default:user.username }}</a></li>
                 <li class="divider"></li>
@@ -52,14 +64,14 @@
                 <li class="divider"></li>
                 <li><a href="{% url "registration_register" %}">{% trans 'Register' %}</a></li>
             {% endif %}
-            <li class="divider hide-for-small"></li>
+            <li class="divider"></li>
         </ul>
     </section>
 </nav>
 </div>
 
 {% if breadcrumbs %}
-<div class="breadcrumbs-wrap">
+<div class="breadcrumbs-wrap show-for-medium-up">
 <div class="row">
     <div class="columns large-12">
         {% block "breadcrumbs" %}
@@ -77,19 +89,19 @@
 <div class="bottom-1em"></div>
 {% endif %}
 
-<div class="row">
-    <div class="columns large-4 text-left">
+<div class="row show-for-medium-up">
+    <div class="columns large-4 medium-4 text-left">
         <h1><a id="logo" href="{% url "home" %}">DNStorm</a></h1>
     </div>
-    <div class="columns large-8">
+    <div class="columns large-8 medium-8">
         <div class="right">
             {% block "topright" %}{% endblock %}
         </div>
-        <div class="row collapse right">
-            <div class="columns large-8">
+        <div class="row collapse right search-form show-for-medium-up">
+            <div class="columns large-8 medium-8">
                 <input type="text" name="q" placeholder="{% trans "Search everything" %}" />
             </div>
-            <div class="columns large-2">
+            <div class="columns large-2 medium-2">
                 <a class="button secondary tiny postfix" data-dropdown="search-options"><i class="foundicon-settings"></i></a>
                 <ul id="search-options" class="f-dropdown" data-dropdown-content>
                     <li><a href="#">{% trans "Everything" %}</a></li>
@@ -99,7 +111,7 @@
                     <li><a href="#">{% trans "Comments" %}</a></li>
                 </ul>
             </div>
-            <div class="columns large-2">
+            <div class="columns large-2 medium-2">
                 <a class="button postfix secondary radius"><i class="foundicon-search"></i></a>
             </div>
         </div>

@@ -3,13 +3,13 @@
 {% with item.user as user and item.date|naturaltime as item_date %}
 {% url "user" item.user.username as user_url %}
 
-<div class="activity-item bottom-1em row{% if sidebar %} collapse{% endif %}">
+<div class="activity-item bottom-1em row collapse">
 
-    <div class="activity-avatar columns large-{% if sidebar %}3{% else %}1{% endif %}">
+    <div class="activity-avatar columns large-3 medium-1 small-1">
         <a class="th radius left" href="{{ user_url }}"><img src="{% if sidebar %}{% gravatar_for_user item.user 32 %}{% else %}{% gravatar_for_user item.user 64 %}{% endif %}" /></a>
     </div>
 
-    <div class="activity-info columns large-{% if sidebar %}9{% else %}11{% endif %}">
+    <div class="activity-info columns large-9 medium-11 small-11">
     <p class="no-margin-bottom">
 
     {% if item.problem %}
@@ -38,7 +38,6 @@
         {% endif %} {% endif %}
 
         {% endwith %}
-
 
     {% else %} {% if item.comment %}
 
@@ -72,9 +71,7 @@
     <span class="label secondary radius no-margin-bottom">{{ item_date }}</span>
 
     {% if not sidebar and item.detail %}
-        <div class="detail html-diff">
-            {{ item.detail|safe }}
-        </div>
+        <div class="detail html-diff">{{ item.detail|safe }}</div>
     {% endif %}
 
     </div>

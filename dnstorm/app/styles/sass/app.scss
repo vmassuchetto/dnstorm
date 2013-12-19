@@ -154,6 +154,25 @@ h1 {
     }
 }
 
+.top-bar h1 {
+    line-height: 1;
+    text-align: left;
+    a {
+        font-family: 'Montserrat Subrayada', sans-serif;
+        color: darken($white, 10%);
+        letter-spacing: emCalc(-3px);
+        @include text-shadow(
+            darken($white, 40%) 1px 1px 0,
+            darken($white, 60%) 2px 2px 0,
+            darken($white, 80%) 3px 3px 0,
+            darken($white, 100%) 4px 4px 0
+        );
+        &:hover {
+            color: lighten($white, 20%);
+        }
+    }
+}
+
 a.logo-faded {
     font-family: 'Montserrat Subrayada', sans-serif;
     font-size: emCalc(25px);
@@ -214,7 +233,7 @@ p.pagination {
         padding: 14px 5px;
         border-left: 2px solid $white;
         border-right: 2px solid $white;
-        width: 80px;
+        width: 44.333%;
         @include text-shadow(
             lighten($black, 50%) 1px 1px 0,
             lighten($black, 70%) 2px 2px 0
