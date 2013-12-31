@@ -13,7 +13,9 @@ class CriteriaListView(TemplateView):
     def get_context_data(self, *args, **kwargs):
         context = super(CriteriaListView, self).get_context_data(**kwargs)
         context['breadcrumbs'] = self.get_breadcrumbs()
-        context['criterias'] = Criteria.objects.all()[:30]
+        criterias = Paginator(Criteria.objects.all().order_by('name'), 25)
+        page = self.request.GET['page'] if 'page' in self.request.GET else 1
+        context['criterias'] = criterias.page(page)
         return context
 
     def get_breadcrumbs(self):

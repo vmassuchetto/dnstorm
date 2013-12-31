@@ -9,12 +9,15 @@
     <div class="row">
     <div class="columns large-12">
         {% if criterias %}
-            <table>
+            <table width="100%">
             <tr><th>{% trans "Name" %}</th><th>{% trans "Description" %}</th></tr>
             {% for criteria in criterias %}
                 <tr><td>{{ criteria.name }}</td><td>{{ criteria.description }}</td></tr>
             {% endfor %}
             </table>
+
+            {% include "pagination.html" with items=criterias %}
+
         {% endif %}
     </div>
     </div>
