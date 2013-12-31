@@ -11,7 +11,7 @@ class CriteriaListView(TemplateView):
     model = Criteria
 
     def get_context_data(self, *args, **kwargs):
-        context = super(CriteriaView, self).get_context_data(**kwargs)
+        context = super(CriteriaListView, self).get_context_data(**kwargs)
         context['breadcrumbs'] = self.get_breadcrumbs()
         context['criterias'] = Criteria.objects.all()[:30]
         return context
