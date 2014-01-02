@@ -204,7 +204,7 @@ class ProblemRevisionView(DetailView):
         first = versions[len(versions)-1]
         detail = '<h3>' + first.object_version.object.title + '</h3>' + first.object_version.object.description
         for c in first.object_version.object.criteria.all():
-            detail += '<a class="button-criteria" data-tooltip title="%s">%s</a>&nbsp;' % (c.description, c.name)
+            detail += render_to_string('criteria_button.html', {'criteria': c})
 
         revisions.append({
             'id': first.id,
