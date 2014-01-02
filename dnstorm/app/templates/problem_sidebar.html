@@ -7,7 +7,6 @@
 {% endif %}
 
 {% if perms.problem.can_edit %}
-    <a class="button small expand radius" href="{% url "problem_edit" problem.slug %}"><i class="foundicon-edit"></i> {% trans 'Edit this problem' %}</a>
     <a class="button small expand radius" href="{% url "table" problem.slug %}"><i class="foundicon-inbox"></i> {% trans 'Problem table' %}</a>
     <a class="button small expand radius" href="{% url "message_new" problem.slug %}"><i class="foundicon-mail"></i> {% trans 'New message' %}</a>
 {% endif %}
