@@ -17,13 +17,24 @@
 
     {% for r in revisions %}
 
+        <hr/>
+
         {% url "problem_revision_item" problem.id r.id as revision_url %}
 
         <div class="revision">
 
-            <div class="detail html-diff">
-                {{ r.detail|safe }}
-            </div>
+            {% if r.detail %}
+                <div class="detail html-diff">
+                    {{ r.detail|safe }}
+                </div>
+            {% endif %}
+
+            {% if r.criteria %}
+                <h5>{% trans "Criterias" %}</h5>
+                {% for criteria in r.criteria %}
+                    {% include "criteria_button.html" %}
+                {% endfor %}
+            {% endif %}
 
             <div class="row">
                 <div class="columns large-5 large-offset-7">
@@ -32,7 +43,6 @@
             </div>
 
         </div>
-        <hr/>
 
     {% endfor %}
     </div>

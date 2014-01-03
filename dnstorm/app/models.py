@@ -84,6 +84,8 @@ class Criteria(models.Model):
             self.order = 0
         super(Criteria, self).save(*args, **kwargs)
 
+reversion.register(Criteria)
+
 class Problem(models.Model):
     title = models.CharField(verbose_name=_('Title'), max_length=90)
     slug = models.SlugField(max_length=90, unique=True, editable=False)
@@ -143,7 +145,7 @@ class Problem(models.Model):
             i.problem.contributor.add(user)
         invites.delete()
 
-reversion.register(Problem)
+reversion.register(Problem, follow=['criteria', 'contributor', 'manager'])
 user_activated.connect(Problem.invites_handler)
 
 class Invite(models.Model):

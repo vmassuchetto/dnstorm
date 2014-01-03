@@ -15,6 +15,7 @@ from django.utils.html import strip_tags
 from django.template.loader import render_to_string
 from django.db.models import Q
 from django.db.models.query import EmptyQuerySet
+from django.contrib.contenttypes.models import ContentType
 
 from dnstorm import settings
 
@@ -178,11 +179,23 @@ class ProblemRevisionView(DetailView):
             old = versions[i+1].object_version.object
             detail = ''
 
+            # Description diff
+
             if new.title != old.title or new.description != old.description:
                 diff = dmp.diff_main('<h3>' + old.title + '</h3>' + old.description, '<h3>' + new.title + '</h3>' + new.description)
                 dmp.diff_cleanupSemantic(diff)
                 detail += diff_prettyHtml(diff)
 
+            # Criterias
+
+            new_criterias = [v for v in versions[i].revision.version_set.all() \
+                if v.content_type == ContentType.objects.get_for_model(Criteria)]
+            old_criterias = [v for v in versions[i+1].revision.version_set.all() \
+                if v.content_type == ContentType.objects.get_for_model(Criteria)]
+
+            criteria = [c.object_version.object for c in old_criterias] \
+                if [c.id for c in new_criterias] != [c.id for c in old_criterias] \
+                else None
 
             # Advanced options
 
@@ -200,20 +213,20 @@ class ProblemRevisionView(DetailView):
             revisions.append({
                 'id': versions[i].id,
                 'detail': detail,
-                'author': versions[i].revision.user,
-                'modified': versions[i].object_version
+                'author': versions[i].object_version.object.author,
+                'modified': versions[i].object_version.object.modified,
+                'criteria': criteria
             })
 
         first = versions[len(versions)-1]
         detail = '<h3>' + first.object_version.object.title + '</h3>' + first.object_version.object.description
-        for c in first.object_version.object.criteria.all():
-            detail += render_to_string('criteria_button.html', {'criteria': c})
 
         revisions.append({
             'id': first.id,
             'detail': detail,
-            'author': first.revision.user,
-            'modified': first.object_version
+            'author': first.object_version.object.author,
+            'modified': first.object_version.object.modified,
+            'criteria': first.object_version.object.criteria.all()
         })
         context['revisions'] = revisions
         return context
