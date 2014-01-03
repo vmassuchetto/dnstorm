@@ -183,13 +183,16 @@ class ProblemRevisionView(DetailView):
                 dmp.diff_cleanupSemantic(diff)
                 detail += diff_prettyHtml(diff)
 
+
+            # Advanced options
+
             checkboxes_detail = ''
             for c in checkboxes:
                 if getattr(new, c) != getattr(old, c):
                     checkboxes_detail += '<li>%s%s%s</li>' % (
-                        '<ins>' if c else '<del>',
-                        true_messages[c] if c else false_messages[c],
-                        '</ins>' if c else '</del>')
+                        '<ins>' if getattr(new, c) else '<del>',
+                        true_messages[c] if getattr(new, c) else false_messages[c],
+                        '</ins>' if getattr(new, c) else '</del>')
 
             if checkboxes_detail:
                 detail += '<h5>' + _('Advanced options') + '</h5><ul>%s</ul>' % checkboxes_detail
