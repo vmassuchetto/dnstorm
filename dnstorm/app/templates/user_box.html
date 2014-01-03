@@ -9,7 +9,7 @@
             <a href="{{ link }}">
         {% endif %}
         {% if date %}
-            {{ date|date:"d b Y" }} {% trans "at" %} {{ problem.modified|date:"H:i" }}
+            {{ date|date:"d b Y" }} {% trans "at" %} {{ date|date:"H:i" }}
         {% endif %}
         {% if date and link %}
             </a>

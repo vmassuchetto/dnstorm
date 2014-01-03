@@ -377,9 +377,6 @@ p.pagination {
 }
 
 .html-diff {
-    span, span * {
-        color: $grey;
-    }
     del, del * {
         color: $red;
         background-color: lighten($red, 60%);
