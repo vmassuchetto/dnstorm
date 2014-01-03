@@ -496,6 +496,9 @@ a.problem-action {
 }
 
 .activity-item {
+    a.th {
+        max-width: 80%;
+    }
     .label {
         margin-top: 0.5em;
     }
