@@ -2,6 +2,8 @@
 // Foundation Variables
 //
 
+$include-open-sans: false;
+
 $black: #444;
 $light-black: lighten($black, 20%);
 $dark-black: darken($black, 20%);
@@ -175,7 +177,7 @@ $default-float: left;
 
 // Control header font styles
 
-// $header-font-family: "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif;
+$header-font-family: "Open Sans", "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif;
 // $header-font-weight: bold;
 // $header-font-style: normal;
 // $header-font-color: #222;
