@@ -306,119 +306,33 @@ class Activity(models.Model):
 
 class ActivityManager(models.Manager):
 
-    def get(self, *args, **kwargs):
+    def get_objects(self, *args, **kwargs):
         """ Fetchs activities related to problems, ideas and comments that can
-        be publicy visible or can be accessed by the current user. """
+        be publicy visible or can be accessed by the current user. That's a RAW
+        SQL query that needs to work on all default engines. """
 
-        user = kwargs['user'] if 'user' in kwargs and int(kwargs['user']) else 0
-        offset = kwargs['offset'] if 'offset' in kwargs and int(kwargs['offset']) else 0
-        limit = kwargs['limit'] if 'limit' in kwargs and int(kwargs['limit']) else 10
+        # Query
 
-        db_engine = ''
-        engine = settings.DATABASES['default']['ENGINE']
-        if re.match('.*sqlite3$', engine):
-            db_engine = 'sqlite3'
-        elif re.match('.*psycopg2$', engine):
-            db_engine = 'postgresql'
-        elif re.match('.*mysql$', engine):
-            db_engine = 'mysql'
+        params = self.get_params(**kwargs)
+        query = self.get_query_string()
+        select = query['select'] % params
+        limit = query['limit'] % params
 
+        # Results
+
+        query = select + limit
         cursor = connection.cursor()
-        cursor.execute("""
-                SELECT
-                    'problem_' || p.id AS type,
-                    p.id AS id,
-                    p.modified AS date
-                FROM
-                    %(dnstorm)s_problem p
-                LEFT JOIN
-                    %(dnstorm)s_problem_contributor pc
-                    ON p.id = pc.problem_id
-                LEFT JOIN
-                    %(dnstorm)s_problem_manager pm
-                    ON p.id = pm.problem_id
-                WHERE 1=1
-                    OR p.public = %(public)s
-                    OR p.author_id = %(user)d
-                    OR pc.user_id = %(user)d
-                    OR pm.user_id = %(user)d
-            UNION
-                SELECT
-                    'idea_' || i.id as type,
-                    i.id AS id,
-                    i.modified AS date
-                FROM
-                    %(dnstorm)s_idea i
-                LEFT JOIN
-                    %(dnstorm)s_problem p
-                    ON p.id = i.problem_id
-                LEFT JOIN
-                    %(dnstorm)s_problem_contributor pc
-                    ON p.id = pc.problem_id
-                LEFT JOIN
-                    %(dnstorm)s_problem_manager pm
-                    ON p.id = pm.problem_id
-                WHERE 1=1
-                    OR i.author_id = %(user)d
-                    OR p.public = %(public)s
-                    OR p.author_id = %(user)d
-                    OR pc.user_id = %(user)d
-                    OR pm.user_id = %(user)d
-            UNION
-                SELECT
-                    'comment_' || c.id as type,
-                    c.id AS id,
-                    c.modified AS date
-                FROM
-                    %(dnstorm)s_comment c
-                LEFT JOIN
-                    %(dnstorm)s_problem p
-                    ON p.id = c.problem_id
-                LEFT JOIN
-                    %(dnstorm)s_idea i
-                    ON i.id = c.idea_id
-                LEFT JOIN
-                    %(dnstorm)s_problem_contributor pc
-                    ON p.id = pc.problem_id
-                LEFT JOIN
-                    %(dnstorm)s_problem_manager pm
-                    ON p.id = pm.problem_id
-                LEFT JOIN
-                    %(dnstorm)s_problem p2
-                    ON p2.id = i.problem_id
-                LEFT JOIN
-                    %(dnstorm)s_problem_contributor pc2
-                    ON p2.id = pc2.problem_id
-                LEFT JOIN
-                    %(dnstorm)s_problem_manager pm2
-                    ON p2.id = pm2.problem_id
-                WHERE 1=1
-                    OR c.author_id = %(user)d
-                    OR i.author_id = %(user)d
-                    OR p.public = %(public)s
-                    OR p.author_id = %(user)d
-                    OR pc.user_id = %(user)d
-                    OR pm.user_id = %(user)d
-                    OR p2.public = %(public)s
-                    OR p2.author_id = %(user)d
-                    OR pc2.user_id = %(user)d
-                    OR pm2.user_id = %(user)d
-            ORDER BY date DESC
-            LIMIT %(limit)d
-            OFFSET %(offset)d
-        """ % {
-            'dnstorm': settings.DNSTORM['table_prefix'],
-            'user': user,
-            'offset': offset,
-            'limit': limit,
-            'public': 'TRUE' if db_engine == 'postgresql' else '1'
-        })
+        cursor.execute(query)
 
         dmp = _dmp.diff_match_patch()
+
+        # Activity types
 
         re_problem = re.compile('^problem_[0-9]+')
         re_idea = re.compile('^idea_[0-9]+')
         re_comment = re.compile('^comment_[0-9]+')
+
+        # Iterate
 
         activities = list()
         for q in cursor.fetchall():
@@ -443,3 +357,156 @@ class ActivityManager(models.Manager):
             activities.append(a)
 
         return activities
+
+    def get_params(self, *args, **kwargs):
+
+        db_engine = ''
+        engine = settings.DATABASES['default']['ENGINE']
+        if re.match('.*sqlite3$', engine):
+            db_engine = 'sqlite3'
+        elif re.match('.*psycopg2$', engine):
+            db_engine = 'postgresql'
+        elif re.match('.*mysql$', engine):
+            db_engine = 'mysql'
+
+        params = {
+            'user': kwargs['user'] if 'user' in kwargs and int(kwargs['user']) else 0,
+            'offset': kwargs['offset'] if 'offset' in kwargs and int(kwargs['offset']) else 0,
+            'limit': kwargs['limit'] if 'limit' in kwargs and int(kwargs['limit']) < 5 else 10,
+            'public': 'TRUE' if db_engine == 'postgresql' else '1',
+            'prefix': settings.DNSTORM['table_prefix']
+        }
+
+        if 'page' in kwargs and int(kwargs['page']):
+            params['page'] = int(kwargs['page'])
+            params['offset'] = (int(kwargs['page']) - 1) * 10
+            params['limit'] = 10
+
+        return params
+
+
+    def get_pagination(self, *args, **kwargs):
+        """ Gets pagination links for a given set of query variables. """
+
+        # Total results count
+
+        params = self.get_params(**kwargs)
+        page = params['page'] if 'page' in params else 1
+        total = self.get_total(**params)
+
+        # Pagination
+
+        pagination = dict()
+        pagination['previous_page_number'] = page - 1 if page > 1 else 0
+        pagination['next_page_number'] = page + 1 if (page + 1) * 10 < total else 0
+        pagination['has_previous'] = True if pagination['previous_page_number'] else False
+        pagination['has_next'] = True if pagination['next_page_number'] else False
+        pagination['number'] = page
+        pagination['paginator'] = { 'num_pages': total / 10 }
+        return pagination
+
+
+    def get_total(self, *args, **kwargs):
+        """ Fetchs only the total number of rows for an activity set. Used for
+        pagination. """
+
+        query = self.get_query_string()
+        select = query['select'] % kwargs
+
+        query = "SELECT COUNT(*) FROM (%(select)s)" % { 'select': select }
+        cursor = connection.cursor()
+        cursor.execute(query)
+        first = cursor.fetchone()
+        return first[0] if len(first) > 0 else 0
+
+    def get_query_string(self, *args, **kwargs):
+        return {
+
+            'select': """
+                    SELECT
+                        'problem_' || p.id AS type,
+                        p.id AS id,
+                        p.modified AS date
+                    FROM
+                        %(prefix)s_problem p
+                    LEFT JOIN
+                        %(prefix)s_problem_contributor pc
+                        ON p.id = pc.problem_id
+                    LEFT JOIN
+                        %(prefix)s_problem_manager pm
+                        ON p.id = pm.problem_id
+                    WHERE 1=1
+                        OR p.public = %(public)s
+                        OR p.author_id = %(user)d
+                        OR pc.user_id = %(user)d
+                        OR pm.user_id = %(user)d
+                UNION
+                    SELECT
+                        'idea_' || i.id AS type,
+                        i.id AS id,
+                        i.modified AS date
+                    FROM
+                        %(prefix)s_idea i
+                    LEFT JOIN
+                        %(prefix)s_problem p
+                        ON p.id = i.problem_id
+                    LEFT JOIN
+                        %(prefix)s_problem_contributor pc
+                        ON p.id = pc.problem_id
+                    LEFT JOIN
+                        %(prefix)s_problem_manager pm
+                        ON p.id = pm.problem_id
+                    WHERE 1=1
+                        OR i.author_id = %(user)d
+                        OR p.public = %(public)s
+                        OR p.author_id = %(user)d
+                        OR pc.user_id = %(user)d
+                        OR pm.user_id = %(user)d
+                UNION
+                    SELECT
+                        'comment_' || c.id AS type,
+                        c.id AS id,
+                        c.modified AS date
+                    FROM
+                        %(prefix)s_comment c
+                    LEFT JOIN
+                        %(prefix)s_problem p
+                        ON p.id = c.problem_id
+                    LEFT JOIN
+                        %(prefix)s_idea i
+                        ON i.id = c.idea_id
+                    LEFT JOIN
+                        %(prefix)s_problem_contributor pc
+                        ON p.id = pc.problem_id
+                    LEFT JOIN
+                        %(prefix)s_problem_manager pm
+                        ON p.id = pm.problem_id
+                    LEFT JOIN
+                        %(prefix)s_problem p2
+                        ON p2.id = i.problem_id
+                    LEFT JOIN
+                        %(prefix)s_problem_contributor pc2
+                        ON p2.id = pc2.problem_id
+                    LEFT JOIN
+                        %(prefix)s_problem_manager pm2
+                        ON p2.id = pm2.problem_id
+                    WHERE 1=1
+                        OR c.author_id = %(user)d
+                        OR i.author_id = %(user)d
+                        OR p.public = %(public)s
+                        OR p.author_id = %(user)d
+                        OR pc.user_id = %(user)d
+                        OR pm.user_id = %(user)d
+                        OR p2.public = %(public)s
+                        OR p2.author_id = %(user)d
+                        OR pc2.user_id = %(user)d
+                        OR pm2.user_id = %(user)d
+                ORDER BY date DESC
+            """,
+
+            'limit': """
+                LIMIT %(limit)d
+                OFFSET %(offset)d
+            """
+
+        }

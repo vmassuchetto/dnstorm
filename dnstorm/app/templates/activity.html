@@ -12,9 +12,11 @@
         <h3>{% trans "Activity" %}</h3>
 
         {% for activity in activities %}
-            {% include "activity_item.html" with item=activity %}
             <hr/>
+            {% include "activity_item.html" with item=activity %}
         {% endfor %}
+
+        {% include "pagination.html" with items=pagination %}
 
     </div>
 

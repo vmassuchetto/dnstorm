@@ -21,7 +21,7 @@ class HomeView(TemplateView):
         problems = Paginator(Problem.objects.all().order_by('-modified'), 25)
         page = self.request.GET['page'] if 'page' in self.request.GET else 1
         context['problems'] = problems.page(page)
-        context['activities'] = ActivityManager().get(limit=4)
+        context['activities'] = ActivityManager().get_objects(limit=4)
         return context
 
 class OptionsView(FormView):
@@ -59,7 +59,7 @@ class UserView(TemplateView):
         context = super(UserView, self).get_context_data(**kwargs)
         self.user = get_object_or_404(User, username=kwargs['username'])
         context['breadcrumbs'] = self.get_breadcrumbs()
-        context['activities'] = ActivityManager().get(user=self.user.id, limit=20)
+        context['activities'] = ActivityManager().get_objects(user=self.user.id, limit=20)
         context['user'] = self.user
         context['problem_count'] = Problem.objects.filter(author=self.user).count()
         context['idea_count'] = Idea.objects.filter(author=self.user).count()
@@ -84,5 +84,7 @@ class ActivityView(TemplateView):
 
     def get_context_data(self, *args, **kwargs):
         context = super(ActivityView, self).get_context_data(**kwargs)
-        context['activities'] = ActivityManager().get(limit=20)
+        kwargs['page'] = int(self.request.GET['page']) if 'page' in self.request.GET else 1
+        context['activities'] = ActivityManager().get_objects(**kwargs)
+        context['pagination'] = ActivityManager().get_pagination(**kwargs)
         return context
