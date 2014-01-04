@@ -21,7 +21,7 @@
 
         {% url "problem_revision_item" problem.id r.id as revision_url %}
 
-        <div class="revision">
+        <div class="revision" id="revision-{{ r.id }}">
 
             {% if r.detail %}
                 <div class="detail html-diff">

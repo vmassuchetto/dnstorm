@@ -1,0 +1,19 @@
+{% load i18n %}
+
+<h2>{{ problem.title }}</h2>
+
+<div class="description">
+    {{ problem.description|safe }}
+</div>
+
+<div class="row">
+    <div class="columns large-7">
+        {% if problem_comment_form %}<a class="problem-action{% if request.user.is_authenticated %} show-on-click{% endif %}" {% if request.user.is_authenticated %}data-show-on-click="problem-comment-form"{% else %}data-reveal-id="login-modal"{% endif %} href="javascript:void(0);" >{% trans "Comment" context "verb" %}</a>{% endif %}
+        {% if perms.problem.can_edit %}<a class="problem-action" href="{% url "problem_edit" problem.slug %}">{% trans "Edit" %}</a>{% endif %}
+    </div>
+
+    <div class="columns large-5">
+        {% include "user_box.html" with user=problem.author date=problem.modified link=problem.get_absolute_url %}
+    </div>
+</div>
+

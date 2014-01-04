@@ -174,7 +174,7 @@ class Idea(models.Model):
         return '<Idea: %d>' % self.id
 
     def get_absolute_url(self, *args, **kwargs):
-        return reverse('idea', kwargs={'slug':self.problem.slug, 'pk': self.id})
+        return reverse('idea', kwargs={'slug': self.problem.slug, 'pk': self.id})
 
     def revision_count(self):
         return reversion.get_for_object(self).count()

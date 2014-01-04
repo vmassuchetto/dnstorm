@@ -32,12 +32,15 @@ def problem_form_valid(obj, form):
     `request.POST`. This method will be the same for ProblemCreateView and
     ProblemUpdateView.
     """
+
     # Save first
+
     obj.object = form.save(commit=False)
     obj.object.author = obj.request.user
     obj.object.save()
 
     # Then fit the criterias in
+
     obj.object.criteria.clear()
     regex = re.compile('^criteria_([0-9]+)$')
     criteria = Criteria.objects.filter(id__in=[m.group(1) for m in [regex.match(p) for p in obj.request.POST] if m])
@@ -46,12 +49,14 @@ def problem_form_valid(obj, form):
     obj.object.save()
 
     # Mailing options
+
     if form.cleaned_data['notice'] or form.cleaned_data['invite']:
         pass
         # TODO
         #site_name = get_option('site_name') if get_option('site_name') else settings.DNSTORM['site_name']
 
     # Notice mailing
+
     if form.cleaned_data['notice']:
         recipients = [u.email for u in obj.object.get_message_recipients()]
         subject = _('%(site_name)s: Problem updated' % { 'site_name': site_name})
@@ -67,14 +72,17 @@ def problem_form_valid(obj, form):
             send_mail(subject, content, settings.EMAIL_HOST_USER, recipients)
 
     # Invite mailing
+
     if form.cleaned_data['invite']:
 
         # Save invites to give permissions for these users when they login
+
         recipients = form.cleaned_data['invite']
         for r in recipients.split(','):
             Invite(problem=obj.object, email=r).save()
 
         # Send the e-mails
+
         subject = _('%(site_name)s: Invitation' % { 'site_name': site_name})
         context = {
             'user': obj.request.user.get_full_name(),
@@ -148,8 +156,6 @@ class ProblemRevisionView(DetailView):
         context = super(ProblemRevisionView, self).get_context_data(**kwargs)
         context['breadcrumbs'] = self.get_breadcrumbs()
 
-        dmp = _dmp.diff_match_patch()
-
         checkboxes = ('blind', 'locked', 'max', 'open', 'public', 'voting', 'vote_count', 'vote_author')
         true_messages = {
             'blind': _('The problem was set to blind contribution mode.'),
@@ -172,6 +178,7 @@ class ProblemRevisionView(DetailView):
             'vote_author': _('Vote authors will no longer be displayed.')
         }
 
+        dmp = _dmp.diff_match_patch()
         revisions = list()
         versions = reversion.get_for_object(self.object)
         for i in range(0, len(versions) - 1):
