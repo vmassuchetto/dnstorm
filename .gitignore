@@ -11,7 +11,7 @@
 env
 
 # Django
-static
+/static
 
 # Migrations
 migrations
