@@ -384,7 +384,6 @@ class ActivityManager(models.Manager):
 
         return params
 
-
     def get_pagination(self, *args, **kwargs):
         """ Gets pagination links for a given set of query variables. """
 

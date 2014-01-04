@@ -262,7 +262,7 @@ class ProblemView(FormView):
     def get_context_data(self, *args, **kwargs):
         context = super(ProblemView, self).get_context_data(**kwargs)
         context['breadcrumbs'] = self.get_breadcrumbs()
-        context['activities'] = ActivityManager().get(limit=4)
+        context['activities'] = ActivityManager().get_objects(limit=4)
         context['title'] = self.problem.title
         context['problem'] = self.problem
         context['comments'] = Comment.objects.filter(problem=self.problem)
