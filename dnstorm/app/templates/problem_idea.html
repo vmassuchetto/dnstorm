@@ -51,7 +51,7 @@
                             {% if idea_actions %}
                                 {% if idea.comment_form %}<a class="problem-action{% if request.user.is_authenticated %} show-on-click{% endif %}" {% if request.user.is_authenticated %}data-show-on-click="comment-form-{{ idea.id }}"{% else %}data-reveal-id="login-modal"{% endif %} href="javascript:void(0);" >{% trans "Comment" context "verb" %}</a>{% endif %}
                                 {% if idea.author == request.user %}<a class="problem-action problem-idea-edit" href="{% url "idea_edit" problem.slug idea.id %}">{% trans "Edit" %}</a>{% endif %}
-                                {% if idea.revision_count > 0 %}<a class="problem-action problem-idea-revision" href="{% url "idea_revision" problem.slug idea.id %}">{% blocktrans count idea.revision_count as i %}{{ i }} revision{% plural %}{{ i }} revisions{% endblocktrans %}</a>{% endif %}
+                                {% if idea.revision_count > 1 %}<a class="problem-action problem-idea-revision" href="{% url "idea_revision" problem.slug idea.id %}">{% blocktrans count idea.revision_count as i %}{{ i }} revision{% plural %}{{ i }} revisions{% endblocktrans %}</a>{% endif %}
                             {% endif %}
                         </div>
                     </div>
