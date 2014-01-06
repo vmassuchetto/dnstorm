@@ -26,6 +26,9 @@ class Option(models.Model):
     def __unicode__(self):
         return '<Option: %s>' % self.name
 
+    def type(self):
+        return _('option')
+
     def get(self, *args):
         """ The site options are defined and saved by the OptionsForm fields,
         and this method ensures that some value or a default value will be
@@ -72,6 +75,9 @@ class Criteria(models.Model):
     def __unicode__(self):
         return self.name
 
+    def type(self):
+        return _('criteria')
+
     def get_absolute_url(self, *args, **kwargs):
         return reverse('criteria', args=[self.slug])
 
@@ -109,6 +115,9 @@ class Problem(models.Model):
 
     def __unicode__(self):
         return '<Problem: %d>' % self.id
+
+    def type(self):
+        return _('problem')
 
     def get_absolute_url(self, *args, **kwargs):
         return reverse('problem', args=[self.slug])
@@ -158,6 +167,9 @@ class Invite(models.Model):
     def __unicode__(self):
         return '<ProblemInvite>'
 
+    def type(self):
+        return _('invite')
+
 class Idea(models.Model):
     title = models.CharField(verbose_name=_('Title'), max_length=90)
     content = RichTextField(config_name='idea_content')
@@ -172,6 +184,9 @@ class Idea(models.Model):
 
     def __unicode__(self):
         return '<Idea: %d>' % self.id
+
+    def type(self):
+        return _('idea')
 
     def get_absolute_url(self, *args, **kwargs):
         return reverse('idea', kwargs={'slug': self.problem.slug, 'pk': self.id})
@@ -198,6 +213,9 @@ class Comment(models.Model):
     def __unicode__(self):
         return '<Comment: %d>' % self.id
 
+    def type(self):
+        return _('comment')
+
 reversion.register(Comment)
 
 class Message(models.Model):
@@ -212,6 +230,9 @@ class Message(models.Model):
 
     def __unicode__(self):
         return '<Message: %d>' % self.id
+
+    def type(self):
+        return _('message')
 
     def get_absolute_url(self, *args, **kwargs):
         return reverse('message', args=[self.id])
@@ -232,6 +253,9 @@ class Vote(models.Model):
     def __unicode__(self):
         return '<Vote: %d>' % self.id
 
+    def type(self):
+        return _('vote')
+
 class Alternative(models.Model):
     problem = models.ForeignKey(Problem)
     name = models.TextField(verbose_name=_('Name'))
@@ -245,6 +269,9 @@ class Alternative(models.Model):
 
     def __unicode__(self):
         return '<Alternative: %d>' % self.id
+
+    def type(self):
+        return _('alternative')
 
     def get_items(self):
         items = list()
@@ -288,6 +315,9 @@ class AlternativeItem(models.Model):
     def __unicode__(self):
         return '<AlternativeItem>'
 
+    def type(self):
+        return _('alternative item')
+
     def save(self, *args, **kwargs):
         self.order = self.order if self.order else 0
         super(AlternativeItem, self).save(*args, **kwargs)
@@ -305,6 +335,9 @@ class Activity(models.Model):
         managed = False
 
 class ActivityManager(models.Manager):
+
+    def type(self):
+        return _('activity')
 
     def get_objects(self, *args, **kwargs):
         """ Fetchs activities related to problems, ideas and comments that can
