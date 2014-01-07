@@ -116,20 +116,20 @@ class AjaxView(View):
 
     def submit_vote(self):
         idea = get_object_or_404(Idea, pk=self.request.GET['idea'])
-        if not self.request.user.is_authenticated() or idea.user == self.request.user:
+        if not self.request.user.is_authenticated() or idea.author == self.request.user:
             raise Http404()
         weight = int(self.request.GET['weight'])
         weight_choices = [ choice[0] for choice in \
             [ field.choices for field in Vote._meta.fields if field.name == 'weight' ][0] ]
         if weight not in weight_choices:
             raise Http404()
-        existing = Vote.objects.filter(idea=idea, user=self.request.user)
+        existing = Vote.objects.filter(idea=idea, author=self.request.user)
         cancel_vote = False
         if len(existing) > 0 and existing[0].weight == weight:
             cancel_vote = True
         existing.delete()
         if not cancel_vote:
-            Vote(idea=idea, weight=weight, user=self.request.user).save()
+            Vote(idea=idea, weight=weight, author=self.request.user).save()
         count = Vote.objects.filter(idea=idea).aggregate(Sum('weight'))['weight__sum']
         return HttpResponse(json.dumps(count if count else 0), content_type="application/json")
 
