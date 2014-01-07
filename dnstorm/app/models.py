@@ -461,17 +461,12 @@ class ActivityManager(models.Manager):
                         p.modified AS date
                     FROM
                         %(prefix)s_problem p
-                    LEFT JOIN
-                        %(prefix)s_problem_contributor pc
-                        ON p.id = pc.problem_id
-                    LEFT JOIN
-                        %(prefix)s_problem_manager pm
-                        ON p.id = pm.problem_id
                     WHERE 1=1
-                        OR p.public = %(public)s
-                        OR p.author_id = %(user)d
-                        OR pc.user_id = %(user)d
-                        OR pm.user_id = %(user)d
+                        AND p.public = %(public)s
+                        AND (
+                            %(user)d = 0
+                            OR p.author_id = %(user)d
+                        )
                 UNION
                     SELECT
                         'idea_' || i.id AS type,
@@ -482,18 +477,12 @@ class ActivityManager(models.Manager):
                     LEFT JOIN
                         %(prefix)s_problem p
                         ON p.id = i.problem_id
-                    LEFT JOIN
-                        %(prefix)s_problem_contributor pc
-                        ON p.id = pc.problem_id
-                    LEFT JOIN
-                        %(prefix)s_problem_manager pm
-                        ON p.id = pm.problem_id
                     WHERE 1=1
-                        OR i.author_id = %(user)d
-                        OR p.public = %(public)s
-                        OR p.author_id = %(user)d
-                        OR pc.user_id = %(user)d
-                        OR pm.user_id = %(user)d
+                        AND p.public = %(public)s
+                        AND (
+                            %(user)d = 0
+                            OR i.author_id = %(user)d
+                        )
                 UNION
                     SELECT
                         'comment_' || c.id AS type,
@@ -507,32 +496,12 @@ class ActivityManager(models.Manager):
                     LEFT JOIN
                         %(prefix)s_idea i
                         ON i.id = c.idea_id
-                    LEFT JOIN
-                        %(prefix)s_problem_contributor pc
-                        ON p.id = pc.problem_id
-                    LEFT JOIN
-                        %(prefix)s_problem_manager pm
-                        ON p.id = pm.problem_id
-                    LEFT JOIN
-                        %(prefix)s_problem p2
-                        ON p2.id = i.problem_id
-                    LEFT JOIN
-                        %(prefix)s_problem_contributor pc2
-                        ON p2.id = pc2.problem_id
-                    LEFT JOIN
-                        %(prefix)s_problem_manager pm2
-                        ON p2.id = pm2.problem_id
                     WHERE 1=1
-                        OR c.author_id = %(user)d
-                        OR i.author_id = %(user)d
-                        OR p.public = %(public)s
-                        OR p.author_id = %(user)d
-                        OR pc.user_id = %(user)d
-                        OR pm.user_id = %(user)d
-                        OR p2.public = %(public)s
-                        OR p2.author_id = %(user)d
-                        OR pc2.user_id = %(user)d
-                        OR pm2.user_id = %(user)d
+                        AND p.public = %(public)s
+                        AND (
+                            %(user)d = 0
+                            OR c.author_id = %(user)d
+                        )
                 ORDER BY date DESC
             """,
 
