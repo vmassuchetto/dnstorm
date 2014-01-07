@@ -13,6 +13,8 @@ from django.contrib.auth.decorators import login_required
 from dnstorm.app.models import Option, Problem, Idea, Comment, ActivityManager
 from dnstorm.app.forms import OptionsForm, AccountCreateForm
 
+from haystack.views import SearchView as HaystackSearchView
+
 class HomeView(TemplateView):
     template_name = 'home.html'
 
@@ -85,6 +87,26 @@ class ActivityView(TemplateView):
     def get_context_data(self, *args, **kwargs):
         context = super(ActivityView, self).get_context_data(**kwargs)
         kwargs['page'] = int(self.request.GET['page']) if 'page' in self.request.GET else 1
+        context['breadcrumbs'] = self.get_breadcrumbs()
         context['activities'] = ActivityManager().get_objects(**kwargs)
         context['pagination'] = ActivityManager().get_pagination(**kwargs)
         return context
+
+    def get_breadcrumbs(self):
+        return [
+            { 'title': _('Activity'), 'classes': 'current' }
+        ]
+
+class SearchView(HaystackSearchView):
+
+    def extra_context(self):
+        return {
+            'breadcrumbs': self.get_breadcrumbs(),
+            'activities': ActivityManager().get_objects(limit=4)
+        }
+
+    def get_breadcrumbs(self):
+        return [
+            { 'title': _('Search'), 'classes': 'unavailable' },
+            { 'title': self.request.GET['q'], 'classes': 'current' }
+        ]

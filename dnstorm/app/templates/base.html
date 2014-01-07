@@ -67,27 +67,28 @@
             <li class="divider"></li>
         </ul>
     </section>
+
 </nav>
 </div>
 
+{% block "breadcrumbs" %}
 {% if breadcrumbs %}
 <div class="breadcrumbs-wrap show-for-medium-up">
 <div class="row">
     <div class="columns large-12">
-        {% block "breadcrumbs" %}
-            <nav class="breadcrumbs">
-                <a href="{% url "home" %}">{% trans "Home" %}</a>
-                {% for b in breadcrumbs %}
-                    <a href="{{ b.url }}" {% if b.classes %}class="{{ b.classes }}"{% endif %}>{{ b.title }}</a>
-                {% endfor %}
-            </nav>
-        {% endblock %}
+        <nav class="breadcrumbs">
+            <a href="{% url "home" %}">{% trans "Home" %}</a>
+            {% for b in breadcrumbs %}
+                <a href="{{ b.url }}" {% if b.classes %}class="{{ b.classes }}"{% endif %}>{{ b.title }}</a>
+            {% endfor %}
+        </nav>
     </div>
 </div>
 </div>
 {% else %}
 <div class="bottom-1em"></div>
 {% endif %}
+{% endblock %}
 
 <div class="row show-for-medium-up">
     <div class="columns large-4 medium-4 text-left">
@@ -97,24 +98,16 @@
         <div class="right">
             {% block "topright" %}{% endblock %}
         </div>
-        <div class="row collapse right search-form show-for-medium-up">
-            <div class="columns large-8 medium-8">
-                <input type="text" name="q" placeholder="{% trans "Search everything" %}" />
+        <form action="/search" method="GET">
+            <div class="row collapse right search-form show-for-medium-up">
+                <div class="columns large-8 medium-8">
+                    <input type="text" name="q" placeholder="{% trans "Search" %}"{% if 'q' in request.GET %} value="{{ request.GET.q }}"{% endif %} />
+                </div>
+                <div class="columns large-4 medium-2">
+                    <button type="submit" class="button postfix secondary radius"><i class="foundicon-search"></i></button>
+                </div>
             </div>
-            <div class="columns large-2 medium-2">
-                <a class="button secondary tiny postfix" data-dropdown="search-options"><i class="foundicon-settings"></i></a>
-                <ul id="search-options" class="f-dropdown" data-dropdown-content>
-                    <li><a href="#">{% trans "Everything" %}</a></li>
-                    <li><a href="#">{% trans "Problems" %}</a></li>
-                    <li><a href="#">{% trans "Criterias" %}</a></li>
-                    <li><a href="#">{% trans "Ideas" %}</a></li>
-                    <li><a href="#">{% trans "Comments" %}</a></li>
-                </ul>
-            </div>
-            <div class="columns large-2 medium-2">
-                <a class="button postfix secondary radius"><i class="foundicon-search"></i></a>
-            </div>
-        </div>
+        </form>
     </div>
 </div>
 

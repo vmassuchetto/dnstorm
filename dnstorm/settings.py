@@ -152,6 +152,7 @@ INSTALLED_APPS = (
     'crispy_forms',
     'crispy_forms_foundation',
     'gravatar',
+    'haystack',
     'registration',
     'reversion',
     'south',
@@ -228,3 +229,11 @@ CKEDITOR_CONFIGS = {
 
 TEMPLATE_PACK = 'foundation'
 CRISPY_TEMPLATE_PACK = 'foundation'
+
+# Haystack
+
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        'ENGINE': 'haystack.backends.simple_backend.SimpleEngine',
+    },
+}

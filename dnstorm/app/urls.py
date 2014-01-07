@@ -1,6 +1,10 @@
 from django.conf.urls import patterns, include
+from django.conf.urls.defaults import url
+
 from dnstorm import settings
 from dnstorm.app.views import base, ajax, problem, criteria, message, idea, table
+
+from haystack.views import search_view_factory
 
 js_info_dict = {
     'packages': ('dnstorm',),
@@ -34,6 +38,7 @@ urlpatterns = patterns('',
     (r'^criteria/(?P<slug>[^/]+)$', criteria.CriteriaProblemView.as_view(), {}, 'criteria'),
     (r'^users/(?P<username>[^/]+)/$', base.UserView.as_view(), {}, 'user'),
     (r'^activity/$', base.ActivityView.as_view(), {}, 'activity'),
+    (r'search/', search_view_factory(view_class=base.SearchView), {}, 'search'),
 
     # Apps
 

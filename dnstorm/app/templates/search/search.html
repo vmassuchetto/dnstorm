@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% load i18n highlight humanize %}
+
+{% block "content" %}
+
+    <div class="row">
+    <div class="columns large-9 search-results">
+
+        {% if request.GET.q %}
+            <h3>{% blocktrans with request.GET.q as s %}Search results for "{{ s }}"{% endblocktrans %}</h3>
+        {% endif %}
+
+        {% for result in page.object_list %}
+
+            <hr/>
+            <div class="row">
+                <div class="columns large-12 search-results-item">
+
+                    <h4><span class="label secondary">{{ result.object.type }}</span>&nbsp;<a href="{{ result.object.get_absolute_url }}">{{ result.object.title }}</a><small class="subheader right">{{ result.object.modified|naturaltime }}</small></h4>
+
+                    <p>
+                    {% if result.object.description %}
+                        {% highlight result.object.description with request.GET.q %}
+                    {% else %} {% if result.object.content %}
+                        {% highlight result.object.content with request.GET.q %} 
+                    {% endif %} {% endif %}
+
+                    {% if result.object.criteria.all %}
+                        <p>
+                        {% for criteria in result.object.criteria.all %}
+                            {% include "criteria_button.html" %}
+                        {% endfor %}
+                        </p>
+                    {% endif %}
+
+                    {% if result.object.cost or result.object.deadline %}
+                        <p>
+                            {% if result.object.cost %}<span class="label secondary radius">$ {{ result.object.cost }}</span>{% endif %}
+                            {% if result.object.deadline %}<span class="label secondary radius"><i class="foundicon-clock icon"></i> {{ result.object.deadline }}</span>{% endif %}
+                        </p>
+                    {% endif %}
+
+                </div>
+            </div>
+        {% empty %}
+            <hr/>
+            <p>{% trans "No results found." %}</p>
+        {% endfor %}
+
+        {% include "pagination.html" with items=page %}
+
+    </div>
+
+    <div class="columns sidebar large-3">
+        {% include "home_sidebar.html" %}
+    </div>
+    </div>
+
+{% endblock %}
