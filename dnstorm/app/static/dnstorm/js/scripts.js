@@ -275,7 +275,8 @@ $('.comment-delete').click(function(){
 
 $('.voting a').click(function() {
 
-    if ($(this).attr('disabled') || $(this).data('reveal-id').length)
+    if (typeof $(this).attr('disabled') !== 'undefined'
+        || typeof $(this).data('reveal-id') !== 'undefined')
         return;
 
     var action;
