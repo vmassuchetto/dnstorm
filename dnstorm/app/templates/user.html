@@ -13,9 +13,9 @@
             <h4>{{ user.get_full_name|default:user.username }}</h4>
         </div>
         <div class="columns large-4 user-labels">
-            {% if problem_count %}<span class="label radius secondary">{{ problem_count }} {% trans "problems created" %}</span><br/>{% endif %}
-            {% if idea_count %}<span class="label radius secondary">{{ idea_count }} {% trans "idea contributions" %}</span><br/>{% endif %}
-            {% if comment_count %}<span class="label radius secondary">{{ comment_count }} {% trans "comments made" %}{% endif %}</span>
+            {% if problem_count %}<span class="label radius secondary right">{{ problem_count }} {% trans "problems created" %}</span><br/>{% endif %}
+            {% if idea_count %}<span class="label radius secondary right">{{ idea_count }} {% trans "idea contributions" %}</span><br/>{% endif %}
+            {% if comment_count %}<span class="label radius secondary right">{{ comment_count }} {% trans "comments made" %}{% endif %}</span>
         </div>
     </div>
     <div class="row">
