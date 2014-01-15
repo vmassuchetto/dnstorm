@@ -6,11 +6,11 @@
     <div class="row problem-detail-title content">
         <div class="columns large-2">
             <a class="th radius" href="{% url "user" user %}">
-                <img class="thumbnail" src="{% gravatar_for_email user.email 128 %}" alt="{{ user.get_full_name|default:user.username }}" />
+                <img class="thumbnail" src="{% gravatar_for_email profile.email 128 %}" alt="{{ profile.get_full_name|default:profile.username }}" />
             </a>
         </div>
         <div class="columns large-6">
-            <h4>{{ user.get_full_name|default:user.username }}</h4>
+            <h4>{{ profile.get_full_name|default:profile.username }}</h4>
         </div>
         <div class="columns large-4 user-labels">
             {% if problem_count %}<span class="label radius secondary right">{{ problem_count }} {% trans "problems created" %}</span><br/>{% endif %}
