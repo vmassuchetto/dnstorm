@@ -6,7 +6,7 @@
     <div class="row problem-detail-title content">
         <div class="columns large-2">
             <a class="th radius" href="{% url "user" user %}">
-                <img class="thumbnail" src="{% gravatar_for_user user 128 %}" alt="{{ user.get_full_name|default:user.username }}" />
+                <img class="thumbnail" src="{% gravatar_for_email user.email 128 %}" alt="{{ user.get_full_name|default:user.username }}" />
             </a>
         </div>
         <div class="columns large-6">

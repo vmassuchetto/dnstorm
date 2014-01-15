@@ -40,7 +40,7 @@
                             <a class="username" href="{% url "user" revision.author.username %}">{{ revision.author.username }}</a>
                         </div>
                         <div class="columns large-2">
-                            <a class="avatar"><img src="{% gravatar_for_user revision.author 32 %}" /></a>
+                            <a class="avatar"><img src="{% gravatar_for_email revision.author.email 32 %}" /></a>
                         </div>
                         </div>
                     </div>

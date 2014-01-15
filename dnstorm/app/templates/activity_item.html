@@ -6,7 +6,7 @@
 <div class="activity-item bottom-1em row collapse">
 
     <div class="activity-avatar columns {% if sidebar %}large-3 hide-for-medium-down{% else %}large-1{% endif %} medium-2 small-2">
-        <a class="th radius left" href="{{ user_url }}"><img src="{% if sidebar %}{% gravatar_for_user item.user 32 %}{% else %}{% gravatar_for_user item.user 64 %}{% endif %}" /></a>
+        <a class="th radius left" href="{{ user_url }}"><img src="{% if sidebar %}{% gravatar_for_email item.user.email 32 %}{% else %}{% gravatar_for_email item.user.email 64 %}{% endif %}" /></a>
     </div>
 
     <div class="activity-info columns {% if sidebar %}large-9{% else %}large-11{% endif %} medium-10 small-10">
