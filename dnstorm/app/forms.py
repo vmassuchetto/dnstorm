@@ -4,8 +4,8 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
 
 from dnstorm.settings import LANGUAGES
-
 from dnstorm.app.models import Option, Problem, Idea, Comment, Criteria, Message
+
 from crispy_forms.helper import FormHelper
 from crispy_forms_foundation.layout import Fieldset, Field, \
     Row, HTML, ButtonHolder, Submit, Layout, Column

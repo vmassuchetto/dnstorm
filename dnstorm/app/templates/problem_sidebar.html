@@ -1,4 +1,4 @@
-{% load absolute i18n %}
+{% load i18n %}
 
 {% if message %}
 <p>
@@ -12,7 +12,7 @@
 {% endif %}
 
 <a class="button small secondary expand radius show-on-click hide-after-click" data-show-on-click="short-link-url" href="javascript:void(0);"><i class="foundicon-paper-clip"></i> {% trans "Short Link" %}</a>
-<div id="short-link-url" class="hide"><input type="text" class="select-on-click" value="{% absolute "problem_short" problem.id %}" /></div>
+<div id="short-link-url" class="hide"><input type="text" class="select-on-click" value="{# absolute "problem_short" problem.id #}" /></div>
 
 {% if problem.public or problem.open or problem.locked or problem.blind or problem.voting %}
     <p class="problem-icons text-center">

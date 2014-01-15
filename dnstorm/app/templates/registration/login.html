@@ -1,9 +1,11 @@
 {% extends "base.html" %}
+{% load crispy_forms_tags i18n %}
 
 {% block "bodyclass" %}login{% endblock %}
 
 {% block "content" %}
     <div class="row">
+    <input type="hidden" name="next" value="{% if request.GET.next %}{{ request.GET.next }}{% else %}{{ dnstorm_url }}{% endif %}" />
     <div class="large-4 large-offset-4 columns content">
         {% include "registration/login_form.html" %}
     </div>
