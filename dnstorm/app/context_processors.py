@@ -6,6 +6,4 @@ def base(request):
     context = dict()
     context['dnstorm_url'] = DNSTORM_URL
     context['options'] = Option().get_all()
-    if not request.user.is_authenticated():
-        context['login_form'] = AuthenticationForm()
     return context
