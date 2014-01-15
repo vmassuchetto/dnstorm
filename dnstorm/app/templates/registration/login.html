@@ -7,7 +7,36 @@
     <div class="row">
     <input type="hidden" name="next" value="{% if request.GET.next %}{{ request.GET.next }}{% else %}{{ dnstorm_url }}{% endif %}" />
     <div class="large-4 large-offset-4 columns content">
-        {% include "registration/login_form.html" %}
+        <h4>{% trans "Login" %}</h4>
+
+        <form method="post" action="{% url "django.contrib.auth.views.login" %}">
+
+            {% if form.errors %}
+                <div class="row">
+                    <div class="columns large-12">
+                        <div class="panel error">
+                            {% trans "Wrong username and password." %}
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{% if request.GET.next %}{{ request.GET.next }}{% else %}{{ request.get_full_path }}{% endif %}" />
+
+            <div class="row">
+                <div class="columns large-12">
+                    {{ form }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="columns large-12">
+                    <input type="submit" class="button success expand" value="{% trans 'Login' %}" />
+                </div>
+            </div>
+
+        </form>
+
     </div>
     </div>
 {% endblock %}

@@ -6,7 +6,7 @@
 {% block "content" %}
     <div class="row">
     <div class="large-4 large-offset-4 columns content">
-        <h4>Create new user</h4>
+        <h4>{% trans "Create new user" %}</h4>
         <form action="." method="POST">
             {{ form }}
             {% csrf_token %}
