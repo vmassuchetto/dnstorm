@@ -235,7 +235,7 @@ class Message(models.Model):
         return _('message')
 
     def get_absolute_url(self, *args, **kwargs):
-        return reverse('message', args=[self.id])
+        return reverse('message', kwargs={'slug': self.problem.slug, 'pk': self.id })
 
 reversion.register(Message)
 
