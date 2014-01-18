@@ -1,5 +1,4 @@
-from django.conf.urls import patterns, include
-from django.conf.urls.defaults import url
+from django.conf.urls import patterns, include, url
 
 from dnstorm import settings
 from dnstorm.app.views import base, ajax, problem, criteria, message, idea, table

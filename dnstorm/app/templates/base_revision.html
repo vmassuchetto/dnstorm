@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load gravatar i18n static %}
+{% load avatar_tags i18n static %}
 
 {% block "scripts" %}<script type="text/javascript" src="{% static "dnstorm/js/htmldiff.js" %}"></script>{% endblock %}
 
@@ -40,7 +40,7 @@
                             <a class="username" href="{% url "user" revision.author.username %}">{{ revision.author.username }}</a>
                         </div>
                         <div class="columns large-2">
-                            <a class="avatar"><img src="{% gravatar_for_email revision.author.email 32 %}" /></a>
+                            <a class="avatar"><img src="{% avatar revision.author 32 %}" /></a>
                         </div>
                         </div>
                     </div>

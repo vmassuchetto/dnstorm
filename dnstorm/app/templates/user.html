@@ -1,13 +1,10 @@
 {% extends "base.html" %}
-
-{% load gravatar i18n %}
+{% load avatar_tags i18n %}
 
 {% block "content" %}
     <div class="row problem-detail-title content">
         <div class="columns large-2">
-            <a class="th radius" href="{% url "user" user %}">
-                <img class="thumbnail" src="{% gravatar_for_email profile.email 128 %}" alt="{{ profile.get_full_name|default:profile.username }}" />
-            </a>
+            <a class="th radius" href="{% url "user" user %}">{% avatar profile 128 %}</a>
         </div>
         <div class="columns large-6">
             <h4>{{ profile.get_full_name|default:profile.username }}</h4>

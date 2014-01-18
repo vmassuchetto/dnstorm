@@ -15,7 +15,8 @@ if LOCALENV:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': 'dnstorm.sqlite3'
+            'NAME': 'dnstorm.sqlite3',
+            'ATOMIC_REQUESTS': True
         }
     }
 else :
@@ -151,7 +152,7 @@ INSTALLED_APPS = (
     'ckeditor',
     'crispy_forms',
     'crispy_forms_foundation',
-    'gravatar',
+    'avatar',
     'haystack',
     'registration',
     'reversion',
