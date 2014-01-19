@@ -10,6 +10,7 @@ from django.conf import global_settings
 DEBUG = os.environ.get('DEBUG', False)
 DATABASE_DEBUG = os.environ.get('DATABASE_DEBUG', False)
 STATICFILES_DEBUG = os.environ.get('STATICFILES_DEBUG', False)
+DEBUG_TOOLBAR = os.environ.get('DEBUG_TOOLBAR', False)
 TEMPLATE_DEBUG = DEBUG
 
 # Databases
@@ -94,7 +95,7 @@ INSTALLED_APPS = (
     'dnstorm.app',
 )
 
-if DEBUG:
+if DEBUG_TOOLBAR:
     INSTALLED_APPS = INSTALLED_APPS + ('debug_toolbar',)
 
 # Logging
