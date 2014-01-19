@@ -448,7 +448,7 @@ class ActivityManager(models.Manager):
         query = self.get_query_string()
         select = query['select'] % kwargs
 
-        query = "SELECT COUNT(*) FROM (%(select)s)" % { 'select': select }
+        query = "SELECT COUNT(*) FROM (%(select)s) AS data" % { 'select': select }
         cursor = connection.cursor()
         cursor.execute(query)
         first = cursor.fetchone()
