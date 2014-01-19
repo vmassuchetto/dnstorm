@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags i18n %}
+
+{% block "bodyclass" %}logout{% endblock %}
+
+{% block "content" %}
+    <div class="row">
+    <div class="columns large-12">
+        <p>{% trans "You are not logged anymore." %}</p>
+    </div>
+    </div>
+{% endblock %}

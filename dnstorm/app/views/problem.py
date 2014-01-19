@@ -317,7 +317,7 @@ class ProblemView(FormView):
     @reversion.create_revision()
     def form_valid(self, form):
         """
-        That' actually an Idea object creation procedure, since the form in
+        This is actually an Idea object creation procedure, since the form in
         this view is meant to show problem information but to save Idea
         information.
         """
