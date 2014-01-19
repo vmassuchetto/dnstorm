@@ -1,4 +1,3 @@
-from django.contrib.auth.forms import AuthenticationForm
 from dnstorm.app.models import Option
 from dnstorm.app import DNSTORM_URL
 
