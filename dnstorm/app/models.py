@@ -81,6 +81,9 @@ class Criteria(models.Model):
     def get_absolute_url(self, *args, **kwargs):
         return reverse('criteria', args=[self.slug])
 
+    def problem_count(self):
+        return Problem.objects.filter(criteria=self).count()
+
     def save(self, *args, **kwargs):
         if not self.id:
             self.created = datetime.today()

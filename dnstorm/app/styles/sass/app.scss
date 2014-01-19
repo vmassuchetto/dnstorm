@@ -223,7 +223,7 @@ p.pagination {
     }
 }
 
-.problem-list-item {
+.list-item {
     padding: emCalc(6px);
     margin: emCalc(6x);
     border-bottom: 1px solid lighten($black, 65%);
@@ -240,13 +240,12 @@ p.pagination {
         margin: 0;
         font-size: emCalc(14px);
     }
-    .problem-counter {
+    .counter {
         text-align: center;
         background: lighten($black, 65%);
         padding: 14px 5px;
         border-left: 2px solid $white;
         border-right: 2px solid $white;
-        width: 44.333%;
         @include text-shadow(
             lighten($black, 50%) 1px 1px 0,
             lighten($black, 70%) 2px 2px 0
@@ -264,6 +263,12 @@ p.pagination {
             color: $light-black;
             font-size: emCalc(12px);
         }
+    }
+}
+
+.problem-list-item {
+    .counter {
+        width: 44.333%;
     }
     .problem-alternative-counter {
         margin-right: 1em;
@@ -309,6 +314,15 @@ p.pagination {
 .problem-icons {
     margin: 0;
     font-size: emCalc(50px);
+}
+
+.criteria-list-item {
+    .counter {
+        width: 98.333%;
+    }
+    .columns.criteria-info {
+        padding-left: emCalc(10px);
+    }
 }
 
 .user-box {

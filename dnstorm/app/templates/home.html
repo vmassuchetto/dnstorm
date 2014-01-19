@@ -22,6 +22,7 @@
             {% if criteria.description %}
                 <div class="panel radius secondary">
                     <p>{{ criteria.description }}</p>
+                     {% if perms.criteria.can_edit %}<span class="label secondary radius right"><a href="{% url "criteria_edit" criteria.slug %}">{% trans "Edit this criteria" %}</a></span>{% endif %}
                     {% if criteria.parent %}<p><a class="button-criteria" href="{% url "criteria" criteria.parent.slug %}" title="{{ criteria.parent.description }}" data-tooltip>{{ criteria.parent.name }}</a></p>{% endif %}
                 </div>
             {% endif %}
@@ -30,13 +31,13 @@
         {% if problems %}
         {% for problem in problems %}
 
-            <div class="row collapse problem-list-item">
+            <div class="row collapse list-item problem-list-item">
             <div class="columns large-3 medium-3 show-for-medium-up">
-                <div class="problem-counter problem-idea-counter left">
+                <div class="counter problem-idea-counter left">
                     <span class="number">{{ problem.idea_count }}</span>
                     <span class="description">{% if problem.idea_count > 1 or problem.idea_count = 0 %}{% trans "ideas" %}{% else %}{% trans "idea" %}{% endif %}</span>
                 </div>
-                <div class="problem-counter problem-alternative-counter left">
+                <div class="counter problem-alternative-counter left">
                     <span class="number">{{ problem.alternative_count }}</span>
                     <span class="description">{% if problem.alternative_count > 1 or problem.alternative_count = 0 %}{% trans "alternatives" %}{% else %}{% trans "alternative" %}{% endif %}</span>
                 </div>
