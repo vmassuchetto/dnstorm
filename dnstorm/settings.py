@@ -13,7 +13,7 @@ DATABASE_DEBUG = os.environ.get('DATABASE_DEBUG', DEBUG)
 
 # Databases
 
-if DEBUG:
+if DATABASE_DEBUG:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
@@ -21,7 +21,7 @@ if DEBUG:
             'ATOMIC_REQUESTS': True
         }
     }
-else :
+else:
     DATABASES = { 'default': dj_database_url.config() }
 
 # Other Django settings
