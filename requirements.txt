@@ -12,7 +12,7 @@ django-avatar==2.0
 django-ckeditor-updated==4.2.6
 django-crispy-forms==1.4.0
 django-debug-toolbar==1.0
-django-haystack==2.1.0
+-e git+http://github.com/toastdriven/django-haystack@cddc4db6e424dc66f1963aa8948ea86471f39fc7#egg=django_haystack-master
 django-registration==1.0
 django-reversion==1.8.0
 django-toolbelt==0.0.1
