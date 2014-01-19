@@ -9,6 +9,7 @@ from django.conf import global_settings
 
 DEBUG = os.environ.get('DEBUG', False)
 TEMPLATE_DEBUG = DEBUG
+DATABASE_DEBUG = os.environ.get('DATABASE_DEBUG', DEBUG)
 
 # Databases
 
