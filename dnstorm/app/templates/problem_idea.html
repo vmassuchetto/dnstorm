@@ -7,10 +7,10 @@
         {% if problem.voting and not ideas_modal %}
             <div class="columns large-1 small-2 voting">
 
-                <a{% if not request.user.is_authenticated %} data-reveal-id="login-modal"{% endif %} class="button secondary upvote{% if idea.user_vote.weight == 1 %} success{% endif %}" data-idea="{{ idea.id }}"{% if idea.author == request.user %} disabled="disabled"{% endif %}><i class="foundicon-up-arrow"></i></a>
+                <a{% if not user.is_authenticated %} data-reveal-id="login-modal"{% endif %} class="button secondary upvote{% if idea.user_vote.weight == 1 %} success{% endif %}" data-idea="{{ idea.id }}"{% if idea.author == user %} disabled="disabled"{% endif %}><i class="foundicon-up-arrow"></i></a>
                 {% if problem.vote_count %}<span class="vote-count">{% if problem.vote_author %}<a href="javascript:void(0);" data-reveal-id="idea-{{ idea.id }}-vote-history-modal">{% endif %}{{ idea.vote_count }}{% if problem.vote_author %}</a>{% endif %}</span>{% else %}{% endif %}
 
-                <a{% if not request.user.is_authenticated %} data-reveal-id="login-modal"{% endif %} class="button secondary downvote{% if idea.user_vote.weight == -1 %} alert{% endif %}" data-idea="{{ idea.id }}"{% if idea.author == request.user %} disabled="disabled"{% endif %}><i class="foundicon-down-arrow"></i></a>
+                <a{% if not user.is_authenticated %} data-reveal-id="login-modal"{% endif %} class="button secondary downvote{% if idea.user_vote.weight == -1 %} alert{% endif %}" data-idea="{{ idea.id }}"{% if idea.author == user %} disabled="disabled"{% endif %}><i class="foundicon-down-arrow"></i></a>
 
             </div>
         {% endif %}
@@ -49,8 +49,8 @@
                     <div class="row">
                         <div class="large-12">
                             {% if idea_actions %}
-                                {% if idea.comment_form %}<a class="problem-action{% if request.user.is_authenticated %} show-on-click{% endif %}" {% if request.user.is_authenticated %}data-show-on-click="comment-form-{{ idea.id }}"{% else %}data-reveal-id="login-modal"{% endif %} href="javascript:void(0);" >{% trans "Comment" context "verb" %}</a>{% endif %}
-                                {% if idea.author == request.user %}<a class="problem-action problem-idea-edit" href="{% url "idea_edit" problem.slug idea.id %}">{% trans "Edit" %}</a>{% endif %}
+                                {% if idea.comment_form %}<a class="problem-action{% if user.is_authenticated %} show-on-click{% endif %}" {% if user.is_authenticated %}data-show-on-click="comment-form-{{ idea.id }}"{% else %}data-reveal-id="login-modal"{% endif %} href="javascript:void(0);" >{% trans "Comment" context "verb" %}</a>{% endif %}
+                                {% if idea.author == user %}<a class="problem-action problem-idea-edit" href="{% url "idea_edit" problem.slug idea.id %}">{% trans "Edit" %}</a>{% endif %}
                                 {% if idea.revision_count > 1 %}<a class="problem-action problem-idea-revision" href="{% url "idea_revision" problem.slug idea.id %}">{% blocktrans count idea.revision_count as i %}{{ i }} revision{% plural %}{{ i }} revisions{% endblocktrans %}</a>{% endif %}
                             {% endif %}
                         </div>
@@ -72,7 +72,7 @@
                 </div>
             </div>
 
-            {% if request.user.is_authenticated and idea.comment_form %}
+            {% if user.is_authenticated and idea.comment_form %}
                 <div class="comment-form hide" id="comment-form-{{ idea.id }}" data-idea="{{ idea.id }}">
                     {% crispy idea.comment_form %}
                 </div>

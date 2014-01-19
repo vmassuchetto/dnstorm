@@ -12,7 +12,7 @@
 
         {% include "problem_content.html" %}
 
-        {% if request.user.is_authenticated and problem_comment_form %}
+        {% if user.is_authenticated and problem_comment_form %}
             <div class="comment-form hide" id="problem-comment-form" data-problem="{{ problem.id }}">
                 {% crispy problem_comment_form %}
             </div>
@@ -30,7 +30,7 @@
 
         <div class="problem-idea-form-wrap">
 
-            {% if not request.user.is_authenticated %}
+            {% if not user.is_authenticated %}
 
                 <a class="large button expand secondary radius" data-reveal-id="login-modal">{% trans "Log in and submit your idea" %}</a>
 
