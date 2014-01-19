@@ -101,10 +101,11 @@
         <div class="right">
             {% block "topright" %}{% endblock %}
         </div>
+
         <form action="/search" method="GET">
             <div class="row collapse right search-form show-for-medium-up">
                 <div class="columns large-8 medium-8">
-                    <input type="text" name="q" placeholder="{% trans "Search" %}"{% if 'q' in request.GET %} value="{{ request.GET.q }}"{% endif %} />
+                    <input type="text" name="q" placeholder="{% trans "Search" %}"{% if query %} value="{{ query }}"{% endif %} />
                 </div>
                 <div class="columns large-4 medium-2">
                     <button type="submit" class="button postfix secondary radius"><i class="foundicon-search"></i></button>

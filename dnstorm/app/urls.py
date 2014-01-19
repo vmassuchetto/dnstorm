@@ -39,13 +39,13 @@ urlpatterns = patterns('',
     (r'^criteria/(?P<slug>[^/]+)/edit/$', criteria.CriteriaUpdateView.as_view(), {}, 'criteria_edit'),
     (r'^users/(?P<username>[^/]+)/$', base.UserView.as_view(), {}, 'user'),
     (r'^activity/$', base.ActivityView.as_view(), {}, 'activity'),
-    (r'search/', search_view_factory(view_class=base.SearchView), {}, 'search'),
 
-    # Apps
+    # Other apps
 
     (r'^jsi18n/$', 'django.views.i18n.javascript_catalog', js_info_dict, 'jsi18n'),
     (r'^ckeditor/', include('ckeditor.urls')),
     (r'^accounts/', include('registration.backends.simple.urls')),
+    (r'search/', search_view_factory(view_class=base.SearchView), {}, 'search'),
 
 )
 

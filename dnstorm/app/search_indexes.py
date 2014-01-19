@@ -1,7 +1,6 @@
 from haystack import indexes
 from dnstorm.app.models import Problem, Idea, Comment
 
-
 class ProblemIndex(indexes.SearchIndex, indexes.Indexable):
     text = indexes.CharField(document=True, use_template=True)
     title = indexes.CharField(model_attr='title')

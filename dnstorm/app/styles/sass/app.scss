@@ -235,8 +235,21 @@ a.logo-faded {
 
 .search-results {
     .search-results-item {
-        p {
+        h4 {
+            span.label {
+                margin-right: emCalc(10px);
+            }
+            span.highlighted {
+                font-weight: bold;
+            }
+        }
+        p.search-result-text {
+            color: #999999;
             margin-bottom: emCalc(6px);
+            span.highlighted {
+                color: $black;
+                font-weight: bold;
+            }
         }
     }
 }

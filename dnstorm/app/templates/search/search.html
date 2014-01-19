@@ -17,13 +17,21 @@
             <div class="row">
                 <div class="columns large-12 search-results-item">
 
-                    <h4><span class="label secondary">{{ result.object.type }}</span>&nbsp;<a href="{{ result.object.get_absolute_url }}">{{ result.object.title }}</a><small class="subheader right">{{ result.object.modified|naturaltime }}</small></h4>
+                    <h4><span class="label secondary radius">{{ result.object.type }}</span>&nbsp;<a href="{{ result.object.get_absolute_url }}">
+                    {% if result.object.type == "comment" and result.object.idea %}
+                        {% blocktrans with idea=result.object.idea.title %}Comment in the idea "{{ idea }}"{% endblocktrans %}
+                    {% else %} {% if result.object.type == "comment" and result.object.problem %}
+                        {% blocktrans with problem=result.object.problem.title %}Comment in the problem "{{ problem }}"{% endblocktrans %}
+                    {% else %}
+                        {% highlight result.object.title with query %}
+                    {% endif %} {% endif %}
+                    </a><small class="subheader right">{{ result.object.modified|naturaltime }}</small></h4>
 
-                    <p>
+
                     {% if result.object.description %}
-                        {% highlight result.object.description with request.GET.q %}
+                        <p class="search-result-text">{% highlight result.object.description with query %}</p>
                     {% else %} {% if result.object.content %}
-                        {% highlight result.object.content with request.GET.q %} 
+                        <p class="search-result-text">{% highlight result.object.content with query %}</p>
                     {% endif %} {% endif %}
 
                     {% if result.object.criteria.all %}
@@ -47,6 +55,7 @@
             <hr/>
             <p>{% trans "No results found." %}</p>
         {% endfor %}
+        <hr/>
 
         {% include "pagination.html" with items=page %}
 
