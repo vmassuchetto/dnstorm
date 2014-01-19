@@ -3,14 +3,12 @@ import dj_database_url
 
 from django.conf import global_settings
 
-# Local development environment
-
-LOCALENV = False
+DEBUG = os.environ.get('DEBUG', False)
+TEMPLATE_DEBUG = DEBUG
 
 # Databases
 
-if LOCALENV:
-    DEBUG = True
+if DEBUG:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
@@ -19,18 +17,15 @@ if LOCALENV:
         }
     }
 else :
-    DEBUG = False
     DATABASES = { 'default': dj_database_url.config() }
 
-# Django settings
+# Other Django settings
 
 ADMINS = (
     ('Vinicius Massuchetto', 'vmassuchetto@gmail.com'),
 )
 
 MANAGERS = ADMINS
-
-TEMPLATE_DEBUG = DEBUG
 
 ALLOWED_HOSTS = ['*']
 
@@ -93,7 +88,7 @@ INSTALLED_APPS = (
     'dnstorm.app',
 )
 
-if LOCALENV:
+if DEBUG:
     INSTALLED_APPS = INSTALLED_APPS + ('debug_toolbar',)
 
 # Logging
