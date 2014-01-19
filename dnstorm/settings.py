@@ -3,6 +3,10 @@ import dj_database_url
 
 from django.conf import global_settings
 
+# Debug mode
+# Local environment: export DEBUG=True ; python manage.py runserver
+# Heroku: heroku config:set DEBUG=True
+
 DEBUG = os.environ.get('DEBUG', False)
 TEMPLATE_DEBUG = DEBUG
 
