@@ -11,6 +11,7 @@ from django.views.generic.base import TemplateView, RedirectView
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _
 from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_protect
 from django.utils.html import strip_tags
 from django.template.loader import render_to_string
 from django.db.models import Q
@@ -20,8 +21,9 @@ from django.contrib import messages
 
 import reversion
 import diff_match_patch as _dmp
-from dnstorm.app.lib.diff import diff_prettyHtml
 
+from dnstorm import settings
+from dnstorm.app.lib.diff import diff_prettyHtml
 from dnstorm.app.models import Problem, Invite, Idea, Criteria, Vote, Comment, Message, ActivityManager
 from dnstorm.app.forms import ProblemForm, IdeaForm, CommentForm, CriteriaForm
 
@@ -103,6 +105,7 @@ class ProblemCreateView(CreateView):
     model = Problem
 
     @method_decorator(login_required)
+    @method_decorator(csrf_protect)
     def dispatch(self, *args, **kwargs):
         return super(ProblemCreateView, self).dispatch(*args, **kwargs)
 
@@ -128,6 +131,7 @@ class ProblemUpdateView(UpdateView):
     model = Problem
 
     @method_decorator(login_required)
+    @method_decorator(csrf_protect)
     def dispatch(self, *args, **kwargs):
         return super(ProblemUpdateView, self).dispatch(*args, **kwargs)
 
@@ -262,6 +266,7 @@ class ProblemView(FormView):
     template_name = 'problem.html'
     form_class = IdeaForm
 
+    @method_decorator(csrf_protect)
     def dispatch(self, request, *args, **kwargs):
         self.problem = get_object_or_404(Problem, slug=self.kwargs['slug'])
         return super(ProblemView, self).dispatch(request, *args, **kwargs)
