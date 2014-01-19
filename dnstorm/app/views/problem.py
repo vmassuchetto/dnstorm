@@ -16,8 +16,7 @@ from django.template.loader import render_to_string
 from django.db.models import Q
 from django.db.models.query import EmptyQuerySet
 from django.contrib.contenttypes.models import ContentType
-
-from dnstorm import settings
+from django.contrib import messages
 
 import reversion
 import diff_match_patch as _dmp
@@ -95,6 +94,7 @@ def problem_form_valid(obj, form):
         else:
             send_mail(subject, content, settings.EMAIL_HOST_USER, recipients)
 
+    messages.success(obj.request, _('Problem saved'))
     return HttpResponseRedirect(reverse('problem', kwargs={'slug':obj.object.slug}))
 
 class ProblemCreateView(CreateView):
@@ -320,6 +320,7 @@ class ProblemView(FormView):
         obj.problem = self.problem
         obj.author = self.request.user
         obj.save()
+        messages.success(self.request, _('Idea saved.'))
         return HttpResponseRedirect(obj.get_absolute_url())
 
 class ProblemSearchView(TemplateView):

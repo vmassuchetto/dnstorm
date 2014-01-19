@@ -6,6 +6,7 @@ from django.views.generic.edit import UpdateView
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext as _
+from django.contrib import messages
 
 from dnstorm.app.models import Problem, Idea, ActivityManager
 from dnstorm.app.forms import IdeaForm
@@ -44,6 +45,7 @@ class IdeaUpdateView(UpdateView):
         self.object = form.save(commit=False)
         self.object.author = self.request.user
         self.object.save()
+        messages.success(obj.request, _('Idea saved.'))
         return HttpResponseRedirect(self.object.get_absolute_url())
 
     def get_breadcrumbs(self):

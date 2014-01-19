@@ -66,10 +66,10 @@
 
 {% block "breadcrumbs" %}
 {% if breadcrumbs %}
-<div class="breadcrumbs-wrap show-for-medium-up">
+<div class="upper-bar-wrap breadcrumbs-wrap show-for-medium-up">
 <div class="row">
     <div class="columns large-12">
-        <nav class="breadcrumbs">
+        <nav class="upper-bar-inner breadcrumbs">
             <a href="{% url "home" %}">{% trans "Home" %}</a>
             {% for b in breadcrumbs %}
                 <a href="{{ b.url }}" {% if b.classes %}class="{{ b.classes }}"{% endif %}>{{ b.title }}</a>
@@ -78,10 +78,20 @@
     </div>
 </div>
 </div>
-{% else %}
-<div class="bottom-1em"></div>
 {% endif %}
 {% endblock %}
+
+{% block "messages" %}
+{% if messages %}
+{% for message in messages %}
+    <div class="upper-bar-wrap message-bar{% if message.tags %} {{ message.tags }}{% endif %}">
+        <div class="row"><div class="columns large-12"><p>{{ message }}</p></div></div>
+    </div>
+{% endfor %}
+{% endif %}
+{% endblock %}
+
+<div class="bottom-1em"></div>
 
 <div class="row show-for-medium-up">
     <div class="columns large-4 medium-4 text-left">

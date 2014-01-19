@@ -128,17 +128,48 @@ form {
     overflow: hidden;
 }
 
-// Breadcrumbs
-
-.breadcrumbs-wrap {
+.upper-bar-wrap {
     @include crumb-container;
     width: 100%;
-    margin-bottom: 1em;
-    .breadcrumbs {
+    margin: 0;
+    .upper-bar-inner {
         border: 0;
         margin: 0;
         padding: 0;
     }
+}
+
+// Messages
+
+.message-bar {
+    padding: 0;
+    margin: 0;
+    p {
+        font-size: 0.7875rem;
+        font-weight: bold;
+        margin: 0;
+        padding: 0.5em 2em;
+        text-align: center;
+        text-transform: uppercase;
+    }
+}
+
+.message-bar.success {
+    background-color: #C1FFBE;
+    border-bottom: 5px solid $green;
+    color: $green;
+}
+
+.message-bar.info {
+    background-color: #FFF7B2;
+    border-bottom: 5px solid #FFF499;
+    color: #675D00;
+}
+
+.message-bar.warning {
+    background-color: #FFDEDE;
+    border-bottom: 5px solid $red;
+    color: $red;
 }
 
 // Header
