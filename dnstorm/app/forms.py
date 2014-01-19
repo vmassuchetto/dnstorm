@@ -185,7 +185,7 @@ class CommentForm(forms.ModelForm):
             Field('idea', type='hidden'),
             Row(
                 Column('content', css_class='large-10'),
-                Column(Submit('submit', _('Submit'), css_class='button small'), css_class='large-2 alignright'),
+                Column(Submit('submit', _('Submit'), css_class='button tiny radius'), css_class='large-2 alignright'),
             )
         )
         super(CommentForm, self).__init__(*args, **kwargs)
