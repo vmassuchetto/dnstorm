@@ -31,7 +31,7 @@
         <hr/>
         <div class="problem-ideas-modal">
         {% for idea in ideas %}
-            <div class="row problem-idea-modal">
+            <div class="row problem-idea-modal" id="idea-{{ idea.id }}-modal-item">
                 <div class="columns large-1">
                     <i class="foundicon-checkmark idea-status"></i>
                 </div>
@@ -111,7 +111,7 @@
                             {% if item.objects %}
                                 {% for object in item.objects %}
                                     {% for idea in object.idea.all %}
-                                        <p>{{ idea.title }}</p>
+                                        <span class="label secondary radius" data-idea="{{ idea.id }}">{{ idea.title }}</span>
                                     {% endfor %}
                                 {% endfor %}
                             {% endif %}

@@ -508,6 +508,13 @@ a.problem-action {
             position: relative;
             padding: 1em 4em;
             min-height: 60px;
+            a.button {
+                display: none;
+            }
+            span.label {
+                margin: emCalc(4px) emCalc(2px);
+                font-size: emCalc(14px);
+            }
         }
         th.criteria {
             text-align:center;

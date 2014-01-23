@@ -3,10 +3,6 @@ import dj_database_url
 
 from django.conf import global_settings
 
-# Debug mode
-# Local environment:    export DEBUG=True ; python manage.py runserver
-# Heroku:               heroku config:set DEBUG=True
-
 DEBUG = os.environ.get('DEBUG', False)
 DATABASE_DEBUG = os.environ.get('DATABASE_DEBUG', False)
 STATICFILES_DEBUG = os.environ.get('STATICFILES_DEBUG', False)
@@ -39,8 +35,8 @@ ALLOWED_HOSTS = ['*']
 TIME_ZONE = 'America/Chicago'
 LANGUAGE_CODE = 'pt-br'
 LANGUAGES = (
-  ('en', 'English'),
-  ('pt-br', 'Brazilian Portuguese'),
+    ('en', 'English'),
+    ('pt-br', 'Brazilian Portuguese'),
 )
 
 SITE_ID = 1

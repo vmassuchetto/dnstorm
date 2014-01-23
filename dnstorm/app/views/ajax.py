@@ -74,8 +74,7 @@ class AjaxView(View):
         # New alternative item
 
         elif 'alternative' in self.request.POST \
-            and 'criteria' in self.request.POST \
-            and self.has_regex_key('idea\[[0-9]+\]', dict(self.request.POST.iterlists())):
+            and 'criteria' in self.request.POST:
             return self.table_new_item()
 
         # Failure
@@ -183,6 +182,23 @@ class AjaxView(View):
         return HttpResponse(json.dumps(output), content_type='application/json')
 
     def table_new_item(self):
+
+        # Get the base item and clear it
+
+        c = None if not int(self.request.POST['criteria']) else Criteria.objects.get(pk=self.request.POST['criteria'])
+        a = Alternative.objects.get(pk=self.request.POST['alternative'])
+        try:
+            item = AlternativeItem.objects.get(criteria=c, alternative=a)
+            item.idea.clear()
+        except:
+            item = AlternativeItem(criteria=c, alternative=a)
+        item.save()
+
+        # When submitting empty queries just clear the item and exit
+
+        if not self.has_regex_key('idea\[[0-9]+\]', dict(self.request.POST.iterlists())):
+            return HttpResponse(json.dumps([]), content_type="application/json")
+
         ideas = list()
         r = re.compile('idea\[[0-9]+\]')
         for key in self.request.POST:
@@ -191,15 +207,7 @@ class AjaxView(View):
         if not len(ideas):
             raise Http404
 
-        c = None if not int(self.request.POST['criteria']) else Criteria.objects.get(pk=self.request.POST['criteria'])
-        a = Alternative.objects.get(pk=self.request.POST['alternative'])
         ideas = Idea.objects.filter(id__in=ideas)
-        try:
-            item = AlternativeItem.objects.get(criteria=c, alternative=a)
-            item.idea.clear()
-        except:
-            item = AlternativeItem(criteria=c, alternative=a)
-        item.save()
         for i in ideas:
             item.idea.add(i)
         item.save()

@@ -1,7 +1,7 @@
 jQuery.noConflict();
 (function($){
 
-// Cookies
+// CSRF
 
 function getCookie(name) {
     var cookieValue = null;
@@ -18,6 +18,38 @@ function getCookie(name) {
     }
     return cookieValue;
 }
+
+var csrftoken = getCookie('csrftoken');
+
+function csrfSafeMethod(method) {
+    // these HTTP methods do not require CSRF protection
+    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+}
+
+function sameOrigin(url) {
+    // test that a given url is a same-origin URL
+    // url could be relative or scheme relative or absolute
+    var host = document.location.host; // host + port
+    var protocol = document.location.protocol;
+    var sr_origin = '//' + host;
+    var origin = protocol + sr_origin;
+    // Allow absolute or scheme relative URLs to same origin
+    return (url == origin || url.slice(0, origin.length + 1) == origin + '/') ||
+        (url == sr_origin || url.slice(0, sr_origin.length + 1) == sr_origin + '/') ||
+        // or any other URL that isn't scheme relative or absolute i.e relative.
+        !(/^(\/\/|http:|https:).*/.test(url));
+}
+
+$.ajaxSetup({
+    beforeSend: function(xhr, settings) {
+        if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+            // Send the token to same-origin, relative URLs only.
+            // Send the token only if the method warrants CSRF protection
+            // Using the CSRFToken value acquired earlier
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        }
+    }
+});
 
 // Foundation
 
@@ -369,17 +401,16 @@ function adjust_table_overflow() {
 
 adjust_table_overflow();
 
-table.find('.cell-wrap').hover(function(){
-    if ($(this).find('a,p').length > 1)
-        $(this).find('a.button').fadeIn();
-}, function(){
-    if ($(this).find('a,p').length > 1)
-        $(this).find('a.button').stop().fadeOut();
+$(document).on('mouseenter', '.problem-table .cell-wrap', function(){
+    $(this).find('a.button').fadeIn();
+});
+$(document).on('mouseleave', '.problem-table .cell-wrap', function(){
+    $(this).find('a.button').stop().fadeOut();
 });
 
 // New column when there's no criterias in TableView
 
-$('.add-column').click(function(){
+$(document).on('click', '.add-column', function(){
     var table = $('.problem-table');
     var i = $('.problem-table tbody tr:first-child td').length
     var x = 0;
@@ -398,7 +429,7 @@ $('.add-column').click(function(){
 
 // New alternative in TableView
 
-$('.add-alternative').click(function(){
+$(document).on('click', '.add-alternative', function(){
     alternative_add_modal.find('input#id_title').val('');
     alternative_add_modal.find('textarea#id_description').val('');
     alternative_add_modal.find('input#id_mode').val('alternative');
@@ -408,21 +439,18 @@ $('.add-alternative').click(function(){
 
 // Remove alternative in TableView
 
-$('.remove-alternative').click(function(){
+$(document).on('click', '.remove-alternative', function(){
     alternative_remove_modal.data('alternative', $(this).data('alternative'));
     alternative_remove_modal.foundation('reveal', 'open');
 });
 
-$('.remove-alternative-confirm').click(function(){
+$(document).on('click', '.remove-alternative-confirm', function(){
     $.ajax({
         url: '/ajax/',
         type: 'POST',
         data: {
             'mode': 'remove-alternative',
             'object': alternative_remove_modal.data('alternative')
-        },
-        beforeSend: function(xhr, settings) {
-            xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
         },
         complete: function(xhr, data) {
             alternative_remove_modal.foundation('reveal', 'close');
@@ -433,7 +461,7 @@ $('.remove-alternative-confirm').click(function(){
 
 // Submit new alternative in TableView
 
-$('#alternative-add-modal form').submit(function(e){
+$(document).on('submit', '#alternative-add-modal form', function(e){
     e.preventDefault();
     var form = $(this);
 
@@ -452,12 +480,11 @@ $('#alternative-add-modal form').submit(function(e){
                 new_alternative = '<tr class="alternative" id="alternative-' + alternative.id + '" data-alternative="' + alternative.id + '">'
                     + '<td class="vertical-title">'
                     + '<span data-tooltip title="' + alternative.description + '">' + alternative.name + '</span>'
-                    + '&nbsp;<a class="foundicon-edit edit-table-title" data-reveal-id="alternative-edit-modal"></a>'
-                    + '&nbsp;<a class="foundicon-remove" data-reveal-id="alternative-remove-modal"></a>'
+                    + '&nbsp;<a class="foundicon-remove remove-alternative" data-reveal-id="alternative-remove-modal" data-alternative="' + alternative.id + '"></a>'
                     + '</td>';
                 n_criteria = table.find('th.criteria').length;
                 for (i = 0; i < n_criteria; i++) {
-                    new_alternative += '<td><a class="button expand secondary select-idea">' + gettext('Select idea') + '</a></td>';
+                    new_alternative += '<td><div class="cell-wrap"><a class="button expand radius secondary select-idea">' + gettext('Select idea') + '</a></div></td>';
                 }
                 new_alternative += '</tr>';
                 table.find('tbody').append(new_alternative);
@@ -471,22 +498,31 @@ $('#alternative-add-modal form').submit(function(e){
 
 // Select idea in the problem table
 
-$(document.body).on('click', '.select-idea', function(){
-    var modal = $('#select-idea-modal');
-    modal.data('problem', $(this).data('problem'));
-    modal.data('criteria', $(this).data('criteria'));
-    modal.data('alternative', $(this).data('alternative'));
-    modal.data('item', $(this).parent());
-    modal.data('idea', {});
-    modal.find('i.idea-status').each(function(){
+$(document).on('click', '.select-idea', function(){
+    var m = $('#select-idea-modal');
+    m.data('problem', $(this).data('problem'));
+    m.data('criteria', $(this).data('criteria'));
+    m.data('alternative', $(this).data('alternative'));
+    m.data('item', $(this).parent());
+    m.data('idea', {});
+
+    // Updata idea markings
+
+    m.find('i.idea-status').each(function(){
         $(this).removeClass('checked');
     });
-    modal.foundation('reveal', 'open');
+    $(this).parent().find('span').each(function(){
+        var i = $(this).data('idea');
+        m.find('#idea-' + i + '-modal-item i.idea-status').addClass('checked');
+        m.data('idea')[i] = i;
+    });
+
+    m.foundation('reveal', 'open');
 });
 
 // Select ideas in the select modal in TableView
 
-$('.problem-idea-modal').click(function(){
+$(document).on('click', '.problem-idea-modal', function(){
     var m = $('#select-idea-modal');
     var i = $(this).find('.problem-idea').data('idea');
     var s = $(this).find('i.idea-status');
@@ -503,7 +539,9 @@ $('.problem-idea-modal').click(function(){
     }
 });
 
-$('.problem-idea-modal-save').click(function(){
+// Save selected ideas
+
+$(document).on('click', '.problem-idea-modal-save', function(){
     var m = $('#select-idea-modal');
     $.ajax({
         url: '/ajax/',
@@ -514,16 +552,15 @@ $('.problem-idea-modal-save').click(function(){
             'alternative': m.data('alternative'),
             'idea': m.data('idea')
         },
-        beforeSend: function(xhr, settings) {
-            xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
-        },
         complete: function(xhr, data) {
-            items = $.parseJSON(xhr.responseText);
-            if (items.length <= 0)
-                return;
             m.data('item').html('');
+            items = $.parseJSON(xhr.responseText);
+            if (items.length <= 0) {
+                m.foundation('reveal', 'close');
+                return;
+            }
             for (i in items) {
-                m.data('item').append('<p>' + items[i].title + '</p>');
+                m.data('item').append('<span class="label secondary radius" data-idea="' + items[i].id + '">' + items[i].title + '</span>');
             }
             m.data('item').append('<a class="button secondary expand select-idea hidden">' + gettext('Select idea') + '</a>');
             m.foundation('reveal', 'close');
