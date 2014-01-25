@@ -137,10 +137,12 @@ DNSTORM = {
 
 # SMTP
 
+'''
 EMAIL_HOST = False
 EMAIL_PORT = False
 EMAIL_HOST_USER = 'dnstorm@localhost'
 EMAIL_HOST_PASSWORD = False
+'''
 
 # CKEditor
 
