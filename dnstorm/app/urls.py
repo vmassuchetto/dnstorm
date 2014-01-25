@@ -44,7 +44,8 @@ urlpatterns = patterns('',
 
     (r'^jsi18n/$', 'django.views.i18n.javascript_catalog', js_info_dict, 'jsi18n'),
     (r'^ckeditor/', include('ckeditor.urls')),
-    (r'^accounts/', include('registration.backends.simple.urls')),
+    (r'^accounts/', include('django.contrib.auth.urls')),
+    (r'^accounts/', include('registration.backends.default.urls')),
     (r'search/', search_view_factory(view_class=base.SearchView), {}, 'search'),
 
 )

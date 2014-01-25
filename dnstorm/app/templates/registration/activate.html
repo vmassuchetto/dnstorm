@@ -2,5 +2,15 @@
 {% load i18n %}
 
 {% block content %}
-    <p>{% trans "The activation key you tried to use is no longer valid. Try to reset your password or to create a new account." %}</p>
+    <div class="row">
+        <div class="large-4 large-offset-4 columns content">
+            <h3>{% trans "Account activation" %}</h3>
+            {% if account %}
+                <div class="panel"><p>{% trans "Account successfully activated" %}</p></div>
+                <p><a class="button expand success" href="{% url 'auth_login' %}">{% trans "Log in" %}</a></p>
+            {% else %}
+                <div class="panel"><p>{% trans "Account activation failed" %}</p></div>
+            {% endif %}
+        </div>
+    </div>
 {% endblock %}

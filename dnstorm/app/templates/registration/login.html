@@ -31,7 +31,18 @@
             </div>
             <div class="row">
                 <div class="columns large-12">
-                    <input type="submit" class="button success expand" value="{% trans 'Login' %}" />
+                    <input type="submit" class="button radius success expand" value="{% trans 'Login' %}" />
+                </div>
+            </div>
+
+            <hr/>
+
+            <div class="row">
+                <div class="columns large-6">
+                    <a class="button radius secondary expand" href="{% url 'auth_password_reset' %}">{% trans "Reset password" %}</a>
+                </div>
+                <div class="columns large-6">
+                    <a class="button radius secondary expand" href="{% url 'registration_register' %}">{% trans "Register" %}</a>
                 </div>
             </div>
 
