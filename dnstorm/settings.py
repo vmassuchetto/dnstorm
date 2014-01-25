@@ -67,17 +67,17 @@ WSGI_APPLICATION = 'dnstorm.wsgi.application'
 # Apps
 
 INSTALLED_APPS = (
-    # Built-in apps included by default
+
+    # Django apps
     'django.contrib.auth',
     'django.contrib.contenttypes',
-    'django.contrib.sessions',
     'django.contrib.messages',
+    'django.contrib.sessions',
+    'django.contrib.sites',
     'django.contrib.staticfiles',
-
-    # Built-in apps not included by default
     'django.contrib.humanize',
 
-    # Third-party apps
+    # Required non-Django apps
     'avatar',
     'ckeditor',
     'crispy_forms',
@@ -89,6 +89,7 @@ INSTALLED_APPS = (
 
      # DNStorm app
     'dnstorm.app',
+
 )
 
 if DEBUG_TOOLBAR:
