@@ -1,18 +1,18 @@
 {% extends "base.html" %}
 {% load crispy_forms_tags i18n %}
 
-{% block "bodyclass" %}problem-edit{% endblock %}
+{% block bodyclass %}problem-edit{% endblock %}
 
-{% block "head" %}{{ form.media }}{% endblock %}
+{% block head %}{{ form.media }}{% endblock %}
 
-{% block "modals" %}
+{% block modals %}
     <div id="criteria-modal" class="reveal-modal tiny" data-reveal>
         <a class="close-reveal-modal">&#215;</a>
         {% crispy criteria_form %}
     </div>
 {% endblock %}
 
-{% block "content" %}
+{% block content %}
     <div class="row">
     <div class="columns large-12">
         {% if title %}<h4>{{ title }}</h4>{% endif %}

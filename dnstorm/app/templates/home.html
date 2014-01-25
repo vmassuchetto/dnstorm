@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 {% load humanize i18n %}
 
-{% block "bodyclass" %}home{% endblock %}
+{% block bodyclass %}home{% endblock %}
 
-{% block "topright" %}
+{% block topright %}
     {% if perms.problem.can_add %}
         <a class="button tiny success radius problem-new-button" href="{% url 'problem_new' %}">
             <i class="foundicon-page"></i> {% trans 'Create new problem' %}
@@ -11,7 +11,7 @@
     {% endif %}
 {% endblock %}
 
-{% block "content" %}
+{% block content %}
 
     <div class="row">
 
@@ -77,7 +77,7 @@
 {% endblock %}
 
 
-{% block "afterfooter" %}
+{% block afterfooter %}
 
 {% if request.GET.help %}
 

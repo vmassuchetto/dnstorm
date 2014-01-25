@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 {% load crispy_forms_tags i18n %}
 
-{% block "bodyclass" %}idea-edit{% endblock %}
+{% block bodyclass %}idea-edit{% endblock %}
 
-{% block "head" %}{{ form.media }}{% endblock %}
+{% block head %}{{ form.media }}{% endblock %}
 
-{% block "content" %}
+{% block content %}
     <div class="row idea-form">
     <div class="columns large-10">
         {% include "problem_content.html" %}

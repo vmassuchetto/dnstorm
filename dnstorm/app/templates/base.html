@@ -10,11 +10,11 @@
     <title>{% if title %}{{ title }} | {{ options.site_title }}{% else %}{{ options.site_title }} | {{ options.site_description }}{% endif %}</title>
     <link rel="stylesheet" href="{% static "dnstorm/css/app.css" %}" />
     <link rel="icon" href="{% static "dnstorm/img/favicon.ico" %}" />
-    {% block "head" %}{% endblock %}
+    {% block head %}{% endblock %}
 </head>
-<body class="{% block "bodyclass" %}{% endblock %}">
+<body class="{% block bodyclass %}{% endblock %}">
 
-{% block "modals" %}{% endblock %}
+{% block modals %}{% endblock %}
 
 <div class="contain-to-grid">
 <nav class="top-bar">
@@ -64,7 +64,7 @@
 </nav>
 </div>
 
-{% block "breadcrumbs" %}
+{% block breadcrumbs %}
 {% if breadcrumbs %}
 <div class="upper-bar-wrap breadcrumbs-wrap show-for-medium-up">
 <div class="row">
@@ -81,7 +81,7 @@
 {% endif %}
 {% endblock %}
 
-{% block "messages" %}
+{% block messages %}
 {% if messages %}
 {% for message in messages %}
     <div class="upper-bar-wrap message-bar{% if message.tags %} {{ message.tags }}{% endif %}">
@@ -99,7 +99,7 @@
     </div>
     <div class="columns large-8 medium-8">
         <div class="right">
-            {% block "topright" %}{% endblock %}
+            {% block topright %}{% endblock %}
         </div>
 
         <form action="/search" method="GET">
@@ -115,7 +115,7 @@
     </div>
 </div>
 
-{% block "content" %}{% endblock %}
+{% block content %}{% endblock %}
 
 <footer>
 <div class="row">
@@ -127,13 +127,13 @@
     </div>
 </footer>
 
-{% block "afterfooter" %}{% endblock %}
+{% block afterfooter %}{% endblock %}
 
 <script src="{% static "dnstorm/js/modernizr.js" %}"></script>
 <script src="{% static "dnstorm/js/jquery.js" %}"></script>
 <script src="{% static "dnstorm/js/jquery.ui.custom.js" %}"></script>
 <script src="{% static "dnstorm/js/foundation.min.js" %}"></script>
-{% block "scripts" %}{% endblock %}
+{% block scripts %}{% endblock %}
 <script src="{% url "jsi18n" %}"></script>
 <script src="{% static "dnstorm/js/scripts.js" %}"></script>
 

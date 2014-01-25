@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 {% load crispy_forms_tags i18n %}
 
-{% block "bodyclass" %}message-edit{% endblock %}
+{% block bodyclass %}message-edit{% endblock %}
 
-{% block "head" %}{{ form.media }}{% endblock %}
+{% block head %}{{ form.media }}{% endblock %}
 
-{% block "content" %}
+{% block content %}
     <div class="row">
     <div class="columns large-12">
         {% if title %}<h4>{{ title }}</h4>{% endif %}

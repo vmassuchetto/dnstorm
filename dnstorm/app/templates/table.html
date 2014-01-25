@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 {% load crispy_forms_tags i18n %}
 
-{% block "bodyclass" %}table{% endblock %}
+{% block bodyclass %}table{% endblock %}
 
-{% block "modals" %}
+{% block modals %}
     <div id="alternative-add-modal" class="reveal-modal tiny" data-reveal>
         <a class="close-reveal-modal">&#215;</a>
         {% crispy alternative_form %}
@@ -51,7 +51,7 @@
 
 {% endblock %}
 
-{% block "content" %}
+{% block content %}
 
     <div class="row">
     <div class="columns content large-8">
