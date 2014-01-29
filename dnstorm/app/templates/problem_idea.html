@@ -47,6 +47,13 @@
 
                 <div class="columns large-7">
                     <div class="row">
+                        {% if idea.quantifiervalue_set.all %}
+                            <div class="large-12 idea-quantifiers">
+                                {% for q in idea.quantifiervalue_set.all %}
+                                    <span class="label secondary radius">{{ q.quantifier.name }}{% if q.quantifier.format != "boolean" %}&nbsp;|&nbsp;{{ q.value }}{% endif %}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
                         <div class="large-12">
                             {% if idea_actions %}
                                 {% if idea.comment_form %}<a class="problem-action{% if user.is_authenticated %} show-on-click{% endif %}" {% if user.is_authenticated %}data-show-on-click="comment-form-{{ idea.id }}"{% else %}data-reveal-id="login-modal"{% endif %} href="javascript:void(0);" >{% trans "Comment" context "verb" %}</a>{% endif %}
@@ -55,16 +62,6 @@
                             {% endif %}
                         </div>
                     </div>
-
-                    {% if idea.cost or idea.deadline %}
-                    <div class="row">
-                        <div class="large-12 idea-attrs">
-                            {% if idea.cost %}<span class="label secondary radius">$ {{ idea.cost }}</span>{% endif %}
-                            {% if idea.deadline %}<span class="label secondary radius"><i class="foundicon-clock icon"></i> {{ idea.deadline }}</span>{% endif %}
-                        </div>
-                    </div>
-                    {% endif %}
-
                 </div>
 
                 <div class="columns large-5">

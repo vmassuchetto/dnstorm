@@ -13,6 +13,7 @@
 
 <a class="button small secondary expand radius show-on-click hide-after-click" data-show-on-click="short-link-url" href="javascript:void(0);"><i class="foundicon-paper-clip"></i> {% trans "Short Link" %}</a>
 <div id="short-link-url" class="hide"><input type="text" class="select-on-click" value="{# absolute "problem_short" problem.id #}" /></div>
+<hr/>
 
 {% if problem.public or problem.open or problem.locked or problem.blind or problem.voting %}
     <p class="problem-icons text-center">
@@ -22,16 +23,16 @@
         {% if problem.blind %}<i class="foundicon-compass" data-tooltip title="{% trans "This problem is in blind contribution mode. You can only see your own ideas." %}"></i>{% endif %}
         {% if problem.voting %}<i class="foundicon-idea" data-tooltip title="{% trans "Ideas voting are opened. You can vote and downvote ideas." %}"></i>{% endif %}
     </p>
+    <hr/>
 {% endif %}
 
 {% if problem.revision_count or problem.idea_count %}
-<div class="info">
-    {% if problem.revision_count > 1 %}<b><a href="{% url "problem_revision" problem.slug %}">{{ problem.revision_count }} {% trans "revisions" %}</a></b><br/>{% endif %}
-    {% if problem.idea_count > 0 %}<b><a href="{% url "problem_ideas" problem.slug %}">{{ problem.idea_count }} {% if problem.idea_count > 1 %}{% trans "idea contributions" %}{% else %}{% trans "idea contribution" %}{% endif %}</a></b>{% endif %}
-</div>
+    <div class="info">
+        {% if problem.revision_count > 1 %}<b><a href="{% url "problem_revision" problem.slug %}">{{ problem.revision_count }} {% trans "revisions" %}</a></b><br/>{% endif %}
+        {% if problem.idea_count > 0 %}<b><a href="{% url "problem_ideas" problem.slug %}">{{ problem.idea_count }} {% if problem.idea_count > 1 %}{% trans "idea contributions" %}{% else %}{% trans "idea contribution" %}{% endif %}</a></b>{% endif %}
+    </div>
+    <hr/>
 {% endif %}
-
-<hr/>
 
 {% if problem.criteria.all %}
     <div class="criterias">
@@ -41,6 +42,16 @@
             {% include "criteria_button.html" %}
         {% endfor %}
         </p>
+    </div>
+    <hr/>
+{% endif %}
+
+{% if problem.quantifier_set.all %}
+    <div class="quantifiers">
+        <h4>{% trans "Idea quantifiers" %}</h4>
+        {% for q in problem.quantifier_set.all %}
+            <span class="label-quantifier label secondary radius">{{ q.name }}&nbsp;|&nbsp;{{ q.format }}</span>
+        {% endfor %}
     </div>
     <hr/>
 {% endif %}

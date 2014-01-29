@@ -160,15 +160,34 @@ class Problem(models.Model):
 reversion.register(Problem, follow=['criteria', 'contributor', 'manager'])
 user_activated.connect(Problem.invites_handler)
 
+QUANTIFIER_CHOICES = (
+    ('number', _('Number')),
+    ('boolean', _('True or False')),
+    ('text', _('Text')))
+
+class Quantifier(models.Model):
+    problem = models.ForeignKey(Problem, editable=False, blank=True, null=True)
+    name = models.CharField(verbose_name=_('Name'), max_length=90)
+    format = models.CharField(verbose_name=_('Type'), max_length=10)
+
+    class Meta:
+        db_table = settings.DNSTORM['table_prefix'] + '_quantifier'
+
+    def __unicode__(self):
+        return '<Quantifier>'
+
+    def type(self):
+        return _('quantifier')
+
 class Invite(models.Model):
     problem = models.ForeignKey(Problem)
     email = models.TextField()
 
     class Meta:
-        db_table = settings.DNSTORM['table_prefix'] + '_problem_invite'
+        db_table = settings.DNSTORM['table_prefix'] + '_invite'
 
     def __unicode__(self):
-        return '<ProblemInvite>'
+        return '<Invite>'
 
     def type(self):
         return _('invite')
@@ -177,8 +196,6 @@ class Idea(models.Model):
     title = models.CharField(verbose_name=_('Title'), max_length=90)
     content = RichTextField(config_name='idea_content')
     problem = models.ForeignKey(Problem, editable=False)
-    cost = models.IntegerField(verbose_name=_('Cost'), blank=True, null=True)
-    deadline = models.IntegerField(verbose_name=_('Deadline'), blank=True, null=True)
     author = models.ForeignKey(User, editable=False)
     modified = models.DateTimeField(auto_now=True, editable=False)
 
@@ -186,7 +203,7 @@ class Idea(models.Model):
         db_table = settings.DNSTORM['table_prefix'] + '_idea'
 
     def __unicode__(self):
-        return '<Idea: %d>' % self.id
+        return '<Idea>'
 
     def type(self):
         return _('idea')
@@ -202,6 +219,20 @@ class Idea(models.Model):
         return w if w else 0
 
 reversion.register(Idea)
+
+class QuantifierValue(models.Model):
+    quantifier = models.ForeignKey(Quantifier)
+    idea = models.ForeignKey(Idea)
+    value = models.TextField(verbose_name=_('value'))
+
+    class Meta:
+        db_table = settings.DNSTORM['table_prefix'] + '_quantifier_value'
+
+    def __unicode__(self):
+        return '<QuantifierValue>'
+
+    def type(self):
+        return _('quantifier value')
 
 class Comment(models.Model):
     problem = models.ForeignKey(Problem, editable=False, blank=True, null=True)

@@ -155,6 +155,26 @@ $('.problem-criteria-select .text').autocomplete({
     }
 });
 
+// Add quantifiers entries
+
+$('#quantifier-add').click(function(){
+    var q = $('#id_quantifier_format option:selected');
+    if ('' == q)
+        return false;
+    var html = '<div class="row collapse quantifier-entry">'
+        + '<div class="columns large-8"><input name="quantifier_new_' + q.val() + '" type="text" value="" placeholder="' + gettext('Quantifier name') + '" /></div>'
+        + '<div class="columns large-2"><span class="postfix">' + q.text() + '</div>'
+        + '<div class="columns large-2"><a class="button alert tiny postfix quantifier-remove"><i class="foundicon-minus"></i>&nbsp;' + gettext('Remove') + '</div>'
+        + '</div>';
+    $('#quantifiers').append(html);
+});
+
+// Remove quantifier entries
+
+$(document).on('click', '.quantifier-remove', function(){
+    $(this).parents('.quantifier-entry').remove();
+});
+
 // Criteria modal form in ProblemCreateView and ProblemUpdateView
 
 $('#criteria-modal form').submit(function(e){
@@ -207,6 +227,7 @@ $('.problem-criteria-select').click(function(){
 $('.problem-edit fieldset:gt(0)').hide();
 $('#advanced').click(function(){
     $('.problem-edit fieldset:gt(0)').each(function(){ $(this).fadeIn(300); });
+    $(this).remove();
 });
 
 // Revision rendering in ProblemRevisionView

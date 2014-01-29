@@ -1,10 +1,12 @@
 from django import forms
+from django.http import Http404
 from django.core.urlresolvers import reverse
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
 
 from dnstorm.settings import LANGUAGES
-from dnstorm.app.models import Option, Problem, Idea, Comment, Criteria, Message
+from dnstorm.app.models import Option, Problem, Idea, Comment, \
+    Criteria, Message, Quantifier, QuantifierValue, QUANTIFIER_CHOICES
 
 from crispy_forms.helper import FormHelper
 from crispy_forms_foundation.layout import Fieldset, Field, \
@@ -58,6 +60,7 @@ class AccountCreateForm(forms.Form):
 
 class ProblemForm(forms.ModelForm):
     criteria = forms.Field(_('Criterias'))
+    quantifier_format = forms.ChoiceField(label='', choices=QUANTIFIER_CHOICES, widget=forms.Select(), initial='', required=False)
     notice = forms.BooleanField(_('Mail an update notice to participants'))
     invite = forms.Field(_('Invite people to participate'))
 
@@ -65,6 +68,20 @@ class ProblemForm(forms.ModelForm):
         model = Problem
 
     def __init__(self, *args, **kwargs):
+
+        quantifiers_html = ''
+        if 'instance' in kwargs and kwargs['instance']:
+            for q in Quantifier.objects.filter(problem=kwargs['instance']):
+                format = [qt[1] for qt in QUANTIFIER_CHOICES if qt[0] == q.format]
+                format = unicode(format[0]) if len(format) > 0 else False
+                if not format:
+                    continue
+                quantifiers_html += '<div class="row collapse quantifier-entry">' \
+                    + '<div class="columns large-8"><input name="quantifier_' + str(q.id) + '_' + q.format + '" type="text" value="' + q.name + '" placeholder="' + _('Quantifier name') + '" /></div>' \
+                    + '<div class="columns large-2"><span class="postfix">' + format + '</span></div>' \
+                    + '<div class="columns large-2"><a class="button alert tiny postfix quantifier-remove"><i class="foundicon-minus"></i>&nbsp;' + _('Remove') + '</a></div>' \
+                    + '</div>'
+
         self.helper = FormHelper()
         self.helper.form_action = '.'
         self.helper.form_class = 'problem-form'
@@ -72,7 +89,14 @@ class ProblemForm(forms.ModelForm):
             Fieldset(_('Problem description'),
                 'title',
                 'description',
-                Field('criteria', css_class='problem-criteria', template='field_criteria.html')
+                Field('criteria', css_class='problem-criteria', template='field_criteria.html'),
+            ),
+            Fieldset(_('Idea Quantifiers'),
+                Row(
+                    Column(Field('quantifier_format'), css_class="large-10"),
+                    Column(HTML('<a href="javascript:void(0)" id="quantifier-add" class="button small postfix"><i class="foundicon-plus"></i>&nbsp;' + _('Add quantifier') + '</a>'), css_class="large-2"),
+                ),
+                HTML('<div id="quantifiers">' + quantifiers_html + '</div>'),
             ),
             Fieldset(_('Permissions'),
                 'contributor',
@@ -149,25 +173,75 @@ class CriteriaForm(forms.ModelForm):
         self.fields['mode'].initial = 'problem_criteria_create'
         self.fields['parent'].required = False
 
+class QuantifierForm(forms.ModelForm):
+
+    class Meta:
+        model = Quantifier
+
+    def __init__(self, *args, **kwargs):
+        self.helper = FormHelper()
+        self.helper.form_action = '.'
+        self.helper.layout = Layout(
+            'name',
+            'format',
+            ButtonHolder(Submit('submit', _('Submit')), css_class='alignright'),
+        )
+        super(QuantifierForm, self).__init__(*args, **kwargs)
+
 class IdeaForm(forms.ModelForm):
 
     class Meta:
         model = Idea
 
     def __init__(self, *args, **kwargs):
+
+        if 'problem' in kwargs:
+            problem = kwargs['problem']
+            del kwargs['problem']
+        elif 'instance' in kwargs:
+            problem = kwargs['instance'].problem
+        else:
+            raise Http404
+
+        # Quantifiers
+
+        quantifiers = problem.quantifier_set.all()
+        layout_args = ('title', 'content',)
+        extra_fields = dict()
+
+        for q in quantifiers:
+            q_key = 'quantifier_' + str(q.id) + '_' + q.format
+            if q.format == 'text':
+                extra_fields[q_key] = forms.CharField()
+            elif q.format == 'number':
+                extra_fields[q_key] = forms.IntegerField()
+            elif q.format == 'boolean':
+                extra_fields[q_key] = forms.BooleanField()
+            else:
+                continue
+            extra_fields[q_key].label = q.name
+            extra_fields[q_key].required = False
+            layout_args += (q_key,)
+        layout_args += (Submit('submit', _('Submit'), css_class='right radius'),)
+
+        # Form
+
         self.helper = FormHelper()
         self.helper.form_action = '.'
-        self.helper.layout = Layout(
-            'title',
-            'content',
-            Row(
-                Column('cost', css_class='large-6'),
-                Column('deadline', css_class='large-6')
-            ),
-            Submit('submit', _('Submit'), css_class='right radius'),
-        )
+        self.helper.layout = Layout(*layout_args)
         super(IdeaForm, self).__init__(*args, **kwargs)
         self.fields['content'].label = ''
+
+        if self.instance.id:
+            for q in quantifiers:
+                q_key = 'quantifier_' + str(q.id) + '_' + q.format
+                try:
+                    qv = QuantifierValue.objects.get(quantifier=q, idea=self.instance).value
+                except QuantifierValue.DoesNotExist:
+                    qv = ''
+                extra_fields[q_key].initial = qv
+
+        self.fields = dict(self.fields.items() + extra_fields.items())
 
 class CommentForm(forms.ModelForm):
     idea = forms.IntegerField()

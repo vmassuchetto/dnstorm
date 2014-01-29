@@ -397,12 +397,17 @@ p.pagination {
 
 .problem-idea-button-panel {
     margin: 1em 0 0 0;
+    display: inline-block;
 }
 
 // Idea list
 
 .idea-content {
     margin: 0 0 1em 0;
+}
+
+.idea-quantifiers {
+    margin: 0 0 3px 0;
 }
 
 .idea-attrs {
@@ -596,7 +601,8 @@ a.problem-action {
             line-height: 1.2;
         }
     }
-    .button-criteria {
+    .button-criteria,
+    .label-quantifier {
         margin: emCalc(4px) 0;
     }
 }

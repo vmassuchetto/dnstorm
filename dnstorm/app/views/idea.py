@@ -1,3 +1,5 @@
+import re
+
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import get_object_or_404
@@ -8,12 +10,39 @@ from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext as _
 from django.contrib import messages
 
-from dnstorm.app.models import Problem, Idea, ActivityManager
+from dnstorm.app.models import Problem, Idea, ActivityManager, Quantifier, QuantifierValue
 from dnstorm.app.forms import IdeaForm
 
 import reversion
 import diff_match_patch as _dmp
 from dnstorm.app.lib.diff import diff_prettyHtml
+
+def idea_form_valid(obj, form):
+
+    # Form
+
+    object = form.save(commit=False)
+    object.problem = obj.problem if hasattr(obj, 'problem') else object.problem
+    object.author = obj.request.user
+    object.save()
+
+    # Quantifiers
+
+    regex = re.compile('^quantifier_([0-9]+)_(boolean|number|text)$')
+    for f in form.fields:
+        m = regex.match(f)
+        if not m:
+            continue
+        try:
+            q = Quantifier.objects.get(id=m.group(1))
+        except Quantifier.DoesNotExist:
+            continue
+        QuantifierValue.objects.filter(quantifier=q, idea=object).delete()
+        if f in form.cleaned_data and form.cleaned_data[f]:
+            QuantifierValue.objects.get_or_create(quantifier=q, idea=object, value=form.cleaned_data[f])[0].save()
+
+    messages.success(obj.request, _('Idea saved.'))
+    return HttpResponseRedirect(object.get_absolute_url())
 
 class IdeaView(RedirectView):
     permanent = True
@@ -39,14 +68,7 @@ class IdeaUpdateView(UpdateView):
 
     @reversion.create_revision()
     def form_valid(self, form):
-        # Don't save if the problem is locked
-        if self.object.problem.locked:
-            raise Http404()
-        self.object = form.save(commit=False)
-        self.object.author = self.request.user
-        self.object.save()
-        messages.success(obj.request, _('Idea saved.'))
-        return HttpResponseRedirect(self.object.get_absolute_url())
+        return idea_form_valid(self, form)
 
     def get_breadcrumbs(self):
         return [

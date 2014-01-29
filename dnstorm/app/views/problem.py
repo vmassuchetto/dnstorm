@@ -24,8 +24,10 @@ import diff_match_patch as _dmp
 
 from dnstorm import settings
 from dnstorm.app.lib.diff import diff_prettyHtml
-from dnstorm.app.models import Problem, Invite, Idea, Criteria, Vote, Comment, Message, ActivityManager
+from dnstorm.app.models import Problem, Invite, Idea, Criteria, Vote, Comment, \
+    Message, ActivityManager, Quantifier
 from dnstorm.app.forms import ProblemForm, IdeaForm, CommentForm, CriteriaForm
+from dnstorm.app.views.idea import idea_form_valid
 
 def problem_form_valid(obj, form):
     """
@@ -40,7 +42,7 @@ def problem_form_valid(obj, form):
     obj.object.author = obj.request.user
     obj.object.save()
 
-    # Then fit the criterias in
+    # Criterias
 
     obj.object.criteria.clear()
     regex = re.compile('^criteria_([0-9]+)$')
@@ -48,6 +50,32 @@ def problem_form_valid(obj, form):
     for c in criteria:
         obj.object.criteria.add(c)
     obj.object.save()
+
+    # Quantifiers
+
+    quantifiers = list()
+
+    # Create
+    regex = re.compile('^quantifier_new_(boolean|number|text)$')
+    qf_post = [m for m in [regex.match(p) for p in obj.request.POST] if m]
+    for q in qf_post:
+        for qf in obj.request.POST.getlist(q.group(0)):
+             quantifiers.append(obj.object.quantifier_set.create(name=qf, format=q.group(1)))
+
+    # Update
+    regex = re.compile('^quantifier_([0-9]+)_(boolean|number|text)$')
+    qf_post = [m for m in [regex.match(p) for p in obj.request.POST] if m]
+    for q in qf_post:
+        try:
+            qf = Quantifier.objects.get(id=q.group(1))
+        except Quantifier.DoesNotExist:
+            continue
+        qf.name = obj.request.POST[q.group(0)]
+        qf.save()
+        quantifiers.append(qf)
+
+    # Remove
+    Quantifier.objects.filter(problem=obj.object).exclude(id__in=[q.id for q in quantifiers]).delete()
 
     # Mailing options
 
@@ -271,6 +299,11 @@ class ProblemView(FormView):
         self.problem = get_object_or_404(Problem, slug=self.kwargs['slug'])
         return super(ProblemView, self).dispatch(request, *args, **kwargs)
 
+    def get_form_kwargs(self):
+        kwargs = super(ProblemView, self).get_form_kwargs()
+        kwargs['problem'] = self.problem
+        return kwargs
+
     def get_context_data(self, *args, **kwargs):
         context = super(ProblemView, self).get_context_data(**kwargs)
         context['breadcrumbs'] = self.get_breadcrumbs()
@@ -316,17 +349,7 @@ class ProblemView(FormView):
 
     @reversion.create_revision()
     def form_valid(self, form):
-        """
-        This is actually an Idea object creation procedure, since the form in
-        this view is meant to show problem information but to save Idea
-        information.
-        """
-        obj = form.save(commit=False)
-        obj.problem = self.problem
-        obj.author = self.request.user
-        obj.save()
-        messages.success(self.request, _('Idea saved.'))
-        return HttpResponseRedirect(obj.get_absolute_url())
+        return idea_form_valid(self, form)
 
 class ProblemSearchView(TemplateView):
     pass
