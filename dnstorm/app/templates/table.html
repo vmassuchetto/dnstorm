@@ -70,6 +70,7 @@
     <table class="problem-table" data-problem="{{ problem.id }}">
         <thead>
             <tr>
+
             {% if criterias %}
                 <th></th>
                 {% for criteria in criterias %}
@@ -79,13 +80,19 @@
                     <th class="criteria text-center" data-criteria="{{ criteria.id }}">
                         <div class="title-inner title-admin">
                             {% include "criteria_button.html" %}
-                            <div class="table-actions"><a class="foundicon-remove remove-alternative" data-alternative="{{ alternative.id }}"></a>
                         </div>
                         </div>
                     </th>
 
                 {% endfor %}
             {% endif %}
+
+            {# Quantifiers #}
+
+            {% if problem.quantifier_set.all %}
+                <th><div class="title-inner title-admin text-center">{% trans "Idea quantifiers" %}</div></th>
+            {% endif %}
+
             </tr>
         </thead>
         <tbody>
@@ -95,10 +102,7 @@
                     {# Alternative title #}
 
                     <td class="vertical-title" title="{{ alternative.description }}" data-tooltip>
-                        <div class="title-inner title-admin">
-                            {{ alternative.name }}
-                            <div class="table-actions"><a class="foundicon-remove remove-alternative" data-alternative="{{ alternative.id }}"></a></div>
-                        </div>
+                        <div class="title-inner title-admin"><a class="foundicon-remove remove-alternative button alert radius tiny" data-alternative="{{ alternative.id }}"></a>{{ alternative.name }}</div>
                     </td>
 
                     {# Items #}
@@ -135,6 +139,16 @@
                             {% endfor %}
                         {% endfor %}
 
+                    {% endif %}
+
+                    {# Quantifiers #}
+
+                    {% if problem.quantifier_set.all %}
+                        <td>
+                            {% for q in alternative.get_quantifiers.values %}
+                                <span class="label radius">{{ q.name }}&nbsp;|&nbsp;{{ q.value }}</span>
+                            {% endfor %}
+                        </td>
                     {% endif %}
 
                 </tr>

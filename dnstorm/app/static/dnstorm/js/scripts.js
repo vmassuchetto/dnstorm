@@ -423,10 +423,10 @@ function adjust_table_overflow() {
 adjust_table_overflow();
 
 $(document).on('mouseenter', '.problem-table .cell-wrap', function(){
-    $(this).find('a.button').fadeIn();
+    $(this).find('a.button').fadeIn(200);
 });
 $(document).on('mouseleave', '.problem-table .cell-wrap', function(){
-    $(this).find('a.button').stop().fadeOut();
+    $(this).find('a.button').stop().fadeOut(200);
 });
 
 // New column when there's no criterias in TableView

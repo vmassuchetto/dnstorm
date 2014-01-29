@@ -527,19 +527,24 @@ a.problem-action {
         td.vertical-title {
             background-color: $light-grey;
             font-weight: bold;
-        }
-        .title-admin {
-            padding-right: 20px;
-            position: relative;
-        }
-        .table-actions {
-            position: absolute;
-            top: 1px;
-            right: 0;
+            .title-admin {
+                position: relative;
+                padding-left: 25px;
+            }
+            a.remove-alternative {
+                position: absolute;
+                left:0;
+                height: 20px;
+                line-height: 1;
+            }
         }
         tr.alternative td {
             text-align: center;
             position: relative;
+        }
+        a.remove-alternative {
+            position: relative;
+            padding: 0.4em;
         }
     }
 }

@@ -327,6 +327,27 @@ class Alternative(models.Model):
             })
         return items
 
+    def get_quantifiers(self):
+        quantifiers = dict()
+        items = self.get_items()
+        for item in items:
+            for alternative_item in item['objects']:
+                for idea in alternative_item.idea.all():
+                    for q in idea.quantifiervalue_set.all():
+                        if q.quantifier.format not in ['number', 'boolean']:
+                            continue
+                        k = q.quantifier.id
+                        if k not in quantifiers.keys():
+                            quantifiers[k] = q.quantifier
+                            quantifiers[k].value = 0
+                            quantifiers[k].count = 0
+                        if q.quantifier.format == 'boolean':
+                            quantifiers[k].value += bool(q.value)
+                            quantifiers[k].count += 1
+                        elif q.quantifier.format == 'number':
+                            quantifiers[k].value += int(q.value)
+        return quantifiers
+
     def save(self, *args, **kwargs):
         if not self.id:
             self.created = datetime.today()

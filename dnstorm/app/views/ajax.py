@@ -163,7 +163,7 @@ class AjaxView(View):
             problem=p,
             name=self.request.POST['name'],
             description=self.request.POST['description'],
-            order = n)
+            order=n)
         alternative.save()
         output = {
             'id': alternative.id,
