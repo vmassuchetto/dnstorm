@@ -13,9 +13,6 @@ env
 # Django
 /static
 
-# Migrations
-migrations
-
 # DNStorm
 *.sqlite3
 media
