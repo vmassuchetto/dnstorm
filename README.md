@@ -8,6 +8,8 @@ Run the project in development mode:
 
     export DEBUG=True
     export DATABASE_DEBUG=True
+    export STATICFILES_DEBUG=True
+    export DEBUG_TOOLBAR=True
     python manage.py runserver
 
 ## Heroku deploy
