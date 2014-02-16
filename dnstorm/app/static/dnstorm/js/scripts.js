@@ -580,8 +580,8 @@ $(document).on('click', '.problem-idea-modal-save', function(){
                 m.foundation('reveal', 'close');
                 return;
             }
-            for (i in items) {
-                m.data('item').append('<span class="label secondary radius" data-idea="' + items[i].id + '">' + items[i].title + '</span>');
+            for (i in items.ideas) {
+                m.data('item').append('<span class="label secondary radius" data-idea="' + items.ideas[i].id + '">' + items.ideas[i].title + '</span>');
             }
             m.data('item').append('<a class="button secondary expand select-idea hidden">' + gettext('Select idea') + '</a>');
             m.foundation('reveal', 'close');
