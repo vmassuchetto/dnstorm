@@ -212,10 +212,22 @@ class AjaxView(View):
             item.idea.add(i)
         item.save()
 
-        output = list()
+        output = dict()
+
+        output['ideas'] = list()
         for i in ideas:
-            output.append({
+            output['ideas'].append({
                 'id': i.id,
-                'title': i.title
-            });
+                'title': i.title,
+            })
+
+        output['quantifiers'] = list()
+        for q in a.get_quantifiers().values():
+            output['quantifiers'].append({
+                'id': q.id,
+                'name': q.name,
+                'value': q.value,
+                'format': q.format
+            })
+
         return HttpResponse(json.dumps(output), content_type="application/json")
