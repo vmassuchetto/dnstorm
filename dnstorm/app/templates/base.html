@@ -51,9 +51,9 @@
                 <li class="divider"></li>
                 <li><a href="{% url "options" %}"><i class="foundicon-settings"></i></a></li>
                 <li class="divider"></li>
-                <li><a href="{% url "django.contrib.auth.views.logout" %}?next={{ request.get_full_path }}">{% trans 'Logout' %}</a></li>
+                <li><a href="{{ logour_url }}">{% trans 'Logout' %}</a></li>
             {% else %}
-                <li><a href="{% url "django.contrib.auth.views.login" %}?next={{ request.get_full_path }}">{% trans 'Login' %}</a></li>
+                <li><a href="{{ login_url }}">{% trans 'Login' %}</a></li>
                 <li class="divider"></li>
                 <li><a href="{% url "registration_register" %}">{% trans 'Register' %}</a></li>
             {% endif %}

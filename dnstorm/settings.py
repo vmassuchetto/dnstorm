@@ -57,6 +57,7 @@ MIDDLEWARE_CLASSES = global_settings.MIDDLEWARE_CLASSES + (
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = global_settings.TEMPLATE_CONTEXT_PROCESSORS + (
+    'django.core.context_processors.request',
     'dnstorm.app.context_processors.base',
 )
 

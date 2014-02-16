@@ -62,7 +62,7 @@
                 {% url "problem_new" as url_problem_new %}
                 {% blocktrans %}No problem here. You can start by <a href="{{ url_problem_new }}">creating a new one</a>.{% endblocktrans %}
             {% else %}
-                {% url "django.contrib.auth.views.login" as url_login %}
+                {% url "auth_login" as url_login %}
                 {% blocktrans %}<a href="{{ url_login }}">Log in</a> to view and create problems.{% endblocktrans %}
             {% endif %}
         {% endif %}
