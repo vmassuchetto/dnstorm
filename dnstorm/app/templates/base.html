@@ -1,4 +1,4 @@
-{% load staticfiles i18n problem %}
+{% load staticfiles i18n %}
 
 <!DOCTYPE html>
 <!--[if IE 8]><html class="no-js lt-ie9" lang="en"><![endif]-->
@@ -49,9 +49,11 @@
             {% if user.is_authenticated %}
                 <li><a href="{% url "user" user %}">{{ user.get_full_name|default:user.username }}</a></li>
                 <li class="divider"></li>
-                <li><a href="{% url "options" %}"><i class="foundicon-settings"></i></a></li>
-                <li class="divider"></li>
-                <li><a href="{{ logour_url }}">{% trans 'Logout' %}</a></li>
+                {% if user.is_superuser or user.perms.dnstorm.can_change_option %}
+                    <li><a href="{% url "options" %}"><i class="foundicon-settings"></i></a></li>
+                    <li class="divider"></li>
+                {% endif %}
+                <li><a href="{{ logout_url }}">{% trans 'Logout' %}</a></li>
             {% else %}
                 <li><a href="{{ login_url }}">{% trans 'Login' %}</a></li>
                 <li class="divider"></li>
@@ -99,6 +101,9 @@
     </div>
     <div class="columns large-8 medium-8">
         <div class="right">
+            <a class="button tiny success radius problem-new-button" href="{% url 'problem_new' %}">
+                <i class="foundicon-page"></i> {% trans 'Create new problem' %}
+            </a>
             {% block topright %}{% endblock %}
         </div>
 

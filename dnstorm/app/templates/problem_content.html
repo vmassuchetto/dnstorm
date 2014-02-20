@@ -8,8 +8,8 @@
 
 <div class="row">
     <div class="columns large-7">
-        {% if problem_comment_form %}<a class="problem-action{% if request.user.is_authenticated %} show-on-click{% endif %}" {% if request.user.is_authenticated %}data-show-on-click="problem-comment-form"{% else %}data-reveal-id="login-modal"{% endif %} href="javascript:void(0);" >{% trans "Comment" context "verb" %}</a>{% endif %}
-        {% if perms.problem.can_edit %}<a class="problem-action" href="{% url "problem_edit" problem.slug %}">{% trans "Edit" %}</a>{% endif %}
+        {% if problem_perm_contribute %}<a class="problem-action show-on-click" data-show-on-click="problem-comment-form" href="javascript:void(0);">{% trans "Comment" context "verb" %}</a>{% endif %}
+        {% if problem_perm_edit %}<a class="problem-action" href="{% url "problem_edit" problem.slug %}">{% trans "Edit" %}</a>{% endif %}
     </div>
 
     <div class="columns large-5">

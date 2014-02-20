@@ -1,4 +1,4 @@
-{% load problem crispy_forms_tags humanize i18n %}
+{% load crispy_forms_tags humanize i18n %}
 
 <div class="problem-idea" id="idea-{{ idea.id }}" data-idea="{{ idea.id }}">
 
@@ -7,11 +7,11 @@
         {% if problem.voting and not ideas_modal %}
             <div class="columns large-1 small-2 voting">
 
-                <a href="{% if not user.is_authenticated %}{{ login_url }}{% else %}javascript:void(0){% endif %}" class="button secondary upvote{% if idea.user_vote.weight == 1 %} success{% endif %}" data-idea="{{ idea.id }}"{% if idea.author == user %} disabled="disabled"{% endif %}><i class="foundicon-up-arrow"></i></a>
+                <a href="{% if not user.is_authenticated %}{{ login_url }}{% else %}javascript:void(0){% endif %}" class="button secondary radius upvote{% if idea.user_vote.weight == 1 %} success{% endif %}" data-idea="{{ idea.id }}"{% if idea.author == user or not problem_perm_contribute %} disabled="disabled"{% endif %}><i class="foundicon-up-arrow"></i></a>
 
                 {% if problem.vote_count %}<span class="vote-count">{% if problem.vote_author %}<a href="javascript:void(0);" data-reveal-id="idea-{{ idea.id }}-vote-history-modal">{% endif %}{{ idea.vote_count }}{% if problem.vote_author %}</a>{% endif %}</span>{% else %}{% endif %}
 
-                <a href="{% if not user.is_authenticated %}{{ login_url }}{% else %}javascript:void(0){% endif %}" class="button secondary downvote{% if idea.user_vote.weight == -1 %} alert{% endif %}" data-idea="{{ idea.id }}"{% if idea.author == user %} disabled="disabled"{% endif %}><i class="foundicon-down-arrow"></i></a>
+                <a href="{% if not user.is_authenticated %}{{ login_url }}{% else %}javascript:void(0){% endif %}" class="button secondary radius downvote{% if idea.user_vote.weight == -1 %} alert{% endif %}" data-idea="{{ idea.id }}"{% if idea.author == user or not problem_perm_contribute %} disabled="disabled"{% endif %}><i class="foundicon-down-arrow"></i></a>
 
             </div>
         {% endif %}
@@ -47,7 +47,7 @@
             <div class="row">
 
                 <div class="columns large-7">
-                    <div class="row">
+                    <div class="row collapse">
                         {% if idea.quantifiervalue_set.all %}
                             <div class="large-12 idea-quantifiers">
                                 {% for q in idea.quantifiervalue_set.all %}
@@ -55,10 +55,10 @@
                                 {% endfor %}
                             </div>
                         {% endif %}
-                        <div class="large-12">
+                        <div class="large-12 right">
                             {% if idea_actions %}
 
-                                {% if idea.comment_form %}<a class="problem-action{% if user.is_authenticated %} show-on-click{% endif %}" {% if user.is_authenticated %}data-show-on-click="comment-form-{{ idea.id }}" href="javascript:void(0);"{% else %}href="{{ login_url }}"{% endif %}>{% trans "Comment" context "verb" %}</a>{% endif %}
+                                {% if problem_perm_contribute %}<a class="problem-action{% if user.is_authenticated %} show-on-click{% endif %}" {% if user.is_authenticated %}data-show-on-click="comment-form-{{ idea.id }}" href="javascript:void(0);"{% else %}href="{{ login_url }}"{% endif %}>{% trans "Comment" context "verb" %}</a>{% endif %}
 
                                 {% if idea.author == user %}<a class="problem-action problem-idea-edit" href="{% url "idea_edit" problem.slug idea.id %}">{% trans "Edit" %}</a>{% endif %}
 

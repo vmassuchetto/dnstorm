@@ -3,7 +3,10 @@
 
 {% block bodyclass %}problem-revision{% endblock %}
 
-{% block title" %}<h3>{% trans "Revisions for the problem %} <a href="{% url "problem" problem.slug %}">#{{ problem.id }}</a></h3>{% endblock %}
+{% block title" %}
+{% url "problem" problem.slug as problem_url %}
+<h3>{% blocktrans with problem.id as problem_id %}Revisions for the problem <a href="{{ problem_url }}">#{{ problem_id }}</a>{% endblocktrans %}</h3>
+{% endblock %}
 
 {% block content %}
 

@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load problem crispy_forms_tags i18n %}
+{% load crispy_forms_tags i18n %}
 
 {% block bodyclass %}problem{% endblock %}
 
@@ -12,7 +12,7 @@
 
         {% include "problem_content.html" %}
 
-        {% if user.is_authenticated and problem_comment_form %}
+        {% if problem_perm_contribute %}
             <div class="comment-form hide" id="problem-comment-form" data-problem="{{ problem.id }}">
                 {% crispy problem_comment_form %}
             </div>
@@ -38,15 +38,19 @@
 
                 <a class="large button expand secondary radius" disabled="disabled">{% trans "This problem is currently locked for new ideas" %}</a>
 
-            {% else %} {% if user_ideas_left > 0 %}
+            {% else %} {% if problem_perm_contribute and user_ideas_left > 0 %}
 
                 <a class="problem-idea-button problem-idea-form-button button expand radius{% if form.errors %} hide{% endif %}"><i class="foundicon-idea"></i> {% trans "Submit your idea to this problem" %}{% if problem.max %}<br/><small>{% blocktrans count user_ideas_left as ideas %}you have {{ ideas }} idea left{% plural %}you have {{ ideas }} ideas left{% endblocktrans %}</small>{% endif %}</a>
 
-            {% else %}
+            {% else %} {% if user_ideas_left == 0 %}
 
                 <a class="problem-idea-button large button expand secondary radius" disabled="disabled">{% trans "You contributed with the maximum ideas allowed for this problem" %}<br/><small>{% trans "edit or delete your existing ideas if you change your mind about them" %}</small></a>
 
-            {% endif %} {% endif %} {% endif %}
+            {% else %} {% if not problem_perm_contribute %}
+
+                <a class="large button expand secondary radius" disabled="disabled">{% trans "You don't have permission to contribute to this problem" %}</a>
+
+            {% endif %} {% endif %} {% endif %} {% endif %} {% endif %}
 
             <div class="problem-idea-form {% if not form.errors %}hide{% endif %}" id="problem-idea-form">
                 <h3>{% trans "Your idea" %}</h3>

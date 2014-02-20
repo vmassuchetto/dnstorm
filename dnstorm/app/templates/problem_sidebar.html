@@ -12,12 +12,16 @@
 {% endif %}
 
 <a class="button small secondary expand radius show-on-click hide-after-click" data-show-on-click="short-link-url" href="javascript:void(0);"><i class="foundicon-paper-clip"></i> {% trans "Short Link" %}</a>
-<div id="short-link-url" class="hide"><input type="text" class="select-on-click" value="{# absolute "problem_short" problem.id #}" /></div>
+<div id="short-link-url" class="hide"><input type="text" class="select-on-click" value="{{ problem_short_url }}" /></div>
 <hr/>
 
 {% if problem.public or problem.open or problem.locked or problem.blind or problem.voting %}
     <p class="problem-icons text-center">
-        {% if problem.public %}<i class="foundicon-globe" data-tooltip title="{% trans "This problem is public. Anyone on the Internet can read it." %}"></i>{% endif %}
+        {% if problem.public %}
+            <i class="foundicon-globe" data-tooltip title="{% trans "This problem is public. Anyone on the Internet can read it." %}"></i>
+        {% else %}
+            <i class="foundicon-lock" data-tooltip title="{% trans "This problem is not public. Only contributores can read it." %}"></i>
+        {% endif %}
         {% if problem.open %}<i class="foundicon-mic" data-tooltip title="{% trans "This problem is opened. Any logged user will be able to contribute." %}"></i>{% endif %}
         {% if problem.locked %}<i class="foundicon-lock" data-tooltip title="{% trans "This problem is locked. No one can contribute with any more ideas until a manager opens it." %}"></i>{% endif %}
         {% if problem.blind %}<i class="foundicon-compass" data-tooltip title="{% trans "This problem is in blind contribution mode. You can only see your own ideas." %}"></i>{% endif %}
