@@ -3,14 +3,6 @@
 
 {% block bodyclass %}home{% endblock %}
 
-{% block topright %}
-    {% if perms.problem.can_add %}
-        <a class="button tiny success radius problem-new-button" href="{% url 'problem_new' %}">
-            <i class="foundicon-page"></i> {% trans 'Create new problem' %}
-        </a>
-    {% endif %}
-{% endblock %}
-
 {% block content %}
 
     <div class="row">
