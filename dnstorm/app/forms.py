@@ -137,10 +137,11 @@ class ProblemForm(forms.ModelForm):
 
         # Add criteria fields
         instance = kwargs.pop('instance')
-        criteria = Criteria.objects.filter(problem=instance)
-        for c in criteria:
-            self.fields['criteria_{i}'.format(i=c.id)] = forms.CharField(widget = forms.HiddenInput(), initial=c.id, label=c.name, help_text=mark_safe(c.description), required=False)
-            self.helper.layout.append((Field('criteria_{i}'.format(i=c.id), type='hidden', value=c.id)))
+        if instance:
+            criteria = Criteria.objects.filter(problem=instance)
+            for c in criteria:
+                self.fields['criteria_{i}'.format(i=c.id)] = forms.CharField(widget = forms.HiddenInput(), initial=c.id, label=c.name, help_text=mark_safe(c.description), required=False)
+                self.helper.layout.append((Field('criteria_{i}'.format(i=c.id), type='hidden', value=c.id)))
 
         # Notices field
         self.fields['notice'].required = False
