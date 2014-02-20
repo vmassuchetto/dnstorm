@@ -16,6 +16,8 @@ from dnstorm.app.lib.diff import diff_prettyHtml
 from ckeditor.fields import RichTextField
 from registration.signals import user_activated
 
+reversion.register(User)
+
 class Option(models.Model):
     name = models.TextField(verbose_name=_('Name'), blank=False, unique=True)
     value = models.TextField(verbose_name=_('Value'), blank=False)
@@ -508,7 +510,6 @@ class ActivityManager(models.Manager):
 
     def get_query_string(self, *args, **kwargs):
         return {
-
             'select': """
                     SELECT
                         'problem_' || p.id AS type,
@@ -564,5 +565,4 @@ class ActivityManager(models.Manager):
                 LIMIT %(limit)d
                 OFFSET %(offset)d
             """
-
         }
