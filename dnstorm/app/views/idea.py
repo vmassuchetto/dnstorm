@@ -3,6 +3,7 @@ import re
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import get_object_or_404
+from django.core.exceptions import PermissionDenied
 from django.views.generic import DetailView, RedirectView
 from django.views.generic.edit import UpdateView
 from django.contrib.auth.decorators import login_required
@@ -12,6 +13,7 @@ from django.contrib import messages
 
 from dnstorm.app.models import Problem, Idea, ActivityManager, Quantifier, QuantifierValue
 from dnstorm.app.forms import IdeaForm
+from dnstorm.app import permissions
 
 import reversion
 import diff_match_patch as _dmp
@@ -49,7 +51,7 @@ class IdeaView(RedirectView):
 
     def get_redirect_url(self, *args, **kwargs):
         idea = get_object_or_404(Idea, id=kwargs['pk'])
-        return reverse('problem', kwargs={'slug':idea.problem.slug}) + '#idea-' + str(idea.id)
+        return reverse('idea', kwargs={'slug':idea.problem.slug, 'pk': idea.id})
 
 class IdeaUpdateView(UpdateView):
     template_name = 'idea_edit.html'
@@ -57,8 +59,11 @@ class IdeaUpdateView(UpdateView):
     model = Idea
 
     @method_decorator(login_required)
-    def dispatch(self, *args, **kwargs):
-        return super(IdeaUpdateView, self).dispatch(*args, **kwargs)
+    def dispatch(self, request, *args, **kwargs):
+        obj = get_object_or_404(Idea, id=kwargs['pk'])
+        if not permissions.idea(obj=obj, user=self.request.user, mode='edit'):
+            raise PermissionDenied
+        return super(IdeaUpdateView, self).dispatch(request, *args, **kwargs)
 
     def get_context_data(self, *args, **kwargs):
         context = super(IdeaUpdateView, self).get_context_data(**kwargs)

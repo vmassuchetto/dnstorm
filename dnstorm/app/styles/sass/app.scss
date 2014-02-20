@@ -117,7 +117,12 @@ form {
 
 // Error panel
 
-.panel.error {
+.errorlist {
+    list-style-type: none;
+    margin-left: 0;
+}
+
+.panel.error, .errorlist li {
     @include panel(pink, 20px);
     @include border-radius($global-radius);
 }
@@ -386,7 +391,7 @@ p.pagination {
 }
 
 .user-labels span {
-    margin: emCalc(4px) 0;
+    margin: emCalc(4px);
 }
 
 // Idea form
@@ -469,16 +474,20 @@ p.pagination {
 .voting {
     text-align: center;
     a.button {
+        i {
+            margin: 0;
+            padding: 0;
+            font-size: 1.3em;
+        }
         margin: 0;
-        font-size: 1.5em;
-        padding: 10px 5px 10px 8px;
+        padding: 5px;
     }
     .vote-count {
         color: #444444;
         display: block;
         font-size: 1.6em;
         letter-spacing: 0;
-        margin: 7px 0;
+        margin: 7px 0 12px 0;
     }
 }
 

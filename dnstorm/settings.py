@@ -145,6 +145,10 @@ EMAIL_HOST_USER = 'dnstorm@localhost'
 EMAIL_HOST_PASSWORD = False
 '''
 
+# Registration
+
+ACCOUNT_ACTIVATION_DAYS = 3
+
 # CKEditor
 
 CKEDITOR_DEFAULT_TOOLBAR = [

@@ -4,6 +4,7 @@ from datetime import datetime
 
 from django.shortcuts import get_object_or_404
 from django.core.urlresolvers import reverse
+from django.core.exceptions import PermissionDenied
 from django.http import Http404, HttpResponseRedirect
 from django.views.generic import DetailView
 from django.views.generic.edit import FormView, CreateView, UpdateView
@@ -16,13 +17,15 @@ from django.utils.html import strip_tags
 from django.template.loader import render_to_string
 from django.db.models import Q
 from django.db.models.query import EmptyQuerySet
-from django.contrib.contenttypes.models import ContentType
 from django.contrib import messages
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.auth.models import User
 
 import reversion
 import diff_match_patch as _dmp
 
 from dnstorm import settings
+from dnstorm.app import permissions
 from dnstorm.app.lib.diff import diff_prettyHtml
 from dnstorm.app.models import Problem, Invite, Idea, Criteria, Vote, Comment, \
     Message, ActivityManager, Quantifier
@@ -40,6 +43,20 @@ def problem_form_valid(obj, form):
 
     obj.object = form.save(commit=False)
     obj.object.author = obj.request.user
+    obj.object.save()
+
+    # Managers and contributors
+
+    obj.object.contributor.clear()
+    if obj.request.POST.get('contributor', False):
+        for c in obj.request.POST['contributor']:
+            obj.object.contributor.add(c)
+
+    obj.object.manager.clear()
+    if obj.request.POST.get('manager', False):
+        for m in obj.request.POST['manager']:
+            obj.object.manager.add(m)
+
     obj.object.save()
 
     # Criterias
@@ -161,6 +178,9 @@ class ProblemUpdateView(UpdateView):
     @method_decorator(login_required)
     @method_decorator(csrf_protect)
     def dispatch(self, *args, **kwargs):
+        obj = get_object_or_404(Problem, slug=kwargs['slug'])
+        if not permissions.problem(obj=obj, user=self.request.user, mode='edit'):
+            raise PermissionDenied
         return super(ProblemUpdateView, self).dispatch(*args, **kwargs)
 
     def get_context_data(self, *args, **kwargs):
@@ -183,6 +203,12 @@ class ProblemUpdateView(UpdateView):
 class ProblemRevisionView(DetailView):
     template_name = 'problem_revision.html'
     model = Problem
+
+    def dispatch(self, *args, **kwargs):
+        obj = get_object_or_404(Problem, slug=kwargs['slug'])
+        if not permissions.problem(obj=obj, user=self.request.user, mode='view'):
+            raise PermissionDenied
+        return super(ProblemRevisionView, self).dispatch(*args, **kwargs)
 
     def get_context_data(self, *args, **kwargs):
         context = super(ProblemRevisionView, self).get_context_data(**kwargs)
@@ -257,6 +283,7 @@ class ProblemRevisionView(DetailView):
                 'criteria': criteria
             })
 
+
         first = versions[len(versions)-1]
         detail = '<h3>' + first.object_version.object.title + '</h3>' + first.object_version.object.description
 
@@ -279,12 +306,24 @@ class ProblemRevisionView(DetailView):
 class ProblemRevisionItemView(RedirectView):
     permanent = True
 
+    def dispatch(self, *args, **kwargs):
+        obj = get_object_or_404(Problem, slug=kwargs['slug'])
+        if not permissions.problem(obj=obj, user=self.request.user, mode='view'):
+            raise PermissionDenied
+        return super(ProblemRevisionItemView, self).dispatch(*args, **kwargs)
+
     def get_redirect_url(self, *args, **kwargs):
         revision = get_object_or_404(reversion.models.Version, id=kwargs['pk'])
         return reverse('problem_revision', kwargs={'id':revision.object.id}) + '#revision-' + str(revision.id)
 
 class ProblemShortView(RedirectView):
     permanent = True
+
+    def dispatch(self, *args, **kwargs):
+        obj = get_object_or_404(Problem, slug=kwargs['slug'])
+        if not permissions.problem(obj=obj, user=self.request.user, mode='view'):
+            raise PermissionDenied
+        return super(ProblemShortView, self).dispatch(*args, **kwargs)
 
     def get_redirect_url(self, *args, **kwargs):
         problem = get_object_or_404(Problem, id=kwargs['pk'])
@@ -297,6 +336,8 @@ class ProblemView(FormView):
     @method_decorator(csrf_protect)
     def dispatch(self, request, *args, **kwargs):
         self.problem = get_object_or_404(Problem, slug=self.kwargs['slug'])
+        if not permissions.problem(obj=self.problem, user=self.request.user, mode='view'):
+            raise PermissionDenied
         return super(ProblemView, self).dispatch(request, *args, **kwargs)
 
     def get_form_kwargs(self):
@@ -310,6 +351,9 @@ class ProblemView(FormView):
         context['activities'] = ActivityManager().get_objects(limit=4)
         context['title'] = self.problem.title
         context['problem'] = self.problem
+        context['problem_perm_edit'] = permissions.problem(obj=self.problem, user=self.request.user, mode='edit')
+        context['problem_perm_contribute'] = permissions.problem(obj=self.problem, user=self.request.user, mode='contribute')
+        context['problem_short_url'] = self.request.build_absolute_uri(reverse('problem_short', kwargs={'pk': self.problem.id}))
         context['comments'] = Comment.objects.filter(problem=self.problem)
         context['bulletin'] = Message.objects.filter(problem=self.problem).order_by('-modified')[:4]
         context['problem_comment_form'] = CommentForm(initial={'problem': self.problem.id})
@@ -350,6 +394,3 @@ class ProblemView(FormView):
     @reversion.create_revision()
     def form_valid(self, form):
         return idea_form_valid(self, form)
-
-class ProblemSearchView(TemplateView):
-    pass

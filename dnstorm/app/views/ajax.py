@@ -2,7 +2,7 @@ import re
 
 from django.http import Http404, HttpResponse, HttpResponseForbidden
 from django.db.models import Sum
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.views.generic import View
 from django.utils.translation import ugettext_lazy as _
 from django.shortcuts import get_object_or_404
@@ -11,6 +11,7 @@ from django.template import loader, Context
 from dnstorm.app.models import Problem, Criteria, Vote, Idea, Comment, Alternative, AlternativeItem
 from dnstorm.app.forms import CriteriaForm
 
+from dnstorm.app import permissions
 from dnstorm.app.lib.slug import unique_slugify
 from dnstorm.app.lib.utils import get_object_or_none
 
@@ -115,8 +116,10 @@ class AjaxView(View):
 
     def submit_vote(self):
         idea = get_object_or_404(Idea, pk=self.request.GET['idea'])
-        if not self.request.user.is_authenticated() or idea.author == self.request.user:
-            raise Http404()
+        if not self.request.user.is_authenticated() \
+            or idea.author == self.request.user \
+            or not permissions.problem(obj=idea.problem, user=self.request.user, mode='contribute'):
+            raise PermissionDenied
         weight = int(self.request.GET['weight'])
         weight_choices = [ choice[0] for choice in \
             [ field.choices for field in Vote._meta.fields if field.name == 'weight' ][0] ]
@@ -141,6 +144,8 @@ class AjaxView(View):
             idea = get_object_or_none(Idea, id=int(self.request.POST['idea']))
         except ValueError:
             idea = None
+        if not permissions.problem(obj=problem, user=self.request.user, mode='contribute'):
+            raise PermissionDenied
         content = self.request.POST['content']
         comment = Comment(problem=problem, idea=idea, content=content, author=self.request.user)
         comment.save()

@@ -391,7 +391,7 @@ $('.voting a').click(function() {
             'weight': weight
         },
         complete: function(xhr, data) {
-            count = parseInt(data);
+            count = parseInt(xhr.responseText);
             // Reset stuff if things go wrong
             if (isNaN(count)) {
                 upvote.removeClass('success');
