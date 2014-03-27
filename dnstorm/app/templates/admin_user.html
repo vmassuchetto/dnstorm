@@ -21,7 +21,7 @@
                         <span class="th radius left">{% avatar user 48 %}</span>
                     </div>
                     <div class="columns large-11 small-10 user-info">
-                        <h4{% if not user.is_active %} class="text-red"{% endif %}>{{ user.username }} {% if user.get_full_name %}<small{% if not user.is_active %} class="text-red"{% endif %}>({{ user.get_full_name }})</small>{% endif %}</h4>
+                        <h4{% if not user.is_active %} class="text-red"{% endif %}>{{ user.username }} {% if user.get_full_name %}<small{% if not user.is_active %} class="text-red"{% endif %}>({{ user.get_full_name }})</small>{% endif %}{% if user.is_superuser %}&nbsp;<span class="label radius secondary">SUPER</span>{% endif %}</h4>
                         <div class="row collapse">
                             <div class="columns large-6{% if not user.is_active %} text-red{% endif %}">
                                 {{ user.email }}

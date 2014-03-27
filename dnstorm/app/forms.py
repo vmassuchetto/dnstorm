@@ -61,7 +61,7 @@ class UserAdminForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ['username', 'email', 'first_name', 'last_name']
+        fields = ['username', 'email', 'first_name', 'last_name', 'is_superuser']
 
     def __init__(self, *args, **kw):
         super(UserAdminForm, self).__init__(*args, **kw)
@@ -76,6 +76,7 @@ class UserAdminForm(forms.ModelForm):
                 'email',
                 'first_name',
                 'last_name',
+                'is_superuser',
                 ButtonHolder(
                     actions,
                     Submit('submit', _('Save'), css_class='radius'),
