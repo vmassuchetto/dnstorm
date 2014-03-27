@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: DNStorm\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-03-27 05:52-0500\n"
-"PO-Revision-Date: 2014-03-27 07:57-0300\n"
+"PO-Revision-Date: 2014-03-27 08:28-0300\n"
 "Last-Translator: Vinicius Massuchetto <vmassuchetto@gmail.com>\n"
 "Language-Team: \n"
 "Language: pt_BR\n"
@@ -967,7 +967,7 @@ msgstr "%(site)s: Sua chave de ativação"
 #: templates/registration/login.html:32
 #: templates/registration/password_reset_form.html:9
 msgid "Reset password"
-msgstr "Repita a senha"
+msgstr "Recuperar senha"
 
 #: templates/registration/logout.html:9
 msgid "Bye!"
