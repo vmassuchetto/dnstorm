@@ -4,7 +4,7 @@
 {% block content %}
     <div class="row problem-detail-title content">
         <div class="columns large-2">
-            <a class="th radius" href="{% url "user" user %}">{% avatar profile 128 %}</a>
+            <a class="th radius" href="{% url "user" profile %}">{% avatar profile 128 %}</a>
         </div>
         <div class="columns large-6">
             <h4>{{ profile.get_full_name|default:profile.username }}</h4>

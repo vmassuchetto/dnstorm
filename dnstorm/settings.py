@@ -64,6 +64,7 @@ TEMPLATE_CONTEXT_PROCESSORS = global_settings.TEMPLATE_CONTEXT_PROCESSORS + (
 ROOT_URLCONF = 'dnstorm.app.urls'
 LOGIN_REDIRECT_URL = '/'
 WSGI_APPLICATION = 'dnstorm.wsgi.application'
+AVATAR_GRAVATAR_DEFAULT = 'identicon'
 
 # Apps
 

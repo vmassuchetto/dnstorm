@@ -9,7 +9,7 @@
     <div class="large-4 large-offset-4 columns content">
         <h4>{% trans "Login" %}</h4>
 
-        <form method="post" action="{% url "auth_login" %}">
+        <form method="post" action="{% url "auth_login" %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}">
 
             {% csrf_token %}
             <input type="hidden" name="next" value="{% if request.GET.next %}{{ request.GET.next }}{% else %}{{ request.get_full_path }}{% endif %}" />
