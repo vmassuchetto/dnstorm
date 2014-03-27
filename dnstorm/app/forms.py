@@ -1,6 +1,7 @@
 from django import forms
 from django.http import Http404
 from django.core.urlresolvers import reverse
+from django.contrib.auth.models import User
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
 
@@ -14,7 +15,7 @@ from crispy_forms_foundation.layout import Fieldset, Field, \
 
 from dnstorm.app.lib.slug import unique_slugify
 
-class OptionsForm(forms.Form):
+class AdminOptionsForm(forms.Form):
     site_title = forms.CharField(label=_('Site title'))
     site_description = forms.CharField(label=_('Site description'))
 
@@ -38,8 +39,6 @@ class OptionsForm(forms.Form):
         for field in self.fields:
             self.fields[field].initial = option.get(field)
 
-
-
 class AccountCreateForm(forms.Form):
     username = forms.CharField(label=_('Username'))
     email = forms.EmailField(label=_('E-mail'))
@@ -57,6 +56,32 @@ class AccountCreateForm(forms.Form):
             Submit('submit', _('Create account'), css_class='expand success'),
         )
         super(AccountCreateForm, self).__init__(*args, **kwargs)
+
+class UserAdminForm(forms.ModelForm):
+
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'first_name', 'last_name']
+
+    def __init__(self, *args, **kw):
+        super(UserAdminForm, self).__init__(*args, **kw)
+        if self.instance.is_active:
+            actions = HTML('<a data-reveal-id="deactivate-modal" data-reveal href="javascript:void(0)" class="left button secondary tiny radius alert">' + _('Deactivate account') + '</a>')
+        else:
+            actions = HTML('<a data-reveal-id="activate-modal" data-reveal href="javascript:void(0)" class="left button secondary tiny radius success">' + _('Activate account') + '</a>')
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            Fieldset(_('Edit user "%s"' % self.instance.username),
+                'username',
+                'email',
+                'first_name',
+                'last_name',
+                ButtonHolder(
+                    actions,
+                    Submit('submit', _('Save'), css_class='radius'),
+                ),
+            )
+        )
 
 class ProblemForm(forms.ModelForm):
     criteria = forms.Field(_('Criterias'))

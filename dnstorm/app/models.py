@@ -31,6 +31,14 @@ class Option(models.Model):
     def type(self):
         return _('option')
 
+    def get_or_create(self, **kwargs):
+        if 'name' not in kwargs or 'value' not in kwargs or len(kwargs) > 2:
+            raise Exception('"name" and "value" are the required key arguments.')
+        try:
+            return Option.objects.get(name=kwargs['name'])
+        except Option.DoesNotExist:
+            return Option(**kwargs)
+
     def get(self, *args):
         """ The site options are defined and saved by the OptionsForm fields,
         and this method ensures that some value or a default value will be
@@ -42,7 +50,7 @@ class Option(models.Model):
         try:
             option = Option.objects.get(name=args[0])
             value = option.value
-        except:
+        except Option.DoesNotExist:
             defaults = self.get_defaults()
             if args[0] not in defaults:
                 return None

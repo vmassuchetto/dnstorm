@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% load i18n humanize avatar_tags %}
+
+{% block bodyclass %}admin-users{% endblock %}
+
+{% block search_url %}{% url "admin_user" %}{% endblock %}
+{% block search_placeholder %}{% trans "Search users" %}{% endblock %}
+
+{% block content %}
+
+    <div class="row">
+    <div class="columns large-12">
+        {% if users %}
+
+            <h2>{% trans "Users admin" %}</h2>
+
+            {% for user in users %}
+
+                <div class="row collapse list-item admin-users-list-item">
+                    <div class="columns large-1 small-2">
+                        <span class="th radius left">{% avatar user 48 %}</span>
+                    </div>
+                    <div class="columns large-11 small-10 user-info">
+                        <h4{% if not user.is_active %} class="text-red"{% endif %}>{{ user.username }} {% if user.get_full_name %}<small{% if not user.is_active %} class="text-red"{% endif %}>({{ user.get_full_name }})</small>{% endif %}</h4>
+                        <div class="row collapse">
+                            <div class="columns large-6{% if not user.is_active %} text-red{% endif %}">
+                                {{ user.email }}
+                            </div>
+                            <div class="columns large-6 text-right">
+                                <a href="{% url "admin_user_edit" user.id %}">{% trans "Edit" %}</a>
+                                {% if user.is_active %}&nbsp;|&nbsp;<a href="{% url "user" user.username %}">{% trans "View profile" %}</a>{% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            {% endfor %}
+
+            {% include "pagination.html" with items=users %}
+
+        {% endif %}
+    </div>
+    </div>
+
+{% endblock %}

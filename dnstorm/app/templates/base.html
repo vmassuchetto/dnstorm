@@ -41,6 +41,10 @@
             <li class="divider"></li>
             <li><a href="{% url "activity" %}">{% trans "Activity" %}</a></li>
             <li class="divider"></li>
+            {% if user.is_superuser %}
+                <li><a href="{% url "admin_user" %}">{% trans "Users" %}</a></li>
+                <li class="divider"></li>
+            {% endif %}
             <li><a href="/?help=1">{% trans "Help" %}</a></li>
             <li class="divider"></li>
         </ul>
@@ -50,7 +54,7 @@
                 <li><a href="{% url "user" user %}">{{ user.get_full_name|default:user.username }}</a></li>
                 <li class="divider"></li>
                 {% if user.is_superuser or user.perms.dnstorm.can_change_option %}
-                    <li><a href="{% url "options" %}"><i class="foundicon-settings"></i></a></li>
+                    <li><a href="{% url "admin_options" %}"><i class="foundicon-settings"></i></a></li>
                     <li class="divider"></li>
                 {% endif %}
                 <li><a href="{{ logout_url }}">{% trans 'Logout' %}</a></li>
@@ -107,10 +111,10 @@
             {% block topright %}{% endblock %}
         </div>
 
-        <form action="/search" method="GET">
+        <form action="{% block search_url %}{% url "search" %}{% endblock %}" method="GET">
             <div class="row collapse right search-form show-for-medium-up">
                 <div class="columns large-8 medium-8">
-                    <input type="text" name="q" placeholder="{% trans "Search" %}"{% if query %} value="{{ query }}"{% endif %} />
+                    <input type="text" name="q" placeholder="{% block search_placeholder %}{% trans "Search" %}{% endblock %}"{% if query %} value="{{ query }}"{% endif %} />
                 </div>
                 <div class="columns large-4 medium-2">
                     <button type="submit" class="button postfix secondary radius"><i class="foundicon-search"></i></button>

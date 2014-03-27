@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags avatar_tags i18n %}
+
+{% block modals %}
+    {% if admin_user.is_active %}
+    {# Deactivate modal #}
+    <div id="deactivate-modal" class="reveal-modal tiny" data-reveal>
+        <a class="close-reveal-modal">&#215;</a>
+        <div class="row bottom-1em">
+            <div class="columns large-12">
+                <p>{% blocktrans with user=admin_user %}Are you sure? The user <b>{{ user }}</b> will be anonymized in all previous activities.{% endblocktrans %}</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="columns large-12">
+                <a class="button tiny secondary radius left close-reveal-modal-button">{% trans "Cancel" %}</a>
+                <a class="button small alert radius right" href="{% url "admin_user_deactivate" admin_user.id %}">{% trans "Yes! I'm sure!" %}</a>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    {# Activate modal #}
+    <div id="activate-modal" class="reveal-modal tiny" data-reveal>
+        <a class="close-reveal-modal">&#215;</a>
+        <div class="row bottom-1em">
+            <div class="columns large-12">
+                <p>{% blocktrans with user=admin_user %}The user will have the information restored from the last deactivation. Continue?{% endblocktrans %}</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="columns large-12">
+                <a class="button tiny secondary radius left close-reveal-modal-button">{% trans "Cancel" %}</a>
+                <a class="button small success radius right" href="{% url "admin_user_activate" admin_user.id %}">{% trans "Yes! Reactivate this user!" %}</a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    <div class="row admin-user-detail content">
+    <div class="columns large-12">
+        {% if not admin_user.is_active and bkp_admin_user %}
+            <div class="panel">
+                <h4>{% trans "User data before deactivation:" %}</h4>
+                <p>
+                    {% trans "Username" %}: {{ bkp_admin_user.username }}<br/>
+                    {% trans "E-mail" %}: {{ bkp_admin_user.email }}
+                    {% if bkp_admin_user.get_full_name %}<br/>{% trans "Name" %}: {{ bkp_admin_user.get_full_name }}{% endif %}
+                </p>
+            </div>
+        {% endif %}
+        {% crispy form %}
+    </div>
+    </div>
+{% endblock %}

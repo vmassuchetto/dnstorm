@@ -1,7 +1,7 @@
 from django.conf.urls import patterns, include, url
 
 from dnstorm import settings
-from dnstorm.app.views import base, ajax, problem, criteria, message, idea, table
+from dnstorm.app.views import base, ajax, problem, criteria, message, idea, table, user
 
 from haystack.views import search_view_factory
 
@@ -15,7 +15,6 @@ urlpatterns = patterns('',
 
     (r'^$', base.HomeView.as_view(), {}, 'home'),
     (r'^ajax/$', ajax.AjaxView.as_view(), {}, 'ajax'),
-    (r'^options/$', base.OptionsView.as_view(), {}, 'options'),
     (r'^p/(?P<pk>[^/]+)/$', problem.ProblemShortView.as_view(), {}, 'problem_short'),
     (r'^problem/new/$', problem.ProblemCreateView.as_view(), {}, 'problem_new'),
     (r'^problem/(?P<slug>[^/]+)/$', problem.ProblemView.as_view(), {}, 'problem'),
@@ -36,8 +35,16 @@ urlpatterns = patterns('',
     (r'^criteria/$', criteria.CriteriaListView.as_view(), {}, 'criteria_list'),
     (r'^criteria/(?P<slug>[^/]+)/$', criteria.CriteriaProblemView.as_view(), {}, 'criteria'),
     (r'^criteria/(?P<slug>[^/]+)/edit/$', criteria.CriteriaUpdateView.as_view(), {}, 'criteria_edit'),
-    (r'^users/(?P<username>[^/]+)/$', base.UserView.as_view(), {}, 'user'),
+    (r'^users/(?P<username>[^/]+)/$', user.UserView.as_view(), {}, 'user'),
     (r'^activity/$', base.ActivityView.as_view(), {}, 'activity'),
+
+    # DNStorm admin
+
+    (r'^admin/options/$', base.AdminOptionsView.as_view(), {}, 'admin_options'),
+    (r'^admin/users/$', user.AdminUserListView.as_view(), {}, 'admin_user'),
+    (r'^admin/users/(?P<user_id>[^/]+)/$', user.AdminUserUpdateView.as_view(), {}, 'admin_user_edit'),
+    (r'^admin/users/(?P<user_id>[^/]+)/activate/$', user.AdminUserActivateView.as_view(), {}, 'admin_user_activate'),
+    (r'^admin/users/(?P<user_id>[^/]+)/deactivate/$', user.AdminUserDeactivateView.as_view(), {}, 'admin_user_deactivate'),
 
     # Other apps
 
@@ -46,6 +53,7 @@ urlpatterns = patterns('',
     (r'^accounts/', include('django.contrib.auth.urls')),
     (r'^accounts/', include('registration.backends.default.urls')),
     (r'search/', search_view_factory(view_class=base.SearchView), {}, 'search'),
+    (r'^avatar/', include('avatar.urls')),
 
 )
 

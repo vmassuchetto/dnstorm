@@ -1,7 +1,9 @@
 from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserChangeForm
+from django.db.models import Q
 from django.views.generic import DetailView, RedirectView
 from django.views.generic.base import TemplateView
-from django.views.generic.edit import FormView
+from django.views.generic.edit import FormView, UpdateView
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
@@ -13,7 +15,7 @@ from django.contrib.auth.decorators import login_required
 
 from dnstorm.app import permissions
 from dnstorm.app.models import Option, Problem, Idea, Comment, ActivityManager
-from dnstorm.app.forms import OptionsForm, AccountCreateForm
+from dnstorm.app.forms import AdminOptionsForm, AccountCreateForm
 
 from haystack.views import SearchView as HaystackSearchView
 
@@ -30,9 +32,9 @@ class HomeView(TemplateView):
         context['activities'] = ActivityManager().get_objects(limit=4)
         return context
 
-class OptionsView(FormView):
-    template_name = 'options.html'
-    form_class = OptionsForm
+class AdminOptionsView(FormView):
+    template_name = 'admin_options.html'
+    form_class = AdminOptionsForm
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
@@ -41,7 +43,7 @@ class OptionsView(FormView):
         return super(OptionsView, self).dispatch(*args, **kwargs)
 
     def get_context_data(self, *args, **kwargs):
-        context = super(OptionsView, self).get_context_data(**kwargs)
+        context = super(AdminOptionsView, self).get_context_data(**kwargs)
         context['breadcrumbs'] = self.get_breadcrumbs()
         context['title'] = _('Options')
         return context
@@ -59,24 +61,6 @@ class OptionsView(FormView):
                 option = Option(name=name, value=form.cleaned_data[name])
             option.save()
         return HttpResponseRedirect(reverse('options'))
-
-class UserView(TemplateView):
-    template_name = 'user.html'
-
-    def get_context_data(self, *args, **kwargs):
-        context = super(UserView, self).get_context_data(**kwargs)
-        context['profile'] = get_object_or_404(User, username=kwargs['username'])
-        context['breadcrumbs'] = self.get_breadcrumbs(username=context['username'])
-        context['activities'] = ActivityManager().get_objects(user=context['profile'].id, limit=20)
-        context['problem_count'] = Problem.objects.filter(author=context['profile']).count()
-        context['idea_count'] = Idea.objects.filter(author=context['profile']).count()
-        context['comment_count'] = Comment.objects.filter(author=context['profile']).count()
-        return context
-
-    def get_breadcrumbs(self, **kwargs):
-        return [
-            { 'title': _('Users'), 'classes': 'unavailable' },
-            { 'title': kwargs['username'], 'classes': 'current' } ]
 
 class CommentView(RedirectView):
     permanent = True
