@@ -62,37 +62,54 @@ def problem_form_valid(obj, form):
     # Criterias
 
     obj.object.criteria.clear()
-    regex = re.compile('^criteria_([0-9]+)$')
-    criteria = Criteria.objects.filter(id__in=[m.group(1) for m in [regex.match(p) for p in obj.request.POST] if m])
+    regex_criteria = re.compile('^criteria_([0-9]+)$')
+    criteria = Criteria.objects.filter(id__in=[m.group(1) for m in [regex_criteria.match(p) for p in obj.request.POST] if m])
     for c in criteria:
         obj.object.criteria.add(c)
     obj.object.save()
 
-    # Quantifiers
+    # New quantifiers
 
-    quantifiers = list()
+    new = dict() # new[<temporary id>] = [<format>, <name>, <help text>]
+    regex_new_name = re.compile('^quantifiername_new([0-9]+)_(boolean|number|text|daterange)$')
+    regex_new_help = re.compile('^quantifierhelp_new([0-9]+)_(boolean|number|text|daterange)$')
 
-    # Create
-    regex = re.compile('^quantifier_new_(boolean|number|text)$')
-    qf_post = [m for m in [regex.match(p) for p in obj.request.POST] if m]
-    for q in qf_post:
-        for qf in obj.request.POST.getlist(q.group(0)):
-             quantifiers.append(obj.object.quantifier_set.create(name=qf, format=q.group(1)))
-
-    # Update
-    regex = re.compile('^quantifier_([0-9]+)_(boolean|number|text)$')
-    qf_post = [m for m in [regex.match(p) for p in obj.request.POST] if m]
-    for q in qf_post:
+    for m in [m for m in [regex_new_name.match(p) for p in obj.request.POST] if m]:
+        new.setdefault(m.group(1), dict())
+        new[m.group(1)]['format'] = m.group(2)
+        new[m.group(1)]['name'] = obj.request.POST[m.group(0)]
+    for m in [m for m in [regex_new_help.match(p) for p in obj.request.POST] if m]:
+        new[m.group(1)]['help'] = obj.request.POST[m.group(0)]  # Help text
+    for q in new.values():
         try:
-            qf = Quantifier.objects.get(id=q.group(1))
-        except Quantifier.DoesNotExist:
+            Quantifier(problem=obj.object, format=q['format'], name=q['name'], help=q['help']).save()
+        except:
+            messages.warning(obj.request, _('There was an error saveing the quantifier \'%s\'.' % q['name']))
             continue
-        qf.name = obj.request.POST[q.group(0)]
-        qf.save()
-        quantifiers.append(qf)
 
-    # Remove
-    Quantifier.objects.filter(problem=obj.object).exclude(id__in=[q.id for q in quantifiers]).delete()
+    # Update quantifiers
+
+    update = dict() # update[<id>] = [<format>, <name>, <help text>]
+    regex_name = re.compile('^quantifiername_([0-9]+)_(boolean|number|text|daterange)$')
+    regex_help = re.compile('^quantifierhelp_([0-9]+)_(boolean|number|text|daterange)$')
+    for m in [m for m in [regex_name.match(p) for p in obj.request.POST] if m]:
+        update.setdefault(m.group(1), dict())
+        update[m.group(1)]['id'] = m.group(1)
+        update[m.group(1)]['format'] = m.group(2)
+        update[m.group(1)]['name'] = obj.request.POST[m.group(0)]
+    for m in [m for m in [regex_help.match(p) for p in obj.request.POST] if m]:
+        update[m.group(1)]['help'] = obj.request.POST[m.group(0)]
+    for q in update.values():
+        try:
+            Quantifier(id=q['id'], problem=obj.object, format=q['format'], name=q['name'], help=q['help']).save()
+        except:
+            messages.warning(obj.request, _('There was an error saveing the quantifier \'%s\'.' % q['name']))
+            continue
+
+    # Remove remaining quantifiers
+
+    ids_to_keeep = new.keys() + update.keys()
+    Quantifier.objects.filter(problem=obj.object).exclude(id__in=ids_to_keeep)
 
     # Mailing options
 

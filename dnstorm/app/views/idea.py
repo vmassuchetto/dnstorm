@@ -1,4 +1,5 @@
 import re
+import json
 
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, Http404
@@ -28,7 +29,7 @@ def idea_form_valid(obj, form):
     object.author = obj.request.user
     object.save()
 
-    # Quantifiers
+    # 1-fielded simple quantifiers
 
     regex = re.compile('^quantifier_([0-9]+)_(boolean|number|text)$')
     for f in form.fields:
@@ -38,10 +39,30 @@ def idea_form_valid(obj, form):
         try:
             q = Quantifier.objects.get(id=m.group(1))
         except Quantifier.DoesNotExist:
+            messages.warning(obj.request, _('There was a problem saving the quantifier \'%s\'.' % f.label))
             continue
-        QuantifierValue.objects.filter(quantifier=q, idea=object).delete()
         if f in form.cleaned_data and form.cleaned_data[f]:
-            QuantifierValue.objects.get_or_create(quantifier=q, idea=object, value=form.cleaned_data[f])[0].save()
+            qv = QuantifierValue.objects.get_or_create(quantifier=q, idea=object)[0]
+            qv.value = form.cleaned_data[f]
+            qv.save()
+
+    # date quantifiers
+
+    date_re = re.compile('quantifier_(?P<id>[0-9]+)_daterange_([0-9]+)')
+    date_ids = list(set([date_re.match(f).group('id') for f in form.fields if date_re.match(f)]))
+    for id in date_ids:
+        data = [
+            form.cleaned_data['quantifier_' + id + '_daterange_01'].strftime('%d/%m/%Y'),
+            form.cleaned_data['quantifier_' + id + '_daterange_02'].strftime('%d/%m/%Y')
+        ]
+        try:
+            q = Quantifier.objects.get(id=id)
+        except Quantifier.DoesNotExist:
+            messages.warning(obj.request, _('There was a problem saving a date quantifier.'))
+            continue
+        qv = QuantifierValue.objects.get_or_create(quantifier=q, idea=object)[0]
+        qv.value = json.dumps(data)
+        qv.save()
 
     messages.success(obj.request, _('Idea saved.'))
     return HttpResponseRedirect(object.get_absolute_url())

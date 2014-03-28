@@ -55,7 +55,7 @@
                                 {% endfor %}
                             </div>
                         {% endif %}
-                        <div class="large-12 right">
+                        <div class="columns large-12 right idea-actions">
                             {% if idea_actions %}
 
                                 {% if problem_perm_contribute %}<a class="problem-action{% if user.is_authenticated %} show-on-click{% endif %}" {% if user.is_authenticated %}data-show-on-click="comment-form-{{ idea.id }}" href="javascript:void(0);"{% else %}href="{{ login_url }}"{% endif %}>{% trans "Comment" context "verb" %}</a>{% endif %}

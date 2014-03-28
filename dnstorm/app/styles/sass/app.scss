@@ -52,6 +52,10 @@ hr {
     border-color: lighten($black, 65%);
 }
 
+.tooltip {
+    width: 30% !important;
+}
+
 // CKEditor
 
 .cke_ltr {
@@ -124,6 +128,10 @@ form {
 .errorlist {
     list-style-type: none;
     margin-left: 0;
+}
+
+#errorMsg ol {
+    margin-bottom: 0;
 }
 
 .panel.error, .errorlist li {
@@ -416,7 +424,11 @@ p.pagination {
 }
 
 .idea-quantifiers {
-    margin: 0 0 3px 0;
+    margin: 0 0 6px 0;
+}
+
+.idea-actions {
+    margin: 0 0 10px 0;
 }
 
 .idea-attrs {

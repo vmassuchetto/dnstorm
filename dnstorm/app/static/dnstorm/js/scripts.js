@@ -1,6 +1,29 @@
 jQuery.noConflict();
 (function($){
 
+// String formatting
+
+if (!String.prototype.format) {
+  String.prototype.format = function() {
+    var args = arguments;
+    return this.replace(/{(\d+)}/g, function(match, number) { 
+      return typeof args[number] != 'undefined'
+        ? args[number]
+        : match
+      ;
+    });
+  };
+}
+
+// Get unique IDs
+
+function get_id() {
+    id = Math.floor((Math.random()*10000)+1); 
+    while ($('#' + id).length > 0)
+        id = Math.floor((Math.random()*10000)+1);
+    return id;
+}
+
 // CSRF
 
 function getCookie(name) {
@@ -154,25 +177,55 @@ $('.problem-criteria-select .text').autocomplete({
         });
     }
 });
+// Datepicker
+
+$('.dateinput').fdatepicker({'format': 'dd/mm/yyyy'});
 
 // Add quantifiers entries
+
+function quantifier_row(q) {
+    id = get_id();
+    base_str = '<div class="row quantifier-entry">'
+        + '<div class="columns large-2"><a class="button secondary tiny radius" href="javascript:void(0)">{0}</a></div>'
+        + '<div class="columns large-3"><input type="text" placeholder="{1}" value="{2}" name="{3}"></div>'
+        + '<div class="columns large-5"><textarea placeholder="{4}" name="{5}">{6}</textarea></div>'
+        + '<div class="columns large-2">'
+            + '<a class="button alert tiny radius quantifier-remove-dialog" href="javascript:void(0)">'
+                + '<i class="foundicon-minus"></i>&nbsp;{7}'
+            + '</a>'
+        + '</div>'
+        + '</div>'
+    return base_str.format(
+        q.format,
+        gettext('Quantifier name'),
+        '',
+        'quantifiername_new' + id + '_' + q.format,
+        gettext('Help text'),
+        'quantifierhelp_new' + id + '_' + q.format,
+        '',
+        gettext('Remove'))
+}
 
 $('#quantifier-add').click(function(){
     var q = $('#id_quantifier_format option:selected');
     if ('' == q)
         return false;
-    var html = '<div class="row collapse quantifier-entry">'
-        + '<div class="columns large-8"><input name="quantifier_new_' + q.val() + '" type="text" value="" placeholder="' + gettext('Quantifier name') + '" /></div>'
-        + '<div class="columns large-2"><span class="postfix">' + q.text() + '</div>'
-        + '<div class="columns large-2"><a class="button alert tiny postfix quantifier-remove"><i class="foundicon-minus"></i>&nbsp;' + gettext('Remove') + '</div>'
-        + '</div>';
+    html = quantifier_row({'format': q.val(), 'label': q.text()});
     $('#quantifiers').append(html);
 });
 
 // Remove quantifier entries
 
-$(document).on('click', '.quantifier-remove', function(){
-    $(this).parents('.quantifier-entry').remove();
+$('#quantifiers').on('click', '.quantifier-remove-dialog', function(e){
+    $('#quantifier-remove-modal').data('to-remove', $(this).parents('.quantifier-entry'));
+    $('#quantifier-remove-modal').foundation('reveal', 'open');
+    e.preventDefault();
+});
+
+$('#quantifiers').on('click', '.quantifier-remove', function(e){
+    $('#quantifier-remove-modal').data('to-remove').remove();
+    $('#quantifier-remove-modal').foundation('reveal', 'close');
+    e.preventDefault();
 });
 
 // Criteria modal form in ProblemCreateView and ProblemUpdateView

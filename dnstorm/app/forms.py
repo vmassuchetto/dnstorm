@@ -1,3 +1,6 @@
+import re
+import json
+
 from django import forms
 from django.http import Http404
 from django.core.urlresolvers import reverse
@@ -93,21 +96,37 @@ class ProblemForm(forms.ModelForm):
     class Meta:
         model = Problem
 
+    def quantifier_row(self, keys):
+        return '''
+            <div class="row quantifier-entry">
+                <div class="columns large-2"><a href="javascript:void(0)" class="button secondary tiny radius">%(format)s</a></div>
+                <div class="columns large-3"><input name="quantifiername_%(id)d_%(format)s" type="text" value="%(name)s" placeholder="%(name_placeholder)s" /></div>
+                <div class="columns large-5"><textarea name="quantifierhelp_%(id)d_%(format)s" placeholder="%(help_placeholder)s">%(help)s</textarea></div>
+                <div class="columns large-2"><a href="javascript:void(0)" class="button alert tiny radius quantifier-remove-dialog"><i class="foundicon-minus"></i>&nbsp;%(remove)s</a></div>
+            </div>''' % keys
+
+    def quantifier_rows(self):
+        if not self.instance:
+            return False
+        html = ''
+        for q in Quantifier.objects.filter(problem=self.instance):
+            format = [qt[1] for qt in QUANTIFIER_CHOICES if qt[0] == q.format]
+            format = unicode(format[0]) if len(format) > 0 else False
+            if not format:
+                continue
+            html += self.quantifier_row({
+                'id': q.id,
+                'format': q.format,
+                'name': q.name,
+                'help': q.help,
+                'name_placeholder': _('Quantifier name'),
+                'help_placeholder': _('Help text'),
+                'remove': _('Remove')
+            })
+        return html
+
     def __init__(self, *args, **kwargs):
-
-        quantifiers_html = ''
-        if 'instance' in kwargs and kwargs['instance']:
-            for q in Quantifier.objects.filter(problem=kwargs['instance']):
-                format = [qt[1] for qt in QUANTIFIER_CHOICES if qt[0] == q.format]
-                format = unicode(format[0]) if len(format) > 0 else False
-                if not format:
-                    continue
-                quantifiers_html += '<div class="row collapse quantifier-entry">' \
-                    + '<div class="columns large-8"><input name="quantifier_' + str(q.id) + '_' + q.format + '" type="text" value="' + q.name + '" placeholder="' + _('Quantifier name') + '" /></div>' \
-                    + '<div class="columns large-2"><span class="postfix">' + format + '</span></div>' \
-                    + '<div class="columns large-2"><a class="button alert tiny postfix quantifier-remove"><i class="foundicon-minus"></i>&nbsp;' + _('Remove') + '</a></div>' \
-                    + '</div>'
-
+        self.instance = kwargs['instance'] if 'instance' in kwargs else False
         self.helper = FormHelper()
         self.helper.form_action = '.'
         self.helper.form_class = 'problem-form'
@@ -119,10 +138,10 @@ class ProblemForm(forms.ModelForm):
             ),
             Fieldset(_('Idea Quantifiers'),
                 Row(
-                    Column(Field('quantifier_format'), css_class="large-10"),
-                    Column(HTML('<a href="javascript:void(0)" id="quantifier-add" class="button small postfix"><i class="foundicon-plus"></i>&nbsp;' + _('Add quantifier') + '</a>'), css_class="large-2"),
+                    Column(Field('quantifier_format'), css_class="large-9"),
+                    Column(HTML('<a href="javascript:void(0)" id="quantifier-add" class="button small radius"><i class="foundicon-plus"></i>&nbsp;' + _('Add quantifier') + '</a>'), css_class="large-3"),
                 ),
-                HTML('<div id="quantifiers">' + quantifiers_html + '</div>'),
+                HTML('<div id="quantifiers">' + self.quantifier_rows() + '</div>'),
             ),
             Fieldset(_('Permissions'),
                 'contributor',
@@ -200,25 +219,15 @@ class CriteriaForm(forms.ModelForm):
         self.fields['mode'].initial = 'problem_criteria_create'
         self.fields['parent'].required = False
 
-class QuantifierForm(forms.ModelForm):
-
-    class Meta:
-        model = Quantifier
-
-    def __init__(self, *args, **kwargs):
-        self.helper = FormHelper()
-        self.helper.form_action = '.'
-        self.helper.layout = Layout(
-            'name',
-            'format',
-            ButtonHolder(Submit('submit', _('Submit')), css_class='alignright'),
-        )
-        super(QuantifierForm, self).__init__(*args, **kwargs)
-
 class IdeaForm(forms.ModelForm):
 
     class Meta:
         model = Idea
+
+    class Media:
+        css = {'all':(
+            'dnstorm/css/foundation-datepicker.css',
+        )}
 
     def __init__(self, *args, **kwargs):
 
@@ -233,42 +242,79 @@ class IdeaForm(forms.ModelForm):
         # Quantifiers
 
         quantifiers = problem.quantifier_set.all()
-        layout_args = ('title', 'content',)
+        layout_args = ['title', 'content']
         extra_fields = dict()
 
+        # Set quantifier fields
         for q in quantifiers:
             q_key = 'quantifier_' + str(q.id) + '_' + q.format
             if q.format == 'text':
-                extra_fields[q_key] = forms.CharField()
+                extra_fields[q_key] = forms.CharField(label=q.name, required=True, help_text=q.help)
             elif q.format == 'number':
-                extra_fields[q_key] = forms.IntegerField()
+                extra_fields[q_key] = forms.IntegerField(label=q.name, required=True, help_text=q.help)
             elif q.format == 'boolean':
-                extra_fields[q_key] = forms.BooleanField()
+                extra_fields[q_key] = forms.BooleanField(label=q.name, required=False, help_text=q.help)
+            elif q.format == 'daterange':
+                extra_fields[q_key + '_01'] = forms.DateField(label=q.name, required=True, help_text=q.help)
+                extra_fields[q_key + '_02'] = forms.DateField(label='&nbsp;', required=True, help_text='&nbsp;')
             else:
                 continue
-            extra_fields[q_key].label = q.name
-            extra_fields[q_key].required = False
-            layout_args += (q_key,)
+
+        # Insert fields in layout
+        for q in quantifiers:
+            q_key = 'quantifier_' + str(q.id) + '_' + q.format
+            if q.format == 'daterange':
+                layout_args.append(Row(
+                    Column(q_key + '_01', css_class='large-6'),
+                    Column(q_key + '_02', css_class='large-6')),)
+            else:
+                layout_args.append(q_key)
         layout_args += (Submit('submit', _('Submit'), css_class='right radius'),)
 
-        # Form
-
+        # Form instantiation
         self.helper = FormHelper()
         self.helper.form_action = '.'
         self.helper.layout = Layout(*layout_args)
         super(IdeaForm, self).__init__(*args, **kwargs)
         self.fields['content'].label = ''
+        self.fields = dict(self.fields.items() + extra_fields.items())
 
+        # Set initial data
         if self.instance.id:
             for q in quantifiers:
+                if q.format == 'daterange':
+                    continue
                 q_key = 'quantifier_' + str(q.id) + '_' + q.format
                 try:
-                    qv = QuantifierValue.objects.get(quantifier=q, idea=self.instance).value
+                    qv = QuantifierValue.objects.get(quantifier=q.id, idea=self.instance).value
                 except QuantifierValue.DoesNotExist:
                     qv = ''
                 extra_fields[q_key].initial = qv
+            for q in quantifiers:
+                if q.format != 'daterange':
+                    continue
+                q_keys = [
+                    'quantifier_' + str(q.id) + '_' + q.format + '_01',
+                    'quantifier_' + str(q.id) + '_' + q.format + '_02'
+                ]
+                try:
+                    qv = QuantifierValue.objects.get(quantifier=q.id, idea=self.instance).value
+                    qv = json.loads(qv) if len(qv) > 0 else ['', '']
+                except QuantifierValue.DoesNotExist:
+                    qv = ['', '']
+                extra_fields[q_keys[0]].initial = qv[0]
+                extra_fields[q_keys[1]].initial = qv[1]
 
-        self.fields = dict(self.fields.items() + extra_fields.items())
+    def clean(self):
+        date_re = re.compile('quantifier_(?P<id>[0-9]+)_daterange_(01|02)')
+        date_ids = list(set([date_re.match(f).group('id') for f in self.fields if date_re.match(f)]))
+        for id in date_ids:
+            key = 'quantifier_' + id + '_daterange_'
+            if key + '01' not in self.cleaned_data or key + '02' not in self.cleaned_data:
+                raise forms.ValidationError(_('You need to provide the date fields.'))
+            if self.cleaned_data[key + '01'] > self.cleaned_data[key + '02']:
+                raise forms.ValidationError(_('The initial date is bigger than the end date.'))
+        return self.cleaned_data
 
 class CommentForm(forms.ModelForm):
     idea = forms.IntegerField()

@@ -173,12 +173,14 @@ user_activated.connect(Problem.invites_handler)
 QUANTIFIER_CHOICES = (
     ('number', _('Number')),
     ('boolean', _('True or False')),
-    ('text', _('Text')))
+    ('text', _('Text')),
+    ('daterange', _('Date range')))
 
 class Quantifier(models.Model):
-    problem = models.ForeignKey(Problem, editable=False, blank=True, null=True)
+    problem = models.ForeignKey(Problem, choices=QUANTIFIER_CHOICES, editable=False, blank=True, null=True)
     name = models.CharField(verbose_name=_('Name'), max_length=90)
     format = models.CharField(verbose_name=_('Type'), max_length=10)
+    help = models.TextField(_('Help text'))
 
     class Meta:
         db_table = settings.DNSTORM['table_prefix'] + '_quantifier'
