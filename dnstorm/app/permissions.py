@@ -21,7 +21,7 @@ def problem_queryset(**kwargs):
     user = kwargs.get('user', None)
     if user and user.is_superuser:
         return Q()
-    return Q(author=user) | Q(contributor__in=[user]) | Q(manager__in=[user]) | Q(public=True)
+    return Q(author=user.id) | Q(contributor__in=[user.id]) | Q(manager__in=[user.id]) | Q(public=True)
 
 def idea(**kwargs):
     obj = kwargs.get('obj')

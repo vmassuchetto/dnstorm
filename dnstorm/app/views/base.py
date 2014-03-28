@@ -25,8 +25,8 @@ class HomeView(TemplateView):
     def get_context_data(self, *args, **kwargs):
         context = super(HomeView, self).get_context_data(**kwargs)
         user = self.request.user if hasattr(self.request, 'user') else False
-        #qs = permissions.problem_queryset(user=user)
-        problems = Paginator(Problem.objects.all().order_by('-modified'), 25)
+        qs = permissions.problem_queryset(user=user)
+        problems = Paginator(Problem.objects.filter(qs).order_by('-modified'), 25)
         page = self.request.GET['page'] if 'page' in self.request.GET else 1
         context['problems'] = problems.page(page)
         context['activities'] = ActivityManager().get_objects(limit=4)
