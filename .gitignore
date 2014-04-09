@@ -2,6 +2,7 @@
 *~
 *.swp
 *.swo
+*.swm
 
 # Sass
 .sass-cache/
