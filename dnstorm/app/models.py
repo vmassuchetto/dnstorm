@@ -121,7 +121,7 @@ class Problem(models.Model):
     voting = models.BooleanField(verbose_name=_('Enable voting for ideas'), help_text=_('Users will be able to vote for the ideas.'), default=True, blank=True)
     vote_count = models.BooleanField(verbose_name=_('Display vote counts'), help_text=_('Users will be able to see how many votes each idea had.'), default=True, blank=True)
     vote_author = models.BooleanField(verbose_name=_('Display vote authors'), help_text=_('Ideas voting will be completely transparent.'), default=False, blank=True)
-    modified = models.DateTimeField(auto_now=True, auto_now_add=True, editable=False)
+    modified = models.DateTimeField(auto_now=True, auto_now_add=True, editable=False, default='2000-01-01')
 
     class Meta:
         db_table = settings.DNSTORM['table_prefix'] + '_problem'
@@ -210,7 +210,7 @@ class Idea(models.Model):
     problem = models.ForeignKey(Problem, editable=False)
     author = models.ForeignKey(User, editable=False)
     deleted_by = models.ForeignKey(User, editable=False, related_name='idea_deleted_by', null=True, blank=True)
-    modified = models.DateTimeField(auto_now=True, editable=False)
+    modified = models.DateTimeField(auto_now=True, editable=False, default='2000-01-01')
 
     class Meta:
         db_table = settings.DNSTORM['table_prefix'] + '_idea'
@@ -253,7 +253,8 @@ class Comment(models.Model):
     content = models.TextField(verbose_name=_('Comment'))
     author = models.ForeignKey(User, editable=False)
     deleted_by = models.ForeignKey(User, editable=False, related_name='comment_deleted_by', null=True, blank=True)
-    modified = models.DateTimeField(auto_now=True, editable=False)
+    created = models.DateTimeField(auto_now_add=True, editable=False, default='2000-01-01')
+    modified = models.DateTimeField(auto_now=True, editable=False, default='2000-01-01')
 
     class Meta:
         db_table = settings.DNSTORM['table_prefix'] + '_comment'
@@ -271,7 +272,7 @@ class Message(models.Model):
     sender = models.ForeignKey(User)
     subject = models.TextField(verbose_name=_('Subject'))
     content = models.TextField(verbose_name=_('Content'))
-    modified = models.DateTimeField(auto_now=True, editable=False)
+    modified = models.DateTimeField(auto_now=True, editable=False, default='2000-01-01')
 
     class Meta:
         db_table = settings.DNSTORM['table_prefix'] + '_message'

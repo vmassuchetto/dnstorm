@@ -338,6 +338,8 @@ if (window.location.hash.match(/#(idea|comment)-[0-9]+/)) {
 $(document).on('click', '.problem-idea-delete-toggle', function(){
     var idea = $(this).parents('.problem-idea');
     var idea_id = $(this).data('idea');
+    var obj = $(this);
+    obj.addClass('loading');
     $.ajax({
         url: '/ajax/',
         type: 'GET',
@@ -352,6 +354,7 @@ $(document).on('click', '.problem-idea-delete-toggle', function(){
                     idea.removeClass('deleted');
                 idea.find('.problem-idea-delete-toggle').text(xhr.responseText);
             }
+            obj.removeClass('loading');
         }
     });
 });
@@ -384,6 +387,8 @@ $('.comment-form form').submit(function(e){
 // Delete comment
 
 $(document).on('click', '.comment-delete-toggle', function(){
+    var obj = $(this)
+    obj.addClass('loading');
     var comment = $(this).parents('.comment');
     $.ajax({
         url: '/ajax/',
@@ -404,6 +409,7 @@ $(document).on('click', '.comment-delete-toggle', function(){
                     comment.removeClass('deleted');
                 }
             }
+            obj.removeClass('loading');
         }
     });
 });
