@@ -419,16 +419,29 @@ p.pagination {
 
 // Idea list
 
-.idea-content {
-    margin: 0 0 1em 0;
+.problem-idea {
+    position: relative;
+
+    .idea-content {
+        margin: 0 0 1em 0;
+    }
+
+    .idea-quantifiers {
+        margin: 0 0 6px 0;
+    }
+
+    .idea-actions {
+        margin: 0 0 10px 0;
+        a {
+            padding:0 4px;
+        }
+    }
 }
 
-.idea-quantifiers {
-    margin: 0 0 6px 0;
-}
-
-.idea-actions {
-    margin: 0 0 10px 0;
+.problem-idea-deleted {
+    * {
+        opacity: 0.8;
+    }
 }
 
 .idea-attrs {

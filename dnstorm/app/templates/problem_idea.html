@@ -1,6 +1,6 @@
 {% load crispy_forms_tags humanize i18n %}
 
-<div class="problem-idea" id="idea-{{ idea.id }}" data-idea="{{ idea.id }}">
+<div class="problem-idea{% if idea.deleted_by %} problem-idea-deleted{% endif %}" id="idea-{{ idea.id }}" data-idea="{{ idea.id }}">
 
     <div class="row">
 
@@ -63,6 +63,8 @@
                                 {% if idea.author == user %}<a class="problem-action problem-idea-edit" href="{% url "idea_edit" problem.slug idea.id %}">{% trans "Edit" %}</a>{% endif %}
 
                                 {% if idea.revision_count > 1 %}<a class="problem-action problem-idea-revision" href="{% url "idea_revision" problem.slug idea.id %}">{% blocktrans count idea.revision_count as i %}{{ i }} revision{% plural %}{{ i }} revisions{% endblocktrans %}</a>{% endif %}
+
+                                {% if problem_perm_edit %}<a class="problem-action problem-idea-delete-toggle" href="javascript:void(0);" data-idea-id="{{ idea.id }}">{% if not idea.deleted_by %}{% trans "Delete" %}{% else %}{% trans "Undelete" %}{% endif %}</a>{% endif %}
 
                             {% endif %}
                         </div>

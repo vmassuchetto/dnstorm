@@ -333,6 +333,29 @@ if (window.location.hash.match(/#(idea|comment)-[0-9]+/)) {
     target.highlight('green', 2000);
 }
 
+// Delete idea
+
+$(document).on('click', '.problem-idea-delete-toggle', function(){
+    var idea = $(this).parents('.problem-idea');
+    var idea_id = $(this).data('idea-id');
+    $.ajax({
+        url: '/ajax/',
+        type: 'GET',
+        data: {
+            'delete_idea': idea_id
+        },
+        complete: function(xhr, data) {
+            if (data == 'success') {
+                if (xhr.responseText == 'undelete')
+                    idea.addClass('problem-idea-deleted');
+                else
+                    idea.removeClass('problem-idea-deleted');
+                idea.find('.problem-idea-delete-toggle').text(xhr.responseText);
+            }
+        }
+    });
+});
+
 // Comment form submit
 
 $('.comment-form form').submit(function(e){

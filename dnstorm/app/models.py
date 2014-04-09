@@ -209,6 +209,7 @@ class Idea(models.Model):
     content = RichTextField(config_name='idea_content')
     problem = models.ForeignKey(Problem, editable=False)
     author = models.ForeignKey(User, editable=False)
+    deleted_by = models.ForeignKey(User, editable=False, related_name='idea_deleted_by', null=True, blank=True)
     modified = models.DateTimeField(auto_now=True, editable=False)
 
     class Meta:

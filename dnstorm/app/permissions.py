@@ -33,5 +33,8 @@ def idea(**kwargs):
         return True
     if mode == 'edit':
         return obj.author == user or user in obj.problem.manager.all()
+    elif mode == 'delete':
+        return obj.author == user or user in obj.problem.manager.all()
+    elif mode == 'undelete':
+        return (obj.deleted_by) and (user == obj.deleted_by or user in obj.problem.manager.all())
     return False
-

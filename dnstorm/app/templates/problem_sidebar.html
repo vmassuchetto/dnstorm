@@ -11,8 +11,6 @@
     <a class="button small expand radius" href="{% url "message_new" problem.slug %}"><i class="foundicon-mail"></i> {% trans 'New message' %}</a>
 {% endif %}
 
-<a class="button small secondary expand radius show-on-click hide-after-click" data-show-on-click="short-link-url" href="javascript:void(0);"><i class="foundicon-paper-clip"></i> {% trans "Short Link" %}</a>
-<div id="short-link-url" class="hide"><input type="text" class="select-on-click" value="{{ problem_short_url }}" /></div>
 <hr/>
 
 {% if problem.public or problem.open or problem.locked or problem.blind or problem.voting %}

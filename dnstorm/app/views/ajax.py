@@ -36,6 +36,11 @@ class AjaxView(View):
         elif 'delete_comment' in self.request.GET:
             return self.delete_comment()
 
+        # Delete idea
+
+        elif 'delete_idea' in self.request.GET:
+            return self.delete_idea()
+
         # Failure
 
         return HttpResponseForbidden()
@@ -154,12 +159,28 @@ class AjaxView(View):
         return HttpResponse(t.render(c))
 
     def delete_comment(self):
-        try:
-            Comment.objects.get(pk=self.request.GET['delete_comment']).delete()
-            result = 1
-        except ObjectDoesNotExist:
-            result = 0
-        return HttpResponse(result)
+        comment = get_object_or_none(Comment, id=int(self.request.GET['delete_comment']))
+        if not comment or not permissions.comment(obj=comment, user=self.request.user, mode='delete'):
+            return HttpResponse(0)
+        comment.status = 1
+        comment.save()
+        return HttpResponse(1)
+
+    def delete_idea(self):
+        '''This is actually a delete toggle. It will delete over undeleted, and
+        undelete over deleted items.'''
+        idea = get_object_or_none(Idea, id=int(self.request.GET['delete_idea']))
+        mode = 'undelete' if idea.deleted_by else 'delete'
+        if not idea or not permissions.idea(obj=idea, user=self.request.user, mode=mode):
+            return HttpResponse(unmode)
+        if idea.deleted_by:
+            idea.deleted_by = None
+            response_mode = 'delete'
+        else:
+            idea.deleted_by = self.request.user
+            response_mode = 'undelete'
+        idea.save()
+        return HttpResponse(response_mode)
 
     def table_new_alternative(self):
         p = Problem.objects.get(pk=self.request.POST['problem'])
