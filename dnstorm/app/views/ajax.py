@@ -159,12 +159,20 @@ class AjaxView(View):
         return HttpResponse(t.render(c))
 
     def delete_comment(self):
+        '''This is actually a delete toggle. It will delete over undeleted, and
+        undelete over deleted items.'''
         comment = get_object_or_none(Comment, id=int(self.request.GET['delete_comment']))
-        if not comment or not permissions.comment(obj=comment, user=self.request.user, mode='delete'):
+        mode = 'undelete' if comment.deleted_by else 'delete'
+        if not comment or not permissions.comment(obj=comment, user=self.request.user, mode=mode):
             return HttpResponse(0)
-        comment.status = 1
+        if comment.deleted_by:
+            comment.deleted_by = None
+            response_mode = 'delete'
+        else:
+            comment.deleted_by = self.request.user
+            response_mode = 'undelete'
         comment.save()
-        return HttpResponse(1)
+        return HttpResponse(response_mode)
 
     def delete_idea(self):
         '''This is actually a delete toggle. It will delete over undeleted, and

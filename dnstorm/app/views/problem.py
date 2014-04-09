@@ -396,10 +396,13 @@ class ProblemView(FormView):
         for idea in context['ideas']:
             user_vote = Vote.objects.filter(idea=idea, author=self.request.user)
             idea.user_vote = user_vote[0] if len(user_vote) else False
+            idea.perms_edit = permissions.idea(obj=idea, user=self.request.user, mode='edit')
             idea.comments = Comment.objects.filter(idea=idea).order_by('modified')
             idea.comment_form = CommentForm(initial={'idea': idea.id})
             if self.problem.vote_author:
                 idea.votes = Vote.objects.filter(idea=idea).order_by('date')
+            for comment in idea.comments:
+                comment.perms_edit = permissions.comment(obj=comment, user=self.request.user, mode='edit')
 
         return context
 

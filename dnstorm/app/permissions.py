@@ -26,7 +26,7 @@ def problem_queryset(**kwargs):
 def idea(**kwargs):
     obj = kwargs.get('obj')
     user = kwargs.get('user')
-    mode = kwargs.get('mode', 'edit') # 'view' is covered by problem permissions
+    mode = kwargs.get('mode', 'edit')
     if not obj:
         return False
     if user and user.is_superuser:
@@ -34,6 +34,20 @@ def idea(**kwargs):
     if mode == 'edit':
         return obj.author == user or user in obj.problem.manager.all()
     elif mode == 'delete':
+        return obj.author == user or user in obj.problem.manager.all()
+    elif mode == 'undelete':
+        return (obj.deleted_by) and (user == obj.deleted_by or user in obj.problem.manager.all())
+    return False
+
+def comment(**kwargs):
+    obj = kwargs.get('obj')
+    user = kwargs.get('user')
+    mode = kwargs.get('mode', 'edit')
+    if not obj:
+        return False
+    if user and user.is_superuser:
+        return True
+    if mode == 'delete':
         return obj.author == user or user in obj.problem.manager.all()
     elif mode == 'undelete':
         return (obj.deleted_by) and (user == obj.deleted_by or user in obj.problem.manager.all())

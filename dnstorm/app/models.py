@@ -252,6 +252,7 @@ class Comment(models.Model):
     idea = models.ForeignKey(Idea, editable=False, blank=True, null=True)
     content = models.TextField(verbose_name=_('Comment'))
     author = models.ForeignKey(User, editable=False)
+    deleted_by = models.ForeignKey(User, editable=False, related_name='comment_deleted_by', null=True, blank=True)
     modified = models.DateTimeField(auto_now=True, editable=False)
 
     class Meta:

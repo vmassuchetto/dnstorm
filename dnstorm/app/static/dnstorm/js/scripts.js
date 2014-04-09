@@ -337,7 +337,7 @@ if (window.location.hash.match(/#(idea|comment)-[0-9]+/)) {
 
 $(document).on('click', '.problem-idea-delete-toggle', function(){
     var idea = $(this).parents('.problem-idea');
-    var idea_id = $(this).data('idea-id');
+    var idea_id = $(this).data('idea');
     $.ajax({
         url: '/ajax/',
         type: 'GET',
@@ -347,9 +347,9 @@ $(document).on('click', '.problem-idea-delete-toggle', function(){
         complete: function(xhr, data) {
             if (data == 'success') {
                 if (xhr.responseText == 'undelete')
-                    idea.addClass('problem-idea-deleted');
+                    idea.addClass('deleted');
                 else
-                    idea.removeClass('problem-idea-deleted');
+                    idea.removeClass('deleted');
                 idea.find('.problem-idea-delete-toggle').text(xhr.responseText);
             }
         }
@@ -381,20 +381,28 @@ $('.comment-form form').submit(function(e){
     });
 });
 
-// Comment delete
+// Delete comment
 
-$('.comment-delete').click(function(){
-    var c = $(this).parent();
+$(document).on('click', '.comment-delete-toggle', function(){
+    var comment = $(this).parents('.comment');
     $.ajax({
         url: '/ajax/',
         type: 'GET',
         data: {
-            delete_comment: $(this).data('comment')
+            'delete_comment': $(this).data('comment')
         },
         complete: function(xhr, data) {
             if (data == 'success') {
-                c.highlight('red');
-                c.fadeOut(300);
+                c = comment.find('.comment-delete-toggle');
+                if (xhr.responseText == 'undelete') {
+                    comment.addClass('deleted');
+                    c.removeClass('comment-delete');
+                    c.addClass('comment-undelete');
+                } else {
+                    c.removeClass('comment-undelete');
+                    c.addClass('comment-delete');
+                    comment.removeClass('deleted');
+                }
             }
         }
     });
