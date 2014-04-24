@@ -57,12 +57,8 @@
 {% block content %}
 
     <div class="row">
-    <div class="columns large-8 problem-title">
+    <div class="columns large-12 problem-title">
         <h2>{{ problem.title }}</h2>
-    </div>
-    <div class="columns large-4 problem-buttons text-right">
-        {% if problem_perm_manage %}<a class="button small radius show-problem-results" href="javascript:void(0)"><i class="foundicon-graph"></i>{% trans 'Results' %}</a>{% endif %}
-        <a class="button small radius show-problem-table" href="javascript:void(0)"><i class="foundicon-website"></i>{% trans 'Strategy table' %}</a>
     </div>
     </div>
 
