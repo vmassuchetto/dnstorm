@@ -32,7 +32,7 @@
         {% url "idea" item.idea.problem.slug item.idea.id as idea_url %}
 
         {% if item.status == "created" %}
-            {% blocktrans %}<a href="{{ user_url }}">{{ user }}</a> contributed with the idea <a href="{{ idea_url }}">{{ idea_title }}</a> if the problem <a href="{{ problem_url }}">{{ problem_title }}</a>{% endblocktrans %}
+            {% blocktrans %}<a href="{{ user_url }}">{{ user }}</a> contributed with the idea <a href="{{ idea_url }}">{{ idea_title }}</a> of the problem <a href="{{ problem_url }}">{{ problem_title }}</a>{% endblocktrans %}
         {% else %} {% if item.status == "updated" %}
             {% blocktrans %}<a href="{{ user_url }}">{{ user }}</a> updated the idea <a href="{{ idea_url }}">{{ idea_title }}</a> of the problem <a href="{{ problem_url }}">{{ problem_title }}</a>{% endblocktrans %}
         {% endif %} {% endif %}

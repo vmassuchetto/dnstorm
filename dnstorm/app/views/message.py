@@ -66,7 +66,7 @@ class MessageView(DetailView):
         self.message = context['message']
         context['breadcrumbs'] = self.get_breadcrumbs()
         context['problem'] = context['message'].problem
-        context['bulletin'] = Message.objects.filter(problem=context['problem']).order_by('-modified')[:4]
+        context['bulletin'] = Message.objects.filter(problem=context['problem']).order_by('-created')[:4]
         return context
 
     def get_breadcrumbs(self):
@@ -88,7 +88,7 @@ class MessageProblemListView(ListView):
         context = super(MessageProblemListView, self).get_context_data(*args, **kwargs)
         context['breadcrumbs'] = self.get_breadcrumbs()
         context['problem'] = self.problem
-        context['bulletin'] = Message.objects.filter(problem=context['problem']).order_by('-modified')
+        context['bulletin'] = Message.objects.filter(problem=context['problem']).order_by('-created')
         context['message'] = True
         return context
 

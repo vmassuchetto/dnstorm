@@ -42,7 +42,7 @@ class CriteriaProblemView(TemplateView):
         context = super(CriteriaProblemView, self).get_context_data(**kwargs)
         context['breadcrumbs'] = self.get_breadcrumbs()
         context['criteria'] = self.criteria
-        problems = Paginator(Problem.objects.filter(criteria=self.criteria).order_by('-modified'), 25)
+        problems = Paginator(Problem.objects.filter(criteria=self.criteria).order_by('-created'), 25)
         page = self.request.GET['page'] if 'page' in self.request.GET else 1
         context['problems'] = problems.page(page)
         context['activities'] = ActivityManager().get_objects(limit=4)

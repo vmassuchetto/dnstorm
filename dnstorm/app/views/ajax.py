@@ -23,22 +23,29 @@ class AjaxView(View):
 
         # Search for criterias in problem edition
 
-        if 'term' in self.request.GET:
+        if self.request.GET.get('term', None):
             return self.problem_criteria_search()
 
-        # Vote
+        # Vote for idea
 
-        elif 'idea' and 'weight' in self.request.GET:
-            return self.submit_vote()
+        elif self.request.GET.get('idea', None) \
+            and self.request.GET.get('weight', None):
+            return self.submit_idea_vote()
+
+        # Vote for alternative
+
+        elif self.request.GET.get('alternative', None) \
+            and self.request.GET.get('weight', None):
+            return self.submit_alternative_vote()
 
         # Delete comments
 
-        elif 'delete_comment' in self.request.GET:
+        elif self.request.GET.get('delete_comment', None):
             return self.delete_comment()
 
         # Delete idea
 
-        elif 'delete_idea' in self.request.GET:
+        elif self.request.GET.get('delete_idea', None):
             return self.delete_idea()
 
         # Failure
@@ -119,7 +126,7 @@ class AjaxView(View):
             response = { 'errors': criteria.errors }
         return HttpResponse(json.dumps(response), content_type="application/json")
 
-    def submit_vote(self):
+    def submit_idea_vote(self):
         idea = get_object_or_404(Idea, pk=self.request.GET['idea'])
         if not self.request.user.is_authenticated() \
             or idea.author == self.request.user \
@@ -140,6 +147,24 @@ class AjaxView(View):
         count = Vote.objects.filter(idea=idea).aggregate(Sum('weight'))['weight__sum']
         return HttpResponse(json.dumps(count if count else 0), content_type="application/json")
 
+    def submit_alternative_vote(self):
+        alternative = get_object_or_404(Alternative, pk=self.request.GET['alternative'])
+        if not self.request.user.is_authenticated() \
+            or not permissions.problem(obj=alternative.problem, user=self.request.user, mode='contribute'):
+            raise PermissionDenied
+        weight = int(self.request.GET['weight'])
+        vote = Vote.objects.filter(alternative=alternative, author=self.request.user)
+        if weight <= 0:
+            vote.delete()
+
+            response = 0
+        elif weight == 1 and len(vote) > 0:
+            response = 1
+        elif weight == 1 and len(vote) == 0:
+            Vote(alternative=alternative, author=self.request.user, weight=1).save()
+            response = 1
+        return HttpResponse(json.dumps(response), content_type="application/json")
+
     def submit_comment(self):
         try:
             problem = get_object_or_none(Problem, id=int(self.request.POST['problem']))
@@ -149,6 +174,7 @@ class AjaxView(View):
             idea = get_object_or_none(Idea, id=int(self.request.POST['idea']))
         except ValueError:
             idea = None
+        # TODO
         if not permissions.problem(obj=problem, user=self.request.user, mode='contribute'):
             raise PermissionDenied
         content = self.request.POST['content']
@@ -202,7 +228,8 @@ class AjaxView(View):
         output = {
             'id': alternative.id,
             'name': alternative.name,
-            'description': alternative.description
+            'description': alternative.description,
+            'problem': p.id
         }
         return HttpResponse(json.dumps(output), content_type="application/json")
 
@@ -253,6 +280,9 @@ class AjaxView(View):
             output['ideas'].append({
                 'id': i.id,
                 'title': i.title,
+                'problem': i.problem.id,
+                'criteria': c.id,
+                'alternative': a.id
             })
 
         output['quantifiers'] = list()

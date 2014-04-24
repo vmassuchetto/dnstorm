@@ -56,6 +56,11 @@ hr {
     width: 30% !important;
 }
 
+.loading {
+    padding-right: 25px !important;
+    background: transparent url('../img/loading.gif') right center no-repeat;
+}
+
 // CKEditor
 
 .cke_ltr {
@@ -82,18 +87,15 @@ hr {
 }
 
 .button-criteria {
-    @include button(rem-calc(2px), #FFF7B2, $button-radius, false, false, false);
+    transition: all 0.5s ease;
+    @include button(rem-calc(2px), $cyan, $button-radius, false, false, false);
     padding-left: rem-calc(6px);
     padding-right: rem-calc(6px);
-    color: #675D00;
     font-size: emCalc(12px);
     margin: 0;
     &:hover {
-        background-color: #675D00;
-        color: #FFFFFF;
-    }
-    .button-criteria {
-        border:1px solid darken(#FFF7B2, 20%);
+        background-color: $dark-cyan;
+        color: $white;
     }
 }
 
@@ -163,7 +165,6 @@ form {
     margin: 0;
     p {
         font-size: 0.7875rem;
-        font-weight: bold;
         margin: 0;
         padding: 0.5em 2em;
         text-align: center;
@@ -173,19 +174,19 @@ form {
 
 .message-bar.success {
     background-color: #C1FFBE;
-    border-bottom: 5px solid $green;
+    border-bottom: 1px solid $green;
     color: $green;
 }
 
 .message-bar.info {
     background-color: #FFF7B2;
-    border-bottom: 5px solid #FFF499;
+    border-bottom: 1px solid #FFF499;
     color: #675D00;
 }
 
 .message-bar.warning {
     background-color: #FFDEDE;
-    border-bottom: 5px solid $red;
+    border-bottom: 1px solid $red;
     color: $red;
 }
 
@@ -346,7 +347,6 @@ p.pagination {
     }
     .text {
         display:inline-block;
-        width: 5%;
         height: 1em;
         margin: 0 3px;
     }
@@ -404,6 +404,67 @@ p.pagination {
 
 .user-labels span {
     margin: emCalc(4px);
+}
+
+.ui-corner-all,
+.ui-corner-bottom,
+.ui-corner-right,
+.ui-corner-left,
+.ui-corner-top,
+.ui-corner-br,
+.ui-corner-bl,
+.ui-corner-tr,
+.ui-corner-tl {
+    border-radius: 0 !important;
+}
+
+ul.ui-autocomplete {
+    border: 1px solid $light-grey !important;
+    background-color: $white !important;
+}
+
+.ui-state-focus {
+    background: #EAEAEA !important;
+    border-radius: 0;
+}
+
+.ui-helper-hidden-accessible {
+    display: none;
+}
+
+.user-result {
+    .avatar {
+        margin-right: 0.3em;
+    }
+    .info {
+        line-height: 28px;
+    }
+}
+
+.results_on_deck {
+    > div {
+        width: 24.3475%;
+        margin: 0 0.534%;
+        padding: 4px 18px 4px 4px;
+        position: relative;
+        display: inline-block;
+        vertical-align: top;
+        border: 1px solid #DDDDDD;
+        background: #F4F4F4;
+        .ui-icon-trash {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+        }
+    }
+    .user-result .info {
+        line-height: 1;
+        padding-left: 40px;
+    }
+    .ui-icon-trash {
+        color: $grey;
+        font-size: 0.8em;
+    }
 }
 
 // Idea form
@@ -474,7 +535,7 @@ p.pagination {
         background: lighten($black, 70%);
         padding: 2px 5px;
     }
-    a.comment-modified {
+    a.comment-date {
         color: lighten($black, 40%);
     }
     a.comment-delete-toggle {
@@ -540,61 +601,124 @@ a.problem-action {
     }
 }
 
+#problem-table-row {
+    display: none;
+}
+
 .problem-table-wrap {
     margin-bottom: 1em;
-    .problem-table {
+}
+
+.problem-table {
+    margin-bottom: 1em;
+    a.button {
+        height: 100%;
+        margin-bottom: 0;
+        padding-left: 1em;
+        padding-right: 1em;
+        position: absolute;
+        left: 0;
+        top: 0;
+    }
+    input[type='text'] {
+        margin-bottom: 0;
+    }
+    .cell-wrap {
+        display: block;
+        position: relative;
+        padding: 1em 4em;
+        min-height: 60px;
         a.button {
-            height: 100%;
-            margin-bottom: 0;
-            padding-left: 1em;
-            padding-right: 1em;
-            position: absolute;
-            left: 0;
-            top: 0;
+            display: none;
         }
-        input[type='text'] {
-            margin-bottom: 0;
-        }
-        .cell-wrap {
-            display: block;
-            position: relative;
-            padding: 1em 4em;
-            min-height: 60px;
-            a.button {
-                display: none;
-            }
-            span.label {
-                margin: emCalc(4px) emCalc(2px);
-                font-size: emCalc(14px);
-            }
-        }
-        th.criteria {
-            text-align:center;
-        }
-        td.vertical-title {
-            background-color: $light-grey;
-            font-weight: bold;
-            .title-admin {
-                position: relative;
-                padding-left: 25px;
-            }
-            a.remove-alternative {
-                position: absolute;
-                left:0;
-                height: 20px;
-                line-height: 1;
-            }
-        }
-        tr.alternative td {
-            text-align: center;
-            position: relative;
-        }
-        a.remove-alternative {
-            position: relative;
-            padding: 0.4em;
+        span.label {
+            margin: emCalc(4px) emCalc(2px);
+            font-size: emCalc(14px);
         }
     }
+    th.criteria {
+        text-align:center;
+    }
+    td.vertical-title {
+        background-color: $light-grey;
+        font-weight: bold;
+        .title-admin {
+            position: relative;
+        }
+        .title-admin-with-button {
+            position: relative;
+            padding-left: 25px;
+        }
+        a.remove-alternative {
+            position: absolute;
+            left:0;
+            height: 20px;
+            line-height: 1;
+        }
+    }
+    th.voting-title {
+        text-align: center;
+    }
+    td.voting {
+        color: $light-grey;
+        a.vote {
+            display: block;
+            margin: 6px 15px;
+            i {
+                color: $light-grey;
+                font-size: 2.5rem;
+            }
+        }
+        span.vote-count {
+            color: $light-grey;
+            display: block;
+            font-size: 1.6em;
+            letter-spacing: 0;
+            margin:0;
+        }
+        &:hover {
+            a.vote {
+                i {
+                    color: $orange;
+                    transition: color 0.5s ease;
+                }
+            }
+            span.vote-count {
+                color: $orange;
+                transition: color 0.5s ease;
+            }
+        }
+    }
+    td.voted {
+        color: $orange;
+        a.vote {
+            i {
+                color: $orange;
+            }
+        }
+        span.vote-count {
+            color: $orange;
+        }
+    }
+    tr.alternative td {
+        text-align: center;
+        position: relative;
+    }
+    a.remove-alternative {
+        position: relative;
+        padding: 0.4em;
+    }
 }
+
+// jScrollPane
+
+.jspHorizontalBar {
+    margin-top: 1em;
+    .jspDrag {
+        background-color: #A0A0A0;
+    }
+}
+
 
 // Idea modal
 
@@ -655,19 +779,19 @@ a.problem-action {
     }
     .button-criteria,
     .label-quantifier {
-        margin: emCalc(4px) 0;
+        margin: emCalc(4px) emCalc(2px);
     }
 }
 
 footer {
-  @include panel($light-grey, 1em);
-  width: 100%;
-  height: 180px;
-  margin: 2em 0 0;
-  bottom: 0;
-  p {
-    color: $light-black;
-    font-size: 90%;
-    line-height: 1;
-  }
+    @include panel($light-grey, 1em);
+    width: 100%;
+    height: 180px;
+    margin: 2em 0 0;
+    bottom: 0;
+    p {
+        color: $light-black;
+        font-size: 90%;
+        line-height: 1;
+    }
 }

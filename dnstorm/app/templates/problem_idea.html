@@ -51,14 +51,18 @@
                         {% if idea.quantifiervalue_set.all %}
                             <div class="large-12 idea-quantifiers">
                                 {% for q in idea.quantifiervalue_set.all %}
-                                    <span class="label secondary radius">{{ q.quantifier.name }}{% if q.quantifier.format != "boolean" %}&nbsp;|&nbsp;{{ q.value }}{% endif %}</span>
+                                    {% if q.quantifier.format == 'daterange' %}
+                                        <span class="label secondary radius">{{ q.quantifier.name }}&nbsp;|&nbsp;{{ q.value }}</span>
+                                    {% else %}
+                                        <span class="label secondary radius">{{ q.quantifier.name }}{% if q.quantifier.format != "boolean" %}&nbsp;|&nbsp;{{ q.value }}{% endif %}</span> 
+                                    {% endif %}
                                 {% endfor %}
                             </div>
                         {% endif %}
                         <div class="columns large-12 right idea-actions">
                             {% if idea_actions %}
 
-                                {% if problem_perm_contribute %}<a class="problem-action{% if user.is_authenticated %} show-on-click{% endif %}" {% if user.is_authenticated %}data-show-on-click="comment-form-{{ idea.id }}" href="javascript:void(0);"{% else %}href="{{ login_url }}"{% endif %}>{% trans "Comment" context "verb" %}</a>{% endif %}
+                                {% if problem_perm_contribute %}<a class="problem-action{% if user.is_authenticated %} show-on-click{% endif %}" {% if user.is_authenticated %}data-show-on-click="idea-comment-form-{{ idea.id }}" href="javascript:void(0);"{% else %}href="{{ login_url }}"{% endif %}>{% trans "Comment" context "verb" %}</a>{% endif %}
 
                                 {% if idea.author == user %}<a class="problem-action problem-idea-edit" href="{% url "idea_edit" problem.slug idea.id %}">{% trans "Edit" %}</a>{% endif %}
 
@@ -72,12 +76,12 @@
                 </div>
 
                 <div class="columns large-5">
-                    {% include "user_box.html" with user=idea.author date=idea.modified link=idea.get_absolute_url %}
+                    {% include "user_box.html" with user=idea.author date=idea.created link=idea.get_absolute_url %}
                 </div>
             </div>
 
             {% if user.is_authenticated and idea.comment_form %}
-                <div class="comment-form hide" id="comment-form-{{ idea.id }}" data-idea="{{ idea.id }}">
+                <div class="comment-form hide" id="idea-comment-form-{{ idea.id }}" data-idea="{{ idea.id }}">
                     {% crispy idea.comment_form %}
                 </div>
             {% endif %}

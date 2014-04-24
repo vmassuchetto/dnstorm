@@ -16,6 +16,8 @@ from crispy_forms.helper import FormHelper
 from crispy_forms_foundation.layout import Fieldset, Field, \
     Row, HTML, ButtonHolder, Submit, Layout, Column
 
+from ajax_select.fields import AutoCompleteSelectMultipleField
+
 from dnstorm.app.lib.slug import unique_slugify
 
 class AdminOptionsForm(forms.Form):
@@ -34,31 +36,13 @@ class AdminOptionsForm(forms.Form):
                 Submit('submit', _('Save'), css_class='radius'),
             ),
         )
-        super(OptionsForm, self).__init__(*args, **kwargs)
+        super(AdminOptionsForm, self).__init__(*args, **kwargs)
 
         # Form defaults or saved values
 
         option = Option()
         for field in self.fields:
             self.fields[field].initial = option.get(field)
-
-class AccountCreateForm(forms.Form):
-    username = forms.CharField(label=_('Username'))
-    email = forms.EmailField(label=_('E-mail'))
-    password = forms.CharField(label=_('Password'), widget=forms.PasswordInput)
-    password_repeat = forms.CharField(label=_('Repeat password'), widget=forms.PasswordInput)
-
-    def __init__(self, *args, **kwargs):
-        self.helper = FormHelper()
-        self.helper.form_action = '.'
-        self.helper.layout = Layout(
-            'username',
-            'email',
-            'password',
-            'password_repeat',
-            Submit('submit', _('Create account'), css_class='expand success'),
-        )
-        super(AccountCreateForm, self).__init__(*args, **kwargs)
 
 class UserAdminForm(forms.ModelForm):
 
@@ -89,9 +73,9 @@ class UserAdminForm(forms.ModelForm):
 
 class ProblemForm(forms.ModelForm):
     criteria = forms.Field(_('Criterias'))
+    contributor = AutoCompleteSelectMultipleField('user', required=False)
+    manager = AutoCompleteSelectMultipleField('user', required=False)
     quantifier_format = forms.ChoiceField(label='', choices=QUANTIFIER_CHOICES, widget=forms.Select(), initial='', required=False)
-    notice = forms.BooleanField(_('Mail an update notice to participants'))
-    invite = forms.Field(_('Invite people to participate'))
 
     class Meta:
         model = Problem
@@ -107,7 +91,7 @@ class ProblemForm(forms.ModelForm):
 
     def quantifier_rows(self):
         if not self.instance:
-            return False
+            return ''
         html = ''
         for q in Quantifier.objects.filter(problem=self.instance):
             format = [qt[1] for qt in QUANTIFIER_CHOICES if qt[0] == q.format]
@@ -141,7 +125,7 @@ class ProblemForm(forms.ModelForm):
                     Column(Field('quantifier_format'), css_class="large-9"),
                     Column(HTML('<a href="javascript:void(0)" id="quantifier-add" class="button small radius"><i class="foundicon-plus"></i>&nbsp;' + _('Add quantifier') + '</a>'), css_class="large-3"),
                 ),
-                HTML('<div id="quantifiers">' + self.quantifier_rows() + '</div>'),
+                HTML('<div id="quantifiers">' + unicode(self.quantifier_rows()) + '</div>'),
             ),
             Fieldset(_('Permissions'),
                 'contributor',
@@ -159,12 +143,6 @@ class ProblemForm(forms.ModelForm):
                     Column('voting', css_class='large-4'),
                     Column('vote_count', css_class='large-4'),
                     Column('vote_author', css_class='large-4'),
-                ),
-            ),
-            Fieldset(_('Mailing'),
-                Row(
-                    Column('notice', css_class='large-4'),
-                    Column('invite', css_class='large-8'),
                 ),
             ),
             ButtonHolder(
@@ -187,14 +165,6 @@ class ProblemForm(forms.ModelForm):
             for c in criteria:
                 self.fields['criteria_{i}'.format(i=c.id)] = forms.CharField(widget = forms.HiddenInput(), initial=c.id, label=c.name, help_text=mark_safe(c.description), required=False)
                 self.helper.layout.append((Field('criteria_{i}'.format(i=c.id), type='hidden', value=c.id)))
-
-        # Notices field
-        self.fields['notice'].required = False
-        self.fields['notice'].help_text = _('Send a mail notice to the participants of this problem about the updates.')
-
-        # Invites field
-        self.fields['invite'].required = False
-        self.fields['invite'].help_text = _('Comma-separated e-mails of users that will receive an invitation to participate in this problem.')
 
 class CriteriaForm(forms.ModelForm):
     description = forms.CharField(widget=forms.Textarea(attrs={'id': 'criteria_description'}))

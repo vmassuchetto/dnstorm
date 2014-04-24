@@ -1,19 +1,4 @@
 {% load i18n %}
 
-<h2>{{ problem.title }}</h2>
 
-<div class="description">
-    {{ problem.description|safe }}
-</div>
-
-<div class="row">
-    <div class="columns large-7">
-        {% if problem_perm_contribute %}<a class="problem-action show-on-click" data-show-on-click="problem-comment-form" href="javascript:void(0);">{% trans "Comment" context "verb" %}</a>{% endif %}
-        {% if problem_perm_edit %}<a class="problem-action" href="{% url "problem_edit" problem.slug %}">{% trans "Edit" %}</a>{% endif %}
-    </div>
-
-    <div class="columns large-5">
-        {% include "user_box.html" with user=problem.author date=problem.modified link=problem.get_absolute_url %}
-    </div>
-</div>
 

@@ -6,38 +6,52 @@
 {% block content %}
     <div class="row">
 
-    <div class="large-4 large-offset-4 columns content">
-        <h4>{% trans "Login" %}</h4>
+    {% if user.is_authenticated %}
 
-        <form method="post" action="{% url "auth_login" %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}">
-
-            {% csrf_token %}
-            <input type="hidden" name="next" value="{% if request.GET.next %}{{ request.GET.next }}{% else %}{{ request.get_full_path }}{% endif %}" />
-
-            <div class="row">
-                <div class="columns large-12">
-                    {{ form }}
-                </div>
+        <div class="large-12 columns content">
+            <div class="panel radius">
+                <p>{% blocktrans %}You are already logged in.{% endblocktrans %}</p>
             </div>
-            <div class="row">
-                <div class="columns large-12">
-                    <input type="submit" class="button radius success expand" value="{% trans 'Login' %}" />
+        </div>
+
+    {% else %}
+
+        <div class="large-4 large-offset-4 columns content">
+
+            <h4>{% trans "Login" %}</h4>
+
+            <form method="post" action="{% url "auth_login" %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}">
+
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{% if request.GET.next %}{{ request.GET.next }}{% else %}{{ request.get_full_path }}{% endif %}" />
+
+                <div class="row">
+                    <div class="columns large-12">
+                        {{ form }}
+                    </div>
                 </div>
-            </div>
-
-            <hr/>
-
-            <div class="row">
-                <div class="columns large-6">
-                    <a class="button radius secondary expand" href="{% url 'auth_password_reset' %}">{% trans "Reset password" %}</a>
+                <div class="row">
+                    <div class="columns large-12">
+                        <input type="submit" class="button radius success expand" value="{% trans 'Login' %}" />
+                    </div>
                 </div>
-                <div class="columns large-6">
-                    <a class="button radius secondary expand" href="{% url 'registration_register' %}">{% trans "Register" %}</a>
+
+                <hr/>
+
+                <div class="row">
+                    <div class="columns large-6">
+                        <a class="button radius secondary expand" href="{% url 'auth_password_reset' %}">{% trans "Reset password" %}</a>
+                    </div>
+                    <div class="columns large-6">
+                        <a class="button radius secondary expand" href="{% url 'registration_register' %}">{% trans "Register" %}</a>
+                    </div>
                 </div>
-            </div>
 
-        </form>
+            </form>
 
-    </div>
+        </div>
+
+    {% endif %}
+
     </div>
 {% endblock %}

@@ -104,10 +104,12 @@ class AdminUserActivateView(RedirectView):
         if not self.request.user.is_superuser:
             raise PermissionDenied
         user = get_object_or_404(User, id=self.kwargs['user_id'])
-        _user = pickle.loads(str(Option().get('_user_backup_' + str(user.id))))
-        user = _user
+        userdata = Option().get('_user_backup_' + str(user.id))
+        if userdata:
+            _user = pickle.loads(str(userdata))
+            user = _user
+            _user.delete()
         user.is_active = True
-        _user.delete()
         user.save()
         return reverse('admin_user_edit', kwargs={'user_id': user.id})
 

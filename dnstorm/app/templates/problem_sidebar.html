@@ -6,12 +6,9 @@
 </p>
 {% endif %}
 
-<a class="button small expand radius" href="{% url "table" problem.slug %}"><i class="foundicon-inbox"></i> {% trans 'Problem table' %}</a>
 {% if problem_perms_edit %}
     <a class="button small expand radius" href="{% url "message_new" problem.slug %}"><i class="foundicon-mail"></i> {% trans 'New message' %}</a>
 {% endif %}
-
-<hr/>
 
 {% if problem.public or problem.open or problem.locked or problem.blind or problem.voting %}
     <p class="problem-icons text-center">
@@ -28,7 +25,7 @@
     <hr/>
 {% endif %}
 
-{% if problem.revision_count or problem.idea_count %}
+{% if problem.revision_count > 0 or problem.idea_count > 0 %}
     <div class="info">
         {% if problem.revision_count > 1 %}<b><a href="{% url "problem_revision" problem.slug %}">{{ problem.revision_count }} {% trans "revisions" %}</a></b><br/>{% endif %}
         {% if problem.idea_count > 0 %}<b><a href="{% url "problem_ideas" problem.slug %}">{{ problem.idea_count }} {% if problem.idea_count > 1 %}{% trans "idea contributions" %}{% else %}{% trans "idea contribution" %}{% endif %}</a></b>{% endif %}
@@ -51,9 +48,11 @@
 {% if problem.quantifier_set.all %}
     <div class="quantifiers">
         <h4>{% trans "Idea quantifiers" %}</h4>
+        <p>
         {% for q in problem.quantifier_set.all %}
-            <span class="label-quantifier label secondary radius">{{ q.name }}&nbsp;|&nbsp;{{ q.format }}</span>
+            <span class="label-quantifier label secondary radius">{{ q.name }}</span>
         {% endfor %}
+        </p>
     </div>
     <hr/>
 {% endif %}
@@ -65,7 +64,7 @@
         {% for b in bulletin %}
             <p class="line-height-1">
                 <b><a href="{{ b.get_absolute_url }}">{{ b.subject }}</a></b><br/>
-                <small>{{ b.modified }}</small>
+                <small>{{ b.created }}</small>
             </p>
         {% endfor %}
         <p class="text-right"><a class="button tiny radius no-margin-bottom" href="{% url "messages" problem.slug %}">{% trans "View all" %}</a>

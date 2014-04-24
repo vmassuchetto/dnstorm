@@ -216,13 +216,13 @@ $('#quantifier-add').click(function(){
 
 // Remove quantifier entries
 
-$('#quantifiers').on('click', '.quantifier-remove-dialog', function(e){
+$(document).on('click', '.quantifier-remove-dialog', function(e){
     $('#quantifier-remove-modal').data('to-remove', $(this).parents('.quantifier-entry'));
     $('#quantifier-remove-modal').foundation('reveal', 'open');
     e.preventDefault();
 });
 
-$('#quantifiers').on('click', '.quantifier-remove', function(e){
+$(document).on('click', '.quantifier-remove', function(e){
     $('#quantifier-remove-modal').data('to-remove').remove();
     $('#quantifier-remove-modal').foundation('reveal', 'close');
     e.preventDefault();
@@ -250,6 +250,8 @@ $('#criteria-modal form').submit(function(e){
                 modal.foundation('reveal', 'close');
                 modal.find('#id_name').val('');
                 modal.find('#criteria_description').val('');
+                // Update 'parent' select field
+                modal.find('#id_parent').append('<option value="' + data.id + '">' + data.name + '</option>');
                 // Insert button
                 button = $('.problem-criteria-result li a[data-id="0"]');
                 button.data('id', data.id);
@@ -300,9 +302,17 @@ $('.revisions').ready(function(){
 
 // Show on click
 
-$('.show-on-click').click(function(){
-    var id = $(this).data('show-on-click');
-    $('#' + id).delay(300).fadeIn(300);
+$(document).on('click', '.show-on-click', function(){
+    $('#' + $(this).data('show-on-click')).fadeIn(300);
+});
+
+$('.show-problem-table').click(function(){
+    if ($('#problem-table-row').css('display') == 'none') {
+        $('#problem-table-row').fadeIn(300);
+        adjust_table_overflow();
+    } else {
+        $('#problem-table-row').fadeOut(300);
+    }
 });
 
 // Hide after click
@@ -414,9 +424,9 @@ $(document).on('click', '.comment-delete-toggle', function(){
     });
 });
 
-// Voting
+// Idea voting
 
-$('.voting a').click(function() {
+$('.problem-idea .voting a').click(function() {
 
     if (typeof $(this).attr('disabled') !== 'undefined'
         || typeof $(this).data('reveal-id') !== 'undefined')
@@ -487,8 +497,56 @@ $('.voting a').click(function() {
                 upvote.removeClass('success');
                 downvote.removeClass('alert');
                 counter.html(parseInt(counter.html()) - weight);
+            } else {
+                counter.html(count);
             }
-            counter.html(count);
+        }
+    });
+
+});
+
+// Alterantive voting
+
+$(document).on('click', '.alternative .voting a', function() {
+
+    if (typeof $(this).attr('disabled') !== 'undefined'
+        || typeof $(this).data('reveal-id') !== 'undefined')
+        return;
+
+    var sum;
+    var vote = $(this).parents('td');
+    var voted = vote.hasClass('voted');
+    var alternative = $(this).data('alternative');
+
+    if (voted) {
+        vote.removeClass('voted');
+        sum = -1;
+    } else {
+        vote.addClass('voted');
+        sum = 1;
+    }
+
+    var counter = $(this).siblings('.vote-count');
+    counter.html(parseInt(counter.text()) + sum);
+
+    $.ajax({
+        url: '/ajax/',
+        data: {
+            'alternative': $(this).data('alternative'),
+            'weight': sum
+        },
+        complete: function(xhr, data) {
+            count = parseInt(xhr.responseText);
+            // Reset stuff if things go wrong
+            if (isNaN(count)) {
+                if (voted)
+                    vote.addClass('voted');
+                else
+                    vote.removeClass('voted');
+                counter.html(parseInt(counter.html()) - sum);
+            } else {
+                counter.html(count);
+            }
         }
     });
 
@@ -506,11 +564,10 @@ var alternative_remove_modal = $('#alternative-remove-modal');
 function adjust_table_overflow() {
     if ($('.problem-table-wrap').lenght <= 0 || !table)
         return;
-    if (table.width() > $('.problem-table-wrap').width())
-        $('.problem-table-wrap').css('overflow-x', 'scroll');
+    if (table.width() > $('.problem-table-wrap').width()) {
+        $('.problem-table-wrap').jScrollPane();
+    }
 }
-
-adjust_table_overflow();
 
 $(document).on('mouseenter', '.problem-table .cell-wrap', function(){
     $(this).find('a.button').fadeIn(200);
@@ -536,6 +593,7 @@ $(document).on('click', '.add-column', function(){
         }
         $(this).find('td:last-child').highlight();
     });
+    adjust_table_overflow();
 });
 
 // New alternative in TableView
@@ -585,18 +643,27 @@ $(document).on('submit', '#alternative-add-modal form', function(e){
             type: 'POST',
             data: form.serialize(),
             complete: function(xhr, data) {
-                alternative = $.parseJSON(xhr.responseText);
+                if (xhr.responseText)
+                    alternative = $.parseJSON(xhr.responseText);
+                else
+                    return;
                 if (isNaN(alternative.id))
                     return;
                 new_alternative = '<tr class="alternative" id="alternative-' + alternative.id + '" data-alternative="' + alternative.id + '">'
                     + '<td class="vertical-title">'
-                    + '<span data-tooltip title="' + alternative.description + '">' + alternative.name + '</span>'
-                    + '&nbsp;<a class="foundicon-remove remove-alternative" data-reveal-id="alternative-remove-modal" data-alternative="' + alternative.id + '"></a>'
+                        + '<div class="title-inner title-admin-with-button" title="' + alternative.description + ' data-tooltip">'
+                        + '&nbsp;<a class="foundicon-remove remove-alternative button alert radius tiny" data-alternative="' + alternative.id + '"></a>'
+                        + alternative.name
+                        + '</div>'
+                    + '</td>'
+                    + '<td class="voting">'
+                        + '<a href="javascript:void(0);" class="vote" data-alternative="' + alternative.id + '"><i class="foundicon-idea"></i></a>'
+                        + '<span class="vote-count">0</span>'
                     + '</td>';
-                n_criteria = table.find('th.criteria').length;
-                for (i = 0; i < n_criteria; i++) {
-                    new_alternative += '<td><div class="cell-wrap"><a class="button expand radius secondary select-idea">' + gettext('Select idea') + '</a></div></td>';
-                }
+                table.find('th.criteria').each(function(){
+                    datas = 'data-problem="' + alternative.problem + '" data-alternative="' + alternative.id + '" data-criteria="' + $(this).data('criteria') + '"';
+                    new_alternative += '<td><div class="cell-wrap"><a class="button expand radius secondary select-idea" ' + datas + '>' + gettext('Select idea') + '</a></div></td>';
+                });
                 new_alternative += '</tr>';
                 table.find('tbody').append(new_alternative);
                 adjust_table_overflow();
@@ -665,7 +732,10 @@ $(document).on('click', '.problem-idea-modal-save', function(){
         },
         complete: function(xhr, data) {
             m.data('item').html('');
-            items = $.parseJSON(xhr.responseText);
+            if (xhr.responseText)
+                items = $.parseJSON(xhr.responseText);
+            else
+                return;
             if (items.length <= 0) {
                 m.foundation('reveal', 'close');
                 return;
@@ -673,9 +743,11 @@ $(document).on('click', '.problem-idea-modal-save', function(){
             for (i in items.ideas) {
                 m.data('item').append('<span class="label secondary radius" data-idea="' + items.ideas[i].id + '">' + items.ideas[i].title + '</span>');
             }
-            m.data('item').append('<a class="button secondary expand select-idea hidden">' + gettext('Select idea') + '</a>');
+            datas = 'data-problem="' + items.ideas[i].problem + '" data-criteria="' + items.ideas[i].criteria + '" data-alternative="' + items.ideas[i].alternative + '"';
+            m.data('item').append('<a class="button secondary radius expand select-idea hidden" '+ datas + '>' + gettext('Select idea') + '</a>');
             m.foundation('reveal', 'close');
             m.data('item').highlight();
+            adjust_table_overflow();
         }
     });
 });

@@ -3,10 +3,11 @@ from django.conf.urls import patterns, include, url
 from dnstorm import settings
 from dnstorm.app.views import base, ajax, problem, criteria, message, idea, table, user
 
+from ajax_select import urls as ajax_select_urls
 from haystack.views import search_view_factory
 
 js_info_dict = {
-    'packages': ('dnstorm',),
+    'packages': ('app',),
 }
 
 urlpatterns = patterns('',
@@ -29,7 +30,6 @@ urlpatterns = patterns('',
     (r'^problem/(?P<slug>[^/]+)/message/new/$', message.MessageCreateView.as_view(), {}, 'message_new'),
     (r'^problem/(?P<slug>[^/]+)/message/(?P<pk>[^/]+)/$', message.MessageView.as_view(), {}, 'message'),
     (r'^problem/(?P<slug>[^/]+)/messages/$', message.MessageProblemListView.as_view(), {}, 'messages'),
-    (r'^problem/(?P<slug>[^/]+)/table/$', table.TableView.as_view(), {}, 'table'),
     (r'^problem/(?P<slug>[^/]+)/#comment-(?P<pk>[^/]+)$', base.CommentView.as_view(), {}, 'comment'),
     (r'^criteria/new/$', criteria.CriteriaCreateView.as_view(), {}, 'criteria_new'),
     (r'^criteria/$', criteria.CriteriaListView.as_view(), {}, 'criteria_list'),
@@ -48,18 +48,19 @@ urlpatterns = patterns('',
 
     # Other apps
 
-    (r'^jsi18n/$', 'django.views.i18n.javascript_catalog', js_info_dict, 'jsi18n'),
-    (r'^ckeditor/', include('ckeditor.urls')),
+    (r'^search/', search_view_factory(view_class=base.SearchView), {}, 'search'),
+    (r'^avatar/', include('avatar.urls')),
     (r'^accounts/', include('django.contrib.auth.urls')),
     (r'^accounts/', include('registration.backends.default.urls')),
-    (r'search/', search_view_factory(view_class=base.SearchView), {}, 'search'),
-    (r'^avatar/', include('avatar.urls')),
+    (r'^lookups/', include(ajax_select_urls)),
+    (r'^jsi18n/$', 'django.views.i18n.javascript_catalog', js_info_dict, 'jsi18n'),
+    (r'^ckeditor/', include('ckeditor.urls')),
 
 )
 
 # Static files
 
-if not settings.STATICFILES_DEBUG:
+if not settings.DEBUG:
     urlpatterns += patterns('',
         (r'^static/(?P<path>.*)$', 'django.views.static.serve', { 'document_root': settings.STATIC_ROOT }),
     )

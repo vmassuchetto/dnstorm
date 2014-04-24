@@ -25,7 +25,7 @@
                     {% else %}
                         {% highlight result.object.title with query %}
                     {% endif %} {% endif %}
-                    </a><small class="subheader right">{{ result.object.modified|naturaltime }}</small></h4>
+                    </a><small class="subheader right">{{ result.object.created|naturaltime }}</small></h4>
 
 
                     {% if result.object.description %}

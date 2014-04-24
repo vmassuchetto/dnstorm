@@ -17,7 +17,14 @@ $light-grey: #DDDDDD;
 $red: #FF0000;
 $light-red: lighten($red, 20%);
 
-$green: #099C00;
+$green: #089700;
+$light-green: lighten($green, 20%);
+
+$cyan: #00BAB1;
+$dark-cyan: darken($cyan, 20%);
+
+$orange: #FFA600;
+$dark-orange: darken($orange, 20%);
 
 $blue: #008CBA;
 $light-blue: lighten($blue, 20%);

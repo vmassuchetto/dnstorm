@@ -75,9 +75,9 @@ class Criteria(models.Model):
     parent = models.ForeignKey('self', verbose_name=_('Parent'), blank=True, null=True)
     slug = models.CharField(max_length=90, unique=True)
     description = models.TextField(verbose_name=_('Description'), blank=True)
-    order = models.IntegerField()
-    created = models.DateTimeField(auto_now=True, editable=False)
-    updated = models.DateTimeField(editable=False)
+    order = models.IntegerField(default=0)
+    created = models.DateTimeField(auto_now_add=True, editable=False, default='2001-01-01')
+    updated = models.DateTimeField(auto_now=True, editable=False, default='2001-01-01')
 
     class Meta:
         db_table = settings.DNSTORM['table_prefix'] + '_criteria'
@@ -95,12 +95,7 @@ class Criteria(models.Model):
         return Problem.objects.filter(criteria=self).count()
 
     def save(self, *args, **kwargs):
-        if not self.id:
-            self.created = datetime.today()
-        self.updated = datetime.today()
         self.slug = unique_slugify(self, self.name)
-        if not self.order:
-            self.order = 0
         super(Criteria, self).save(*args, **kwargs)
 
 reversion.register(Criteria)
@@ -121,13 +116,15 @@ class Problem(models.Model):
     voting = models.BooleanField(verbose_name=_('Enable voting for ideas'), help_text=_('Users will be able to vote for the ideas.'), default=True, blank=True)
     vote_count = models.BooleanField(verbose_name=_('Display vote counts'), help_text=_('Users will be able to see how many votes each idea had.'), default=True, blank=True)
     vote_author = models.BooleanField(verbose_name=_('Display vote authors'), help_text=_('Ideas voting will be completely transparent.'), default=False, blank=True)
-    modified = models.DateTimeField(auto_now=True, auto_now_add=True, editable=False, default='2000-01-01')
+    created = models.DateTimeField(auto_now_add=True, editable=False, default='2000-01-01')
+    updated = models.DateTimeField(auto_now=True, editable=False, default='2000-01-01')
+    last_activity = models.DateTimeField(auto_now=True, editable=False, default='2000-01-01')
 
     class Meta:
         db_table = settings.DNSTORM['table_prefix'] + '_problem'
 
     def __unicode__(self):
-        return '<Problem: %d>' % self.id
+        return u'%d' % self.id
 
     def type(self):
         return _('problem')
@@ -186,7 +183,7 @@ class Quantifier(models.Model):
         db_table = settings.DNSTORM['table_prefix'] + '_quantifier'
 
     def __unicode__(self):
-        return '<Quantifier>'
+        return u'%d' % self.id
 
     def type(self):
         return _('quantifier')
@@ -205,12 +202,13 @@ class Invite(models.Model):
         return _('invite')
 
 class Idea(models.Model):
-    title = models.CharField(verbose_name=_('Title'), max_length=90)
+    title = models.CharField(verbose_name=_('title'), max_length=90)
     content = RichTextField(config_name='idea_content')
     problem = models.ForeignKey(Problem, editable=False)
     author = models.ForeignKey(User, editable=False)
     deleted_by = models.ForeignKey(User, editable=False, related_name='idea_deleted_by', null=True, blank=True)
-    modified = models.DateTimeField(auto_now=True, editable=False, default='2000-01-01')
+    created = models.DateTimeField(auto_now_add=True, editable=False, default='2000-01-01')
+    updated = models.DateTimeField(auto_now=True, editable=False, default='2000-01-01')
 
     class Meta:
         db_table = settings.DNSTORM['table_prefix'] + '_idea'
@@ -254,7 +252,7 @@ class Comment(models.Model):
     author = models.ForeignKey(User, editable=False)
     deleted_by = models.ForeignKey(User, editable=False, related_name='comment_deleted_by', null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True, editable=False, default='2000-01-01')
-    modified = models.DateTimeField(auto_now=True, editable=False, default='2000-01-01')
+    updated = models.DateTimeField(auto_now=True, editable=False, default='2000-01-01')
 
     class Meta:
         db_table = settings.DNSTORM['table_prefix'] + '_comment'
@@ -272,7 +270,7 @@ class Message(models.Model):
     sender = models.ForeignKey(User)
     subject = models.TextField(verbose_name=_('Subject'))
     content = models.TextField(verbose_name=_('Content'))
-    modified = models.DateTimeField(auto_now=True, editable=False, default='2000-01-01')
+    created = models.DateTimeField(auto_now_add=True, editable=False, default='2000-01-01')
 
     class Meta:
         db_table = settings.DNSTORM['table_prefix'] + '_message'
@@ -288,30 +286,13 @@ class Message(models.Model):
 
 reversion.register(Message)
 
-class Vote(models.Model):
-    idea = models.ForeignKey(Idea)
-    author = models.ForeignKey(User)
-    weight = models.SmallIntegerField(choices=(
-        (1, _('Upvote')),
-        (-1, _('Downvote'))))
-    date = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        db_table = settings.DNSTORM['table_prefix'] + '_vote'
-
-    def __unicode__(self):
-        return '<Vote: %d>' % self.id
-
-    def type(self):
-        return _('vote')
-
 class Alternative(models.Model):
     problem = models.ForeignKey(Problem)
     name = models.TextField(verbose_name=_('Name'))
     description = models.TextField(verbose_name=_('Description'))
-    order = models.IntegerField()
-    created = models.DateTimeField(auto_now=True, editable=False)
-    updated = models.DateTimeField(editable=False)
+    order = models.IntegerField(default=0)
+    created = models.DateTimeField(auto_now_add=True, editable=False, default='2001-01-01')
+    updated = models.DateTimeField(auto_now=True, editable=False, default='2001-01-01')
 
     class Meta:
         db_table = settings.DNSTORM['table_prefix'] + '_alternative'
@@ -363,15 +344,6 @@ class Alternative(models.Model):
                             quantifiers[k].value += int(q.value)
         return quantifiers
 
-    def save(self, *args, **kwargs):
-        if not self.id:
-            self.created = datetime.today()
-        self.updated = datetime.today()
-        if not self.order:
-            self.order = 0
-        super(Alternative, self).save(*args, **kwargs)
-
-
 class AlternativeItem(models.Model):
     criteria = models.ForeignKey(Criteria, blank=True, null=True)
     alternative = models.ForeignKey(Alternative)
@@ -391,6 +363,24 @@ class AlternativeItem(models.Model):
     def save(self, *args, **kwargs):
         self.order = self.order if self.order else 0
         super(AlternativeItem, self).save(*args, **kwargs)
+
+class Vote(models.Model):
+    idea = models.ForeignKey(Idea, blank=True, null=True)
+    alternative = models.ForeignKey(Alternative, blank=True, null=True)
+    author = models.ForeignKey(User)
+    weight = models.SmallIntegerField(choices=(
+        (1, _('Upvote')),
+        (-1, _('Downvote'))))
+    date = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = settings.DNSTORM['table_prefix'] + '_vote'
+
+    def __unicode__(self):
+        return '<Vote: %d>' % self.id
+
+    def type(self):
+        return _('vote')
 
 class Activity(models.Model):
     problem = models.ForeignKey(Problem, blank=True, null=True)
@@ -452,7 +442,7 @@ class ActivityManager(models.Manager):
             versions = reversion.get_for_object(obj)
             a.status = 'updated' if len(versions) > 1 else 'created'
             a.user = versions[1].revision.user if len(versions) > 1 else obj.author
-            a.date = obj.modified
+            a.date = obj.updated
             if len(versions) > 1 and a.problem:
                 diff = dmp.diff_main('<h3>' + versions[1].object_version.object.title + '</h3>' + versions[1].object_version.object.description, '<h3>' + a.problem.title + '</h3>' + a.problem.description)
                 dmp.diff_cleanupSemantic(diff)
@@ -527,7 +517,7 @@ class ActivityManager(models.Manager):
                     SELECT
                         'problem_' || p.id AS type,
                         p.id AS id,
-                        p.modified AS date
+                        p.updated AS date
                     FROM
                         %(prefix)s_problem p
                     WHERE 1=1
@@ -540,7 +530,7 @@ class ActivityManager(models.Manager):
                     SELECT
                         'idea_' || i.id AS type,
                         i.id AS id,
-                        i.modified AS date
+                        i.updated AS date
                     FROM
                         %(prefix)s_idea i
                     LEFT JOIN
@@ -556,7 +546,7 @@ class ActivityManager(models.Manager):
                     SELECT
                         'comment_' || c.id AS type,
                         c.id AS id,
-                        c.modified AS date
+                        c.updated AS date
                     FROM
                         %(prefix)s_comment c
                     LEFT JOIN

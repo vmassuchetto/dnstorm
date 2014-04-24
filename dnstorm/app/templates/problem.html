@@ -5,12 +5,86 @@
 
 {% block head %}{{ form.media }}{% endblock %}
 
+{% block modals %}
+    {% if problem_perm_manage %}
+        <div id="alternative-add-modal" class="reveal-modal tiny" data-reveal>
+            <a class="close-reveal-modal">&#215;</a>
+            {% crispy alternative_form %}
+        </div>
+
+        <div id="alternative-remove-modal" class="reveal-modal tiny" data-reveal>
+            <div class="row">
+            <div class="columns large-12">
+                <p>{% trans "Remove this item?" %}</p>
+            </div>
+            </div>
+            <div class="row">
+            <div class="columns large-6">
+                <a class="close-reveal-modal-button button small secondary radius no-margin-bottom">{% trans "Cancel" %}</a>
+            </div>
+            <div class="columns large-6 text-right">
+                <a class="remove button alert radius no-margin-bottom remove-alternative-confirm">{% trans "Remove" %}</a>
+            </div>
+            </div>
+        </div>
+
+        <div id="select-idea-modal" class="reveal-modal large" data-reveal>
+            <a class="close-reveal-modal">&#215;</a>
+            <h3>{% trans "Select ideas" %}</h3>
+            <hr/>
+            <div class="problem-ideas-modal">
+            {% for idea in ideas %}
+                <div class="row problem-idea-modal" id="idea-{{ idea.id }}-modal-item">
+                    <div class="columns large-1">
+                        <i class="foundicon-checkmark idea-status"></i>
+                    </div>
+                    <div class="columns large-11">
+                        {% include "problem_idea.html" %}
+                    </div>
+                </div>
+            {% endfor %}
+            </div>
+            <hr/>
+            <div class="row problem-ideas-modal-buttons">
+                <div class="large-12 text-right">
+                    <a class="button small success radius problem-idea-modal-save">{% trans "Done" %}</a>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
+
 {% block content %}
+
+    <div class="row">
+    <div class="columns large-8 problem-title">
+        <h2>{{ problem.title }}</h2>
+    </div>
+    <div class="columns large-4 problem-buttons text-right">
+        {% if problem_perm_manage %}<a class="button small radius show-problem-results" href="javascript:void(0)"><i class="foundicon-graph"></i>{% trans 'Results' %}</a>{% endif %}
+        <a class="button small radius show-problem-table" href="javascript:void(0)"><i class="foundicon-website"></i>{% trans 'Strategy table' %}</a>
+    </div>
+    </div>
+
+    {% include "problem_table.html" %}
 
     <div class="row">
     <div class="columns large-9 problem-detail">
 
-        {% include "problem_content.html" %}
+        <div class="description">
+            {{ problem.description|safe }}
+        </div>
+
+        <div class="row">
+            <div class="columns large-7">
+                {% if problem_perm_contribute %}<a class="problem-action show-on-click" data-show-on-click="problem-comment-form" href="javascript:void(0);">{% trans "Comment" context "verb" %}</a>{% endif %}
+                {% if problem_perm_manage %}<a class="problem-action" href="{% url "problem_edit" problem.slug %}">{% trans "Edit" %}</a>{% endif %}
+            </div>
+
+            <div class="columns large-5">
+                {% include "user_box.html" with user=problem.author date=problem.created link=problem.get_absolute_url %}
+            </div>
+        </div>
 
         {% if problem_perm_contribute %}
             <div class="comment-form hide" id="problem-comment-form" data-problem="{{ problem.id }}">

@@ -9,6 +9,7 @@ from django.http import Http404, HttpResponseRedirect
 from django.views.generic import DetailView
 from django.views.generic.edit import FormView, CreateView, UpdateView
 from django.views.generic.base import TemplateView, RedirectView
+from django.contrib.auth import get_user
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _
 from django.utils.decorators import method_decorator
@@ -27,9 +28,11 @@ import diff_match_patch as _dmp
 from dnstorm import settings
 from dnstorm.app import permissions
 from dnstorm.app.lib.diff import diff_prettyHtml
-from dnstorm.app.models import Problem, Invite, Idea, Criteria, Vote, Comment, \
+from dnstorm.app.models import Problem, Invite, Idea, \
+    Criteria, Vote, Comment, Alternative, \
     Message, ActivityManager, Quantifier
-from dnstorm.app.forms import ProblemForm, IdeaForm, CommentForm, CriteriaForm
+from dnstorm.app.forms import ProblemForm, IdeaForm, \
+    CommentForm, CriteriaForm, AlternativeForm
 from dnstorm.app.views.idea import idea_form_valid
 
 def problem_form_valid(obj, form):
@@ -47,15 +50,17 @@ def problem_form_valid(obj, form):
 
     # Managers and contributors
 
-    obj.object.contributor.clear()
-    if obj.request.POST.get('contributor', False):
-        for c in obj.request.POST['contributor']:
-            obj.object.contributor.add(c)
+    for i in obj.request.POST.get('contributor', '').split('|'):
+        try:
+            obj.object.contributor.add(int(i))
+        except ValueError:
+            continue
 
-    obj.object.manager.clear()
-    if obj.request.POST.get('manager', False):
-        for m in obj.request.POST['manager']:
-            obj.object.manager.add(m)
+    for i in obj.request.POST.get('manager', '').split('|'):
+        try:
+            obj.object.manager.add(int(i))
+        except ValueError:
+            continue
 
     obj.object.save()
 
@@ -70,6 +75,7 @@ def problem_form_valid(obj, form):
 
     # New quantifiers
 
+    new_ids = list()
     new = dict() # new[<temporary id>] = [<format>, <name>, <help text>]
     regex_new_name = re.compile('^quantifiername_new([0-9]+)_(boolean|number|text|daterange)$')
     regex_new_help = re.compile('^quantifierhelp_new([0-9]+)_(boolean|number|text|daterange)$')
@@ -82,9 +88,11 @@ def problem_form_valid(obj, form):
         new[m.group(1)]['help'] = obj.request.POST[m.group(0)]  # Help text
     for q in new.values():
         try:
-            Quantifier(problem=obj.object, format=q['format'], name=q['name'], help=q['help']).save()
+            n = Quantifier(problem=obj.object, format=q['format'], name=q['name'], help=q['help'])
+            n.save()
+            new_ids.append(n.id)
         except:
-            messages.warning(obj.request, _('There was an error saveing the quantifier \'%s\'.' % q['name']))
+            messages.warning(obj.request, _('There was an error saving the quantifier \'%s\'.' % q['name']))
             continue
 
     # Update quantifiers
@@ -103,60 +111,15 @@ def problem_form_valid(obj, form):
         try:
             Quantifier(id=q['id'], problem=obj.object, format=q['format'], name=q['name'], help=q['help']).save()
         except:
-            messages.warning(obj.request, _('There was an error saveing the quantifier \'%s\'.' % q['name']))
+            messages.warning(obj.request, _('There was an error saving the quantifier \'%s\'.' % q['name']))
             continue
 
     # Remove remaining quantifiers
 
-    ids_to_keeep = new.keys() + update.keys()
-    Quantifier.objects.filter(problem=obj.object).exclude(id__in=ids_to_keeep)
+    ids_to_keeep = new_ids + [ int(k) for k in update.keys() ]
+    Quantifier.objects.filter(problem=obj.object.id).exclude(pk__in=ids_to_keeep).delete()
 
-    # Mailing options
-
-    if form.cleaned_data['notice'] or form.cleaned_data['invite']:
-        pass
-        # TODO
-        #site_name = get_option('site_name') if get_option('site_name') else settings.DNSTORM['site_name']
-
-    # Notice mailing
-
-    if form.cleaned_data['notice']:
-        recipients = [u.email for u in obj.object.get_message_recipients()]
-        subject = _('%(site_name)s: Problem updated' % { 'site_name': site_name})
-        context = {
-            'site_name': site_name,
-            'problem_url': reverse('problem', kwargs={'slug': obj.object.slug}),
-            'problem_revision_url': reverse('problem_revision', kwargs={'pk': obj.object.id})
-        }
-        content = render_to_string('mail/notice.txt', context)
-        if settings.DEBUG:
-            print '[%s] "MAIL would be sent to %s"' % (time.strftime('%d/%b/%Y %H:%M:%S'), ', '.join(recipients))
-        else:
-            send_mail(subject, content, settings.EMAIL_HOST_USER, recipients)
-
-    # Invite mailing
-
-    if form.cleaned_data['invite']:
-
-        # Save invites to give permissions for these users when they login
-
-        recipients = form.cleaned_data['invite']
-        for r in recipients.split(','):
-            Invite(problem=obj.object, email=r).save()
-
-        # Send the e-mails
-
-        subject = _('%(site_name)s: Invitation' % { 'site_name': site_name})
-        context = {
-            'user': obj.request.user.get_full_name(),
-            'site_name': site_name,
-            'problem_url': reverse('problem', kwargs={'slug': obj.object.slug})
-        }
-        content = render_to_string('mail/invite.txt', context)
-        if settings.DEBUG:
-            print '[%s] "MAIL would be sent to %s"' % (time.strftime('%d/%b/%Y %H:%M:%S'), recipients)
-        else:
-            send_mail(subject, content, settings.EMAIL_HOST_USER, recipients)
+    # Success
 
     messages.success(obj.request, _('Problem saved'))
     return HttpResponseRedirect(reverse('problem', kwargs={'slug':obj.object.slug}))
@@ -296,7 +259,7 @@ class ProblemRevisionView(DetailView):
                 'id': versions[i].id,
                 'detail': detail,
                 'author': versions[i].object_version.object.author,
-                'modified': versions[i].object_version.object.modified,
+                'updated': versions[i].object_version.object.updated,
                 'criteria': criteria
             })
 
@@ -308,7 +271,7 @@ class ProblemRevisionView(DetailView):
             'id': first.id,
             'detail': detail,
             'author': first.object_version.object.author,
-            'modified': first.object_version.object.modified,
+            'updated': first.object_version.object.updated,
             'criteria': first.object_version.object.criteria.all()
         })
         context['revisions'] = revisions
@@ -364,45 +327,57 @@ class ProblemView(FormView):
 
     def get_context_data(self, *args, **kwargs):
         context = super(ProblemView, self).get_context_data(**kwargs)
+        user = get_user(self.request)
         context['breadcrumbs'] = self.get_breadcrumbs()
         context['activities'] = ActivityManager().get_objects(limit=4)
         context['title'] = self.problem.title
         context['problem'] = self.problem
-        context['problem_perm_edit'] = permissions.problem(obj=self.problem, user=self.request.user, mode='edit')
-        context['problem_perm_contribute'] = permissions.problem(obj=self.problem, user=self.request.user, mode='contribute')
+        context['problem_perm_manage'] = permissions.problem(obj=self.problem, user=user, mode='manage')
+        context['problem_perm_contribute'] = permissions.problem(obj=self.problem, user=user, mode='contribute')
         context['problem_short_url'] = self.request.build_absolute_uri(reverse('problem_short', kwargs={'pk': self.problem.id}))
         context['comments'] = Comment.objects.filter(problem=self.problem)
-        context['bulletin'] = Message.objects.filter(problem=self.problem).order_by('-modified')[:4]
+        context['bulletin'] = Message.objects.filter(problem=self.problem).order_by('-created')[:4]
         context['problem_comment_form'] = CommentForm(initial={'problem': self.problem.id})
+        context['criterias'] = Criteria.objects.filter(problem=self.problem).order_by('order')
+        context['alternatives'] = Alternative.objects.filter(problem=self.problem).order_by('order')
+        context['alternative_form'] = AlternativeForm(initial={'problem': self.problem.id})
+        context['all_ideas'] = Idea.objects.filter(problem=self.problem)
 
         # Ideas
 
-        ideas_qs = Q(problem=self.problem)
-        if not self.request.user.is_authenticated():
-            ideas_qs = False
-        elif self.problem.blind:
-            ideas_qs &= Q(author=self.request.user)
+        ideas_qs = Q(problem=self.problem) & permissions.idea_queryset(user=user)
+        if self.problem.blind:
+            ideas_qs &= Q(author=user.id)
         if ideas_qs:
             context['ideas'] = Idea.objects.filter(ideas_qs)
         else:
             context['ideas'] = Idea.objects.none()
         context['idea_actions'] = True
-        if not self.request.user.is_authenticated():
-            return context
+
+        # Voting and comments
+
         if self.problem.max > 0:
             context['user_ideas_left'] = self.problem.max - Idea.objects.filter(problem=self.problem, author=self.request.user).count()
-        else:
+        elif self.request.user.is_authenticated():
             context['user_ideas_left'] = 1
+
+        for alternative in context['alternatives']:
+            alternative.vote_count = Vote.objects.filter(alternative=alternative).count()
+            alternative.user_vote = Vote.objects.filter(alternative=alternative, author=user.id).count()
+
         for idea in context['ideas']:
-            user_vote = Vote.objects.filter(idea=idea, author=self.request.user)
+            user_vote = Vote.objects.filter(idea=idea, author=user.id)
             idea.user_vote = user_vote[0] if len(user_vote) else False
             idea.perms_edit = permissions.idea(obj=idea, user=self.request.user, mode='edit')
-            idea.comments = Comment.objects.filter(idea=idea).order_by('modified')
+            idea.comments = Comment.objects.filter(idea=idea).order_by('created')
             idea.comment_form = CommentForm(initial={'idea': idea.id})
             if self.problem.vote_author:
                 idea.votes = Vote.objects.filter(idea=idea).order_by('date')
             for comment in idea.comments:
                 comment.perms_edit = permissions.comment(obj=comment, user=self.request.user, mode='edit')
+
+        for comment in context['comments']:
+            comment.perms_edit = permissions.comment(obj=comment, user=self.request.user, mode='edit')
 
         return context
 

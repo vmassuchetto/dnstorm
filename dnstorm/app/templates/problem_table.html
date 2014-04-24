@@ -1,0 +1,121 @@
+{% load crispy_forms_tags i18n %}
+
+<div class="row collapse" id="problem-table-row">
+<div class="columns large-12">
+<div class="problem-table-wrap">
+<hr/>
+<table class="problem-table" data-problem="{{ problem.id }}">
+    <thead>
+        <tr>
+
+        <th></th>
+        <th class="voting-title">{% trans "Votes" %}</th>
+
+        {% if criterias %}
+            {% for criteria in criterias %}
+
+                {# Criteria column #}
+
+                <th class="criteria text-center" data-criteria="{{ criteria.id }}">
+                    <div class="title-inner title-admin">
+                        {% include "criteria_button.html" %}
+                    </div>
+                    </div>
+                </th>
+
+            {% endfor %}
+        {% endif %}
+
+        {# Quantifiers #}
+
+        {% if problem.quantifier_set.all %}
+            <th><div class="title-inner title-admin text-center">{% trans "Idea quantifiers" %}</div></th>
+        {% endif %}
+
+        </tr>
+    </thead>
+    <tbody>
+        {% for alternative in alternatives %}
+            <tr class="alternative" id="alternative-{{ alternative.id }}" data-alternative="{{ alternative.id }}">
+
+                {# Alternative title #}
+
+                <td class="vertical-title">
+                    <div class="title-inner title-admin{% if problem_perm_manage %}-with-button{% endif %}" title="{{ alternative.description }}" data-tooltip>{% if problem_perm_manage %}<a class="foundicon-remove remove-alternative button alert radius tiny" data-alternative="{{ alternative.id }}"></a>{% endif %}{{ alternative.name }}</div>
+                </td>
+
+                {# Voting #}
+
+                <td class="voting{% if alternative.user_vote == 1 %} voted{% endif %}">
+                    <a href="{% if not user.is_authenticated %}{{ login_url }}{% else %}javascript:void(0){% endif %}" class="vote" data-alternative="{{ alternative.id }}"{% if not problem_perm_contribute %} disabled="disabled"{% endif %}><i class="foundicon-idea"></i></a>
+                    <span class="vote-count">{{ alternative.vote_count }}</span>
+                </td>
+
+                {# Items #}
+
+                {% if criterias %}
+
+                    {% for item in alternative.get_items %}
+                        <td>
+                        <div class="cell-wrap">
+                        {% if item.objects %}
+                            {% for object in item.objects %}
+                                {% for idea in object.idea.all %}
+                                    <span class="label secondary radius" data-idea="{{ idea.id }}">{{ idea.title }}</span>
+                                {% endfor %}
+                            {% endfor %}
+                        {% endif %}
+                        {% if problem_perm_manage %}
+                            <a class="button expand radius secondary select-idea{% if item.objects %} hide{% endif %}" data-problem="{{ problem.id }}" data-criteria="{{ item.criteria.id }}" data-alternative="{{ alternative.id }}">{% trans "Select ideas" %}</a>
+                        {% endif %}
+                        </div>
+                        </td>
+                    {% endfor %}
+
+                {% else %}
+
+                    {% for item in alternative.get_items %}
+                        {% for object in item.objects %}
+                            {% for idea in object.idea.all %}
+                                <td>
+                                <div class="cell-wrap">
+                                <p>{{ idea.title }}</p>
+                                <a class="button expand radius secondary select-idea hide" data-problem="{{ problem.id }}" data-criteria="0" data-alternative="{{ alternative.id }}">{% trans "Select ideas" %}</a>
+                                </div>
+                                </td>
+                            {% endfor %}
+                        {% endfor %}
+                    {% endfor %}
+
+                {% endif %}
+
+                {# Quantifiers #}
+
+                {% if problem.quantifier_set.all %}
+                    <td>
+                        {% for q in alternative.get_quantifiers.values %}
+                            <span class="label radius">{{ q.name }}&nbsp;|&nbsp;{{ q.value }}</span>
+                        {% endfor %}
+                    </td>
+                {% endif %}
+
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<br/>
+</div>
+{% if problem_perm_manage %}
+    <a class="button secondary small radius add-alternative">{% trans "Add alternative" %}</a>
+    {% if not criterias %}
+        &nbsp;<a class="button secondary small radius add-column">{% trans "Add column" %}</a>
+    {% endif %}
+    <ul>
+        <li>{% trans "Click on the table cells to select ideas." %}</li>
+        {% url "problem_edit" problem.slug as problem_url %}
+        {% if criterias %}<li>{% blocktrans with url=problem_url %}<a href="{{ url }}">Edit the problem</a> to create new criterias{% endblocktrans %}</li>{% endif %}
+    </ul>
+{% endif %}
+</div>
+<hr/>
+</div>

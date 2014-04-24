@@ -34,7 +34,7 @@
                         {% if criteria.parent %}
                             <p class="left no-margin-bottom">{% include "criteria_button.html" with criteria=criteria.parent %}</p>
                         {% endif %}
-                        <h6 class="subheader right">{{ problem.modified|naturaltime }}</h6>
+                        <h6 class="subheader right">{{ problem.created|naturaltime }}</h6>
                         <span class="label secondary radius right"><a href="{% url "criteria_edit" criteria.slug %}">{% trans "Edit" %}</a></span>
                     </div>
                 </div>

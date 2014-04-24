@@ -1,39 +1,9 @@
 import os
-import dj_database_url
 
 from django.conf import global_settings
 
-DEBUG = os.environ.get('DEBUG', False)
-DATABASE_DEBUG = os.environ.get('DATABASE_DEBUG', False)
-STATICFILES_DEBUG = os.environ.get('STATICFILES_DEBUG', False)
-DEBUG_TOOLBAR = os.environ.get('DEBUG_TOOLBAR', False)
-TEMPLATE_DEBUG = DEBUG
-
-# Databases
-
-if DATABASE_DEBUG:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': 'dnstorm.sqlite3',
-            'ATOMIC_REQUESTS': True
-        }
-    }
-else:
-    DATABASES = { 'default': dj_database_url.config() }
-
-# Other Django settings
-
-ADMINS = (
-    ('Vinicius Massuchetto', 'vmassuchetto@gmail.com'),
-)
-
-MANAGERS = ADMINS
-
 ALLOWED_HOSTS = ['*']
 
-TIME_ZONE = 'America/Chicago'
-LANGUAGE_CODE = 'pt-br'
 LANGUAGES = (
     ('en', 'English'),
     ('pt-br', 'Brazilian Portuguese'),
@@ -44,13 +14,11 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 
-SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
+SITE_ROOT = os.path.dirname(os.path.realpath(__file__)) + '/../'
 MEDIA_ROOT = SITE_ROOT + '/media/'
 MEDIA_URL = ''
 STATIC_ROOT = 'static'
 STATIC_URL = '/static/'
-
-SECRET_KEY = '+=hz$82m0-sh@+=i64h-+i%8_3+m=w2(^hf2bnha+v&6)^-qd^'
 
 MIDDLEWARE_CLASSES = global_settings.MIDDLEWARE_CLASSES + (
     'reversion.middleware.RevisionMiddleware',
@@ -79,8 +47,9 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.humanize',
 
-    # Required non-Django apps
+    # Required apps for DNStorm
     'avatar',
+    'ajax_select',
     'ckeditor',
     'crispy_forms',
     'crispy_forms_foundation',
@@ -94,8 +63,9 @@ INSTALLED_APPS = (
 
 )
 
-if DEBUG_TOOLBAR:
-    INSTALLED_APPS = INSTALLED_APPS + ('debug_toolbar',)
+AJAX_LOOKUP_CHANNELS = {
+    'user': ('dnstorm.app.lookups', 'UserLookup')
+}
 
 # Logging
 
@@ -136,15 +106,6 @@ DNSTORM = {
     'site_description': 'An idea-generation platform',
     'site_language': 'en_EN',
 }
-
-# SMTP
-
-'''
-EMAIL_HOST = False
-EMAIL_PORT = False
-EMAIL_HOST_USER = 'dnstorm@localhost'
-EMAIL_HOST_PASSWORD = False
-'''
 
 # Registration
 

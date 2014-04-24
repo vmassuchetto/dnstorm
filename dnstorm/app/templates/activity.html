@@ -6,20 +6,25 @@
 {% block content %}
 
     <div class="row">
-
     <div class="large-12 columns">
 
         <h3>{% trans "Activity" %}</h3>
 
-        {% for activity in activities %}
-            <hr/>
-            {% include "activity_item.html" with item=activity %}
-        {% endfor %}
+        {% if activities %}
 
-        {% include "pagination.html" with items=pagination %}
+            {% for activity in activities %}
+                <hr/>
+                {% include "activity_item.html" with item=activity %}
+            {% endfor %}
+            {% include "pagination.html" with items=pagination %}
+
+        {% else %}
+
+            <div class="panel radius">{% blocktrans %}No activity available.{% endblocktrans %}</div>
+
+        {% endif %}
 
     </div>
-
     </div>
 
 {% endblock %}

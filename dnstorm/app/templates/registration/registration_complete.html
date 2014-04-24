@@ -3,11 +3,13 @@
 
 {% block content %}
     <div class="row">
-    <div class="large-4 large-offset-4 columns content">
+    <div class="large-12 columns content">
     <div class="row">
         <div class="columns large-12">
             <h4>{% trans "Confirmation e-mail" %}</h4>
-            <p>{% trans "A confirmation e-mail was sent to you. Please check your inbox." %}</p>
+            <div class="panel radius">
+                <p>{% trans "A confirmation e-mail was sent to you. Please check your inbox for the verification code." %}</p>
+            </div>
         </div>
     </div>
     </div>

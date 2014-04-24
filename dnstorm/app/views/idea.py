@@ -1,5 +1,6 @@
 import re
 import json
+from datetime import datetime
 
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, Http404
@@ -46,7 +47,7 @@ def idea_form_valid(obj, form):
             qv.value = form.cleaned_data[f]
             qv.save()
 
-    # date quantifiers
+    # Date quantifiers
 
     date_re = re.compile('quantifier_(?P<id>[0-9]+)_daterange_([0-9]+)')
     date_ids = list(set([date_re.match(f).group('id') for f in form.fields if date_re.match(f)]))
@@ -63,6 +64,11 @@ def idea_form_valid(obj, form):
         qv = QuantifierValue.objects.get_or_create(quantifier=q, idea=object)[0]
         qv.value = json.dumps(data)
         qv.save()
+
+    # Problem activity update
+
+    object.problem.last_activity = datetime.now()
+    object.problem.save()
 
     messages.success(obj.request, _('Idea saved.'))
     return HttpResponseRedirect(object.get_absolute_url())
@@ -119,6 +125,7 @@ class IdeaRevisionView(DetailView):
         for i in range(0, len(versions) - 1):
             new = versions[i].object_version.object
             old = versions[i+1].object_version.object
+            detail = ''
 
             if new.title != old.title or new.content != old.content:
                 diff = dmp.diff_main('<h3>' + old.title + '</h3>' + old.content, '<h3>' + new.title + '</h3>' + new.content)
@@ -129,7 +136,7 @@ class IdeaRevisionView(DetailView):
                 'id': versions[i].id,
                 'detail': detail,
                 'author': versions[i].object_version.object.author,
-                'modified': versions[i].object_version.object.modified,
+                'updated': versions[i].object_version.object.updated,
             })
 
         first = versions[len(versions)-1]
@@ -138,7 +145,7 @@ class IdeaRevisionView(DetailView):
             'id': first.id,
             'detail': detail,
             'author': first.object_version.object.author,
-            'modified': first.object_version.object.modified,
+            'updated': first.object_version.object.updated,
         })
 
         return context
