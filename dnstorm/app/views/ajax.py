@@ -281,7 +281,7 @@ class AjaxView(View):
                 'id': i.id,
                 'title': i.title,
                 'problem': i.problem.id,
-                'criteria': c.id,
+                'criteria': c.id if c else None,
                 'alternative': a.id
             })
 
