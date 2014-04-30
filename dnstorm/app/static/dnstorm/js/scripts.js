@@ -567,6 +567,9 @@ function adjust_table_overflow() {
     if (table.width() > $('.problem-table-wrap').width()) {
         $('.problem-table-wrap').jScrollPane();
     }
+    h = table.height() + 30;
+    $('.problem-table-wrap').height(h);
+    $('.problem-table-wrap').data('jsp').reinitialise();
 }
 
 $(document).on('mouseenter', '.problem-table .cell-wrap', function(){
@@ -624,6 +627,7 @@ $(document).on('click', '.remove-alternative-confirm', function(){
         complete: function(xhr, data) {
             alternative_remove_modal.foundation('reveal', 'close');
             $('#alternative-' + alternative_remove_modal.data('alternative')).highlight('red').delay(1000).fadeOut(500).delay(500).remove();
+            adjust_table_overflow();
         }
     });
 });
