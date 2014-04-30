@@ -260,6 +260,8 @@ class AjaxView(View):
         if not self.has_regex_key('idea\[[0-9]+\]', dict(self.request.POST.iterlists())):
             return HttpResponse(json.dumps([]), content_type="application/json")
 
+        # Save ideas to the alternative item
+
         ideas = list()
         r = re.compile('idea\[[0-9]+\]')
         for key in self.request.POST:
@@ -275,6 +277,8 @@ class AjaxView(View):
 
         output = dict()
 
+        # Update the alternative item with the selected ideas
+
         output['ideas'] = list()
         for i in ideas:
             output['ideas'].append({
@@ -284,6 +288,8 @@ class AjaxView(View):
                 'criteria': c.id if c else None,
                 'alternative': a.id
             })
+
+        # Update the quatifiers at the end of the row
 
         output['quantifiers'] = list()
         for q in a.get_quantifiers().values():

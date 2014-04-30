@@ -637,9 +637,6 @@ $(document).on('click', '.remove-alternative-confirm', function(){
 $(document).on('submit', '#alternative-add-modal form', function(e){
     e.preventDefault();
     var form = $(this);
-
-    // New alternative
-
     if ('new' == form.find('input[name="object"]').val()
         && 'alternative' == form.find('input[name="mode"]').val()) {
         $.ajax({
@@ -653,6 +650,9 @@ $(document).on('submit', '#alternative-add-modal form', function(e){
                     return;
                 if (isNaN(alternative.id))
                     return;
+
+                // Alternative row
+
                 new_alternative = '<tr class="alternative" id="alternative-' + alternative.id + '" data-alternative="' + alternative.id + '">'
                     + '<td class="vertical-title">'
                         + '<div class="title-inner title-admin-with-button" title="' + alternative.description + ' data-tooltip">'
@@ -668,7 +668,14 @@ $(document).on('submit', '#alternative-add-modal form', function(e){
                     datas = 'data-problem="' + alternative.problem + '" data-alternative="' + alternative.id + '" data-criteria="' + $(this).data('criteria') + '"';
                     new_alternative += '<td><div class="cell-wrap"><a class="button expand radius secondary select-idea" ' + datas + '>' + gettext('Select idea') + '</a></div></td>';
                 });
+
+                // Extra column for criterias if they are being used
+
+                if (table.hasClass('with-criterias'))
+                    new_alternative += '<td></td>';
+
                 new_alternative += '</tr>';
+
                 table.find('tbody').append(new_alternative);
                 adjust_table_overflow();
                 alternative_add_modal.foundation('reveal', 'close');
@@ -725,6 +732,8 @@ $(document).on('click', '.problem-idea-modal', function(){
 
 $(document).on('click', '.problem-idea-modal-save', function(){
     var m = $('#select-idea-modal');
+    var item = m.data('item');
+    var quant = m.data('item').parents('tr').find('td:last-child');
     $.ajax({
         url: '/ajax/',
         type: 'POST',
@@ -735,7 +744,7 @@ $(document).on('click', '.problem-idea-modal-save', function(){
             'idea': m.data('idea')
         },
         complete: function(xhr, data) {
-            m.data('item').html('');
+            item.html('');
             if (xhr.responseText)
                 items = $.parseJSON(xhr.responseText);
             else
@@ -744,13 +753,26 @@ $(document).on('click', '.problem-idea-modal-save', function(){
                 m.foundation('reveal', 'close');
                 return;
             }
+
+            // Alternatives
+
             for (i in items.ideas) {
-                m.data('item').append('<span class="label secondary radius" data-idea="' + items.ideas[i].id + '">' + items.ideas[i].title + '</span>');
+                item.append('<span class="label secondary radius" data-idea="' + items.ideas[i].id + '">' + items.ideas[i].title + '</span>');
             }
-            datas = 'data-problem="' + items.ideas[i].problem + '" data-criteria="' + items.ideas[i].criteria + '" data-alternative="' + items.ideas[i].alternative + '"';
-            m.data('item').append('<a class="button secondary radius expand select-idea hidden" '+ datas + '>' + gettext('Select idea') + '</a>');
+            datas = 'data-problem="' + items.ideas[i].problem + '" '
+                + 'data-criteria="' + items.ideas[i].criteria + '" '
+                + 'data-alternative="' + items.ideas[i].alternative + '"';
+            item.append('<a class="button secondary radius expand select-idea hidden" '+ datas + '>' + gettext('Select idea') + '</a>');
+
+            // Quantifiers
+
+            quant.html('');
+            for (q in items.quantifiers) {
+                quant.append('<span class="label radius">' + items.quantifiers[q].name + '&nbsp;|&nbsp;' + items.quantifiers[q].value + '</span>');
+            }
+
             m.foundation('reveal', 'close');
-            m.data('item').highlight();
+            item.highlight();
             adjust_table_overflow();
         }
     });

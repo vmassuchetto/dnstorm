@@ -4,7 +4,7 @@
 <div class="columns large-12">
 <hr/>
 <div class="problem-table-wrap">
-<table class="problem-table" data-problem="{{ problem.id }}">
+<table class="problem-table{% if criterias %} with-criterias{% endif %}" data-problem="{{ problem.id }}">
     <thead>
         <tr>
 
