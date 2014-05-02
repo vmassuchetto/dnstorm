@@ -20,3 +20,6 @@ media
 
 # Heroku project
 dnstorm/settings/heroku.py
+
+# Documentation
+docs/_*
