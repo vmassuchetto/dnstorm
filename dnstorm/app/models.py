@@ -19,6 +19,9 @@ from registration.signals import user_activated
 reversion.register(User)
 
 class Option(models.Model):
+    """ Option is an adaptation for a meta-based table, where ``name`` is
+    stored only once, and retrieved via the ``get`` method. """
+
     name = models.TextField(verbose_name=_('Name'), blank=False, unique=True)
     value = models.TextField(verbose_name=_('Value'), blank=False)
 
@@ -58,12 +61,18 @@ class Option(models.Model):
         return value
 
     def get_defaults(self, *args, **kwargs):
+        """ These are some default values that are used in templates and
+        somewhere else. They are supposed to be overwritten by values on
+        database. """
+
         return {
             'site_title': 'DNStorm',
             'site_description': _('An idea-generation platform')
         }
 
     def get_all(self):
+        """ Get all the default values. """
+
         options = dict()
         defaults = self.get_defaults()
         for default in defaults:
@@ -71,6 +80,10 @@ class Option(models.Model):
         return options
 
 class Criteria(models.Model):
+    """ When creating a problem, managers should define some criterias as a
+    reference for the ideas submitted by users. These will also be the columns
+    for the strategy table of the problem. """
+
     name = models.CharField(verbose_name=_('Name'), max_length=90)
     parent = models.ForeignKey('self', verbose_name=_('Parent'), blank=True, null=True)
     slug = models.CharField(max_length=90, unique=True)
@@ -101,6 +114,10 @@ class Criteria(models.Model):
 reversion.register(Criteria)
 
 class Problem(models.Model):
+    """ Problems are the central entity of the platform, as everything goes
+    around them. This is no more than the suubject of discussion for generating
+    ideas and a strategy table. """
+
     title = models.CharField(verbose_name=_('Title'), max_length=90)
     slug = models.SlugField(max_length=90, unique=True, editable=False)
     description = RichTextField(verbose_name=_('Description'), blank=True)
@@ -174,6 +191,10 @@ QUANTIFIER_CHOICES = (
     ('daterange', _('Date range')))
 
 class Quantifier(models.Model):
+    """ Quantifiers is a pre-defined resource for ideas. By giving ideas, the
+    users may quantify them if the manager asks for it. These quantifiers will
+    also be calculated in the streategy table. """
+
     problem = models.ForeignKey(Problem, choices=QUANTIFIER_CHOICES, editable=False, blank=True, null=True)
     name = models.CharField(verbose_name=_('Name'), max_length=90)
     format = models.CharField(verbose_name=_('Type'), max_length=10)
@@ -189,6 +210,10 @@ class Quantifier(models.Model):
         return _('quantifier')
 
 class Invite(models.Model):
+    """ Invites are used to join existing or new users to problems. If an
+    invitation is sent to a non-registered user, the user will have access
+    granted to this problem when it subscribes. """
+
     problem = models.ForeignKey(Problem)
     email = models.TextField()
 
@@ -202,6 +227,10 @@ class Invite(models.Model):
         return _('invite')
 
 class Idea(models.Model):
+    """ Ideas are the second main entity in the platform, as the
+    problem-solving process required idea generation and participation of
+    users. These will after compose the strategy table. """
+
     title = models.CharField(verbose_name=_('title'), max_length=90)
     content = RichTextField(config_name='idea_content')
     problem = models.ForeignKey(Problem, editable=False)
@@ -232,6 +261,8 @@ class Idea(models.Model):
 reversion.register(Idea)
 
 class QuantifierValue(models.Model):
+    """ Values for quantifiers in a meta-key schema. """
+
     quantifier = models.ForeignKey(Quantifier)
     idea = models.ForeignKey(Idea)
     value = models.TextField(verbose_name=_('value'))
@@ -246,6 +277,8 @@ class QuantifierValue(models.Model):
         return _('quantifier value')
 
 class Comment(models.Model):
+    """ Comments that can be made for ideas or problems. """
+
     problem = models.ForeignKey(Problem, editable=False, blank=True, null=True)
     idea = models.ForeignKey(Idea, editable=False, blank=True, null=True)
     content = models.TextField(verbose_name=_('Comment'))
@@ -266,6 +299,8 @@ class Comment(models.Model):
 reversion.register(Comment)
 
 class Message(models.Model):
+    """ Messages for users that managers can send to them. """
+
     problem = models.ForeignKey(Problem)
     sender = models.ForeignKey(User)
     subject = models.TextField(verbose_name=_('Subject'))
@@ -287,6 +322,10 @@ class Message(models.Model):
 reversion.register(Message)
 
 class Alternative(models.Model):
+    """ Alternatives are the strategy table rows where ideas can be allocated.
+    If there's no criteria in the problem, these will be just rows with no
+    specific columns. """
+
     problem = models.ForeignKey(Problem)
     name = models.TextField(verbose_name=_('Name'))
     description = models.TextField(verbose_name=_('Description'))
@@ -345,6 +384,9 @@ class Alternative(models.Model):
         return quantifiers
 
 class AlternativeItem(models.Model):
+    """ Ideas mapping in the strategy table allocated by some criteria and some
+    alternative. """
+
     criteria = models.ForeignKey(Criteria, blank=True, null=True)
     alternative = models.ForeignKey(Alternative)
     idea = models.ManyToManyField(Idea)
@@ -365,6 +407,8 @@ class AlternativeItem(models.Model):
         super(AlternativeItem, self).save(*args, **kwargs)
 
 class Vote(models.Model):
+    """ A vote for idea or for an alternative. """
+
     idea = models.ForeignKey(Idea, blank=True, null=True)
     alternative = models.ForeignKey(Alternative, blank=True, null=True)
     author = models.ForeignKey(User)
@@ -383,6 +427,10 @@ class Vote(models.Model):
         return _('vote')
 
 class Activity(models.Model):
+    """ Abstract model to be filled by the ``ActivityManager`` class, where all
+    that's being happening in the platform according to the viewer's
+    permissions are fetched and listed. """
+
     problem = models.ForeignKey(Problem, blank=True, null=True)
     idea = models.ForeignKey(Idea, blank=True, null=True)
     comment = models.ForeignKey(Comment, blank=True, null=True)
@@ -395,6 +443,7 @@ class Activity(models.Model):
         managed = False
 
 class ActivityManager(models.Manager):
+    """ Manager for retrieving activities from the database. """
 
     def type(self):
         return _('activity')
