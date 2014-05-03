@@ -1,7 +1,7 @@
 from django.conf.urls import patterns, include, url
 
 from dnstorm import settings
-from dnstorm.app.views import base, ajax, problem, criteria, message, idea, table, user
+from dnstorm.app.views import base, ajax, problem, criteria, message, idea, user
 
 from ajax_select import urls as ajax_select_urls
 from haystack.views import search_view_factory
