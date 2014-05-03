@@ -449,7 +449,7 @@ class ActivityManager(models.Manager):
         return _('activity')
 
     def get_objects(self, *args, **kwargs):
-        """ Fetchs activities related to problems, ideas and comments that can
+        """ Fetches activities related to problems, ideas and comments that can
         be publicy visible or can be accessed by the current user. That's a RAW
         SQL query that needs to work on all default engines. """
 
@@ -501,6 +501,8 @@ class ActivityManager(models.Manager):
         return activities
 
     def get_params(self, *args, **kwargs):
+        """ Supply the parameters for the activity query according to the DB
+        engine. """
 
         db_engine = ''
         engine = settings.DATABASES['default']['ENGINE']
@@ -561,6 +563,8 @@ class ActivityManager(models.Manager):
         return first[0] if len(first) > 0 else 0
 
     def get_query_string(self, *args, **kwargs):
+        """ Get the ``UNION`` SQL statement parts for the activity query. """
+
         return {
             'select': """
                     SELECT
