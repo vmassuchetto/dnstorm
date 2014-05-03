@@ -1,3 +1,24 @@
+About
+-----
+
+DNStorm is a Django project created as a MSc. project in Nuclear Technology by
+Vinicius Massuchetto and Willy Hoppe de Sousa in decision-making theory.
+
+The collaborative platform allows managers to state problems and ask help of
+users that can contribute with quantified ideas to build a [strategy
+table](http://www.structureddecisionmaking.org/tools/toolsstrategytables/).
+
+Complete documentation can be found at [Read the
+Docs](http://dnstorm.readthedocs.org/en/latest/).
+
+A [live demo](http://dnstorm.herokuapp.com/) and experimental environment can
+be found on Heroku.
+
+Status
+------
+
+The development status is in its alpha stages.
+
 Start a development instance
 ----------------------------
 
