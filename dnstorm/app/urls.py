@@ -59,11 +59,8 @@ urlpatterns = patterns('',
     (r'^jsi18n/$', 'django.views.i18n.javascript_catalog', js_info_dict, 'jsi18n'),
     (r'^ckeditor/', include('ckeditor.urls')),
 
+    # Static files
+
+    (r'^static/(?P<path>.*)$', 'django.views.static.serve', { 'document_root': settings.STATIC_ROOT }),
+
 )
-
-# Static files
-
-if not settings.PRODUCTION:
-    urlpatterns += patterns('',
-        (r'^static/(?P<path>.*)$', 'django.views.static.serve', { 'document_root': settings.STATIC_ROOT }),
-    )
