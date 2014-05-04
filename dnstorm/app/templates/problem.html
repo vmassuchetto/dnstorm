@@ -73,7 +73,7 @@
 
         <div class="row">
             <div class="columns large-7">
-                {% if problem_perm_contribute %}<a class="problem-action show-on-click" data-show-on-click="problem-comment-form" href="javascript:void(0);">{% trans "Comment" context "verb" %}</a>{% endif %}
+                {% if problem_perm_contribute %}<a class="problem-action problem-comment" href="javascript:void(0);">{% trans "Comment" context "verb" %}</a>{% endif %}
                 {% if problem_perm_manage %}<a class="problem-action" href="{% url "problem_edit" problem.slug %}">{% trans "Edit" %}</a>{% endif %}
             </div>
 
@@ -83,7 +83,7 @@
         </div>
 
         {% if problem_perm_contribute %}
-            <div class="comment-form hide" id="problem-comment-form" data-problem="{{ problem.id }}">
+            <div class="comment-form hide problem-comment-form" data-problem="{{ problem.id }}">
                 {% crispy problem_comment_form %}
             </div>
         {% endif %}

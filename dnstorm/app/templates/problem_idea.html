@@ -62,7 +62,7 @@
                         <div class="columns large-12 right idea-actions">
                             {% if idea_actions %}
 
-                                {% if problem_perm_contribute %}<a class="problem-action{% if user.is_authenticated %} show-on-click{% endif %}" {% if user.is_authenticated %}data-show-on-click="idea-comment-form-{{ idea.id }}" href="javascript:void(0);"{% else %}href="{{ login_url }}"{% endif %}>{% trans "Comment" context "verb" %}</a>{% endif %}
+                                {% if problem_perm_contribute %}<a class="problem-action{% if user.is_authenticated %} idea-comment{% endif %}" href="{% if user.is_authenticated %}javascript:void(0);{% else %}{{ login_url }}{% endif %}" data-idea="{{ idea.id }}">{% trans "Comment" context "verb" %}</a>{% endif %}
 
                                 {% if idea.author == user %}<a class="problem-action problem-idea-edit" href="{% url "idea_edit" problem.slug idea.id %}">{% trans "Edit" %}</a>{% endif %}
 
@@ -81,7 +81,7 @@
             </div>
 
             {% if user.is_authenticated and idea.comment_form %}
-                <div class="comment-form hide" id="idea-comment-form-{{ idea.id }}" data-idea="{{ idea.id }}">
+                <div class="comment-form idea-comment-form hide" id="idea-{{ idea.id }}-comment-form" data-idea="{{ idea.id }}">
                     {% crispy idea.comment_form %}
                 </div>
             {% endif %}

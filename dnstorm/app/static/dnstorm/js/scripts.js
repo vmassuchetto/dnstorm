@@ -302,8 +302,12 @@ $('.revisions').ready(function(){
 
 // Show on click
 
-$(document).on('click', '.show-on-click', function(){
-    $('#' + $(this).data('show-on-click')).fadeIn(300);
+$(document).on('click', '.problem-comment', function(){
+    $('.problem-comment-form').fadeIn();
+});
+
+$(document).on('click', '.idea-comment', function(){
+    $('div#idea-' + parseInt($(this).data('idea')) + '-comment-form.comment-form').fadeIn();
 });
 
 $('.show-problem-table').click(function(){
@@ -328,7 +332,6 @@ $('.select-on-click').click(function(){
 });
 
 // Show idea form
-// Not using 'show-on-click' because of the resizing problem
 
 $('.problem-idea-form-button').click(function(){
     $('.problem-idea-button').fadeOut(300);
