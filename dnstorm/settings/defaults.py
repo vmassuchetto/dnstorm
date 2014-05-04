@@ -63,6 +63,7 @@ INSTALLED_APPS = (
 
 )
 
+AJAX_SELECT_BOOTSTRAP = False
 AJAX_LOOKUP_CHANNELS = {
     'user': ('dnstorm.app.lookups', 'UserLookup')
 }
