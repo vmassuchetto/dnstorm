@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: DNStorm\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-05-04 23:12-0300\n"
-"PO-Revision-Date: 2014-05-04 23:13-0300\n"
+"PO-Revision-Date: 2014-05-05 00:13-0300\n"
 "Last-Translator: Vinicius Massuchetto <vmassuchetto@gmail.com>\n"
 "Language-Team: \n"
 "Language: pt_BR\n"
@@ -564,7 +564,7 @@ msgstr "Problemas com o critério \"%(criteria_name)s\""
 
 #: templates/home.html:17
 msgid "Edit this criteria"
-msgstr "Editar este problema"
+msgstr "Editar este critério"
 
 #: templates/home.html:30
 msgid "ideas"
