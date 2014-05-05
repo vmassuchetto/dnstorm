@@ -168,7 +168,6 @@ class ProblemForm(forms.ModelForm):
 
 class CriteriaForm(forms.ModelForm):
     description = forms.CharField(widget=forms.Textarea(attrs={'id': 'criteria_description'}))
-    parent = forms.ModelChoiceField(queryset=Criteria.objects.filter(parent=None))
     mode = forms.CharField()
 
     class Meta:
@@ -181,13 +180,11 @@ class CriteriaForm(forms.ModelForm):
         self.helper.layout = Layout(
             Field('mode', type='hidden'),
             Row(Column('name', css_class='large-12')),
-            Row(Column('parent', css_class='large-12')),
             Row(Column('description', css_class='large-12')),
             Row(Column(Submit('submit', _('Save'), css_class='small radius right'), css_class='large-12')),
         )
         super(CriteriaForm, self).__init__(*args, **kwargs)
         self.fields['mode'].initial = 'problem_criteria_create'
-        self.fields['parent'].required = False
 
 class IdeaForm(forms.ModelForm):
 

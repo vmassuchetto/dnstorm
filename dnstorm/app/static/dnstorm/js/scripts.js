@@ -250,8 +250,6 @@ $('#criteria-modal form').submit(function(e){
                 modal.foundation('reveal', 'close');
                 modal.find('#id_name').val('');
                 modal.find('#criteria_description').val('');
-                // Update 'parent' select field
-                modal.find('#id_parent').append('<option value="' + data.id + '">' + data.name + '</option>');
                 // Insert button
                 button = $('.problem-criteria-result li a[data-id="0"]');
                 button.data('id', data.id);
@@ -508,7 +506,7 @@ $('.problem-idea .voting a').click(function() {
 
 });
 
-// Alterantive voting
+// Alternative voting
 
 $(document).on('click', '.alternative .voting a', function() {
 

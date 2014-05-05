@@ -85,7 +85,6 @@ class Criteria(models.Model):
     for the strategy table of the problem. """
 
     name = models.CharField(verbose_name=_('Name'), max_length=90)
-    parent = models.ForeignKey('self', verbose_name=_('Parent'), blank=True, null=True)
     slug = models.CharField(max_length=90, unique=True)
     description = models.TextField(verbose_name=_('Description'), blank=True)
     order = models.IntegerField(default=0)

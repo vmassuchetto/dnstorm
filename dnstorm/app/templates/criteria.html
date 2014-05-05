@@ -31,9 +31,6 @@
 
                     <div class="columns large-11 medium-11 small-12 criteria-info">
                         <h4><a href="{% url "criteria" criteria.slug %}">{{ criteria.name }}</a></h4>
-                        {% if criteria.parent %}
-                            <p class="left no-margin-bottom">{% include "criteria_button.html" with criteria=criteria.parent %}</p>
-                        {% endif %}
                         <h6 class="subheader right">{{ problem.created|naturaltime }}</h6>
                         <span class="label secondary radius right"><a href="{% url "criteria_edit" criteria.slug %}">{% trans "Edit" %}</a></span>
                     </div>
