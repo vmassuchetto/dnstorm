@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: DNStorm\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-05-04 23:12-0300\n"
-"PO-Revision-Date: 2014-05-05 00:13-0300\n"
+"PO-Revision-Date: 2014-05-05 20:16-0300\n"
 "Last-Translator: Vinicius Massuchetto <vmassuchetto@gmail.com>\n"
 "Language-Team: \n"
 "Language: pt_BR\n"
@@ -541,7 +541,7 @@ msgstr "em"
 
 #: templates/criteria.html:11
 msgid "Create new criteria"
-msgstr "Criar novo problema"
+msgstr "Criar novo critério"
 
 #: templates/criteria.html:28
 msgid "problems"
@@ -555,7 +555,7 @@ msgstr ""
 
 #: templates/criteria_edit.html:15
 msgid "Create a new criteria"
-msgstr "Criar novo problema"
+msgstr "Criar novo critério"
 
 #: templates/home.html:13
 #, python-format
@@ -990,7 +990,7 @@ msgstr ""
 
 #: templates/registration/registration_form.html:9
 msgid "Create new user"
-msgstr "Criar novo problema"
+msgstr "Criar novo usuário"
 
 #: templates/search/search.html:11
 #, python-format
