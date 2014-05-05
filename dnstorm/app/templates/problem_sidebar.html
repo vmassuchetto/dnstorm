@@ -1,18 +1,16 @@
 {% load i18n %}
 
 {% if message %}
-<p>
     <a class="button small expand radius secondary" href="{% url "problem" problem.slug %}"><i class="foundicon-left-arrow"></i> {% trans 'Back to problem' %}</a>
-</p>
+    <a class="button small secondary expand" href="{% url "messages" problem.slug %}"><i class="foundicon-mail"></i> {% trans "View all messages" %}</a>
+{% else %}
+    <a class="button small expand radius show-problem-table" href="javascript:void(0)"><i class="foundicon-website"></i>{% trans 'Strategy table' %}</a>
 {% endif %}
 
-<p>
-    <a class="button small expand radius show-problem-table" href="javascript:void(0)"><i class="foundicon-website"></i>{% trans 'Strategy table' %}</a>
-    {% if problem_perm_manage %}
-        <a class="button small expand radius show-problem-results" href="javascript:void(0)"><i class="foundicon-graph"></i>{% trans 'Results' %}</a>
-        <a class="button small expand radius" href="{% url "message_new" problem.slug %}"><i class="foundicon-mail"></i> {% trans 'New message' %}</a>
-    {% endif %}
-</p>
+{% if problem_perm_manage %}
+    <a class="button small expand radius show-problem-results" href="javascript:void(0)"><i class="foundicon-graph"></i>{% trans 'Results' %}</a>
+    <a class="button small expand radius" href="{% url "message_new" problem.slug %}"><i class="foundicon-mail"></i> {% trans 'New message' %}</a>
+{% endif %}
 
 <hr/>
 

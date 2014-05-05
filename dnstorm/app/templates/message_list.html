@@ -26,7 +26,7 @@
         {% for b in bulletin %}
             <tr>
                 <td><a href="{% url "user" b.sender.username %}">{{ b.sender }}</a></td>
-                <td><a href="{% url "message" b.id %}">{{ b.subject }}</a></td>
+                <td><a href="{% url "message" b.problem.slug b.id %}">{{ b.subject }}</a></td>
                 <td>{{ b.created }}</td>
             </tr>
         {% endfor %}

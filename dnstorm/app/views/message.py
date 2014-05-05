@@ -13,7 +13,7 @@ from django.core.mail import send_mail
 
 from dnstorm import settings
 
-from dnstorm.app.models import Problem, Message
+from dnstorm.app.models import Problem, Message, Option
 from dnstorm.app.forms import MessageForm
 
 class MessageCreateView(CreateView):
@@ -23,7 +23,7 @@ class MessageCreateView(CreateView):
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
-        self.problem = get_object_or_404(Problem, id=self.kwargs['problem_id'])
+        self.problem = get_object_or_404(Problem, slug=self.kwargs['slug'])
         return super(MessageCreateView, self).dispatch(*args, **kwargs)
 
     def get_context_data(self, *args, **kwargs):
@@ -37,7 +37,6 @@ class MessageCreateView(CreateView):
         return [
             { 'title': _('Problem'), 'url': self.problem.get_absolute_url() },
             { 'title': self.problem.title, 'url': reverse('problem', kwargs={'slug':self.problem.slug}) },
-            { 'title': _('Messages'), 'url': reverse('message_problem', kwargs={'problem_id':self.problem.id}) },
             { 'title': _('Compose new message'), 'classes': 'current' } ]
 
     def form_valid(self, form):
@@ -45,15 +44,10 @@ class MessageCreateView(CreateView):
         self.object.problem = self.problem
         self.object.sender = self.request.user
         self.object.save()
-        # TODO
-        #site_name = get_option('site_name') if get_option('site_name') else settings.DNSTORM['site_name']
-        site_name = ''
+        site_name = Option().get('site_name')
         subject = '[%s] %s' % (site_name, form.cleaned_data['subject'])
         recipients = [r.email for r in self.problem.get_message_recipients()]
-        if settings.DEBUG:
-            print '[%s] "MAIL would be sent to %s"' % (time.strftime('%d/%b/%Y %H:%M:%S'), ', '.join(recipients))
-        else:
-            send_mail(subject, form.cleaned_data['content'], settings.EMAIL_HOST_USER, recipients)
+        send_mail(subject, form.cleaned_data['content'], settings.EMAIL_HOST_USER, recipients)
         return HttpResponseRedirect(reverse('problem', kwargs={'slug':self.problem.slug}))
 
 class MessageView(DetailView):
@@ -73,7 +67,7 @@ class MessageView(DetailView):
         return [
             { 'title': _('Problems'), 'url': self.problem.get_absolute_url() },
             { 'title': self.problem.title, 'url': reverse('problem', kwargs={'slug':self.problem.slug}) },
-            { 'title': _('Messages'), 'url': reverse('message_problem', kwargs={'problem_id':self.problem.id}) },
+            { 'title': _('Messages'), 'url': reverse('messages', kwargs={'slug':self.problem.slug}) },
             { 'title': _('Message #%(id)d' % {'id':self.message.id}), 'classes': 'current' } ]
 
 class MessageProblemListView(ListView):
@@ -81,7 +75,7 @@ class MessageProblemListView(ListView):
     template_name = 'message_list.html'
 
     def dispatch(self, *args, **kwargs):
-        self.problem = get_object_or_404(Problem, id=self.kwargs['problem_id'])
+        self.problem = get_object_or_404(Problem, slug=self.kwargs['slug'])
         return super(MessageProblemListView, self).dispatch(*args, **kwargs)
 
     def get_context_data(self, *args, **kwargs):

@@ -6,11 +6,8 @@
 {% block content %}
 
     <div class="row message-detail-title">
-    <div class="columns content large-9">
+    <div class="columns content large-12">
         <h4>{{ message.subject.title }}</h4>
-    </div>
-    <div class="columns large-3">
-        <a class="button small secondary expand" href="{% url "message_problem" problem.id %}"><i class="foundicon-mail"></i> {% trans "View all messages" %}</a>
     </div>
     </div>
 
