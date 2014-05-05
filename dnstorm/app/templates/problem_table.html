@@ -12,6 +12,7 @@
         <th class="voting-title">{% trans "Votes" %}</th>
 
         {% if criterias %}
+
             {% for criteria in criterias %}
 
                 {# Criteria column #}
@@ -24,6 +25,13 @@
                 </th>
 
             {% endfor %}
+
+        {% else %}
+
+            {% for alternative in alternatives %}
+                <th></th>
+            {% endfor %}
+
         {% endif %}
 
         {# Quantifiers #}
@@ -107,9 +115,6 @@
 </div>
 {% if problem_perm_manage %}
     <a class="button secondary small radius add-alternative">{% trans "Add alternative" %}</a>
-    {% if not criterias %}
-        &nbsp;<a class="button secondary small radius add-column">{% trans "Add column" %}</a>
-    {% endif %}
     <ul>
         <li>{% trans "Click on the table cells to select ideas." %}</li>
         {% url "problem_edit" problem.slug as problem_url %}

@@ -561,18 +561,18 @@ $(document).on('click', '.alternative .voting a', function() {
 var table = $('.problem-table');
 var alternative_add_modal = $('#alternative-add-modal');
 var alternative_remove_modal = $('#alternative-remove-modal');
+var problem_remove_modal = $('#alternative-remove-modal');
 
 // Table overflow adjust in TableView
 
 function adjust_table_overflow() {
     if ($('.problem-table-wrap').lenght <= 0 || !table)
         return;
+    h = table.height() + 30;
+    $('.problem-table-wrap').height(h);
     if (table.width() > $('.problem-table-wrap').width()) {
         $('.problem-table-wrap').jScrollPane();
     }
-    h = table.height() + 30;
-    $('.problem-table-wrap').height(h);
-    $('.problem-table-wrap').data('jsp').reinitialise();
 }
 
 $(document).on('mouseenter', '.problem-table .cell-wrap', function(){
@@ -580,26 +580,6 @@ $(document).on('mouseenter', '.problem-table .cell-wrap', function(){
 });
 $(document).on('mouseleave', '.problem-table .cell-wrap', function(){
     $(this).find('a.button').stop().fadeOut(200);
-});
-
-// New column when there's no criterias in TableView
-
-$(document).on('click', '.add-column', function(){
-    var table = $('.problem-table');
-    var i = $('.problem-table tbody tr:first-child td').length
-    var x = 0;
-    table.find('tbody tr').each(function(){
-        if ($(this).find('td').length > x)
-            x = $(this).find('td').length;
-    });
-    table.find('tbody tr').each(function(){
-        y = x - $(this).find('td').length;
-        for (yy = 0; yy <= y; yy++) {
-            $(this).append('<td><div class="cell-wrap"><a class="button secondary select-idea expand" data-alternative="' + $(this).data('alternative') + '" data-criteria="0">' + gettext('Select idea') + '</a></div></td>');
-        }
-        $(this).find('td:last-child').highlight();
-    });
-    adjust_table_overflow();
 });
 
 // New alternative in TableView

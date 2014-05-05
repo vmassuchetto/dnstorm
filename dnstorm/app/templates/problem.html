@@ -15,7 +15,7 @@
         <div id="alternative-remove-modal" class="reveal-modal tiny" data-reveal>
             <div class="row">
             <div class="columns large-12">
-                <p>{% trans "Remove this item?" %}</p>
+                <p>{% trans "Really remove this alternative?" %}</p>
             </div>
             </div>
             <div class="row">
@@ -23,7 +23,7 @@
                 <a class="close-reveal-modal-button button small secondary radius no-margin-bottom">{% trans "Cancel" %}</a>
             </div>
             <div class="columns large-6 text-right">
-                <a class="remove button alert radius no-margin-bottom remove-alternative-confirm">{% trans "Remove" %}</a>
+                <a class="remove button alert radius no-margin-bottom remove-alternative-confirm">{% trans "Remove!" %}</a>
             </div>
             </div>
         </div>
@@ -74,7 +74,13 @@
         <div class="row">
             <div class="columns large-7">
                 {% if problem_perm_contribute %}<a class="problem-action problem-comment" href="javascript:void(0);">{% trans "Comment" context "verb" %}</a>{% endif %}
-                {% if problem_perm_manage %}<a class="problem-action" href="{% url "problem_edit" problem.slug %}">{% trans "Edit" %}</a>{% endif %}
+                {% if problem_perm_manage %}
+
+                    <a class="problem-action" href="{% url "problem_edit" problem.slug %}">{% trans "Edit" %}</a>
+
+                    <a class="problem-action problem-delete" href="{% url "problem_delete" problem.slug %}">{% trans "Delete" %}</a>
+
+                {% endif %}
             </div>
 
             <div class="columns large-5">

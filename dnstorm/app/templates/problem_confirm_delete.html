@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+    <div class="row">
+        <div class="large-12 columns content">
+            <h4>{% trans "Really delete this problem? This cannot be undone!" %}</h4>
+            <div class="panel"><p>{{ object.title }}</p></div>
+            <form action="" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="after" value="{% url "home" %}" />
+                <input type="submit" class="button alert radius" value="{% trans "Remove" %}" />
+            </form>
+        </div>
+    </div>
+{% endblock %}

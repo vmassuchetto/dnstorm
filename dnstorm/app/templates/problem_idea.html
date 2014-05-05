@@ -68,7 +68,7 @@
 
                                 {% if idea.revision_count > 1 %}<a class="problem-action problem-idea-revision" href="{% url "idea_revision" problem.slug idea.id %}">{% blocktrans count idea.revision_count as i %}{{ i }} revision{% plural %}{{ i }} revisions{% endblocktrans %}</a>{% endif %}
 
-                                {% if idea.perms_edit %}<a class="problem-action problem-idea-delete-toggle" href="javascript:void(0);" data-idea="{{ idea.id }}">{% if not idea.deleted_by %}{% trans "Delete" %}{% else %}{% trans "Undelete" %}{% endif %}</a>{% endif %}
+                                {% if idea.perms_edit %}<a class="problem-action problem-idea-delete-toggle idea-delete" href="javascript:void(0);" data-idea="{{ idea.id }}">{% if not idea.deleted_by %}{% trans "Delete" %}{% else %}{% trans "Undelete" %}{% endif %}</a>{% endif %}
 
                             {% endif %}
                         </div>

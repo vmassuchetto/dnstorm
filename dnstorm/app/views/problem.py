@@ -7,7 +7,7 @@ from django.core.urlresolvers import reverse
 from django.core.exceptions import PermissionDenied
 from django.http import Http404, HttpResponseRedirect
 from django.views.generic import DetailView
-from django.views.generic.edit import FormView, CreateView, UpdateView
+from django.views.generic.edit import FormView, CreateView, UpdateView, DeleteView
 from django.views.generic.base import TemplateView, RedirectView
 from django.contrib.auth import get_user
 from django.contrib.auth.decorators import login_required
@@ -36,11 +36,9 @@ from dnstorm.app.forms import ProblemForm, IdeaForm, \
 from dnstorm.app.views.idea import idea_form_valid
 
 def problem_form_valid(obj, form):
-    """
-    Save the object, clear the criterias and add the submited ones in
-    `request.POST`. This method will be the same for ProblemCreateView and
-    ProblemUpdateView.
-    """
+    """ Save the object, clear the criterias and add the submited ones in
+    `request.POST`. This method will be the same for ProblemCreateView and 
+    ProblemUpdateView. """
 
     # Save first
 
@@ -179,6 +177,19 @@ class ProblemUpdateView(UpdateView):
     @reversion.create_revision()
     def form_valid(self, form):
         return problem_form_valid(self, form)
+
+class ProblemDeleteView(DeleteView):
+    template_name = 'problem_confirm_delete.html'
+    model = Problem
+    success_url = '/'
+
+    def dispatch(self, *args, **kwargs):
+        obj = get_object_or_404(Problem, slug=kwargs['slug'])
+        if not permissions.problem(obj=obj, user=self.request.user, mode='view'):
+            raise PermissionDenied
+        if len(self.request.POST) > 0:
+            messages.success(self.request, _('Problem deleted'))
+        return super(ProblemDeleteView, self).dispatch(*args, **kwargs)
 
 class ProblemRevisionView(DetailView):
     template_name = 'problem_revision.html'
