@@ -61,7 +61,7 @@ class AdminOptionsView(FormView):
             except:
                 option = Option(name=name, value=form.cleaned_data[name])
             option.save()
-        return HttpResponseRedirect(reverse('options'))
+        return HttpResponseRedirect(reverse('admin_options'))
 
 class CommentView(RedirectView):
     permanent = True
