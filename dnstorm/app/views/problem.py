@@ -28,7 +28,7 @@ import diff_match_patch as _dmp
 from dnstorm import settings
 from dnstorm.app import permissions
 from dnstorm.app.lib.diff import diff_prettyHtml
-from dnstorm.app.models import Problem, Invite, Idea, \
+from dnstorm.app.models import Problem, Idea, \
     Criteria, Vote, Comment, Alternative, \
     Message, ActivityManager, Quantifier
 from dnstorm.app.forms import ProblemForm, IdeaForm, \

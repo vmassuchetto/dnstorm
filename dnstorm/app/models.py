@@ -172,17 +172,7 @@ class Problem(models.Model):
                 recipients.append(comment.author)
         return sorted(set(recipients))
 
-    def invites_handler(sender, user, request, *args, **kwargs):
-        """ After the user is activated we need to search for previous invites
-        for participating in problems he received and then add it back as a
-        contributor. """
-        invites = Invite.objects.filter(email=user.email)
-        for i in invites:
-            i.problem.contributor.add(user)
-        invites.delete()
-
 reversion.register(Problem, follow=['criteria', 'contributor', 'manager'])
-user_activated.connect(Problem.invites_handler)
 
 QUANTIFIER_CHOICES = (
     ('number', _('Number')),
@@ -209,26 +199,9 @@ class Quantifier(models.Model):
     def type(self):
         return _('quantifier')
 
-class Invite(models.Model):
-    """ Invites are used to join existing or new users to problems. If an
-    invitation is sent to a non-registered user, the user will have access
-    granted to this problem when it subscribes. """
-
-    problem = models.ForeignKey(Problem)
-    email = models.TextField()
-
-    class Meta:
-        db_table = settings.DNSTORM['table_prefix'] + '_invite'
-
-    def __unicode__(self):
-        return '<Invite>'
-
-    def type(self):
-        return _('invite')
-
 class Idea(models.Model):
     """ Ideas are the second main entity in the platform, as the
-    problem-solving process required idea generation and participation of
+    problem-solving process requires idea generation and participation of
     users. These will after compose the strategy table. """
 
     title = models.CharField(verbose_name=_('title'), max_length=90)
