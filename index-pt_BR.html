@@ -1,0 +1,131 @@
+<!doctype html>
+<html class="no-js" lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DNStorm | Uma plataforma para geração de ideias</title>
+    <link rel="stylesheet" href="css/foundation.min.css" />
+    <link rel="stylesheet" href="css/style.css" />
+    <script src="js/vendor/modernizr.js"></script>
+</head>
+<body>
+
+<header class="stormbg">
+<div class="row">
+    <div class="large-12 columns">
+        <h1>DNStorm</h1>
+        <h2>Uma proposta sobre tomada de decisão<br/>e colaboratividade.</h2>
+        <div class="right">
+            <form>
+            <select id="languages">
+                <option value="">Ver esta página em outro idioma</option>
+                <option value="en_US">English</option>
+            </select>
+            </form>
+        </div>
+    </div>
+</div>
+</header>
+
+<div class="about">
+
+<div class="row">
+    <div class="large-12 columns about-text">
+        <p>O DNStorm é uma plataforma colaborativa para tomada de decisão feito
+        com <a href="http://djangoproject.com">Django</a>. Utiliza os
+        principais conceitos do brainstorming e da tabela de estratégias para
+        ajudar os usuários a resolver problemas complexos de forma colaborativa
+        e a apresentar o processo de decisão de modo compreensivo.</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="large-12 columns">
+        <h2 class="expanded-title">Na verdade é bem simples</h3>
+    </div>
+</div>
+
+<div class="row about-icons">
+    <div class="large-2 columns">
+        <img src="images/setup.png" />
+        <p>Ajuste como deve ser o processo decisório.</p>
+    </div>
+    <div class="large-2 columns">
+        <img src="images/exclamation.png" />
+        <p>Com seus usuários, defina o problema e os critérios.</p>
+    </div>
+    <div class="large-2 columns">
+        <img src="images/balloon.png" />
+        <p>Obtenha ideias do brainstorming.</p>
+    </div>
+    <div class="large-2 columns">
+        <img src="images/measure.png" />
+        <p>Quantifique e priorize as ideias.</p>
+    </div>
+    <div class="large-2 columns">
+        <img src="images/list.png" />
+        <p>Crie alternativas e as coloque na tabela de estratégias.</p>
+    </div>
+    <div class="large-2 columns">
+        <img src="images/easel.png" />
+        <p>Faça votações para obter uma decisão e apresente todo o processo.</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="large-12 columns">
+        <h2 class="expanded-title">Não é tipo '<a href="http://en.wikipedia.org/wiki/Free_as_in_free_beer">cerveja de graça</a>'</h3>
+    </div>
+</div>
+
+<div class="row">
+    <div class="large-12 columns about-text">
+        <p>O DNStorm é um software livre e pode ser baixado gratuitamente.
+        Existem instruções na documentação que ensinam a reproduzir o sistema.
+        Se estiver com preguiça você pode tentar a instalação de demonstração,
+        e se não estiver pode ajudar informando erros no sistema.</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="large-3 columns"><a class="button radius expand demo" href="http://dnstorm.herokuapp.com">Ver a demonstração</a></div>
+    <div class="large-3 columns"><a class="button radius expand download" href="https://github.com/vmassuchetto/dnstorm/archive/master.zip">Baixar e instalar</a></div>
+    <div class="large-3 columns"><a class="button radius expand github" href="https://github.com/vmassuchetto/dnstorm">Clonar no Github</a></div>
+    <div class="large-3 columns"><a class="button radius expand documentation" href="http://dnstorm.readthedocs.org">Ler a documentação</a></div>
+    </div>
+</div>
+</div>
+
+<footer>
+<div class="row">
+    <div class="large-12">
+        <p>Este software é um experimento sobre teoria de tomada de decisão
+        feita por Vinicius Massuchetto e Willy Hoppe de Sousa para o Programa
+        de Mestrado em Tecnologia Nuclear - Aplicações, do <a
+        href="http://ipen.br">Instituto de Pesquisas Energéticas e
+        Nucleares</a> e <a href="http://usp.br">Universidade de São
+        Paulo</a>.</p>
+
+        <p>O DNStorm é um software livre licenciado sob a <a
+        href="http://www.gnu.org/licenses/gpl-2.0.txt">GPL2</a>.</p>
+
+        <p>A foto do cabeçalho foi feita por <a
+        href="https://www.flickr.com/photos/lucasjames123/8193235628">LJ
+        Mears</a> e os ícones azuis por <a
+        href="http://www.aha-soft.com/free-icons/free-dark-blue-cloud-icons/">Aha-Soft</a>.</p>
+    </div>
+</div>
+</footer>
+
+<script src="js/vendor/jquery.js"></script>
+<script src="js/foundation.min.js"></script>
+<script>
+        $(document).foundation();
+        $('#languages').change(function(){
+            if ($(this).val().length <= 0)
+                return false;
+            window.location.href = 'index-' + $(this).val() + '.html';
+        });
+</script>
+</body>
+</html>
