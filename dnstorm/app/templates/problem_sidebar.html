@@ -10,9 +10,8 @@
 {% if problem_perm_manage %}
     <a class="button small expand radius show-problem-results" href="javascript:void(0)"><i class="foundicon-graph"></i>{% trans 'Results' %}</a>
     <a class="button small expand radius" href="{% url "message_new" problem.slug %}"><i class="foundicon-mail"></i> {% trans 'New message' %}</a>
-{% endif %}
-
 <hr/>
+{% endif %}
 
 {% if problem.public or problem.open or problem.locked or problem.blind or problem.voting %}
     <p class="problem-icons text-center">
@@ -29,7 +28,7 @@
     <hr/>
 {% endif %}
 
-{% if problem.revision_count > 0 or problem.idea_count > 0 %}
+{% if problem.revision_count > 1 or problem.idea_count > 1 %}
     <div class="info">
         {% if problem.revision_count > 1 %}<b><a href="{% url "problem_revision" problem.slug %}">{{ problem.revision_count }} {% trans "revisions" %}</a></b><br/>{% endif %}
         {% if problem.idea_count > 0 %}<b><a href="{% url "problem_ideas" problem.slug %}">{{ problem.idea_count }} {% if problem.idea_count > 1 %}{% trans "idea contributions" %}{% else %}{% trans "idea contribution" %}{% endif %}</a></b>{% endif %}
