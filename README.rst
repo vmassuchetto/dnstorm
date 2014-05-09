@@ -90,7 +90,7 @@ Localization
 
 The PO and MO files for each language are located in
 ``dnstorm/app/locale/<locale_code>/LC_MESSAGES``. To generate a PO file for a
-given [locale code](http://stackoverflow.com/a/3191729/513401) run this:
+given `locale code <http://stackoverflow.com/a/3191729/513401>`_ run this:
 
 ::
 
