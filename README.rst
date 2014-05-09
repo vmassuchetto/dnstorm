@@ -10,11 +10,10 @@ build a `strategy table
 <http://www.structureddecisionmaking.org/tools/toolsstrategytables/>`_.
 
 The `project's fancy page <http://vmassuchetto.github.io/dnstorm>`_ presents
-the software in a non-technical language.
-
-Sphinx documentation can be found at `Read the Docs
-<http://dnstorm.readthedocs.org/en/latest/>`_. A `live demo and experimental
-environment <http://dnstorm.herokuapp.com/>`_ can be found on Heroku.
+the software in a non-technical language. Sphinx documentation can be found at
+`Read the Docs <http://dnstorm.readthedocs.org/en/latest/>`_. A `live demo and
+experimental environment <http://dnstorm.herokuapp.com/>`_ can be found on
+Heroku.
 
 
 Status
@@ -63,8 +62,8 @@ The application might be running at ``http://localhost:8000``.
 Styles
 ------
 
-The project's CSS is written in Sass using Compass. Make sure you have Ruby
-with Gem to install it:
+The project's CSS is written in `Sass <http://sass-lang.com>`_ using `Compass
+<http://compass-style.org>`_. Make sure you have Ruby with Gem to install it:
 
 ::
 
@@ -78,10 +77,11 @@ With ``compass`` command available you can build the project's CSS:
     compass build
 
 If you're developing the styles just run the compiler daemon to automatically
-build when you change the ``dnstorm/app/styles/app.scss`` file.
+build the CSS file when you change the ``dnstorm/app/styles/app.scss`` file.
 
 ::
 
+    cd dnstorm/app/styles
     compass watch
 
 
@@ -102,7 +102,7 @@ given `locale code <http://stackoverflow.com/a/3191729/513401>`_ run this:
 Documentation
 -------------
 
-To generate the Sphinx documentation files:
+To generate the `Sphinx <http://sphinx-doc.org/>`_ documentation files:
 
 ::
 
