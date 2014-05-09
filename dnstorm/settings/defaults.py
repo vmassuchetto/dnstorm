@@ -121,7 +121,7 @@ CKEDITOR_DEFAULT_TOOLBAR = [
     ['Link','Unlink','Anchor'],
     ['Image','Flash']
 ]
-CKEDITOR_UPLOAD_PATH = SITE_ROOT
+CKEDITOR_UPLOAD_PATH = MEDIA_ROOT
 CKEDITOR_CONFIGS = {
     'default': { 'toolbar': CKEDITOR_DEFAULT_TOOLBAR },
     'idea_content': { 'toolbar': CKEDITOR_DEFAULT_TOOLBAR , 'height': 200 }
