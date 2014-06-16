@@ -4,7 +4,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': 'dnstorm.sqlite3',
-        'ATOMIC_REQUESTS': True
+        'ATOMIC_REQUESTS': False
     }
 }
 

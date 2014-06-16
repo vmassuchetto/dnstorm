@@ -8,56 +8,70 @@ from django.core.paginator import Paginator
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_protect
 from django.contrib import messages
+from django.utils.safestring import mark_safe
 
 import reversion
 
-from dnstorm.app.models import Problem, Criteria, ActivityManager
-from dnstorm.app.forms import CriteriaForm
+from dnstorm.app import models
+from dnstorm.app import forms
 
 class CriteriaListView(TemplateView):
-    template_name = 'criteria.html'
-    model = Criteria
+    template_name = 'criteria_list.html'
+    model = models.Criteria
 
     def get_context_data(self, *args, **kwargs):
         context = super(CriteriaListView, self).get_context_data(**kwargs)
         context['breadcrumbs'] = self.get_breadcrumbs()
-        criterias = Paginator(Criteria.objects.all().order_by('name'), 25)
+        context['activities'] = models.ActivityManager().get_objects(limit=4)
+        context['sidebar'] = True
+        criterias = Paginator(models.Criteria.objects.all().order_by('name'), 25)
         page = self.request.GET['page'] if 'page' in self.request.GET else 1
         context['criterias'] = criterias.page(page)
         return context
 
     def get_breadcrumbs(self):
         return [
-            { 'title': _('Problems'), 'url': reverse('home') },
             { 'title': _('Criterias'), 'classes': 'current' } ]
 
-class CriteriaProblemView(TemplateView):
-    template_name = 'home.html'
+class CriteriaView(TemplateView):
+    template_name = 'criteria.html'
+    model = models.Criteria
 
     def dispatch(self, request, *args, **kwargs):
-        self.criteria = get_object_or_404(Criteria, slug=kwargs['slug'])
-        return super(CriteriaProblemView, self).dispatch(request, *args, **kwargs)
+        self.criteria = get_object_or_404(models.Criteria, slug=kwargs['slug'])
+        return super(CriteriaView, self).dispatch(request, *args, **kwargs)
 
     def get_context_data(self, *args, **kwargs):
-        context = super(CriteriaProblemView, self).get_context_data(**kwargs)
+        context = super(CriteriaView, self).get_context_data(**kwargs)
+
+        star = '<i class="fi-star"></i>'
+        self.criteria.stars = list()
+        for i in range(1,6):
+            self.criteria.stars.append({
+                'icons': mark_safe(star * i),
+                'help': getattr(self.criteria, 'help_star%d' % i)
+            })
+
         context['breadcrumbs'] = self.get_breadcrumbs()
+        context['activities'] = models.ActivityManager().get_objects(limit=4)
+        context['sidebar'] = True
+        context['title'] = self.criteria.name
         context['criteria'] = self.criteria
-        problems = Paginator(Problem.objects.filter(criteria=self.criteria).order_by('-created'), 25)
+        problems = Paginator(models.Problem.objects.filter(criteria=self.criteria).order_by('-created'), 25)
         page = self.request.GET['page'] if 'page' in self.request.GET else 1
         context['problems'] = problems.page(page)
-        context['activities'] = ActivityManager().get_objects(limit=4)
+        context['activities'] = models.ActivityManager().get_objects(limit=4)
         return context
 
     def get_breadcrumbs(self):
         return [
-            { 'title': _('Problems'), 'url': reverse('home') },
             { 'title': _('Criterias'), 'url': reverse('criteria_list') },
             { 'title': self.criteria.name, 'url': self.criteria.get_absolute_url(), 'classes': 'current' } ]
 
 class CriteriaCreateView(CreateView):
     template_name = 'criteria_edit.html'
-    form_class = CriteriaForm
-    model = Criteria
+    form_class = forms.CriteriaForm
+    model = models.Criteria
 
     @method_decorator(csrf_protect)
     def dispatch(self, request, *args, **kwargs):
@@ -70,7 +84,6 @@ class CriteriaCreateView(CreateView):
 
     def get_breadcrumbs(self):
         return [
-            { 'title': _('Problems'), 'url': reverse('home') },
             { 'title': _('Criterias'), 'url': reverse('criteria_list') },
             { 'title': _('Create'), 'classes': 'current' } ]
 
@@ -82,8 +95,8 @@ class CriteriaCreateView(CreateView):
 
 class CriteriaUpdateView(UpdateView):
     template_name = 'criteria_edit.html'
-    form_class = CriteriaForm
-    model = Criteria
+    form_class = forms.CriteriaForm
+    model = models.Criteria
 
     @method_decorator(csrf_protect)
     def dispatch(self, request, *args, **kwargs):
@@ -97,7 +110,6 @@ class CriteriaUpdateView(UpdateView):
 
     def get_breadcrumbs(self):
         return [
-            { 'title': _('Problems'), 'url': reverse('home') },
             { 'title': _('Criterias'), 'url': reverse('criteria_list') },
             { 'title': self.object.name, 'url': self.object.get_absolute_url() },
             { 'title': _('Edit'), 'classes': 'current' } ]

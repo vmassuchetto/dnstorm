@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% load humanize i18n %}
+
+{% block bodyclass %}home{% endblock %}
+
+{% block topright %}
+    {% if perms.criteria.can_add %}
+        <div class="left-1em">
+            <a class="button tiny success radius" href="{% url "criteria_new" %}">
+                <i class="foundicon-page"></i> {% trans 'Create new criteria' %}
+            </a>
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+
+    <div class="row">
+
+    <div class="large-9 columns content">
+
+        {% if criterias %}
+        {% for criteria in criterias %}
+
+            <div class="row collapse list-item">
+            <div class="columns large-2 medium-2 show-for-medium-up">
+                <div class="counter expand">
+                    <span class="number">{{ criteria.problem_count }}</span>
+                    <span class="description">{% if criteria.problem_count > 1 or criteria.problem_count = 0 %}{% trans "problems" %}{% else %}{% trans "problem" %}{% endif %}</span>
+                </div>
+            </div>
+            <div class="columns large-10 medium-10 small-12 left-1em">
+                <h4><a href="{% url "criteria" criteria.slug %}">{{ criteria.name }}</a></h4>
+                <p class="left no-margin-bottom">
+                    {{ criteria.description }}
+                </p>
+            </div>
+            </div>
+
+        {% endfor %}
+
+        {% include "pagination.html" with items=problems %}
+
+        {% else %}
+            <div class="panel radius">
+            <p>
+                {% blocktrans %}No criteria yet!{% endblocktrans %}
+            </p>
+            </div>
+        {% endif %}
+
+    </div>
+
+    <div class="large-3 columns sidebar">
+        {% include "sidebar.html" %}
+    </div>
+
+    </div>
+
+{% endblock %}

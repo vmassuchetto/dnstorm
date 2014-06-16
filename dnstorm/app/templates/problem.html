@@ -7,12 +7,10 @@
 
 {% block modals %}
     {% if problem_perm_manage %}
-        <div id="alternative-add-modal" class="reveal-modal tiny" data-reveal>
-            <a class="close-reveal-modal">&#215;</a>
-            {% crispy alternative_form %}
-        </div>
 
-        <div id="alternative-remove-modal" class="reveal-modal tiny" data-reveal>
+        {# Alternative removal confirmation #}
+
+        <div id="alternative-delete-modal" class="reveal-modal tiny" data-reveal>
             <div class="row">
             <div class="columns large-12">
                 <p>{% trans "Really remove this alternative?" %}</p>
@@ -23,10 +21,12 @@
                 <a class="close-reveal-modal-button button small secondary radius no-margin-bottom">{% trans "Cancel" %}</a>
             </div>
             <div class="columns large-6 text-right">
-                <a class="remove button alert radius no-margin-bottom remove-alternative-confirm">{% trans "Remove!" %}</a>
+                <a class="delete button alert radius no-margin-bottom delete-alternative-confirm">{% trans "Remove!" %}</a>
             </div>
             </div>
         </div>
+
+        {# Ideas selector for the alternatives #}
 
         <div id="select-idea-modal" class="reveal-modal large" data-reveal>
             <a class="close-reveal-modal">&#215;</a>
@@ -36,7 +36,7 @@
             {% for idea in ideas %}
                 <div class="row problem-idea-modal" id="idea-{{ idea.id }}-modal-item">
                     <div class="columns large-1">
-                        <i class="foundicon-checkmark idea-status"></i>
+                        <i class="fi-check idea-status"></i>
                     </div>
                     <div class="columns large-11">
                         {% include "problem_idea.html" %}
@@ -47,29 +47,39 @@
             <hr/>
             <div class="row problem-ideas-modal-buttons">
                 <div class="large-12 text-right">
-                    <a class="button small success radius problem-idea-modal-save">{% trans "Done" %}</a>
+                    <a class="button success radius problem-idea-modal-save">{% trans "Done" %}</a>
                 </div>
             </div>
         </div>
+
     {% endif %}
 {% endblock %}
 
 {% block content %}
 
-    <div class="row">
+    {# Title #}
+
+    <div class="row collapse">
     <div class="columns large-12 problem-title">
         <h2>{{ problem.title }}</h2>
     </div>
     </div>
+
+    {# Table #}
 
     {% include "problem_table.html" %}
 
     <div class="row">
     <div class="columns large-9 problem-detail">
 
+        {# Description #}
+
+        <h3>{% trans "Problem description" %}</h3>
         <div class="description">
             {{ problem.description|safe }}
         </div>
+
+        {# Actions #}
 
         <div class="row">
             <div class="columns large-7">
@@ -88,11 +98,15 @@
             </div>
         </div>
 
+        {# Comment form #}
+
         {% if problem_perm_contribute %}
             <div class="comment-form hide problem-comment-form" data-problem="{{ problem.id }}">
                 {% crispy problem_comment_form %}
             </div>
         {% endif %}
+
+        {# Comments #}
 
         <div class="comments" id="comments-problem-{{ problem.id }}">
             {% if comments %}
@@ -104,51 +118,38 @@
 
         <hr/>
 
+        {# Idea form and button #}
+
         <div class="problem-idea-form-wrap">
 
             {% if not user.is_authenticated %}
 
                 <a class="large button expand secondary radius" href="{{ login_url }}">{% trans "Log in and submit your idea" %}</a>
 
-            {% else %} {% if problem.locked %}
+            {% else %}
 
-                <a class="large button expand secondary radius" disabled="disabled">{% trans "This problem is currently locked for new ideas" %}</a>
+                <a class="problem-idea-button problem-idea-form-button button expand radius{% if form.errors %} hide{% endif %}"><i class="fi-lightbulb"></i> {% trans "Submit your idea to this problem" %}{% if problem.max %}<br/><small>{% blocktrans count user_ideas_left as ideas %}you have {{ ideas }} idea left{% plural %}you have {{ ideas }} ideas left{% endblocktrans %}</small>{% endif %}</a>
 
-            {% else %} {% if problem_perm_contribute and user_ideas_left > 0 %}
-
-                <a class="problem-idea-button problem-idea-form-button button expand radius{% if form.errors %} hide{% endif %}"><i class="foundicon-idea"></i> {% trans "Submit your idea to this problem" %}{% if problem.max %}<br/><small>{% blocktrans count user_ideas_left as ideas %}you have {{ ideas }} idea left{% plural %}you have {{ ideas }} ideas left{% endblocktrans %}</small>{% endif %}</a>
-
-            {% else %} {% if user_ideas_left == 0 %}
-
-                <a class="problem-idea-button large button expand secondary radius" disabled="disabled">{% trans "You contributed with the maximum ideas allowed for this problem" %}<br/><small>{% trans "edit or delete your existing ideas if you change your mind about them" %}</small></a>
-
-            {% else %} {% if not problem_perm_contribute %}
-
-                <a class="large button expand secondary radius" disabled="disabled">{% trans "You don't have permission to contribute to this problem" %}</a>
-
-            {% endif %} {% endif %} {% endif %} {% endif %} {% endif %}
+            {% endif %}
 
             <div class="problem-idea-form {% if not form.errors %}hide{% endif %}" id="problem-idea-form">
-                <h3>{% trans "Your idea" %}</h3>
                 {% crispy form %}
             </div>
-
-            {% if problem.blind %}
-                <div class="panel text-center radius problem-idea-button-panel"><p>{% trans "This problem is in blind contribution mode. That means you can't see the other users ideas until the manager turns the option off." %}</p></div>
-            {% endif %}
 
         </div>
 
         <hr/>
 
+        {# Ideas list #}
+
         {% if ideas %}
-        <a name="ideas"></a>
-        <div class="problem-ideas">
-            {% for idea in ideas %}
-                {% include "problem_idea.html" %}
-                <hr/>
-            {% endfor %}
-        </div>
+            <a name="ideas"></a>
+            <div class="problem-ideas">
+                {% for idea in ideas %}
+                    {% include "problem_idea.html" %}
+                    <hr/>
+                {% endfor %}
+            </div>
         {% endif %}
 
     </div>

@@ -7,43 +7,14 @@
 
     <div class="row">
 
-    <div class="large-9 columns content problem-list">
-
-        {% if criteria %}
-            <h2>{% blocktrans with criteria.name as criteria_name %}Problems with the criteria "{{ criteria_name }}"{% endblocktrans %}</h2>
-            {% if criteria.description %}
-                <div class="panel radius secondary">
-                    <p>{{ criteria.description }}</p>
-                     {% if perms.criteria.can_edit %}<span class="label secondary radius right"><a href="{% url "criteria_edit" criteria.slug %}">{% trans "Edit this criteria" %}</a></span>{% endif %}
-                </div>
-            {% endif %}
-        {% endif %}
+    <div class="large-9 columns content">
 
         {% if problems %}
+
+        <h2>{% trans "Problems" %}</h2>
+
         {% for problem in problems %}
-
-            <div class="row collapse list-item problem-list-item">
-            <div class="columns large-3 medium-3 show-for-medium-up">
-                <div class="counter problem-idea-counter left">
-                    <span class="number">{{ problem.idea_count }}</span>
-                    <span class="description">{% if problem.idea_count > 1 or problem.idea_count = 0 %}{% trans "ideas" %}{% else %}{% trans "idea" %}{% endif %}</span>
-                </div>
-                <div class="counter problem-alternative-counter left">
-                    <span class="number">{{ problem.alternative_count }}</span>
-                    <span class="description">{% if problem.alternative_count > 1 or problem.alternative_count = 0 %}{% trans "alternatives" %}{% else %}{% trans "alternative" %}{% endif %}</span>
-                </div>
-            </div>
-            <div class="problem-info columns large-9 medium-9 small-12">
-                <h4><a href="{% url "problem" problem.slug %}">{{ problem.title }}</a></h4>
-                <p class="problem-criteria left no-margin-bottom">
-                    {% for criteria in problem.criteria.all %}
-                        {% include "criteria_button.html" %}
-                    {% endfor %}
-                </p>
-                <h6 class="subheader right">{{ problem.last_activity|naturaltime }}</h6>
-            </div>
-            </div>
-
+            {% include "problem_row.html" %}
         {% endfor %}
 
         {% include "pagination.html" with items=problems %}
@@ -64,14 +35,9 @@
     </div>
 
     <div class="large-3 columns sidebar">
-        {% include "home_sidebar.html" %}
+        {% include "sidebar.html" %}
     </div>
 
     </div>
-
-{% endblock %}
-
-
-{% block afterfooter %}
 
 {% endblock %}

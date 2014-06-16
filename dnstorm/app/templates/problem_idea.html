@@ -4,8 +4,10 @@
 
     <div class="row">
 
+        {# Voting arrows #}
+
         {% if problem.voting and not ideas_modal %}
-            <div class="columns large-1 small-2 voting">
+            <div class="columns large-1 small-2 idea-vote">
 
                 <a href="{% if not user.is_authenticated %}{{ login_url }}{% else %}javascript:void(0){% endif %}" class="button secondary radius upvote{% if idea.user_vote.weight == 1 %} success{% endif %}" data-idea="{{ idea.id }}"{% if idea.author == user or not problem_perm_contribute %} disabled="disabled"{% endif %}><i class="foundicon-up-arrow"></i></a>
 
@@ -37,6 +39,8 @@
 
         <div class="columns {% if problem.voting and not ideas_modal %}large-11 small-10 left-1em{% else %}large-12 small-12{% endif %}">
 
+            {# Content #}
+
             <div class="row">
                 <div class="columns large-12 idea-content">
                     <h5><a href="{{ idea.get_absolute_url }}">{{ idea.title }}</a></h5>
@@ -44,21 +48,22 @@
                 </div>
             </div>
 
+            {# Criterias with stars #}
+
+            <div class="row">
+                <div class="columns large-12 idea-criterias">
+                {% for criteria in idea.criterias %}
+                    {% include "criteria_button.html" with criteria=criteria size="tiny" with_stars=True with_link=False %}
+                {% endfor %}
+                </div>
+            </div>
+
+            {# Action mini bar #}
+
             <div class="row">
 
                 <div class="columns large-7">
                     <div class="row collapse">
-                        {% if idea.quantifiervalue_set.all %}
-                            <div class="large-12 idea-quantifiers">
-                                {% for q in idea.quantifiervalue_set.all %}
-                                    {% if q.quantifier.format == 'daterange' %}
-                                        <span class="label secondary radius">{{ q.quantifier.name }}&nbsp;|&nbsp;{{ q.value }}</span>
-                                    {% else %}
-                                        <span class="label secondary radius">{{ q.quantifier.name }}{% if q.quantifier.format != "boolean" %}&nbsp;|&nbsp;{{ q.value }}{% endif %}</span> 
-                                    {% endif %}
-                                {% endfor %}
-                            </div>
-                        {% endif %}
                         <div class="columns large-12 right idea-actions">
                             {% if idea_actions %}
 
@@ -80,11 +85,15 @@
                 </div>
             </div>
 
+            {# Comment form #}
+
             {% if user.is_authenticated and idea.comment_form %}
                 <div class="comment-form idea-comment-form hide" id="idea-{{ idea.id }}-comment-form" data-idea="{{ idea.id }}">
                     {% crispy idea.comment_form %}
                 </div>
             {% endif %}
+
+            {# Comments #}
 
             <div class="comments" id="comments-idea-{{ idea.id }}">
                 {% if idea.comments %}

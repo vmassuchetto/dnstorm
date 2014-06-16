@@ -1,12 +1,13 @@
 import re
 from datetime import datetime
-from dnstorm.app.lib.slug import unique_slugify
 
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.db import models, connection
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
+from django.template.loader import render_to_string
+from django.db.models import Sum
 
 import reversion
 import diff_match_patch as _dmp
@@ -14,22 +15,24 @@ from dnstorm import settings
 from dnstorm.app.lib.diff import diff_prettyHtml
 
 from ckeditor.fields import RichTextField
+from autoslug import AutoSlugField
 from registration.signals import user_activated
 
-reversion.register(User)
-
 class Option(models.Model):
-    """ Option is an adaptation for a meta-based table, where ``name`` is
-    stored only once, and retrieved via the ``get`` method. """
+    """
+    Meta-based table to store general site options retrieved via the ``get``
+    method.
+
+    Attributes:
+        * ``name`` unique entry key
+        * ``value`` value for the key
+    """
 
     name = models.TextField(verbose_name=_('Name'), blank=False, unique=True)
     value = models.TextField(verbose_name=_('Value'), blank=False)
 
     class Meta:
         db_table = settings.DNSTORM['table_prefix'] + '_option'
-
-    def __unicode__(self):
-        return '<Option: %s>' % self.name
 
     def type(self):
         return _('option')
@@ -43,10 +46,12 @@ class Option(models.Model):
             return Option(**kwargs)
 
     def get(self, *args):
-        """ The site options are defined and saved by the OptionsForm fields,
+        """
+        The site options are defined and saved by the OptionsForm fields,
         and this method ensures that some value or a default value will be
         returned when querying for an option value. `None` is returned if the
-        option name is invalid. """
+        option name is invalid.
+        """
 
         if len(args) <= 0:
             return None
@@ -61,9 +66,11 @@ class Option(models.Model):
         return value
 
     def get_defaults(self, *args, **kwargs):
-        """ These are some default values that are used in templates and
+        """
+        These are some default values that are used in templates and
         somewhere else. They are supposed to be overwritten by values on
-        database. """
+        database.
+        """
 
         return {
             'site_title': 'DNStorm',
@@ -71,7 +78,9 @@ class Option(models.Model):
         }
 
     def get_all(self):
-        """ Get all the default values. """
+        """
+        Get all the default values.
+        """
 
         options = dict()
         defaults = self.get_defaults()
@@ -80,58 +89,61 @@ class Option(models.Model):
         return options
 
 class Criteria(models.Model):
-    """ When creating a problem, managers should define some criterias as a
+    """
+    When creating a problem, managers should define some criterias as a
     reference for the ideas submitted by users. These will also be the columns
-    for the strategy table of the problem. """
+    for the strategy table of the problem.
 
-    name = models.CharField(verbose_name=_('Name'), max_length=90)
-    slug = models.CharField(max_length=90, unique=True)
-    description = models.TextField(verbose_name=_('Description'), blank=True)
-    order = models.IntegerField(default=0)
+    Attributes:
+        * ``help_star[1-5]`` Help message to explain the meaning of each star
+          for the given criteria.
+    """
+
+    name = models.CharField(verbose_name=_('Name'), max_length=90, blank=False)
+    slug = AutoSlugField(populate_from='name', max_length=60, editable=False, unique=True)
+    description = models.TextField(verbose_name=_('Description for the criteria'), blank=False)
+    help_star1 = models.CharField(verbose_name=_('Description for 1 star'), max_length=255, blank=False)
+    help_star2 = models.CharField(verbose_name=_('Description for 2 stars'), max_length=255, blank=False)
+    help_star3 = models.CharField(verbose_name=_('Description for 3 stars'), max_length=255, blank=False)
+    help_star4 = models.CharField(verbose_name=_('Description for 4 stars'), max_length=255, blank=False)
+    help_star5 = models.CharField(verbose_name=_('Description for 5 stars'), max_length=255, blank=False)
     created = models.DateTimeField(auto_now_add=True, editable=False, default='2001-01-01')
     updated = models.DateTimeField(auto_now=True, editable=False, default='2001-01-01')
 
     class Meta:
         db_table = settings.DNSTORM['table_prefix'] + '_criteria'
 
-    def __unicode__(self):
-        return self.name
-
     def type(self):
         return _('criteria')
 
     def get_absolute_url(self, *args, **kwargs):
-        return reverse('criteria', args=[self.slug])
+        return reverse('criteria', kwargs={'slug': self.slug })
 
     def problem_count(self):
         return Problem.objects.filter(criteria=self).count()
 
-    def save(self, *args, **kwargs):
-        self.slug = unique_slugify(self, self.name)
-        super(Criteria, self).save(*args, **kwargs)
+    def get_button(self):
+        return mark_safe(render_to_string('criteria_button.html', {'criteria': self}))
 
-reversion.register(Criteria)
 
 class Problem(models.Model):
-    """ Problems are the central entity of the platform, as everything goes
+    """
+    Problems are the central entity of the platform, as everything goes
     around them. This is no more than the suubject of discussion for generating
-    ideas and a strategy table. """
+    ideas and a strategy table.
+
+    Attributes:
+        * ``last_activity`` Gets updated in favor of the ``ActivityManager``
+          ordering every time an idea or a comment is made for this problem.
+    """
 
     title = models.CharField(verbose_name=_('Title'), max_length=90)
-    slug = models.SlugField(max_length=90, unique=True, editable=False)
-    description = RichTextField(verbose_name=_('Description'), blank=True)
-    criteria = models.ManyToManyField(Criteria, verbose_name=_('Criterias'), editable=False, blank=True, null=True)
+    slug = AutoSlugField(populate_from='title', max_length=60, editable=False, unique=True)
+    description = RichTextField(verbose_name=_('Description'))
+    criteria = models.ManyToManyField(Criteria, verbose_name=_('Criterias'), editable=False)
     author = models.ForeignKey(User, related_name='author', editable=False)
     contributor = models.ManyToManyField(User, related_name='contributor', verbose_name=_('Contributors'), help_text=_('Users with permission to contribute to this problem.'), blank=True, null=True)
     manager = models.ManyToManyField(User, related_name='manager', verbose_name=_('Managers'), help_text=_('Users with permission to manage this problem.'), blank=True, null=True)
-    open = models.BooleanField(verbose_name=_('Open participation'), help_text=_('Any registered user can contribute to this problem.'), default=True)
-    public = models.BooleanField(verbose_name=_('Public'), help_text=_('The problem will be publicy available to anyone.'), default=True)
-    locked = models.BooleanField(verbose_name=_('Locked'), help_text=_('Lock the problem so it will be kept visible but no one will be able to contribute.'), default=False, blank=True)
-    blind = models.BooleanField(verbose_name=_('Blind contributions'), help_text=_('People can only see their own ideas.'), default=False, blank=True)
-    max = models.IntegerField(verbose_name=_('Max ideas per user'), help_text=_('Maximum number of ideas an user will be able to contribute to this problem. Leave 0 for unlimited.'), default=0, blank=True)
-    voting = models.BooleanField(verbose_name=_('Enable voting for ideas'), help_text=_('Users will be able to vote for the ideas.'), default=True, blank=True)
-    vote_count = models.BooleanField(verbose_name=_('Display vote counts'), help_text=_('Users will be able to see how many votes each idea had.'), default=True, blank=True)
-    vote_author = models.BooleanField(verbose_name=_('Display vote authors'), help_text=_('Ideas voting will be completely transparent.'), default=False, blank=True)
     created = models.DateTimeField(auto_now_add=True, editable=False, default='2000-01-01')
     updated = models.DateTimeField(auto_now=True, editable=False, default='2000-01-01')
     last_activity = models.DateTimeField(auto_now=True, editable=False, default='2000-01-01')
@@ -139,18 +151,11 @@ class Problem(models.Model):
     class Meta:
         db_table = settings.DNSTORM['table_prefix'] + '_problem'
 
-    def __unicode__(self):
-        return u'%d' % self.id
-
     def type(self):
         return _('problem')
 
     def get_absolute_url(self, *args, **kwargs):
         return reverse('problem', args=[self.slug])
-
-    def save(self, *args, **kwargs):
-        self.slug = unique_slugify(self, self.title)
-        super(Problem, self).save(*args, **kwargs)
 
     def revision_count(self):
         return reversion.get_for_object(self).count()
@@ -161,51 +166,18 @@ class Problem(models.Model):
     def alternative_count(self):
         return Alternative.objects.filter(problem=self).count()
 
-    def get_message_recipients(self):
-        recipients = [self.author]
-        recipients = recipients + [user for user in self.contributor.all()]
-        recipients = recipients + [user for user in self.manager.all()]
-        for idea in Idea.objects.filter(problem=self):
-            recipients.append(idea.author)
-            for comment in Comment.objects.filter(idea=idea):
-                recipients.append(comment.author)
-        return sorted(set(recipients))
-
-reversion.register(Problem, follow=['criteria', 'contributor', 'manager'])
-
-QUANTIFIER_CHOICES = (
-    ('number', _('Number')),
-    ('boolean', _('True or False')),
-    ('text', _('Text')),
-    ('daterange', _('Date range')))
-
-class Quantifier(models.Model):
-    """ Quantifiers is a pre-defined resource for ideas. By giving ideas, the
-    users may quantify them if the manager asks for it. These quantifiers will
-    also be calculated in the streategy table. """
-
-    problem = models.ForeignKey(Problem, choices=QUANTIFIER_CHOICES, editable=False, blank=True, null=True)
-    name = models.CharField(verbose_name=_('Name'), max_length=90)
-    format = models.CharField(verbose_name=_('Type'), max_length=10)
-    help = models.TextField(_('Help text'))
-
-    class Meta:
-        db_table = settings.DNSTORM['table_prefix'] + '_quantifier'
-
-    def __unicode__(self):
-        return u'%d' % self.id
-
-    def type(self):
-        return _('quantifier')
+reversion.register(Problem)
 
 class Idea(models.Model):
-    """ Ideas are the second main entity in the platform, as the
+    """
+    Ideas are the second main entity in the platform, as the
     problem-solving process requires idea generation and participation of
-    users. These will after compose the strategy table. """
+    users. These will after compose the strategy table.
+    """
 
+    problem = models.ForeignKey(Problem, editable=False)
     title = models.CharField(verbose_name=_('title'), max_length=90)
     content = RichTextField(config_name='idea_content')
-    problem = models.ForeignKey(Problem, editable=False)
     author = models.ForeignKey(User, editable=False)
     deleted_by = models.ForeignKey(User, editable=False, related_name='idea_deleted_by', null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True, editable=False, default='2000-01-01')
@@ -213,9 +185,6 @@ class Idea(models.Model):
 
     class Meta:
         db_table = settings.DNSTORM['table_prefix'] + '_idea'
-
-    def __unicode__(self):
-        return '<Idea>'
 
     def type(self):
         return _('idea')
@@ -232,24 +201,34 @@ class Idea(models.Model):
 
 reversion.register(Idea)
 
-class QuantifierValue(models.Model):
-    """ Values for quantifiers in a meta-key schema. """
+class IdeaCriteria(models.Model):
+    """
+    Relation between ideas and criterias. When users submit ideas they need
+    to specify how the idea is supposed to be related to each of the criterias
+    of the problem.
 
-    quantifier = models.ForeignKey(Quantifier)
-    idea = models.ForeignKey(Idea)
-    value = models.TextField(verbose_name=_('value'))
+    Attributes:
+        * ``stars`` 1 to 5 number that should be given by the idea author
+          following the ``Criteria.help_star[1-5]`` texts.
+    """
+
+    idea = models.ForeignKey(Idea, editable=False)
+    criteria = models.ForeignKey(Criteria, editable=False)
+    stars = models.PositiveSmallIntegerField(editable=False, default=0)
 
     class Meta:
-        db_table = settings.DNSTORM['table_prefix'] + '_quantifier_value'
-
-    def __unicode__(self):
-        return '<QuantifierValue>'
+        db_table = settings.DNSTORM['table_prefix'] + '_idea_criteria'
 
     def type(self):
-        return _('quantifier value')
+        return _('idea criteria')
+
+    def get_absolute_url(self, *args, **kwargs):
+        return reverse('ideacriteria', kwargs={'slug': self.problem.slug, 'pk': self.id})
 
 class Comment(models.Model):
-    """ Comments that can be made for ideas or problems. """
+    """
+    Comments that can be made for ideas or problems.
+    """
 
     problem = models.ForeignKey(Problem, editable=False, blank=True, null=True)
     idea = models.ForeignKey(Idea, editable=False, blank=True, null=True)
@@ -262,19 +241,17 @@ class Comment(models.Model):
     class Meta:
         db_table = settings.DNSTORM['table_prefix'] + '_comment'
 
-    def __unicode__(self):
-        return '<Comment: %d>' % self.id
-
     def type(self):
         return _('comment')
 
-reversion.register(Comment)
-
 class Message(models.Model):
-    """ Messages for users that managers can send to them. """
+    """
+    Messages for users that managers can send to them.
+    """
 
     problem = models.ForeignKey(Problem)
-    sender = models.ForeignKey(User)
+    sender = models.ForeignKey(User, related_name='message_sender')
+    recipients = models.ManyToManyField(User, related_name='message_recipients')
     subject = models.TextField(verbose_name=_('Subject'))
     content = models.TextField(verbose_name=_('Content'))
     created = models.DateTimeField(auto_now_add=True, editable=False, default='2000-01-01')
@@ -282,148 +259,104 @@ class Message(models.Model):
     class Meta:
         db_table = settings.DNSTORM['table_prefix'] + '_message'
 
-    def __unicode__(self):
-        return '<Message: %d>' % self.id
-
     def type(self):
         return _('message')
 
     def get_absolute_url(self, *args, **kwargs):
         return reverse('message', kwargs={'slug': self.problem.slug, 'pk': self.id })
 
-reversion.register(Message)
+    def get_message_recipients(self):
+        """
+        Fetches every user related to the problem: Author, managers,
+        contributors, and commenters.
+        """
+        recipients = [self.problem.author]
+        recipients = recipients + [user for user in self.problem.contributor.all()]
+        recipients = recipients + [user for user in self.problem.manager.all()]
+        for idea in Idea.objects.filter(problem=self.problem):
+            recipients.append(idea.author)
+            for comment in Comment.objects.filter(idea=idea):
+                recipients.append(comment.author)
+        return sorted(set(recipients))
 
 class Alternative(models.Model):
-    """ Alternatives are the strategy table rows where ideas can be allocated.
-    If there's no criteria in the problem, these will be just rows with no
-    specific columns. """
+    """
+    Alternatives are the strategy table rows where ideas can be allocated.
+    """
 
-    problem = models.ForeignKey(Problem)
-    name = models.TextField(verbose_name=_('Name'))
-    description = models.TextField(verbose_name=_('Description'))
-    order = models.IntegerField(default=0)
+    problem = models.ForeignKey(Problem, editable=False)
+    idea = models.ManyToManyField(Idea, editable=False, null=True, blank=True)
+    order = models.PositiveSmallIntegerField(editable=False, default=0)
     created = models.DateTimeField(auto_now_add=True, editable=False, default='2001-01-01')
-    updated = models.DateTimeField(auto_now=True, editable=False, default='2001-01-01')
 
     class Meta:
         db_table = settings.DNSTORM['table_prefix'] + '_alternative'
 
-    def __unicode__(self):
-        return '<Alternative: %d>' % self.id
-
     def type(self):
         return _('alternative')
 
-    def get_items(self):
-        items = list()
-        criterias = Criteria.objects.filter(problem=self.problem)
-        if criterias:
-            for criteria in criterias:
-                try:
-                    items.append({
-                        'criteria': criteria,
-                        'objects': AlternativeItem.objects.filter(criteria=criteria, alternative=self)
-                    })
-                except:
-                    pass
-
-        else:
-            items.append({
-                'criteria': None,
-                'objects': AlternativeItem.objects.filter(criteria=None, alternative=self)
-            })
-        return items
-
-    def get_quantifiers(self):
-        quantifiers = dict()
-        items = self.get_items()
-        for item in items:
-            for alternative_item in item['objects']:
-                for idea in alternative_item.idea.all():
-                    for q in idea.quantifiervalue_set.all():
-                        if q.quantifier.format not in ['number', 'boolean']:
-                            continue
-                        k = q.quantifier.id
-                        if k not in quantifiers.keys():
-                            quantifiers[k] = q.quantifier
-                            quantifiers[k].value = 0
-                            quantifiers[k].count = 0
-                        if q.quantifier.format == 'boolean':
-                            quantifiers[k].value += bool(q.value)
-                            quantifiers[k].count += 1
-                        elif q.quantifier.format == 'number':
-                            quantifiers[k].value += int(q.value)
-        return quantifiers
-
-class AlternativeItem(models.Model):
-    """ Ideas mapping in the strategy table allocated by some criteria and some
-    alternative. """
-
-    criteria = models.ForeignKey(Criteria, blank=True, null=True)
-    alternative = models.ForeignKey(Alternative)
-    idea = models.ManyToManyField(Idea)
-    name = models.TextField(verbose_name=_('Name'))
-    order = models.IntegerField()
-
-    class Meta:
-        db_table = settings.DNSTORM['table_prefix'] + '_alternative_item'
-
-    def __unicode__(self):
-        return '<AlternativeItem>'
-
-    def type(self):
-        return _('alternative item')
-
-    def save(self, *args, **kwargs):
-        self.order = self.order if self.order else 0
-        super(AlternativeItem, self).save(*args, **kwargs)
+    def fill_data(self):
+        self.total_ideas = self.idea.all().count()
+        self.criteria = list()
+        for c in self.problem.criteria.all():
+            c.total_stars = IdeaCriteria.objects.filter(idea__in=self.idea.all(), criteria=c).aggregate(stars=Sum('stars'))['stars']
+            c.total_stars = c.total_stars if c.total_stars else 0
+            c.star_ratio = c.total_stars * 100 / self.total_ideas / 5 if c.total_stars > 0 and self.total_ideas > 0 else 0
+            self.criteria.append(c)
 
 class Vote(models.Model):
-    """ A vote for idea or for an alternative. """
+    """
+    A vote for idea or for an alternative.
 
-    idea = models.ForeignKey(Idea, blank=True, null=True)
-    alternative = models.ForeignKey(Alternative, blank=True, null=True)
+    Attributes:
+        * ``weight`` Vote weight. Negative only for ideas.
+    """
+
+    idea = models.ForeignKey(Idea, blank=True, null=True, related_name='vote_idea')
+    comment = models.ForeignKey(Alternative, blank=True, null=True, related_name='vote_comment')
+    alternative = models.ForeignKey(Alternative, blank=True, null=True, related_name='vote_alternative')
     author = models.ForeignKey(User)
-    weight = models.SmallIntegerField(choices=(
-        (1, _('Upvote')),
-        (-1, _('Downvote'))))
-    date = models.DateTimeField(auto_now=True)
+    weight = models.SmallIntegerField(editable=False, default=0)
+    created = models.DateTimeField(auto_now_add=True, editable=False, default='2001-01-01')
 
     class Meta:
         db_table = settings.DNSTORM['table_prefix'] + '_vote'
-
-    def __unicode__(self):
-        return '<Vote: %d>' % self.id
 
     def type(self):
         return _('vote')
 
 class Activity(models.Model):
-    """ Abstract model to be filled by the ``ActivityManager`` class, where all
+    """
+    Abstract model to be filled by the ``ActivityManager`` class, where all
     that's being happening in the platform according to the viewer's
-    permissions are fetched and listed. """
+    permissions are fetched and listed.
+    """
 
     problem = models.ForeignKey(Problem, blank=True, null=True)
     idea = models.ForeignKey(Idea, blank=True, null=True)
     comment = models.ForeignKey(Comment, blank=True, null=True)
-    detail = models.TextField(blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
     user = models.ForeignKey(User, blank=True, null=True)
-    date = models.DateTimeField(blank=True, null=True)
+    updated = models.DateTimeField(blank=True, null=True)
 
     class Meta:
         abstract = True
         managed = False
 
 class ActivityManager(models.Manager):
-    """ Manager for retrieving activities from the database. """
+    """
+    Manager for retrieving activities from the database.
+    """
 
     def type(self):
         return _('activity')
 
     def get_objects(self, *args, **kwargs):
-        """ Fetches activities related to problems, ideas and comments that can
+        """
+        Fetches activities related to problems, ideas and comments that can
         be publicy visible or can be accessed by the current user. That's a RAW
-        SQL query that needs to work on all default engines. """
+        SQL query that needs to work on all default engines.
+        """
 
         # Query
 
@@ -473,8 +406,10 @@ class ActivityManager(models.Manager):
         return activities
 
     def get_params(self, *args, **kwargs):
-        """ Supply the parameters for the activity query according to the DB
-        engine. """
+        """
+        Supply the parameters for the activity query according to the DB
+        engine.
+        """
 
         db_engine = ''
         engine = settings.DATABASES['default']['ENGINE']
@@ -501,7 +436,9 @@ class ActivityManager(models.Manager):
         return params
 
     def get_pagination(self, *args, **kwargs):
-        """ Gets pagination links for a given set of query variables. """
+        """
+        Gets pagination links for a given set of query variables.
+        """
 
         # Total results count
 
@@ -522,8 +459,10 @@ class ActivityManager(models.Manager):
 
 
     def get_total(self, *args, **kwargs):
-        """ Fetchs only the total number of rows for an activity set. Used for
-        pagination. """
+        """
+        Fetchs only the total number of rows for an activity set. Used for
+        pagination.
+        """
 
         query = self.get_query_string()
         select = query['select'] % kwargs
@@ -535,7 +474,9 @@ class ActivityManager(models.Manager):
         return first[0] if len(first) > 0 else 0
 
     def get_query_string(self, *args, **kwargs):
-        """ Get the ``UNION`` SQL statement parts for the activity query. """
+        """
+        Get the ``UNION`` SQL statement parts for the activity query.
+        """
 
         return {
             'select': """
@@ -546,7 +487,6 @@ class ActivityManager(models.Manager):
                     FROM
                         %(prefix)s_problem p
                     WHERE 1=1
-                        AND p.public = %(public)s
                         AND (
                             %(user)d = 0
                             OR p.author_id = %(user)d
@@ -562,7 +502,6 @@ class ActivityManager(models.Manager):
                         %(prefix)s_problem p
                         ON p.id = i.problem_id
                     WHERE 1=1
-                        AND p.public = %(public)s
                         AND (
                             %(user)d = 0
                             OR i.author_id = %(user)d
@@ -581,7 +520,6 @@ class ActivityManager(models.Manager):
                         %(prefix)s_idea i
                         ON i.id = c.idea_id
                     WHERE 1=1
-                        AND p.public = %(public)s
                         AND (
                             %(user)d = 0
                             OR c.author_id = %(user)d

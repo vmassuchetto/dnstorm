@@ -9,22 +9,11 @@ def problem(**kwargs):
         return False
     if user and user.is_superuser:
         return True
-    if mode == 'view':
-        return obj.public == True or obj.author == user \
-            or user in obj.contributor.all() or user in obj.manager.all()
     elif mode == 'manage':
         return obj.author == user or user in obj.manager.all()
     elif mode == 'contribute':
         return obj.author == user or user in obj.manager.all() or user in obj.contributor.all()
     return False
-
-def problem_queryset(**kwargs):
-    user = kwargs.get('user', None)
-    if not user:
-        return Q(public=True)
-    if user.is_superuser:
-        return Q()
-    return Q(author=user.id) | Q(contributor__in=[user.id]) | Q(manager__in=[user.id]) | Q(public=True)
 
 def idea(**kwargs):
     obj = kwargs.get('obj')

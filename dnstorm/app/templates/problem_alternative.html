@@ -1,0 +1,51 @@
+{% load i18n %}
+
+<tr class="alternative" id="alternative-{{ alternative.id }}" data-alternative="{{ alternative.id }}">
+
+    <td class="alternative-order">
+    <div class="cell-wrap">
+        {{ alternative.order }}
+    </div>
+    </td>
+
+    {% if problem_perm_manage %}
+        <td><div class="cell-wrap"><a class="select-ideas add-icon" data-alternative="{{ alternative.id }}"><i class="fi-plus"></i></a></div></td>
+    {% endif %}
+
+    <td class="alternative-ideas">
+        <div class="cell-wrap">
+            {% for idea in alternative.idea.all %}
+                <span class="label secondary radius" data-idea="{{ idea.id }}">{{ idea.title }}</span>
+            {% endfor %}
+        </div>
+    </td>
+
+    {% for criteria in alternative.criteria %}
+        <td class="alternative-stars">
+            <div class="cell-wrap">
+                <div class="stars-wrap">
+                    <div class="stars" style="width:{{ criteria.star_ratio }}%">
+                        <i class="fi-star seledted"></i>
+                        <i class="fi-star seledted"></i>
+                        <i class="fi-star seledted"></i>
+                        <i class="fi-star seledted"></i>
+                        <i class="fi-star seledted"></i>
+                    </div>
+                    <div class="stars-bg">
+                        <i class="fi-star seledted"></i>
+                        <i class="fi-star seledted"></i>
+                        <i class="fi-star seledted"></i>
+                        <i class="fi-star seledted"></i>
+                        <i class="fi-star seledted"></i>
+                    </div>
+                </div>
+                <div class="star-ratio button tiny text-bold yellow right no-margin-bottom">{{ criteria.star_ratio }}%</div>
+            </div>
+        </td>
+    {% endfor %}
+
+    {% if problem_perm_manage %}
+        <td><div class="cell-wrap"><a class="delete-icon delete-alternative" data-alternative="{{ alternative.id }}"><i class="fi-x"></i></a></div></td>
+    {% endif %}
+
+</tr>

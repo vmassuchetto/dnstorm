@@ -49,22 +49,53 @@ INSTALLED_APPS = (
 
     # Required apps for DNStorm
     'avatar',
+    'autoslug',
     'ajax_select',
     'ckeditor',
     'crispy_forms',
     'crispy_forms_foundation',
+    'compressor',
+    'djangobower',
     'haystack',
     'registration',
     'reversion',
     'south',
 
-     # DNStorm app
+    # DNStorm app
     'dnstorm.app',
 
 )
 
+# Bower
+
+BOWER_INSTALLED_APPS = (
+    'jquery',
+    'foundation',
+    'foundation-icons'
+)
+
+BOWER_COMPONENTS_ROOT = SITE_ROOT + '/components/'
+
+# Compressor
+
+STATICFILES_FINDERS = global_settings.STATICFILES_FINDERS + (
+    'compressor.finders.CompressorFinder',
+)
+
+COMPRESS_PRECOMPILERS = (
+    ('text/x-sass', 'sass --compass "{infile}" "{outfile}"'),
+    ('text/x-scss', 'sass --scss --compass -I "%s/bower_components/foundation/scss" "{infile}" "{outfile}"' % BOWER_COMPONENTS_ROOT),
+)
+
+COMPRESS_ROOT = SITE_ROOT + '/app/static/'
+COMPRESS_URL = '/static/'
+COMPRESS_OUTPUT_DIR = 'cache'
+
+# Ajax lookups
+
 AJAX_SELECT_BOOTSTRAP = False
 AJAX_LOOKUP_CHANNELS = {
+    'criteria': ('dnstorm.app.lookups', 'CriteriaLookup'),
     'user': ('dnstorm.app.lookups', 'UserLookup')
 }
 
@@ -129,8 +160,8 @@ CKEDITOR_CONFIGS = {
 
 # Crispy Forms
 
-TEMPLATE_PACK = 'foundation'
-CRISPY_TEMPLATE_PACK = 'foundation'
+TEMPLATE_PACK = 'foundation-5'
+CRISPY_TEMPLATE_PACK = 'foundation-5'
 
 # Haystack
 

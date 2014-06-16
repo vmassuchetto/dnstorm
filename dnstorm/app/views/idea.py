@@ -13,7 +13,7 @@ from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext as _
 from django.contrib import messages
 
-from dnstorm.app.models import Problem, Idea, ActivityManager, Quantifier, QuantifierValue
+from dnstorm.app import models
 from dnstorm.app.forms import IdeaForm
 from dnstorm.app import permissions
 
@@ -22,48 +22,25 @@ import diff_match_patch as _dmp
 from dnstorm.app.lib.diff import diff_prettyHtml
 
 def idea_form_valid(obj, form):
+    """
+    Validates the idea form for the ``IdeaUpdateView``.
+    """
 
-    # Form
+    # Save idea
 
     object = form.save(commit=False)
     object.problem = obj.problem if hasattr(obj, 'problem') else object.problem
     object.author = obj.request.user
     object.save()
 
-    # 1-fielded simple quantifiers
+    # Criterias ratings
 
-    regex = re.compile('^quantifier_([0-9]+)_(boolean|number|text)$')
-    for f in form.fields:
-        m = regex.match(f)
-        if not m:
-            continue
-        try:
-            q = Quantifier.objects.get(id=m.group(1))
-        except Quantifier.DoesNotExist:
-            messages.warning(obj.request, _('There was a problem saving the quantifier \'%s\'.' % f.label))
-            continue
-        if f in form.cleaned_data and form.cleaned_data[f]:
-            qv = QuantifierValue.objects.get_or_create(quantifier=q, idea=object)[0]
-            qv.value = form.cleaned_data[f]
-            qv.save()
-
-    # Date quantifiers
-
-    date_re = re.compile('quantifier_(?P<id>[0-9]+)_daterange_([0-9]+)')
-    date_ids = list(set([date_re.match(f).group('id') for f in form.fields if date_re.match(f)]))
-    for id in date_ids:
-        data = [
-            form.cleaned_data['quantifier_' + id + '_daterange_01'].strftime('%d/%m/%Y'),
-            form.cleaned_data['quantifier_' + id + '_daterange_02'].strftime('%d/%m/%Y')
-        ]
-        try:
-            q = Quantifier.objects.get(id=id)
-        except Quantifier.DoesNotExist:
-            messages.warning(obj.request, _('There was a problem saving a date quantifier.'))
-            continue
-        qv = QuantifierValue.objects.get_or_create(quantifier=q, idea=object)[0]
-        qv.value = json.dumps(data)
-        qv.save()
+    models.IdeaCriteria.objects.filter(idea=object).delete()
+    for c in object.problem.criteria.all():
+        models.IdeaCriteria(
+            idea=models.Idea.objects.get(id=object.id),
+            criteria=models.Criteria.objects.get(id=c.id),
+            stars=form.cleaned_data['criteria_%d' % c.id]).save()
 
     # Problem activity update
 
@@ -83,19 +60,20 @@ class IdeaView(RedirectView):
 class IdeaUpdateView(UpdateView):
     template_name = 'idea_edit.html'
     form_class = IdeaForm
-    model = Idea
+    model = models.Idea
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
-        obj = get_object_or_404(Idea, id=kwargs['pk'])
+        obj = get_object_or_404(models.Idea, id=kwargs['pk'])
         if not permissions.idea(obj=obj, user=self.request.user, mode='edit'):
             raise PermissionDenied
         return super(IdeaUpdateView, self).dispatch(request, *args, **kwargs)
 
     def get_context_data(self, *args, **kwargs):
         context = super(IdeaUpdateView, self).get_context_data(**kwargs)
-        context['problem'] = get_object_or_404(Problem, id=self.object.problem.id)
+        context['problem'] = get_object_or_404(models.Problem, id=self.object.problem.id)
         context['breadcrumbs'] = self.get_breadcrumbs()
+        context['activities'] = models.ActivityManager().get_objects(limit=4)
         return context
 
     @reversion.create_revision()
@@ -111,13 +89,13 @@ class IdeaUpdateView(UpdateView):
 
 class IdeaRevisionView(DetailView):
     template_name = 'idea_revision.html'
-    model = Idea
+    model = models.Idea
 
     def get_context_data(self, *args, **kwargs):
         context = super(IdeaRevisionView, self).get_context_data(**kwargs)
         context['breadcrumbs'] = self.get_breadcrumbs()
         context['problem'] = self.object.problem
-        context['activities'] = ActivityManager().get_objects(limit=4)
+        context['activities'] = models.ActivityManager().get_objects(limit=4)
         context['revisions'] = list()
 
         dmp = _dmp.diff_match_patch()

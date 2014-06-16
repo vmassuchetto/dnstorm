@@ -5,19 +5,6 @@
 
 {% block head %}{{ form.media }}{% endblock %}
 
-{% block modals %}
-    <div id="criteria-modal" class="reveal-modal tiny" data-reveal>
-        <a class="close-reveal-modal">&#215;</a>
-        {% crispy criteria_form %}
-    </div>
-    <div id="quantifier-remove-modal" class="reveal-modal tiny" data-reveal>
-        <a class="close-reveal-modal">&#215;</a>
-        <p>{% trans "Are you sure? All existing data for this quantifier will be lost." %}</p>
-        <a class="close-reveal-modal-button button secondary small radius left">{% trans "Cancel" %}</a>
-        <a class="button alert small radius right quantifier-remove">{% trans "Remove" %}</a>
-    </div>
-{% endblock %}
-
 {% block content %}
     <div class="row">
     <div class="columns large-12">

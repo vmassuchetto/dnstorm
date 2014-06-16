@@ -7,16 +7,17 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
+from django.template.loader import render_to_string
 
 from dnstorm.settings import LANGUAGES
-from dnstorm.app.models import Option, Problem, Idea, Comment, \
-    Criteria, Message, Quantifier, QuantifierValue, QUANTIFIER_CHOICES
+from dnstorm.app import models
+from dnstorm.app.lib.get import get_object_or_none
 
 from crispy_forms.helper import FormHelper
-from crispy_forms_foundation.layout import Fieldset, Field, \
-    Row, HTML, ButtonHolder, Submit, Layout, Column
+from crispy_forms_foundation.layout import *
 
 from ajax_select.fields import AutoCompleteSelectMultipleField
+from ajax_select import make_ajax_field
 
 from dnstorm.app.lib.slug import unique_slugify
 
@@ -72,42 +73,12 @@ class UserAdminForm(forms.ModelForm):
         )
 
 class ProblemForm(forms.ModelForm):
-    criteria = forms.Field(_('Criterias'))
+    criteria = AutoCompleteSelectMultipleField('criteria', required=True)
     contributor = AutoCompleteSelectMultipleField('user', required=False)
     manager = AutoCompleteSelectMultipleField('user', required=False)
-    quantifier_format = forms.ChoiceField(label='', choices=QUANTIFIER_CHOICES, widget=forms.Select(), initial='', required=False)
 
     class Meta:
-        model = Problem
-
-    def quantifier_row(self, keys):
-        return '''
-            <div class="row quantifier-entry">
-                <div class="columns large-2"><a href="javascript:void(0)" class="button secondary tiny radius">%(format)s</a></div>
-                <div class="columns large-3"><input name="quantifiername_%(id)d_%(format)s" type="text" value="%(name)s" placeholder="%(name_placeholder)s" /></div>
-                <div class="columns large-5"><textarea name="quantifierhelp_%(id)d_%(format)s" placeholder="%(help_placeholder)s">%(help)s</textarea></div>
-                <div class="columns large-2"><a href="javascript:void(0)" class="button alert tiny radius quantifier-remove-dialog"><i class="foundicon-minus"></i>&nbsp;%(remove)s</a></div>
-            </div>''' % keys
-
-    def quantifier_rows(self):
-        if not self.instance:
-            return ''
-        html = ''
-        for q in Quantifier.objects.filter(problem=self.instance):
-            format = [qt[1] for qt in QUANTIFIER_CHOICES if qt[0] == q.format]
-            format = unicode(format[0]) if len(format) > 0 else False
-            if not format:
-                continue
-            html += self.quantifier_row({
-                'id': q.id,
-                'format': q.format,
-                'name': q.name,
-                'help': q.help,
-                'name_placeholder': _('Quantifier name'),
-                'help_placeholder': _('Help text'),
-                'remove': _('Remove')
-            })
-        return html
+        model = models.Problem
 
     def __init__(self, *args, **kwargs):
         self.instance = kwargs['instance'] if 'instance' in kwargs else False
@@ -118,159 +89,99 @@ class ProblemForm(forms.ModelForm):
             Fieldset(_('Problem description'),
                 'title',
                 'description',
-                Field('criteria', css_class='problem-criteria', template='field_criteria.html'),
             ),
-            Fieldset(_('Idea Quantifiers'),
+            Fieldset(_('Criterias'),
                 Row(
-                    Column(Field('quantifier_format'), css_class="large-9"),
-                    Column(HTML('<a href="javascript:void(0)" id="quantifier-add" class="button small radius"><i class="foundicon-plus"></i>&nbsp;' + _('Add quantifier') + '</a>'), css_class="large-3"),
+                    Column('criteria', css_class='large-10'),
+                    Column(HTML('<br/><a target="_blank" class="button small radius expand" href="%s">%s</a>' % (reverse('criteria_new'), _('New criteria'))), css_class='large-2')
                 ),
-                HTML('<div id="quantifiers">' + unicode(self.quantifier_rows()) + '</div>'),
             ),
             Fieldset(_('Permissions'),
                 'contributor',
                 'manager',
-                Row(
-                    Column('open', css_class='large-3'),
-                    Column('public', css_class='large-2'),
-                    Column('locked', css_class='large-2'),
-                    Column('blind', css_class='large-3'),
-                    Column('max', css_class='large-2'),
-                ),
-            ),
-            Fieldset(_('Voting'),
-                Row(
-                    Column('voting', css_class='large-4'),
-                    Column('vote_count', css_class='large-4'),
-                    Column('vote_author', css_class='large-4'),
-                ),
             ),
             ButtonHolder(
-                HTML('<a id="advanced" class="button secondary radius">' + _('Advanced options') + '</a>'),
                 Submit('submit', _('Save'), css_class='radius'),
             ),
         )
         super(ProblemForm, self).__init__(*args, **kwargs)
 
-        self.fields['max'].label = ''
-
-        # Format criteria field
-        self.fields['criteria'].required = False
-        self.fields['criteria'].help_text = mark_safe(_('Type the name of the criteria to search. Go to the <a href="%s">criterias page</a> if you want to edit them.' % reverse('criteria_list')))
-
-        # Add criteria fields
-        instance = kwargs.pop('instance')
-        if instance:
-            criteria = Criteria.objects.filter(problem=instance)
-            for c in criteria:
-                self.fields['criteria_{i}'.format(i=c.id)] = forms.CharField(widget = forms.HiddenInput(), initial=c.id, label=c.name, help_text=mark_safe(c.description), required=False)
-                self.helper.layout.append((Field('criteria_{i}'.format(i=c.id), type='hidden', value=c.id)))
+        if self.instance.id:
+            self.fields['criteria'].initial = [c.id for c in self.instance.criteria.all()]
 
 class CriteriaForm(forms.ModelForm):
     description = forms.CharField(widget=forms.Textarea(attrs={'id': 'criteria_description'}))
-    mode = forms.CharField()
 
     class Meta:
-        model = Criteria
-        exclude = ['slug', 'order']
+        model = models.Criteria
+        exclude = ['slug']
 
     def __init__(self, *args, **kwargs):
+        star = '<i class="fi-star"></i>'
         self.helper = FormHelper()
         self.helper.form_action = '.'
-        self.helper.layout = Layout(
-            Field('mode', type='hidden'),
+        layout_args = (
             Row(Column('name', css_class='large-12')),
             Row(Column('description', css_class='large-12')),
-            Row(Column(Submit('submit', _('Save'), css_class='small radius right'), css_class='large-12')),
+            Row(Column(HTML('<h4>' + _('Quantification') + '</h4>'), css_class='large-12')),
+            Row(Column(HTML('<p class="formHint quantifier-help">' + _('Users will use 5 stars to rate how ideas match each criteria. Describe what each number of star means.') + '</p>'), css_class="large-12"))
         )
+        for i in range(1,6):
+            layout_args += (Row(Column(HTML('<label class="right inline">' + star * i + '</label>'), css_class='large-2'), Column(Field('help_star%d' % i), css_class='large-10')),)
+        layout_args += (ButtonHolder(
+            Submit('submit', _('Save'), css_class='radius'),
+        ),)
+        self.helper.layout = Layout(*layout_args)
         super(CriteriaForm, self).__init__(*args, **kwargs)
-        self.fields['mode'].initial = 'problem_criteria_create'
+        for i in range(1,6):
+            self.fields['help_star%d' % i].label = ''
 
 class IdeaForm(forms.ModelForm):
 
     class Meta:
-        model = Idea
-
-    class Media:
-        css = {'all':(
-            'dnstorm/css/foundation-datepicker.css',
-        )}
+        model = models.Idea
 
     def __init__(self, *args, **kwargs):
 
         if 'problem' in kwargs:
+            idea = None
             problem = kwargs['problem']
             del kwargs['problem']
         elif 'instance' in kwargs:
-            problem = kwargs['instance'].problem
+            idea = kwargs['instance']
+            problem = idea.problem
         else:
             raise Http404
 
-        # Quantifiers
+        super(IdeaForm, self).__init__(*args, **kwargs)
 
-        quantifiers = problem.quantifier_set.all()
-        layout_args = ['title', 'content']
-        extra_fields = dict()
+        # Add criterias
 
-        # Set quantifier fields
-        for q in quantifiers:
-            q_key = 'quantifier_' + str(q.id) + '_' + q.format
-            if q.format == 'text':
-                extra_fields[q_key] = forms.CharField(label=q.name, required=True, help_text=q.help)
-            elif q.format == 'number':
-                extra_fields[q_key] = forms.IntegerField(label=q.name, required=True, help_text=q.help)
-            elif q.format == 'boolean':
-                extra_fields[q_key] = forms.BooleanField(label=q.name, required=False, help_text=q.help)
-            elif q.format == 'daterange':
-                extra_fields[q_key + '_01'] = forms.DateField(label=q.name, required=True, help_text=q.help)
-                extra_fields[q_key + '_02'] = forms.DateField(label='&nbsp;', required=True, help_text='&nbsp;')
-            else:
-                continue
+        criteria_html = tuple()
+        criteria_fields = tuple()
+        context = dict()
+        for c in problem.criteria.all():
+            context['criteria'] = c
+            s = get_object_or_none(models.IdeaCriteria, idea=idea, criteria=c)
+            context['stars'] = s.stars if s else 0
+            criteria_html += (HTML(render_to_string('criteria_vote.html', context)),)
+            self.fields['criteria_%d' % c.id] = forms.IntegerField(label=c.name, initial=context['stars'])
+            criteria_fields += (Field('criteria_%d' % c.id, type='hidden'),)
 
-        # Insert fields in layout
-        for q in quantifiers:
-            q_key = 'quantifier_' + str(q.id) + '_' + q.format
-            if q.format == 'daterange':
-                layout_args.append(Row(
-                    Column(q_key + '_01', css_class='large-6'),
-                    Column(q_key + '_02', css_class='large-6')),)
-            else:
-                layout_args.append(q_key)
-        layout_args += (Submit('submit', _('Submit'), css_class='right radius'),)
+        errors = ''
+        if re.match(r'.*criteria_.*', str(self.errors)):
+            errors = HTML('<small class="error">' + _('All quantifiers are needed to submit an idea.') + '</small>')
+
+        layout_args = (
+            HTML('<h3>' + _('Describe the idea') + '</h3>'),
+            'title',
+            'content',
+            HTML('<h3 class="top-1em">' + _('How this idea meet the problem criterias') + '</h3>'), errors) + criteria_html + criteria_fields + (HTML('<hr/>'),) + (Submit('submit', _('Submit'), css_class='right radius'),)
 
         # Form instantiation
         self.helper = FormHelper()
         self.helper.form_action = '.'
         self.helper.layout = Layout(*layout_args)
-        super(IdeaForm, self).__init__(*args, **kwargs)
-        self.fields['content'].label = ''
-        self.fields = dict(self.fields.items() + extra_fields.items())
-
-        # Set initial data
-        if self.instance.id:
-            for q in quantifiers:
-                if q.format == 'daterange':
-                    continue
-                q_key = 'quantifier_' + str(q.id) + '_' + q.format
-                try:
-                    qv = QuantifierValue.objects.get(quantifier=q.id, idea=self.instance).value
-                except QuantifierValue.DoesNotExist:
-                    qv = ''
-                extra_fields[q_key].initial = qv
-            for q in quantifiers:
-                if q.format != 'daterange':
-                    continue
-                q_keys = [
-                    'quantifier_' + str(q.id) + '_' + q.format + '_01',
-                    'quantifier_' + str(q.id) + '_' + q.format + '_02'
-                ]
-                try:
-                    qv = QuantifierValue.objects.get(quantifier=q.id, idea=self.instance).value
-                    qv = json.loads(qv) if len(qv) > 0 else ['', '']
-                except QuantifierValue.DoesNotExist:
-                    qv = ['', '']
-                extra_fields[q_keys[0]].initial = qv[0]
-                extra_fields[q_keys[1]].initial = qv[1]
 
     def clean(self):
         date_re = re.compile('quantifier_(?P<id>[0-9]+)_daterange_(01|02)')
@@ -289,7 +200,7 @@ class CommentForm(forms.ModelForm):
     content = forms.CharField(widget=forms.Textarea(attrs={'id': 'comment_content'}))
 
     class Meta:
-        model = Comment
+        model = models.Comment
 
     def __init__(self, *args, **kwargs):
         self.helper = FormHelper()
@@ -309,7 +220,7 @@ class MessageForm(forms.ModelForm):
     subject = forms.CharField(label=_('Subject'), widget=forms.TextInput)
 
     class Meta:
-        model = Message
+        model = models.Message
         exclude = ['problem', 'sender']
 
     def __init__(self, *args, **kwargs):

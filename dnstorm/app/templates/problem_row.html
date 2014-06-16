@@ -1,0 +1,23 @@
+{% load i18n humanize %}
+
+<div class="row collapse list-item problem-list-item">
+<div class="columns large-3 medium-3 show-for-medium-up">
+    <div class="counter problem-idea-counter left">
+        <span class="number">{{ problem.idea_count }}</span>
+        <span class="description">{% if problem.idea_count > 1 or problem.idea_count = 0 %}{% trans "ideas" %}{% else %}{% trans "idea" %}{% endif %}</span>
+    </div>
+    <div class="counter problem-alternative-counter left">
+        <span class="number">{{ problem.alternative_count }}</span>
+        <span class="description">{% if problem.alternative_count > 1 or problem.alternative_count = 0 %}{% trans "alternatives" %}{% else %}{% trans "alternative" %}{% endif %}</span>
+    </div>
+</div>
+<div class="problem-info columns large-9 medium-9 small-12">
+    <h4><a href="{% url "problem" problem.slug %}">{{ problem.title }}</a></h4>
+    <p class="problem-criteria left no-margin-bottom">
+        {% for criteria in problem.criteria.all %}
+            {% include "criteria_button.html" with size="tiny" %}
+        {% endfor %}
+    </p>
+    <h6 class="subheader right">{{ problem.last_activity|naturaltime }}</h6>
+</div>
+</div>

@@ -11,12 +11,15 @@
 *.pyc
 env
 
-# Django
+# Static files and components
 /static
+dnstorm/app/static/cache
+dnstorm/components
 
 # DNStorm
 *.sqlite3
 media
+dnstorm/app/static/dnstorm/css/app.css
 
 # Heroku project
 dnstorm/settings/heroku.py

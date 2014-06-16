@@ -1,1 +1,1 @@
-<a class="button-criteria" href="{% url "criteria" criteria.slug %}">{{ criteria.name }}</a>
+<a class="button {% if size %}{{ size }}{% else %}small{% endif %} radius button-criteria{% if with_stars %} left button-criteria-with-stars{% endif %}" {% if with_link %}href="{{ criteria.get_absolute_url }}"{% endif %}>{% if with_stars %}{% for star in criteria.stars %}<i class="fi-star"></i>{% endfor %}&nbsp;{% endif %}{{ criteria.name }}</a>

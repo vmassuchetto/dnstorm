@@ -28,17 +28,17 @@ import diff_match_patch as _dmp
 from dnstorm import settings
 from dnstorm.app import permissions
 from dnstorm.app.lib.diff import diff_prettyHtml
-from dnstorm.app.models import Problem, Idea, \
-    Criteria, Vote, Comment, Alternative, \
-    Message, ActivityManager, Quantifier
-from dnstorm.app.forms import ProblemForm, IdeaForm, \
-    CommentForm, CriteriaForm, AlternativeForm
+from dnstorm.app.lib.get import get_object_or_none
+from dnstorm.app import models
+from dnstorm.app import forms
 from dnstorm.app.views.idea import idea_form_valid
 
 def problem_form_valid(obj, form):
-    """ Save the object, clear the criterias and add the submited ones in
-    `request.POST`. This method will be the same for ProblemCreateView and 
-    ProblemUpdateView. """
+    """
+    Save the object, clear the criterias and add the submited ones in
+    ``request.POST``. This method will be the same for ProblemCreateView and
+    ProblemUpdateView.
+    """
 
     # Save first
 
@@ -46,76 +46,28 @@ def problem_form_valid(obj, form):
     obj.object.author = obj.request.user
     obj.object.save()
 
-    # Managers and contributors
-
-    for i in obj.request.POST.get('contributor', '').split('|'):
-        try:
-            obj.object.contributor.add(int(i))
-        except ValueError:
-            continue
-
-    for i in obj.request.POST.get('manager', '').split('|'):
-        try:
-            obj.object.manager.add(int(i))
-        except ValueError:
-            continue
-
-    obj.object.save()
-
     # Criterias
 
-    obj.object.criteria.clear()
-    regex_criteria = re.compile('^criteria_([0-9]+)$')
-    criteria = Criteria.objects.filter(id__in=[m.group(1) for m in [regex_criteria.match(p) for p in obj.request.POST] if m])
-    for c in criteria:
+    obj.object.criteria.through.objects.all().delete()
+    criterias = [i for i in obj.request.POST.get('criteria', '').split('|') if i.isdigit()]
+    for c in models.Criteria.objects.filter(id__in=criterias):
         obj.object.criteria.add(c)
+
+    # Contributor
+
+    obj.object.contributor.through.objects.all().delete()
+    contributors = [i for i in obj.request.POST.get('contributor', '').split('|') if i.isdigit()]
+    for u in User.objects.filter(id__in=contributors):
+        obj.object.contributor.add(u)
+
+    # Manager
+
+    obj.object.manager.through.objects.all().delete()
+    managers = [i for i in obj.request.POST.get('manager', '').split('|') if i.isdigit()]
+    for u in User.objects.filter(id__in=managers):
+        obj.object.manager.add(u)
+
     obj.object.save()
-
-    # New quantifiers
-
-    new_ids = list()
-    new = dict() # new[<temporary id>] = [<format>, <name>, <help text>]
-    regex_new_name = re.compile('^quantifiername_new([0-9]+)_(boolean|number|text|daterange)$')
-    regex_new_help = re.compile('^quantifierhelp_new([0-9]+)_(boolean|number|text|daterange)$')
-
-    for m in [m for m in [regex_new_name.match(p) for p in obj.request.POST] if m]:
-        new.setdefault(m.group(1), dict())
-        new[m.group(1)]['format'] = m.group(2)
-        new[m.group(1)]['name'] = obj.request.POST[m.group(0)]
-    for m in [m for m in [regex_new_help.match(p) for p in obj.request.POST] if m]:
-        new[m.group(1)]['help'] = obj.request.POST[m.group(0)]  # Help text
-    for q in new.values():
-        try:
-            n = Quantifier(problem=obj.object, format=q['format'], name=q['name'], help=q['help'])
-            n.save()
-            new_ids.append(n.id)
-        except:
-            messages.warning(obj.request, _('There was an error saving the quantifier \'%s\'.' % q['name']))
-            continue
-
-    # Update quantifiers
-
-    update = dict() # update[<id>] = [<format>, <name>, <help text>]
-    regex_name = re.compile('^quantifiername_([0-9]+)_(boolean|number|text|daterange)$')
-    regex_help = re.compile('^quantifierhelp_([0-9]+)_(boolean|number|text|daterange)$')
-    for m in [m for m in [regex_name.match(p) for p in obj.request.POST] if m]:
-        update.setdefault(m.group(1), dict())
-        update[m.group(1)]['id'] = m.group(1)
-        update[m.group(1)]['format'] = m.group(2)
-        update[m.group(1)]['name'] = obj.request.POST[m.group(0)]
-    for m in [m for m in [regex_help.match(p) for p in obj.request.POST] if m]:
-        update[m.group(1)]['help'] = obj.request.POST[m.group(0)]
-    for q in update.values():
-        try:
-            Quantifier(id=q['id'], problem=obj.object, format=q['format'], name=q['name'], help=q['help']).save()
-        except:
-            messages.warning(obj.request, _('There was an error saving the quantifier \'%s\'.' % q['name']))
-            continue
-
-    # Remove remaining quantifiers
-
-    ids_to_keeep = new_ids + [ int(k) for k in update.keys() ]
-    Quantifier.objects.filter(problem=obj.object.id).exclude(pk__in=ids_to_keeep).delete()
 
     # Success
 
@@ -124,8 +76,8 @@ def problem_form_valid(obj, form):
 
 class ProblemCreateView(CreateView):
     template_name = 'problem_edit.html'
-    form_class = ProblemForm
-    model = Problem
+    form_class = forms.ProblemForm
+    model = models.Problem
 
     @method_decorator(login_required)
     @method_decorator(csrf_protect)
@@ -136,7 +88,7 @@ class ProblemCreateView(CreateView):
         context = super(ProblemCreateView, self).get_context_data(**kwargs)
         context['breadcrumbs'] = self.get_breadcrumbs()
         context['title'] = _('Create new problem')
-        context['criteria_form'] = CriteriaForm()
+        context['criteria_form'] = forms.CriteriaForm()
         return context
 
     def get_breadcrumbs(self):
@@ -150,13 +102,13 @@ class ProblemCreateView(CreateView):
 
 class ProblemUpdateView(UpdateView):
     template_name = 'problem_edit.html'
-    form_class = ProblemForm
-    model = Problem
+    form_class = forms.ProblemForm
+    model = models.Problem
 
     @method_decorator(login_required)
     @method_decorator(csrf_protect)
     def dispatch(self, *args, **kwargs):
-        obj = get_object_or_404(Problem, slug=kwargs['slug'])
+        obj = get_object_or_404(models.Problem, slug=kwargs['slug'])
         if not permissions.problem(obj=obj, user=self.request.user, mode='edit'):
             raise PermissionDenied
         return super(ProblemUpdateView, self).dispatch(*args, **kwargs)
@@ -165,7 +117,7 @@ class ProblemUpdateView(UpdateView):
         context = super(ProblemUpdateView, self).get_context_data(**kwargs)
         context['breadcrumbs'] = self.get_breadcrumbs()
         context['title'] = _('Edit problem')
-        context['criteria_form'] = CriteriaForm()
+        context['criteria_form'] = forms.CriteriaForm()
         return context
 
     def get_breadcrumbs(self):
@@ -180,7 +132,7 @@ class ProblemUpdateView(UpdateView):
 
 class ProblemDeleteView(DeleteView):
     template_name = 'problem_confirm_delete.html'
-    model = Problem
+    model = models.Problem
     success_url = '/'
 
     def dispatch(self, *args, **kwargs):
@@ -193,7 +145,7 @@ class ProblemDeleteView(DeleteView):
 
 class ProblemRevisionView(DetailView):
     template_name = 'problem_revision.html'
-    model = Problem
+    model = models.Problem
 
     def dispatch(self, *args, **kwargs):
         obj = get_object_or_404(Problem, slug=kwargs['slug'])
@@ -307,26 +259,13 @@ class ProblemRevisionItemView(RedirectView):
         revision = get_object_or_404(reversion.models.Version, id=kwargs['pk'])
         return reverse('problem_revision', kwargs={'id':revision.object.id}) + '#revision-' + str(revision.id)
 
-class ProblemShortView(RedirectView):
-    permanent = True
-
-    def dispatch(self, *args, **kwargs):
-        obj = get_object_or_404(Problem, slug=kwargs['slug'])
-        if not permissions.problem(obj=obj, user=self.request.user, mode='view'):
-            raise PermissionDenied
-        return super(ProblemShortView, self).dispatch(*args, **kwargs)
-
-    def get_redirect_url(self, *args, **kwargs):
-        problem = get_object_or_404(Problem, id=kwargs['pk'])
-        return reverse('problem', kwargs={'slug':problem.slug})
-
 class ProblemView(FormView):
     template_name = 'problem.html'
-    form_class = IdeaForm
+    form_class = forms.IdeaForm
 
     @method_decorator(csrf_protect)
     def dispatch(self, request, *args, **kwargs):
-        self.problem = get_object_or_404(Problem, slug=self.kwargs['slug'])
+        self.problem = get_object_or_404(models.Problem, slug=self.kwargs['slug'])
         if not permissions.problem(obj=self.problem, user=self.request.user, mode='view'):
             raise PermissionDenied
         return super(ProblemView, self).dispatch(request, *args, **kwargs)
@@ -340,50 +279,55 @@ class ProblemView(FormView):
         context = super(ProblemView, self).get_context_data(**kwargs)
         user = get_user(self.request)
         context['breadcrumbs'] = self.get_breadcrumbs()
-        context['activities'] = ActivityManager().get_objects(limit=4)
+        context['activities'] = models.ActivityManager().get_objects(limit=4)
         context['title'] = self.problem.title
+        context['sidebar'] = True
         context['problem'] = self.problem
         context['problem_perm_manage'] = permissions.problem(obj=self.problem, user=user, mode='manage')
         context['problem_perm_contribute'] = permissions.problem(obj=self.problem, user=user, mode='contribute')
-        context['problem_short_url'] = self.request.build_absolute_uri(reverse('problem_short', kwargs={'pk': self.problem.id}))
-        context['comments'] = Comment.objects.filter(problem=self.problem)
-        context['bulletin'] = Message.objects.filter(problem=self.problem).order_by('-created')[:4]
-        context['problem_comment_form'] = CommentForm(initial={'problem': self.problem.id})
-        context['criterias'] = Criteria.objects.filter(problem=self.problem).order_by('order')
-        context['alternatives'] = Alternative.objects.filter(problem=self.problem).order_by('order')
-        context['alternative_form'] = AlternativeForm(initial={'problem': self.problem.id})
-        context['all_ideas'] = Idea.objects.filter(problem=self.problem)
+        context['comments'] = models.Comment.objects.filter(problem=self.problem)
+        context['bulletin'] = models.Message.objects.filter(problem=self.problem).order_by('-created')[:4]
+        context['problem_comment_form'] = forms.CommentForm(initial={'problem': self.problem.id})
+        context['criterias'] = models.Criteria.objects.filter(problem=self.problem)
+        context['all_ideas'] = models.Idea.objects.filter(problem=self.problem)
+
+        # Alternatives
+
+        context['alternatives'] = list()
+        for a in models.Alternative.objects.filter(problem=self.problem):
+            a.fill_data()
+            context['alternatives'].append(a)
 
         # Ideas
 
         ideas_qs = Q(problem=self.problem) & permissions.idea_queryset(user=user)
-        if self.problem.blind:
-            ideas_qs &= Q(author=user.id)
         if ideas_qs:
-            context['ideas'] = Idea.objects.filter(ideas_qs)
+            context['ideas'] = models.Idea.objects.filter(ideas_qs)
         else:
-            context['ideas'] = Idea.objects.none()
+            context['ideas'] = models.Idea.objects.none()
         context['idea_actions'] = True
 
         # Voting and comments
 
-        if self.problem.max > 0:
-            context['user_ideas_left'] = self.problem.max - Idea.objects.filter(problem=self.problem, author=self.request.user).count()
-        elif self.request.user.is_authenticated():
-            context['user_ideas_left'] = 1
-
-        for alternative in context['alternatives']:
-            alternative.vote_count = Vote.objects.filter(alternative=alternative).count()
-            alternative.user_vote = Vote.objects.filter(alternative=alternative, author=user.id).count()
-
         for idea in context['ideas']:
-            user_vote = Vote.objects.filter(idea=idea, author=user.id)
+            user_vote = models.Vote.objects.filter(idea=idea, author=user.id)
             idea.user_vote = user_vote[0] if len(user_vote) else False
             idea.perms_edit = permissions.idea(obj=idea, user=self.request.user, mode='edit')
-            idea.comments = Comment.objects.filter(idea=idea).order_by('created')
-            idea.comment_form = CommentForm(initial={'idea': idea.id})
-            if self.problem.vote_author:
-                idea.votes = Vote.objects.filter(idea=idea).order_by('date')
+            idea.comments = models.Comment.objects.filter(idea=idea).order_by('created')
+            idea.comment_form = forms.CommentForm(initial={'idea': idea.id})
+
+            # Idea criterias
+
+            idea.criterias = list()
+            for criteria in self.problem.criteria.all():
+                ic = get_object_or_none(models.IdeaCriteria, criteria=criteria.id, idea=idea.id)
+                if not ic:
+                    continue
+                criteria.stars = xrange(ic.stars)
+                idea.criterias.append(criteria)
+
+            # Idea comments
+
             for comment in idea.comments:
                 comment.perms_edit = permissions.comment(obj=comment, user=self.request.user, mode='edit')
 

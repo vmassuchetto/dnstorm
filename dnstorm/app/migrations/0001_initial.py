@@ -20,9 +20,13 @@ class Migration(SchemaMigration):
         db.create_table('dnstorm_criteria', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('name', self.gf('django.db.models.fields.CharField')(max_length=90)),
-            ('slug', self.gf('django.db.models.fields.CharField')(unique=True, max_length=90)),
-            ('description', self.gf('django.db.models.fields.TextField')(blank=True)),
-            ('order', self.gf('django.db.models.fields.IntegerField')(default=0)),
+            ('slug', self.gf('autoslug.fields.AutoSlugField')(unique=True, max_length=60, populate_from='name', unique_with=())),
+            ('description', self.gf('django.db.models.fields.TextField')()),
+            ('help_star1', self.gf('django.db.models.fields.CharField')(max_length=255)),
+            ('help_star2', self.gf('django.db.models.fields.CharField')(max_length=255)),
+            ('help_star3', self.gf('django.db.models.fields.CharField')(max_length=255)),
+            ('help_star4', self.gf('django.db.models.fields.CharField')(max_length=255)),
+            ('help_star5', self.gf('django.db.models.fields.CharField')(max_length=255)),
             ('created', self.gf('django.db.models.fields.DateTimeField')(default='2001-01-01', auto_now_add=True, blank=True)),
             ('updated', self.gf('django.db.models.fields.DateTimeField')(default='2001-01-01', auto_now=True, blank=True)),
         ))
@@ -32,17 +36,9 @@ class Migration(SchemaMigration):
         db.create_table('dnstorm_problem', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('title', self.gf('django.db.models.fields.CharField')(max_length=90)),
-            ('slug', self.gf('django.db.models.fields.SlugField')(unique=True, max_length=90)),
-            ('description', self.gf('ckeditor.fields.RichTextField')(blank=True)),
+            ('slug', self.gf('autoslug.fields.AutoSlugField')(unique=True, max_length=60, populate_from='title', unique_with=())),
+            ('description', self.gf('ckeditor.fields.RichTextField')()),
             ('author', self.gf('django.db.models.fields.related.ForeignKey')(related_name='author', to=orm['auth.User'])),
-            ('open', self.gf('django.db.models.fields.BooleanField')(default=True)),
-            ('public', self.gf('django.db.models.fields.BooleanField')(default=True)),
-            ('locked', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('blind', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('max', self.gf('django.db.models.fields.IntegerField')(default=0, blank=True)),
-            ('voting', self.gf('django.db.models.fields.BooleanField')(default=True)),
-            ('vote_count', self.gf('django.db.models.fields.BooleanField')(default=True)),
-            ('vote_author', self.gf('django.db.models.fields.BooleanField')(default=False)),
             ('created', self.gf('django.db.models.fields.DateTimeField')(default='2000-01-01', auto_now_add=True, blank=True)),
             ('updated', self.gf('django.db.models.fields.DateTimeField')(default='2000-01-01', auto_now=True, blank=True)),
             ('last_activity', self.gf('django.db.models.fields.DateTimeField')(default='2000-01-01', auto_now=True, blank=True)),
@@ -76,22 +72,12 @@ class Migration(SchemaMigration):
         ))
         db.create_unique(m2m_table_name, ['problem_id', 'user_id'])
 
-        # Adding model 'Quantifier'
-        db.create_table('dnstorm_quantifier', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('problem', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['app.Problem'], null=True, blank=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=90)),
-            ('format', self.gf('django.db.models.fields.CharField')(max_length=10)),
-            ('help', self.gf('django.db.models.fields.TextField')()),
-        ))
-        db.send_create_signal(u'app', ['Quantifier'])
-
         # Adding model 'Idea'
         db.create_table('dnstorm_idea', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('problem', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['app.Problem'])),
             ('title', self.gf('django.db.models.fields.CharField')(max_length=90)),
             ('content', self.gf('ckeditor.fields.RichTextField')()),
-            ('problem', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['app.Problem'])),
             ('author', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
             ('deleted_by', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='idea_deleted_by', null=True, to=orm['auth.User'])),
             ('created', self.gf('django.db.models.fields.DateTimeField')(default='2000-01-01', auto_now_add=True, blank=True)),
@@ -99,14 +85,14 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal(u'app', ['Idea'])
 
-        # Adding model 'QuantifierValue'
-        db.create_table('dnstorm_quantifier_value', (
+        # Adding model 'IdeaCriteria'
+        db.create_table('dnstorm_idea_criteria', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('quantifier', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['app.Quantifier'])),
             ('idea', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['app.Idea'])),
-            ('value', self.gf('django.db.models.fields.TextField')()),
+            ('criteria', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['app.Criteria'])),
+            ('stars', self.gf('django.db.models.fields.PositiveSmallIntegerField')(default=0)),
         ))
-        db.send_create_signal(u'app', ['QuantifierValue'])
+        db.send_create_signal(u'app', ['IdeaCriteria'])
 
         # Adding model 'Comment'
         db.create_table('dnstorm_comment', (
@@ -125,52 +111,49 @@ class Migration(SchemaMigration):
         db.create_table('dnstorm_message', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('problem', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['app.Problem'])),
-            ('sender', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
+            ('sender', self.gf('django.db.models.fields.related.ForeignKey')(related_name='message_sender', to=orm['auth.User'])),
             ('subject', self.gf('django.db.models.fields.TextField')()),
             ('content', self.gf('django.db.models.fields.TextField')()),
             ('created', self.gf('django.db.models.fields.DateTimeField')(default='2000-01-01', auto_now_add=True, blank=True)),
         ))
         db.send_create_signal(u'app', ['Message'])
 
+        # Adding M2M table for field recipients on 'Message'
+        m2m_table_name = db.shorten_name('dnstorm_message_recipients')
+        db.create_table(m2m_table_name, (
+            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
+            ('message', models.ForeignKey(orm[u'app.message'], null=False)),
+            ('user', models.ForeignKey(orm[u'auth.user'], null=False))
+        ))
+        db.create_unique(m2m_table_name, ['message_id', 'user_id'])
+
         # Adding model 'Alternative'
         db.create_table('dnstorm_alternative', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('problem', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['app.Problem'])),
-            ('name', self.gf('django.db.models.fields.TextField')()),
-            ('description', self.gf('django.db.models.fields.TextField')()),
-            ('order', self.gf('django.db.models.fields.IntegerField')(default=0)),
+            ('order', self.gf('django.db.models.fields.PositiveSmallIntegerField')(default=0)),
             ('created', self.gf('django.db.models.fields.DateTimeField')(default='2001-01-01', auto_now_add=True, blank=True)),
-            ('updated', self.gf('django.db.models.fields.DateTimeField')(default='2001-01-01', auto_now=True, blank=True)),
         ))
         db.send_create_signal(u'app', ['Alternative'])
 
-        # Adding model 'AlternativeItem'
-        db.create_table('dnstorm_alternative_item', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('criteria', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['app.Criteria'], null=True, blank=True)),
-            ('alternative', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['app.Alternative'])),
-            ('name', self.gf('django.db.models.fields.TextField')()),
-            ('order', self.gf('django.db.models.fields.IntegerField')()),
-        ))
-        db.send_create_signal(u'app', ['AlternativeItem'])
-
-        # Adding M2M table for field idea on 'AlternativeItem'
-        m2m_table_name = db.shorten_name('dnstorm_alternative_item_idea')
+        # Adding M2M table for field idea on 'Alternative'
+        m2m_table_name = db.shorten_name('dnstorm_alternative_idea')
         db.create_table(m2m_table_name, (
             ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('alternativeitem', models.ForeignKey(orm[u'app.alternativeitem'], null=False)),
+            ('alternative', models.ForeignKey(orm[u'app.alternative'], null=False)),
             ('idea', models.ForeignKey(orm[u'app.idea'], null=False))
         ))
-        db.create_unique(m2m_table_name, ['alternativeitem_id', 'idea_id'])
+        db.create_unique(m2m_table_name, ['alternative_id', 'idea_id'])
 
         # Adding model 'Vote'
         db.create_table('dnstorm_vote', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('idea', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['app.Idea'], null=True, blank=True)),
-            ('alternative', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['app.Alternative'], null=True, blank=True)),
+            ('idea', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='vote_idea', null=True, to=orm['app.Idea'])),
+            ('comment', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='vote_comment', null=True, to=orm['app.Alternative'])),
+            ('alternative', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='vote_alternative', null=True, to=orm['app.Alternative'])),
             ('author', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
-            ('weight', self.gf('django.db.models.fields.SmallIntegerField')()),
-            ('date', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, blank=True)),
+            ('weight', self.gf('django.db.models.fields.SmallIntegerField')(default=0)),
+            ('created', self.gf('django.db.models.fields.DateTimeField')(default='2001-01-01', auto_now_add=True, blank=True)),
         ))
         db.send_create_signal(u'app', ['Vote'])
 
@@ -194,14 +177,11 @@ class Migration(SchemaMigration):
         # Removing M2M table for field manager on 'Problem'
         db.delete_table(db.shorten_name('dnstorm_problem_manager'))
 
-        # Deleting model 'Quantifier'
-        db.delete_table('dnstorm_quantifier')
-
         # Deleting model 'Idea'
         db.delete_table('dnstorm_idea')
 
-        # Deleting model 'QuantifierValue'
-        db.delete_table('dnstorm_quantifier_value')
+        # Deleting model 'IdeaCriteria'
+        db.delete_table('dnstorm_idea_criteria')
 
         # Deleting model 'Comment'
         db.delete_table('dnstorm_comment')
@@ -209,14 +189,14 @@ class Migration(SchemaMigration):
         # Deleting model 'Message'
         db.delete_table('dnstorm_message')
 
+        # Removing M2M table for field recipients on 'Message'
+        db.delete_table(db.shorten_name('dnstorm_message_recipients'))
+
         # Deleting model 'Alternative'
         db.delete_table('dnstorm_alternative')
 
-        # Deleting model 'AlternativeItem'
-        db.delete_table('dnstorm_alternative_item')
-
-        # Removing M2M table for field idea on 'AlternativeItem'
-        db.delete_table(db.shorten_name('dnstorm_alternative_item_idea'))
+        # Removing M2M table for field idea on 'Alternative'
+        db.delete_table(db.shorten_name('dnstorm_alternative_idea'))
 
         # Deleting model 'Vote'
         db.delete_table('dnstorm_vote')
@@ -226,21 +206,10 @@ class Migration(SchemaMigration):
         u'app.alternative': {
             'Meta': {'object_name': 'Alternative', 'db_table': "'dnstorm_alternative'"},
             'created': ('django.db.models.fields.DateTimeField', [], {'default': "'2001-01-01'", 'auto_now_add': 'True', 'blank': 'True'}),
-            'description': ('django.db.models.fields.TextField', [], {}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.TextField', [], {}),
-            'order': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
-            'problem': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['app.Problem']"}),
-            'updated': ('django.db.models.fields.DateTimeField', [], {'default': "'2001-01-01'", 'auto_now': 'True', 'blank': 'True'})
-        },
-        u'app.alternativeitem': {
-            'Meta': {'object_name': 'AlternativeItem', 'db_table': "'dnstorm_alternative_item'"},
-            'alternative': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['app.Alternative']"}),
-            'criteria': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['app.Criteria']", 'null': 'True', 'blank': 'True'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'idea': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['app.Idea']", 'symmetrical': 'False'}),
-            'name': ('django.db.models.fields.TextField', [], {}),
-            'order': ('django.db.models.fields.IntegerField', [], {})
+            'idea': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'to': u"orm['app.Idea']", 'null': 'True', 'blank': 'True'}),
+            'order': ('django.db.models.fields.PositiveSmallIntegerField', [], {'default': '0'}),
+            'problem': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['app.Problem']"})
         },
         u'app.comment': {
             'Meta': {'object_name': 'Comment', 'db_table': "'dnstorm_comment'"},
@@ -256,11 +225,15 @@ class Migration(SchemaMigration):
         u'app.criteria': {
             'Meta': {'object_name': 'Criteria', 'db_table': "'dnstorm_criteria'"},
             'created': ('django.db.models.fields.DateTimeField', [], {'default': "'2001-01-01'", 'auto_now_add': 'True', 'blank': 'True'}),
-            'description': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
+            'description': ('django.db.models.fields.TextField', [], {}),
+            'help_star1': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
+            'help_star2': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
+            'help_star3': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
+            'help_star4': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
+            'help_star5': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '90'}),
-            'order': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
-            'slug': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '90'}),
+            'slug': ('autoslug.fields.AutoSlugField', [], {'unique': 'True', 'max_length': '60', 'populate_from': "'name'", 'unique_with': '()'}),
             'updated': ('django.db.models.fields.DateTimeField', [], {'default': "'2001-01-01'", 'auto_now': 'True', 'blank': 'True'})
         },
         u'app.idea': {
@@ -274,13 +247,21 @@ class Migration(SchemaMigration):
             'title': ('django.db.models.fields.CharField', [], {'max_length': '90'}),
             'updated': ('django.db.models.fields.DateTimeField', [], {'default': "'2000-01-01'", 'auto_now': 'True', 'blank': 'True'})
         },
+        u'app.ideacriteria': {
+            'Meta': {'object_name': 'IdeaCriteria', 'db_table': "'dnstorm_idea_criteria'"},
+            'criteria': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['app.Criteria']"}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'idea': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['app.Idea']"}),
+            'stars': ('django.db.models.fields.PositiveSmallIntegerField', [], {'default': '0'})
+        },
         u'app.message': {
             'Meta': {'object_name': 'Message', 'db_table': "'dnstorm_message'"},
             'content': ('django.db.models.fields.TextField', [], {}),
             'created': ('django.db.models.fields.DateTimeField', [], {'default': "'2000-01-01'", 'auto_now_add': 'True', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'problem': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['app.Problem']"}),
-            'sender': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.User']"}),
+            'recipients': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'message_recipients'", 'symmetrical': 'False', 'to': u"orm['auth.User']"}),
+            'sender': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'message_sender'", 'to': u"orm['auth.User']"}),
             'subject': ('django.db.models.fields.TextField', [], {})
         },
         u'app.option': {
@@ -292,48 +273,26 @@ class Migration(SchemaMigration):
         u'app.problem': {
             'Meta': {'object_name': 'Problem', 'db_table': "'dnstorm_problem'"},
             'author': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'author'", 'to': u"orm['auth.User']"}),
-            'blind': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'contributor': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'contributor'", 'null': 'True', 'symmetrical': 'False', 'to': u"orm['auth.User']"}),
             'created': ('django.db.models.fields.DateTimeField', [], {'default': "'2000-01-01'", 'auto_now_add': 'True', 'blank': 'True'}),
-            'criteria': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'to': u"orm['app.Criteria']", 'null': 'True', 'blank': 'True'}),
-            'description': ('ckeditor.fields.RichTextField', [], {'blank': 'True'}),
+            'criteria': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['app.Criteria']", 'symmetrical': 'False'}),
+            'description': ('ckeditor.fields.RichTextField', [], {}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'last_activity': ('django.db.models.fields.DateTimeField', [], {'default': "'2000-01-01'", 'auto_now': 'True', 'blank': 'True'}),
-            'locked': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'manager': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'manager'", 'null': 'True', 'symmetrical': 'False', 'to': u"orm['auth.User']"}),
-            'max': ('django.db.models.fields.IntegerField', [], {'default': '0', 'blank': 'True'}),
-            'open': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
-            'public': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
-            'slug': ('django.db.models.fields.SlugField', [], {'unique': 'True', 'max_length': '90'}),
+            'slug': ('autoslug.fields.AutoSlugField', [], {'unique': 'True', 'max_length': '60', 'populate_from': "'title'", 'unique_with': '()'}),
             'title': ('django.db.models.fields.CharField', [], {'max_length': '90'}),
-            'updated': ('django.db.models.fields.DateTimeField', [], {'default': "'2000-01-01'", 'auto_now': 'True', 'blank': 'True'}),
-            'vote_author': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'vote_count': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
-            'voting': ('django.db.models.fields.BooleanField', [], {'default': 'True'})
-        },
-        u'app.quantifier': {
-            'Meta': {'object_name': 'Quantifier', 'db_table': "'dnstorm_quantifier'"},
-            'format': ('django.db.models.fields.CharField', [], {'max_length': '10'}),
-            'help': ('django.db.models.fields.TextField', [], {}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '90'}),
-            'problem': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['app.Problem']", 'null': 'True', 'blank': 'True'})
-        },
-        u'app.quantifiervalue': {
-            'Meta': {'object_name': 'QuantifierValue', 'db_table': "'dnstorm_quantifier_value'"},
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'idea': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['app.Idea']"}),
-            'quantifier': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['app.Quantifier']"}),
-            'value': ('django.db.models.fields.TextField', [], {})
+            'updated': ('django.db.models.fields.DateTimeField', [], {'default': "'2000-01-01'", 'auto_now': 'True', 'blank': 'True'})
         },
         u'app.vote': {
             'Meta': {'object_name': 'Vote', 'db_table': "'dnstorm_vote'"},
-            'alternative': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['app.Alternative']", 'null': 'True', 'blank': 'True'}),
+            'alternative': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'vote_alternative'", 'null': 'True', 'to': u"orm['app.Alternative']"}),
             'author': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.User']"}),
-            'date': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
+            'comment': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'vote_comment'", 'null': 'True', 'to': u"orm['app.Alternative']"}),
+            'created': ('django.db.models.fields.DateTimeField', [], {'default': "'2001-01-01'", 'auto_now_add': 'True', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'idea': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['app.Idea']", 'null': 'True', 'blank': 'True'}),
-            'weight': ('django.db.models.fields.SmallIntegerField', [], {})
+            'idea': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'vote_idea'", 'null': 'True', 'to': u"orm['app.Idea']"}),
+            'weight': ('django.db.models.fields.SmallIntegerField', [], {'default': '0'})
         },
         u'auth.group': {
             'Meta': {'object_name': 'Group'},
@@ -353,7 +312,7 @@ class Migration(SchemaMigration):
             'date_joined': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
             'email': ('django.db.models.fields.EmailField', [], {'max_length': '75', 'blank': 'True'}),
             'first_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
-            'groups': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'related_name': "u'user_set'", 'blank': 'True', 'to': u"orm['auth.Group']"}),
+            'groups': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['auth.Group']", 'symmetrical': 'False', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'is_staff': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
@@ -361,7 +320,7 @@ class Migration(SchemaMigration):
             'last_login': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
             'last_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
             'password': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
-            'user_permissions': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'related_name': "u'user_set'", 'blank': 'True', 'to': u"orm['auth.Permission']"}),
+            'user_permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'}),
             'username': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '30'})
         },
         u'contenttypes.contenttype': {

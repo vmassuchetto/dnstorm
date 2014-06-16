@@ -63,26 +63,14 @@ Styles
 ------
 
 The project's CSS is written in `Sass <http://sass-lang.com>`_ using `Compass
-<http://compass-style.org>`_. Make sure you have Ruby with Gem to install it:
+<http://compass-style.org>`_ and `django-bower
+<https://github.com/nvbn/django-bower>`_. Make sure you have Ruby with Gem to
+install it:
 
 ::
 
     gem install compass
-
-With ``compass`` command available you can build the project's CSS:
-
-::
-
-    cd dnstorm/app/styles
-    compass build
-
-If you're developing the styles just run the compiler daemon to automatically
-build the CSS file when you change the ``dnstorm/app/styles/app.scss`` file.
-
-::
-
-    cd dnstorm/app/styles
-    compass watch
+    python manage.py bower install
 
 
 Localization

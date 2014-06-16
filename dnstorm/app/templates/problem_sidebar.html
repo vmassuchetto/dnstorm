@@ -3,36 +3,9 @@
 {% if message %}
     <a class="button small expand radius secondary" href="{% url "problem" problem.slug %}"><i class="foundicon-left-arrow"></i> {% trans 'Back to problem' %}</a>
     <a class="button small secondary expand" href="{% url "messages" problem.slug %}"><i class="foundicon-mail"></i> {% trans "View all messages" %}</a>
-{% else %}
-    <a class="button small expand radius show-problem-table" href="javascript:void(0)"><i class="foundicon-website"></i>{% trans 'Strategy table' %}</a>
-{% endif %}
-
-{% if problem_perm_manage %}
-    <a class="button small expand radius show-problem-results" href="javascript:void(0)"><i class="foundicon-graph"></i>{% trans 'Results' %}</a>
-    <a class="button small expand radius" href="{% url "message_new" problem.slug %}"><i class="foundicon-mail"></i> {% trans 'New message' %}</a>
-<hr/>
-{% endif %}
-
-{% if problem.public or problem.open or problem.locked or problem.blind or problem.voting %}
-    <p class="problem-icons text-center">
-        {% if problem.public %}
-            <i class="foundicon-globe" data-tooltip title="{% trans "This problem is public. Anyone on the Internet can read it." %}"></i>
-        {% else %}
-            <i class="foundicon-lock" data-tooltip title="{% trans "This problem is not public. Only contributores can read it." %}"></i>
-        {% endif %}
-        {% if problem.open %}<i class="foundicon-mic" data-tooltip title="{% trans "This problem is opened. Any logged user will be able to contribute." %}"></i>{% endif %}
-        {% if problem.locked %}<i class="foundicon-lock" data-tooltip title="{% trans "This problem is locked. No one can contribute with any more ideas until a manager opens it." %}"></i>{% endif %}
-        {% if problem.blind %}<i class="foundicon-compass" data-tooltip title="{% trans "This problem is in blind contribution mode. You can only see your own ideas." %}"></i>{% endif %}
-        {% if problem.voting %}<i class="foundicon-idea" data-tooltip title="{% trans "Ideas voting are opened. You can vote and downvote ideas." %}"></i>{% endif %}
-    </p>
     <hr/>
-{% endif %}
-
-{% if problem.revision_count > 1 or problem.idea_count > 1 %}
-    <div class="info">
-        {% if problem.revision_count > 1 %}<b><a href="{% url "problem_revision" problem.slug %}">{{ problem.revision_count }} {% trans "revisions" %}</a></b><br/>{% endif %}
-        {% if problem.idea_count > 0 %}<b><a href="{% url "problem_ideas" problem.slug %}">{{ problem.idea_count }} {% if problem.idea_count > 1 %}{% trans "idea contributions" %}{% else %}{% trans "idea contribution" %}{% endif %}</a></b>{% endif %}
-    </div>
+{% else %}
+    <a class="button small expand radius show-problem-table" href="javascript:void(0)"><i class="fi-list-thumbnails"></i>&nbsp;{% trans 'Strategy table' %}</a>
     <hr/>
 {% endif %}
 

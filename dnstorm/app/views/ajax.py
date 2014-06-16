@@ -8,7 +8,9 @@ from django.utils.translation import ugettext_lazy as _
 from django.shortcuts import get_object_or_404
 from django.template import loader, Context
 
-from dnstorm.app.models import Problem, Criteria, Vote, Idea, Comment, Alternative, AlternativeItem
+from crispy_forms.utils import render_crispy_form
+
+from dnstorm.app import models
 from dnstorm.app.forms import CriteriaForm
 
 from dnstorm.app import permissions
@@ -18,8 +20,14 @@ from dnstorm.app.lib.utils import get_object_or_none
 import json
 
 class AjaxView(View):
+    """
+    Ajax actions view. Will receive all GET and POST requests to /ajax/ URL.
+    """
 
     def get(self, *args, **kwargs):
+        """
+        Ajax GET requests router.
+        """
 
         # Search for criterias in problem edition
 
@@ -32,13 +40,7 @@ class AjaxView(View):
             and self.request.GET.get('weight', None):
             return self.submit_idea_vote()
 
-        # Vote for alternative
-
-        elif self.request.GET.get('alternative', None) \
-            and self.request.GET.get('weight', None):
-            return self.submit_alternative_vote()
-
-        # Delete comments
+        # Delete comment
 
         elif self.request.GET.get('delete_comment', None):
             return self.delete_comment()
@@ -48,11 +50,25 @@ class AjaxView(View):
         elif self.request.GET.get('delete_idea', None):
             return self.delete_idea()
 
+        # New alternative
+
+        elif self.request.GET.get('new_alternative', None) \
+            and self.request.GET.get('problem', None):
+            return self.new_alternative()
+
+        # Delete alternative
+
+        elif self.request.GET.get('delete_alternative', None):
+            return self.delete_alternative()
+
         # Failure
 
         return HttpResponseForbidden()
 
     def post(self, *args, **kwargs):
+        """
+        Ajax POST requests router.
+        """
 
         # New comment
 
@@ -60,35 +76,17 @@ class AjaxView(View):
             'problem' and 'content' in self.request.POST:
             return self.submit_comment()
 
-        # New criteria in problem edition
-
-        elif 'mode' in self.request.POST and 'problem_criteria_create' == self.request.POST['mode'] \
-            and 'name' in self.request.POST and 'description' in self.request.POST:
-            return self.problem_criteria_create()
-
-        # New criteria
-
-        elif 'mode' in self.request.POST and 'criteria' == self.request.POST['mode'] \
-            and 'object' in self.request.POST and 'new' == self.request.POST['object']:
-            return self.table_new_criteria()
-
-        # New alternative
-
-        elif 'mode' in self.request.POST and 'alternative' == self.request.POST['mode'] \
-            and 'object' in self.request.POST and 'new' == self.request.POST['object']:
-            return self.table_new_alternative()
-
         # Remove alternative
 
         elif 'mode' in self.request.POST and 'remove-alternative' == self.request.POST['mode'] \
             and 'object' in self.request.POST:
             return self.table_remove_alternative()
 
-        # New alternative item
+        # Add ideas to some alternative
 
-        elif 'alternative' in self.request.POST \
-            and 'criteria' in self.request.POST:
-            return self.table_new_item()
+        elif self.request.POST.get('alternative', None) \
+            and self.request.POST.get('idea_alternative', None):
+            return self.idea_alternative()
 
         # Failure
 
@@ -101,29 +99,59 @@ class AjaxView(View):
                 return True
         return False
 
-    def problem_criteria_search(self):
-        criterias = Criteria.objects.filter(slug__icontains = self.request.GET['term'])[:5]
-        response = []
-        for c in criterias:
-            response.append({
-                'id': c.id,
-                'label': c.name,
-                'description': c.description
-            })
-        return HttpResponse(json.dumps(response), content_type="application/json")
+    def new_alternative(self):
+        problem = get_object_or_404(models.Problem, id=self.request.GET['problem'])
+        if not permissions.problem(obj=problem, user=self.request.user, mode='manage'):
+            raise Http404
+        order = models.Alternative.objects.filter(problem=problem).count() + 1
+        a = models.Alternative(problem=problem, order=order)
+        a.save()
+        response = {
+            'id': a.id,
+            'html': loader.render_to_string('problem_alternative.html', {'alternative': a})
+        }
+        return HttpResponse(json.dumps(response), content_type='application/json')
 
-    def problem_criteria_create(self):
-        criteria = CriteriaForm(self.request.POST)
-        if criteria.is_valid():
-            c = criteria.save()
-            response = {
-                'id': c.id,
-                'name': c.name,
-                'description': c.description
-            }
-        else:
-            response = { 'errors': criteria.errors }
-        return HttpResponse(json.dumps(response), content_type="application/json")
+    def delete_alternative(self):
+        a = get_object_or_404(models.Alternative, id=self.request.GET.get('delete_alternative'))
+        if not permissions.problem(obj=a.problem, user=self.request.user, mode='manage'):
+            raise Http404
+        deleted_id = a.id
+        problem = a.problem
+        a.delete()
+        # Reorder the remaining alternatives
+        i = 0
+        for a in models.Alternative.objects.filter(problem=problem).order_by('order'):
+            i += 1
+            a.order = i
+            a.save()
+        response = {
+            'deleted': deleted_id
+        }
+        return HttpResponse(json.dumps(response), content_type='application/json')
+
+    def idea_alternative(self):
+        alternative = get_object_or_404(models.Alternative, id=self.request.POST.get('alternative'))
+        if not permissions.problem(obj=alternative.problem, user=self.request.user, mode='manage'):
+            raise Http404
+        alternative.idea.clear()
+        ideas = list()
+        r = re.compile('idea\[[0-9]+\]')
+        for key in self.request.POST:
+            if r.match(key) and int(self.request.POST[key]):
+                ideas.append(int(self.request.POST[key]))
+        for i in ideas:
+            alternative.idea.add(i)
+        alternative.save()
+        alternative.fill_data()
+        response = {
+            'html': loader.render_to_string('problem_alternative.html', {
+                'alternative': alternative,
+                'problem_perm_manage': True
+            })
+        }
+        return HttpResponse(json.dumps(response), content_type='application/json')
+
 
     def submit_idea_vote(self):
         idea = get_object_or_404(Idea, pk=self.request.GET['idea'])
@@ -142,9 +170,9 @@ class AjaxView(View):
             cancel_vote = True
         existing.delete()
         if not cancel_vote:
-            Vote(idea=idea, weight=weight, author=self.request.user).save()
+            models.Vote(idea=idea, weight=weight, author=self.request.user).save()
         count = Vote.objects.filter(idea=idea).aggregate(Sum('weight'))['weight__sum']
-        return HttpResponse(json.dumps(count if count else 0), content_type="application/json")
+        return HttpResponse(json.dumps(count if count else 0), content_type='application/json')
 
     def submit_alternative_vote(self):
         alternative = get_object_or_404(Alternative, pk=self.request.GET['alternative'])
@@ -166,7 +194,7 @@ class AjaxView(View):
 
     def submit_comment(self):
         try:
-            problem = get_object_or_none(Problem, id=int(self.request.POST['problem']))
+            problem = get_object_or_none(models.Problem, id=int(self.request.POST['problem']))
         except ValueError:
             problem = None
         try:
@@ -214,89 +242,3 @@ class AjaxView(View):
             response_mode = 'undelete'
         idea.save()
         return HttpResponse(response_mode)
-
-    def table_new_alternative(self):
-        p = Problem.objects.get(pk=self.request.POST['problem'])
-        n = Alternative.objects.filter(problem=self.request.POST['problem']).count()
-        alternative = Alternative(
-            problem=p,
-            name=self.request.POST['name'],
-            description=self.request.POST['description'],
-            order=n)
-        alternative.save()
-        output = {
-            'id': alternative.id,
-            'name': alternative.name,
-            'description': alternative.description,
-            'problem': p.id
-        }
-        return HttpResponse(json.dumps(output), content_type="application/json")
-
-    def table_remove_alternative(self):
-        a = Alternative.objects.get(id=int(self.request.POST['object']))
-        AlternativeItem.objects.filter(alternative=a).delete()
-        a.delete()
-        output = {
-            'deleted': a.id
-        }
-        return HttpResponse(json.dumps(output), content_type='application/json')
-
-    def table_new_item(self):
-
-        # Get the base item and clear it
-
-        c = None if not int(self.request.POST['criteria']) else Criteria.objects.get(pk=self.request.POST['criteria'])
-        a = Alternative.objects.get(pk=self.request.POST['alternative'])
-        try:
-            item = AlternativeItem.objects.get(criteria=c, alternative=a)
-            item.idea.clear()
-        except:
-            item = AlternativeItem(criteria=c, alternative=a)
-        item.save()
-
-        # When submitting empty queries just clear the item and exit
-
-        if not self.has_regex_key('idea\[[0-9]+\]', dict(self.request.POST.iterlists())):
-            return HttpResponse(json.dumps([]), content_type="application/json")
-
-        # Save ideas to the alternative item
-
-        ideas = list()
-        r = re.compile('idea\[[0-9]+\]')
-        for key in self.request.POST:
-            if r.match(key) and int(self.request.POST[key]):
-                ideas.append(int(self.request.POST[key]))
-        if not len(ideas):
-            raise Http404
-
-        ideas = Idea.objects.filter(id__in=ideas)
-        for i in ideas:
-            item.idea.add(i)
-        item.save()
-
-        output = dict()
-
-        # Update the alternative item with the selected ideas
-
-        output['ideas'] = list()
-        for i in ideas:
-            output['ideas'].append({
-                'id': i.id,
-                'title': i.title,
-                'problem': i.problem.id,
-                'criteria': c.id if c else None,
-                'alternative': a.id
-            })
-
-        # Update the quatifiers at the end of the row
-
-        output['quantifiers'] = list()
-        for q in a.get_quantifiers().values():
-            output['quantifiers'].append({
-                'id': q.id,
-                'name': q.name,
-                'value': q.value,
-                'format': q.format
-            })
-
-        return HttpResponse(json.dumps(output), content_type="application/json")
