@@ -19,8 +19,6 @@ from crispy_forms_foundation.layout import *
 from ajax_select.fields import AutoCompleteSelectMultipleField
 from ajax_select import make_ajax_field
 
-from dnstorm.app.lib.slug import unique_slugify
-
 class AdminOptionsForm(forms.Form):
     site_title = forms.CharField(label=_('Site title'))
     site_description = forms.CharField(label=_('Site description'))

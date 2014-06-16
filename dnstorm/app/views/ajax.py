@@ -14,7 +14,6 @@ from dnstorm.app import models
 from dnstorm.app.forms import CriteriaForm
 
 from dnstorm.app import permissions
-from dnstorm.app.lib.slug import unique_slugify
 from dnstorm.app.lib.utils import get_object_or_none
 
 import json
