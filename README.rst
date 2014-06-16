@@ -59,11 +59,11 @@ Run your server:
 The application might be running at ``http://localhost:8000``.
 
 
-Styles
-------
+CSS
+---
 
-The project's CSS is written in `Sass <http://sass-lang.com>`_ using `Compass
-<http://compass-style.org>`_ and `django-bower
+The project's CSS is written in SCSS using `Sass <http://sass-lang.com>`_,
+`Compass <http://compass-style.org>`_ and `django-bower
 <https://github.com/nvbn/django-bower>`_. Make sure you have Ruby with Gem to
 install it:
 
@@ -71,6 +71,15 @@ install it:
 
     gem install compass
     python manage.py bower install
+
+And then, to generate the static files:
+
+::
+
+    cd dnstorm/app/static/scss
+    compass compile
+
+If you're developing, you might want to use ``compass watch`` instead.
 
 
 Localization

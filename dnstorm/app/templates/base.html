@@ -7,17 +7,13 @@
     <meta name="viewport" content="width=device-width" />
     <title>{% if title %}{{ title }} | {{ options.site_title }}{% else %}{{ options.site_title }} | {{ options.site_description }}{% endif %}</title>
     <link rel="icon" href="{% static "img/favicon.ico" %}" />
-    {% compress css %}
-        <link rel="stylesheet" href="{% static 'scss/app.scss' %}" media="screen, projection" type="text/x-scss" />
-        <link rel="stylesheet" href="{% static "css/foundation-icons.css" %}" />
-        <link rel="stylesheet" href="{% static "css/jquery.jscrollpane.css" %}" />
-    {% endcompress %}
-    {% compress js %}
-        <script type="text/javascript" src="{% static "js/modernizr.js" %}"></script>
-        <script type="text/javascript" src="{% static "js/jquery.js" %}"></script>
-        <script type="text/javascript" src="{% static "js/jquery.ui.custom.js" %}"></script>
-        <script type="text/javascript" src="{% static "js/jquery.jscrollpane.min.js" %}"></script>
-    {% endcompress %}
+    <link rel="stylesheet" href="{% static 'css/app.css' %}" media="screen, projection" type="text/x-scss" />
+    <link rel="stylesheet" href="{% static "css/foundation-icons.css" %}" />
+    <link rel="stylesheet" href="{% static "css/jquery.jscrollpane.css" %}" />
+    <script type="text/javascript" src="{% static "js/modernizr.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/jquery.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/jquery.ui.custom.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/jquery.jscrollpane.min.js" %}"></script>
     <script type="text/javascript" src="{% url "jsi18n" %}"></script>
     {% block head %}{% endblock %}
 </head>
