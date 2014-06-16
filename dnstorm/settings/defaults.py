@@ -87,9 +87,10 @@ COMPRESS_PRECOMPILERS = (
     ('text/x-scss', 'sass --scss --compass -I "%s/bower_components/foundation/scss" "{infile}" "{outfile}"' % BOWER_COMPONENTS_ROOT),
 )
 
+COMPRESS_ENABLED = True
 COMPRESS_ROOT = SITE_ROOT + '/app/static/'
 COMPRESS_URL = '/static/'
-COMPRESS_OUTPUT_DIR = 'cache'
+COMPRESS_OUTPUT_DIR = ''
 
 # Ajax lookups
 

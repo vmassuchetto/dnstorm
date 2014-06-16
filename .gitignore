@@ -13,7 +13,6 @@ env
 
 # Static files and components
 /static
-dnstorm/app/static/cache
 dnstorm/components
 
 # DNStorm
