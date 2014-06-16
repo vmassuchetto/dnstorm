@@ -82,16 +82,6 @@ STATICFILES_FINDERS = global_settings.STATICFILES_FINDERS + (
     'compressor.finders.CompressorFinder',
 )
 
-COMPRESS_PRECOMPILERS = (
-    ('text/x-sass', 'sass --compass "{infile}" "{outfile}"'),
-    ('text/x-scss', 'sass --scss --compass -I "%s/bower_components/foundation/scss" "{infile}" "{outfile}"' % BOWER_COMPONENTS_ROOT),
-)
-
-COMPRESS_ENABLED = True
-COMPRESS_ROOT = SITE_ROOT + '/app/static/'
-COMPRESS_URL = '/static/'
-COMPRESS_OUTPUT_DIR = ''
-
 # Ajax lookups
 
 AJAX_SELECT_BOOTSTRAP = False
