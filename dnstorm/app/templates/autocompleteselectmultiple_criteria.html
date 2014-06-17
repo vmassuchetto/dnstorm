@@ -1,0 +1,12 @@
+{% load i18n %}
+<div class="row collapse">
+    <div class="columns large-10">
+        <input class="no-margin-bottom" type="text" name="{{name}}_text" id="{{html_id}}_text" value="" autocomplete="off"  {{ extra_attrs }} />
+        <p class="help">{% trans "Type to search for criterias." %}</p>
+    </div>
+    <div class="columns large-2">
+        <a target="_blank" class="button postfix small radius expand" href="{% url "criteria_new" %}">{% trans "New criteria" %}</a>
+    </div>
+</div>
+<input type="hidden" name="{{ name }}" id="{{ html_id }}" value="{{ current_ids }}" data-ajax-select="autocompleteselectmultiple" data-plugin-options="{{ data_plugin_options }}" />
+<div id="{{ html_id }}_on_deck" class="results_on_deck"></div>

@@ -340,6 +340,10 @@ function adjust_table_overflow() {
     }
 }
 
+$(document).on('click', '.table-help-show', function(){
+    $('.table-help').slideDown(300);
+});
+
 /**
  * Strategy table: New alternative
  */
@@ -418,7 +422,7 @@ $(document).on('click', '.select-ideas', function(){
     m.find('i.idea-status').each(function(){
         $(this).removeClass('checked');
     });
-    $(this).parent().find('span').each(function(){
+    $(this).parents('tr').find('.alternative-ideas span').each(function(){
         var i = $(this).data('idea');
         m.find('#idea-' + i + '-modal-item i.idea-status').addClass('checked');
         m.data('idea')[i] = i;

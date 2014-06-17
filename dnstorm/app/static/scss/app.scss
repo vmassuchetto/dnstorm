@@ -127,7 +127,7 @@ form {
     .ctrlHolder {
         margin-bottom: emCalc(15px);
     }
-    .formHint, .hint {
+    .formHint, .hint, p.help {
         font-size: 11px;
         color: $light-black;
         margin: 0;
@@ -376,6 +376,12 @@ p.pagination {
     font-size: emCalc(50px);
 }
 
+.problem-edit {
+    .hint {
+        display: none;
+    }
+}
+
 #criterias .criteria {
     border-bottom: 1px solid $light-grey;
     margin: 0.5em;
@@ -406,6 +412,10 @@ p.pagination {
             color: $yellow;
         }
     }
+}
+
+.new-criteria-button {
+    margin-top: emCalc(30px);
 }
 
 .user-box {
@@ -461,6 +471,13 @@ ul.ui-autocomplete {
     .info {
         line-height: 28px;
         font-size: 1.5em;
+    }
+}
+
+.admin-user-list-item {
+    h4 {
+        line-height: 1;
+        margin-bottom: 2px;
     }
 }
 
@@ -797,6 +814,10 @@ a.problem-action {
             }
         }
     }
+}
+
+.table-help {
+    display: none;
 }
 
 .activity-item {

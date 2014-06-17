@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DNStorm\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-05-04 23:12-0300\n"
-"PO-Revision-Date: 2014-05-05 20:16-0300\n"
+"POT-Creation-Date: 2014-06-17 00:49-0300\n"
+"PO-Revision-Date: 2014-06-17 00:51-0300\n"
 "Last-Translator: Vinicius Massuchetto <vmassuchetto@gmail.com>\n"
 "Language-Team: \n"
 "Language: pt_BR\n"
@@ -18,88 +18,74 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 1.5.4\n"
 
-#: forms.py:24
+#: forms.py:23
 msgid "Site title"
 msgstr "Título do site"
 
-#: forms.py:25
+#: forms.py:24
 msgid "Site description"
 msgstr "Descrição do site"
 
-#: forms.py:31
+#: forms.py:30
 msgid "Site"
 msgstr "Site"
 
-#: forms.py:36 forms.py:69 forms.py:150 forms.py:186 forms.py:349
+#: forms.py:35 forms.py:68 forms.py:99 forms.py:127 forms.py:252
 msgid "Save"
 msgstr "Salvar"
 
-#: forms.py:56
+#: forms.py:55
 msgid "Deactivate account"
 msgstr "Desativar conta"
 
-#: forms.py:58
+#: forms.py:57
 msgid "Activate account"
 msgstr "Ativar conta"
 
-#: forms.py:61
+#: forms.py:60
 #, python-format
 msgid "Edit user \"%s\""
 msgstr "Editar o usuário \"%s\""
 
-#: forms.py:75 models.py:124 templates/base.html:45
-#: templates/problem_revision.html:36 views/criteria.py:32
-#: views/criteria.py:54 views/criteria.py:74 views/criteria.py:101
-msgid "Criterias"
-msgstr "Critérios"
-
-#: forms.py:106
-msgid "Quantifier name"
-msgstr "Nome do quantificador"
-
-#: forms.py:107 models.py:201
-msgid "Help text"
-msgstr "Texto de ajuda"
-
-#: forms.py:108 templates/problem_confirm_delete.html:12
-#: templates/problem_edit.html:17
-msgid "Remove"
-msgstr "Remover"
-
-#: forms.py:118
+#: forms.py:87 templates/problem.html:77
 msgid "Problem description"
 msgstr "Descrição do problema"
 
-#: forms.py:123
-msgid "Idea Quantifiers"
-msgstr "Quantificadores de Ideias"
+#: forms.py:91 models.py:143 templates/base.html:45
+#: templates/problem_revision.html:36 views/criteria.py:34
+#: views/criteria.py:68 views/criteria.py:87 views/criteria.py:113
+msgid "Criterias"
+msgstr "Critérios"
 
-#: forms.py:126
-msgid "Add quantifier"
-msgstr "Adicionar quantificador"
-
-#: forms.py:130
+#: forms.py:94
 msgid "Permissions"
 msgstr "Permissões"
 
-#: forms.py:141
-msgid "Voting"
-msgstr "Votação"
+#: forms.py:121
+msgid "Quantification"
+msgstr "Quantificação"
 
-#: forms.py:149 views/problem.py:267
-msgid "Advanced options"
-msgstr "Opções avançadas"
-
-#: forms.py:159
-#, python-format
+#: forms.py:122
 msgid ""
-"Type the name of the criteria to search. Go to the <a href=\"%s\">criterias "
-"page</a> if you want to edit them."
+"Users will use 5 stars to rate how ideas match each criteria. Describe what "
+"each number of star means."
 msgstr ""
-"Digite o nome do critério que você quer procurar. Vá para a <a href=\"%s"
-"\">página dos critérios</a> se você quiser editá-los."
+"Os usuários utilizarão 5 estrelas para avaliar como as ideias abordam cada "
+"critério. Descreva o que cada número de estrelas significa."
 
-#: forms.py:242 forms.py:305
+#: forms.py:168
+msgid "All quantifiers are needed to submit an idea."
+msgstr "Todos os quantificadores são necessários para enviar uma ideia."
+
+#: forms.py:171
+msgid "Describe the idea"
+msgstr "Descreva a ideia"
+
+#: forms.py:174
+msgid "How this idea meet the problem criterias"
+msgstr "Como esta ideia atende os critérios do problema"
+
+#: forms.py:174 forms.py:208
 #: templates/registration/password_change_form.html:12
 #: templates/registration/password_reset_confirm.html:13
 #: templates/registration/password_reset_form.html:14
@@ -107,27 +93,27 @@ msgstr ""
 msgid "Submit"
 msgstr "Enviar"
 
-#: forms.py:284
+#: forms.py:187
 msgid "You need to provide the date fields."
 msgstr "Você precisa fornecer os campos de data."
 
-#: forms.py:286
+#: forms.py:189
 msgid "The initial date is bigger than the end date."
 msgstr "A data inicial é maior do que a final."
 
-#: forms.py:312 models.py:306 templates/message_list.html:21
+#: forms.py:215 models.py:255 templates/message_list.html:21
 msgid "Subject"
 msgstr "Assunto"
 
-#: forms.py:322 forms.py:325
+#: forms.py:225 forms.py:228
 msgid "Send message"
 msgstr "Enviar mensagem"
 
-#: forms.py:329
+#: forms.py:232
 msgid "The subject of the mail message to be sent."
 msgstr "O assunto da mensagem a ser enviada."
 
-#: forms.py:330
+#: forms.py:233
 msgid ""
 "This message will be sent in plain text to everyone envolved with this "
 "problem (managers, invited users, idea contributors and commenters)."
@@ -136,212 +122,115 @@ msgstr ""
 "com o problema (gerentes, convidados, colaboradores de ideias e "
 "comentaristas)."
 
-#: forms.py:334 models.py:121
+#: forms.py:237 models.py:140
 msgid "Title"
 msgstr "Título"
 
-#: forms.py:335 models.py:90 models.py:123 models.py:331
+#: forms.py:238 models.py:142
 msgid "Description"
 msgstr "Descrição"
 
-#: models.py:25 models.py:87 models.py:199 models.py:330 models.py:393
-#: templates/admin_user_edit.html:49
+#: models.py:31 models.py:102 templates/admin_user_edit.html:49
 msgid "Name"
 msgstr "Nome"
 
-#: models.py:26
+#: models.py:32
 msgid "Value"
 msgstr "Valor"
 
-#: models.py:35
+#: models.py:38
 msgid "option"
 msgstr "opção"
 
-#: models.py:70
+#: models.py:77
 msgid "An idea-generation platform"
 msgstr "Uma plataforma para geração de ideias"
 
-#: models.py:88
-msgid "Parent"
-msgstr "Pai"
+#: models.py:104
+msgid "Description for the criteria"
+msgstr "Descrição para o critério"
 
-#: models.py:102
+#: models.py:105
+msgid "Description for 1 star"
+msgstr "Descrição para 1 estrela"
+
+#: models.py:106
+msgid "Description for 2 stars"
+msgstr "Descrição para 2 estrelas"
+
+#: models.py:107
+msgid "Description for 3 stars"
+msgstr "Descrição para 3 estrelas"
+
+#: models.py:108
+msgid "Description for 4 stars"
+msgstr "Descrição para 4 estrelas"
+
+#: models.py:109
+msgid "Description for 5 stars"
+msgstr "Descrição para 5 estrelas"
+
+#: models.py:117
 msgid "criteria"
 msgstr "critério"
 
-#: models.py:126
+#: models.py:145
 msgid "Contributors"
 msgstr "Colaboradores"
 
-#: models.py:126
+#: models.py:145
 msgid "Users with permission to contribute to this problem."
 msgstr "Usuários com permissão para contribuir com este problema."
 
-#: models.py:127
+#: models.py:146
 msgid "Managers"
 msgstr "Gerentes"
 
-#: models.py:127
+#: models.py:146
 msgid "Users with permission to manage this problem."
 msgstr "Usuários com permissão para gerenciar este problema."
 
-#: models.py:128
-msgid "Open participation"
-msgstr "Participação aberta"
-
-#: models.py:128
-msgid "Any registered user can contribute to this problem."
-msgstr "Qualquer usuário registrado poderá contribuir para este problema."
-
-#: models.py:129
-msgid "Public"
-msgstr "Público"
-
-#: models.py:129
-msgid "The problem will be publicy available to anyone."
-msgstr "Este problema ficará disponível publicamente para qualquer pessoa."
-
-#: models.py:130
-msgid "Locked"
-msgstr "Travado"
-
-#: models.py:130
-msgid ""
-"Lock the problem so it will be kept visible but no one will be able to "
-"contribute."
-msgstr ""
-"Trava o problema e o mantém visível, mas ninguém mais poderá contribuir."
-
-#: models.py:131
-msgid "Blind contributions"
-msgstr "Contribuição às cegas"
-
-#: models.py:131
-msgid "People can only see their own ideas."
-msgstr "As pessoas podem somente ver as suas próprias ideias."
-
-#: models.py:132
-msgid "Max ideas per user"
-msgstr "Máximo de ideias por usuário"
-
-#: models.py:132
-msgid ""
-"Maximum number of ideas an user will be able to contribute to this problem. "
-"Leave 0 for unlimited."
-msgstr ""
-"O número máximo de ideias que os usuários poderão dar para este problema. "
-"Deixe 0 para ilimitado."
-
-#: models.py:133
-msgid "Enable voting for ideas"
-msgstr "Habilitar as votações de ideias"
-
-#: models.py:133
-msgid "Users will be able to vote for the ideas."
-msgstr "Usuários poderão votar nas ideias."
-
-#: models.py:134
-msgid "Display vote counts"
-msgstr "Mostrar contador de votos"
-
-#: models.py:134
-msgid "Users will be able to see how many votes each idea had."
-msgstr ""
-"Usuários poderão ver quantos votos positivos ou negativos cada ideia recebeu."
-
-#: models.py:135
-msgid "Display vote authors"
-msgstr "Mostrar autores dos votos"
-
-#: models.py:135
-msgid "Ideas voting will be completely transparent."
-msgstr "A votação de ideias será completamente transparente."
-
-#: models.py:147 templates/criteria.html:28
+#: models.py:155 templates/criteria_list.html:29
 msgid "problem"
 msgstr "Problema"
 
-#: models.py:188
-msgid "Number"
-msgstr "Número"
-
-#: models.py:189
-msgid "True or False"
-msgstr "Verdadeiro ou Falso"
-
-#: models.py:190
-msgid "Text"
-msgstr "Texto"
-
-#: models.py:191
-msgid "Date range"
-msgstr "Faixa de data"
-
-#: models.py:200
-msgid "Type"
-msgstr "Tipo"
-
-#: models.py:210
-msgid "quantifier"
-msgstr "quantificador"
-
-#: models.py:227
-msgid "invite"
-msgstr "convite"
-
-#: models.py:234
+#: models.py:179
 msgid "title"
 msgstr "título"
 
-#: models.py:249 templates/home.html:30
+#: models.py:190 templates/problem_row.html:7
 msgid "idea"
 msgstr "ideia"
 
-#: models.py:268
-msgid "value"
-msgstr "Valor"
+#: models.py:223
+msgid "idea criteria"
+msgstr "critério da ideia"
 
-#: models.py:277
-msgid "quantifier value"
-msgstr "valor do quantificador"
-
-#: models.py:284
+#: models.py:235
 msgid "Comment"
 msgstr "Comentário"
 
-#: models.py:297
+#: models.py:245
 msgid "comment"
 msgstr "comentário"
 
-#: models.py:307
+#: models.py:256
 msgid "Content"
 msgstr "Conteúdo"
 
-#: models.py:317
+#: models.py:263
 msgid "message"
 msgstr "mensagem"
 
-#: models.py:343 templates/home.html:34
+#: models.py:296 templates/problem_row.html:11
 msgid "alternative"
 msgstr "alternativa"
 
-#: models.py:403
-msgid "alternative item"
-msgstr "item de alternativa"
-
-#: models.py:416
-msgid "Upvote"
-msgstr "Favorável"
-
-#: models.py:417
-msgid "Downvote"
-msgstr "Desfavorável"
-
-#: models.py:427
+#: models.py:326
 msgid "vote"
 msgstr "voto"
 
-#: models.py:449
+#: models.py:352
 msgid "activity"
 msgstr "atividade"
 
@@ -349,7 +238,7 @@ msgstr "atividade"
 msgid "The page you are trying to access does not exist."
 msgstr "A página que você está tentando acessar não existe."
 
-#: templates/activity.html:11 templates/base.html:47 views/base.py:87
+#: templates/activity.html:11 templates/base.html:47 views/base.py:91
 msgid "Activity"
 msgstr "Atividade"
 
@@ -433,9 +322,12 @@ msgstr "Buscar usuários"
 msgid "Users admin"
 msgstr "Administração de usuários"
 
-#: templates/admin_user.html:31 templates/criteria.html:38
-#: templates/problem.html:79 templates/problem_idea.html:67
-#: views/criteria.py:103
+#: templates/admin_user.html:24
+msgid "SUPER"
+msgstr "SUPER"
+
+#: templates/admin_user.html:31 templates/problem.html:89
+#: templates/problem_idea.html:72 views/criteria.py:115
 msgid "Edit"
 msgstr "Editar"
 
@@ -453,7 +345,7 @@ msgstr ""
 "suas atividades anteriores."
 
 #: templates/admin_user_edit.html:16 templates/admin_user_edit.html.py:32
-#: templates/problem.html:23 templates/problem_edit.html:16
+#: templates/problem.html:21
 msgid "Cancel"
 msgstr "Cancelar"
 
@@ -485,15 +377,22 @@ msgstr "Nome de usuário"
 msgid "E-mail"
 msgstr "E-mail"
 
+#: templates/autocompleteselectmultiple_criteria.html:5
+msgid "Type to search for criterias."
+msgstr "Digite para buscar os critérios."
+
+#: templates/autocompleteselectmultiple_criteria.html:8
+msgid "New criteria"
+msgstr "Novo critério"
+
 #: templates/base.html:41 templates/base.html.py:82
 msgid "Home"
 msgstr "Início"
 
-#: templates/base.html:43 views/criteria.py:31 views/criteria.py:53
-#: views/criteria.py:73 views/criteria.py:100 views/idea.py:107
-#: views/idea.py:155 views/message.py:74 views/message.py:97
-#: views/problem.py:144 views/problem.py:173 views/problem.py:293
-#: views/problem.py:397
+#: templates/base.html:43 templates/home.html:14 views/base.py:38
+#: views/idea.py:85 views/idea.py:133 views/message.py:68 views/message.py:91
+#: views/problem.py:96 views/problem.py:125 views/problem.py:245
+#: views/problem.py:341
 msgid "Problems"
 msgstr "Problemas"
 
@@ -514,11 +413,11 @@ msgstr "Login"
 msgid "Register"
 msgstr "Criar conta"
 
-#: templates/base.html:114 views/problem.py:138 views/problem.py:145
+#: templates/base.html:114 views/problem.py:90 views/problem.py:97
 msgid "Create new problem"
 msgstr "Criar novo problema"
 
-#: templates/base.html:123 views/base.py:100
+#: templates/base.html:123 views/base.py:104
 msgid "Search"
 msgstr "Busca"
 
@@ -539,13 +438,13 @@ msgstr "editado"
 msgid "at"
 msgstr "em"
 
-#: templates/criteria.html:11
+#: templates/criteria.html:12 templates/criteria_list.html:10
 msgid "Create new criteria"
 msgstr "Criar novo critério"
 
-#: templates/criteria.html:28
-msgid "problems"
-msgstr "Problemas"
+#: templates/criteria.html:42
+msgid "Problems using this criteria:"
+msgstr "Problemas usando este critério"
 
 #: templates/criteria_edit.html:13
 #, python-format
@@ -557,24 +456,15 @@ msgstr ""
 msgid "Create a new criteria"
 msgstr "Criar novo critério"
 
-#: templates/home.html:13
-#, python-format
-msgid "Problems with the criteria \"%(criteria_name)s\""
-msgstr "Problemas com o critério \"%(criteria_name)s\""
+#: templates/criteria_list.html:29
+msgid "problems"
+msgstr "Problemas"
 
-#: templates/home.html:17
-msgid "Edit this criteria"
-msgstr "Editar este critério"
+#: templates/criteria_list.html:47
+msgid "No criteria yet!"
+msgstr "Nenhum critério ainda!"
 
-#: templates/home.html:30
-msgid "ideas"
-msgstr "ideias"
-
-#: templates/home.html:34
-msgid "alternatives"
-msgstr "alternativas"
-
-#: templates/home.html:57
+#: templates/home.html:27
 #, python-format
 msgid ""
 "No problem here. You can start by <a href=\"%(url_problem_new)s\">creating a "
@@ -583,7 +473,7 @@ msgstr ""
 "Nenhum problema aqui. Você pode começar <a href=\"%(url_problem_new)s"
 "\">criando um</a>."
 
-#: templates/home.html:60
+#: templates/home.html:30
 #, python-format
 msgid ""
 "Hi! There's no problem around for you. Try <a href=\"%(url_login)s\">loggin "
@@ -600,10 +490,6 @@ msgstr "Editar ideia"
 #, python-format
 msgid "Revisions for the idea <a href=\"%(idea_url)s\">#%(idea_id)s</a>"
 msgstr "Revisões para a ideia <a href=\"%(idea_url)s\">#%(idea_id)s</a>"
-
-#: templates/message.html:13
-msgid "View all messages"
-msgstr "Ver todas as mensagens"
 
 #: templates/message_list.html:10
 msgid "Bulletin for problem"
@@ -622,16 +508,15 @@ msgstr "Data"
 msgid "Page %(number)s of %(total)s"
 msgstr "Página %(number)s de %(total)s"
 
-#: templates/problem.html:18
+#: templates/problem.html:16
 msgid "Really remove this alternative?"
 msgstr "Realmente remover esta alternativa?"
 
-#: templates/problem.html:26
+#: templates/problem.html:24
 msgid "Remove!"
 msgstr "Remover!"
 
-#: templates/problem.html:33 templates/problem_table.html:77
-#: templates/problem_table.html.py:91
+#: templates/problem.html:33
 msgid "Select ideas"
 msgstr "Selecionar ideias"
 
@@ -639,78 +524,54 @@ msgstr "Selecionar ideias"
 msgid "Done"
 msgstr "Pronto"
 
-#: templates/problem.html:76 templates/problem_idea.html:65
+#: templates/problem.html:86 templates/problem_idea.html:70
 msgctxt "verb"
 msgid "Comment"
 msgstr "Comentar"
 
-#: templates/problem.html:81 templates/problem_idea.html:71
+#: templates/problem.html:91 templates/problem_idea.html:76
 msgid "Delete"
 msgstr "Remover"
 
-#: templates/problem.html:111
+#: templates/problem.html:127
 msgid "Log in and submit your idea"
 msgstr "Faça login para enviar sua ideia"
 
-#: templates/problem.html:115
-msgid "This problem is currently locked for new ideas"
-msgstr "Este problema não está recebendo novas ideias"
-
-#: templates/problem.html:119
+#: templates/problem.html:131
 msgid "Submit your idea to this problem"
 msgstr "Envie uma ideia para este problema"
 
-#: templates/problem.html:119
+#: templates/problem.html:131
 #, python-format
 msgid "you have %(ideas)s idea left"
 msgid_plural "you have %(ideas)s ideas left"
 msgstr[0] "você tem %(ideas)s ideia restante"
 msgstr[1] "você tem %(ideas)s ideias restantes\t"
 
-#: templates/problem.html:123
-msgid "You contributed with the maximum ideas allowed for this problem"
-msgstr ""
-"Você já contribuiu com o máximo de ideias permitidas para este problema"
+#: templates/problem_alternative.html:12
+msgid "Select ideas for this alternative"
+msgstr "Selecione ideias para esta alternativa"
 
-#: templates/problem.html:123
-msgid "edit or delete your existing ideas if you change your mind about them"
-msgstr "edite ou remova suas ideias existentes se você mudou de ideia"
-
-#: templates/problem.html:127
-msgid "You don't have permission to contribute to this problem"
-msgstr "Você não tem permissão para contribuir com este problema"
-
-#: templates/problem.html:132
-msgid "Your idea"
-msgstr "Sua ideia"
-
-#: templates/problem.html:137
-msgid ""
-"This problem is in blind contribution mode. That means you can't see the "
-"other users ideas until the manager turns the option off."
-msgstr ""
-"Este problema está no modo de contribuição às cegas. Isto significa que você "
-"não poderá ver as ideias dos outros usuários até que o gestor do problema "
-"desligue esta opção."
+#: templates/problem_alternative.html:48
+msgid "Delete alternative"
+msgstr "Deletar alternativa"
 
 #: templates/problem_confirm_delete.html:7
 msgid "Really delete this problem? This cannot be undone!"
 msgstr "Realmente deletar este problema? Isto não poderá ser desfeito!"
 
-#: templates/problem_edit.html:15
-msgid "Are you sure? All existing data for this quantifier will be lost."
-msgstr ""
-"Você tem certeza? Todos os dados existentes para este quantificador serão "
-"perdidos."
+#: templates/problem_confirm_delete.html:12
+msgid "Remove"
+msgstr "Remover"
 
-#: templates/problem_idea.html:69
+#: templates/problem_idea.html:74
 #, python-format
 msgid "%(i)s revision"
 msgid_plural "%(i)s revisions"
 msgstr[0] "%(i)s revisão"
 msgstr[1] "%(i)s revisões"
 
-#: templates/problem_idea.html:71
+#: templates/problem_idea.html:76
 msgid "Undelete"
 msgstr "Recuperar"
 
@@ -721,105 +582,84 @@ msgid ""
 msgstr ""
 "Revisões para o problema <a href=\"%(problem_url)s\">#%(problem_id)s</a>"
 
-#: templates/problem_sidebar.html:5
+#: templates/problem_row.html:7
+msgid "ideas"
+msgstr "ideias"
+
+#: templates/problem_row.html:11
+msgid "alternatives"
+msgstr "alternativas"
+
+#: templates/problem_sidebar.html:4
 msgid "Back to problem"
 msgstr "Voltar ao problema"
 
-#: templates/problem_sidebar.html:10
+#: templates/problem_sidebar.html:5
+msgid "View all messages"
+msgstr "Ver todas as mensagens"
+
+#: templates/problem_sidebar.html:8 templates/problem_table.html:6
 msgid "Strategy table"
 msgstr "Tabela de estratégias"
 
-#: templates/problem_sidebar.html:12
-msgid "Results"
-msgstr "Resultados"
-
-#: templates/problem_sidebar.html:13
-msgid "New message"
-msgstr "Nova mensagem"
-
-#: templates/problem_sidebar.html:22
-msgid "This problem is public. Anyone on the Internet can read it."
-msgstr "Este problema é público. Qualquer pessoa na Internet pode vê-lo."
-
-#: templates/problem_sidebar.html:24
-msgid "This problem is not public. Only contributores can read it."
-msgstr "Este problema não é público. Somente contribuidores podem vê-lo."
-
-#: templates/problem_sidebar.html:26
-msgid "This problem is opened. Any logged user will be able to contribute."
-msgstr ""
-"Este problema está aberto. Qualquer usuário logado poderá contribuir com "
-"ideias."
-
-#: templates/problem_sidebar.html:27
-msgid ""
-"This problem is locked. No one can contribute with any more ideas until a "
-"manager opens it."
-msgstr ""
-"Este problema está travado. Ninguém pode contribuir até que um gerente o "
-"destrave."
-
-#: templates/problem_sidebar.html:28
-msgid ""
-"This problem is in blind contribution mode. You can only see your own ideas."
-msgstr ""
-"Este problema está em modo de contribuição às cegas. Você pode ver somente "
-"as suas próprias ideias."
-
-#: templates/problem_sidebar.html:29
-msgid "Ideas voting are opened. You can vote and downvote ideas."
-msgstr ""
-"A votação de ideias está aberta. Você pode votar positivo ou negativo nas "
-"ideias."
-
-#: templates/problem_sidebar.html:36
-msgid "revisions"
-msgstr "revisões"
-
-#: templates/problem_sidebar.html:37 templates/user.html:14
-msgid "idea contributions"
-msgstr "contribuições de ideias"
-
-#: templates/problem_sidebar.html:37
-msgid "idea contribution"
-msgstr "contribuição de ideia"
-
-#: templates/problem_sidebar.html:44
+#: templates/problem_sidebar.html:14
 msgid "Criterias for this problem"
 msgstr "Critérios para este problema"
 
-#: templates/problem_sidebar.html:56 templates/problem_table.html:40
+#: templates/problem_sidebar.html:26
 msgid "Idea quantifiers"
 msgstr "Quantificadores de ideias"
 
-#: templates/problem_sidebar.html:68
+#: templates/problem_sidebar.html:38
 msgid "Bulletin"
 msgstr "Comunicados"
 
-#: templates/problem_sidebar.html:76
+#: templates/problem_sidebar.html:46
 msgid "View all"
 msgstr "Ver todos"
 
-#: templates/problem_table.html:12
-msgid "Votes"
-msgstr "Votos"
+#: templates/problem_table.html:13
+msgid "Alternative"
+msgstr "Alternativa"
 
-#: templates/problem_table.html:117
-msgid "Add alternative"
-msgstr "Adicionar alternativa"
+#: templates/problem_table.html:15
+msgid "Ideas"
+msgstr "Ideias"
 
-#: templates/problem_table.html:119
-msgid "Click on the table cells to select ideas."
-msgstr "Clique nas células das tabelas para selecionar as ideias."
+#: templates/problem_table.html:40
+msgid "Add a new alternative"
+msgstr "Adicionar nova alternativa"
 
-#: templates/problem_table.html:121
+#: templates/problem_table.html:41
+msgid "Need some help?"
+msgstr "Precisa de ajuda?"
+
+#: templates/problem_table.html:44
+msgid "To start building the table click on \"Add alternative\""
+msgstr "Para começar a construir a tabela clique em \"adicionar alternativa\""
+
+#: templates/problem_table.html:45
 #, python-format
-msgid "<a href=\"%(url)s\">Edit the problem</a> to create new criterias"
-msgstr "<a href=\"%(url)s\">Edite o problema</a> para criar critérios"
+msgid "To put ideas into alternatives click on the %(icon)s icon"
+msgstr "Para colocar ideias em uma alternativa clique no ícone %(icon)s"
+
+#: templates/problem_table.html:46
+#, python-format
+msgid "To delete alternatives click on the %(icon)s icon"
+msgstr "Para deletar alternativas clique no ícone %(icon)s"
+
+#: templates/problem_table.html:48
+#, python-format
+msgid "<a href=\"%(url)s\">Edit the problem</a> to create more criterias"
+msgstr "<a href=\"%(url)s\">Edite o problema</a> para criar mais critérios"
 
 #: templates/user.html:13
 msgid "problems created"
 msgstr "problemas criados"
+
+#: templates/user.html:14
+msgid "idea contributions"
+msgstr "contribuições de ideias"
 
 #: templates/user.html:15
 msgid "comments made"
@@ -1040,44 +880,35 @@ msgstr[1] "dias"
 msgid "%(number)d %(type)s"
 msgstr "%(number)d %(type)s"
 
-#: views/base.py:49 views/base.py:54
+#: views/base.py:53 views/base.py:58
 msgid "Options"
 msgstr "Opções"
 
-#: views/criteria.py:75
+#: views/criteria.py:88
 msgid "Create"
 msgstr "Criar"
 
-#: views/criteria.py:80
+#: views/criteria.py:93
 msgid "Criteria created."
 msgstr "Critério salvo."
 
-#: views/criteria.py:108
+#: views/criteria.py:120
 msgid "Criteria saved."
 msgstr "Critério salvo."
 
-#: views/idea.py:43
-#, python-format
-msgid "There was a problem saving the quantifier '%s'."
-msgstr "Houve um problema ao salvar o quantificador '%s'."
-
-#: views/idea.py:62
-msgid "There was a problem saving a date quantifier."
-msgstr "Houve um problema ao salvar o quantificador de data."
-
-#: views/idea.py:73
+#: views/idea.py:50
 msgid "Idea saved."
 msgstr "Ideia salva."
 
-#: views/idea.py:109 views/idea.py:157
+#: views/idea.py:87 views/idea.py:135
 msgid "Idea"
 msgstr "Ideia"
 
-#: views/idea.py:110 views/problem.py:175
+#: views/idea.py:88 views/problem.py:127
 msgid "Update"
 msgstr "Atualização"
 
-#: views/idea.py:158 views/problem.py:295
+#: views/idea.py:136 views/problem.py:247
 msgid "Revisions"
 msgstr "Revisões"
 
@@ -1090,104 +921,308 @@ msgstr "Nova mensagem para o problema <a href=\"%(url)s\">#%(id)d</a>"
 msgid "Problem"
 msgstr "Problema"
 
-#: views/message.py:40 views/message.py:76 views/message.py:99
-msgid "Messages"
-msgstr "Mensagem"
-
-#: views/message.py:41
+#: views/message.py:40
 msgid "Compose new message"
 msgstr "Enviar nova mensagem"
 
-#: views/message.py:77
+#: views/message.py:70 views/message.py:93
+msgid "Messages"
+msgstr "Mensagem"
+
+#: views/message.py:71
 #, python-format
 msgid "Message #%(id)d"
 msgstr "Mensagem #%(id)d"
 
-#: views/problem.py:93 views/problem.py:112
-#, python-format
-msgid "There was an error saving the quantifier '%s'."
-msgstr "Houve um erro ao salvar o quantificador '%s'."
-
-#: views/problem.py:122
+#: views/problem.py:74
 msgid "Problem saved"
 msgstr "Problema salvo"
 
-#: views/problem.py:167
+#: views/problem.py:119
 msgid "Edit problem"
 msgstr "Editar problema"
 
-#: views/problem.py:191
+#: views/problem.py:143
 msgid "Problem deleted"
 msgstr "Problema removido"
 
-#: views/problem.py:210
+#: views/problem.py:162
 msgid "The problem was set to blind contribution mode."
 msgstr "O problema foi configurado para o modo de contribuição às cegas."
 
-#: views/problem.py:211
+#: views/problem.py:163
 msgid "The problem was locked for contributions."
 msgstr "O problema não pode receber novas contribuições."
 
-#: views/problem.py:212
+#: views/problem.py:164
 #, python-format
 msgid "Max ideas per user set to %d."
 msgstr "Máximo de ideias por usuário ajustado para %d."
 
-#: views/problem.py:213
+#: views/problem.py:165
 msgid "Contributions opened for any logged user."
 msgstr "Contribuições abertas para qualquer usuário logado."
 
-#: views/problem.py:214
+#: views/problem.py:166
 msgid "Problem set to be publicly available."
 msgstr "Problema configurado para ser disponibilizado publicamente."
 
-#: views/problem.py:215
+#: views/problem.py:167
 msgid "Ideas votation were opened."
 msgstr "A votação de ideias está aberta."
 
-#: views/problem.py:216
+#: views/problem.py:168
 msgid "Vote counts will be displayed."
 msgstr "Contadores de votos serão mostrados."
 
-#: views/problem.py:217
+#: views/problem.py:169
 msgid "Vote authors will be displayed."
 msgstr "Autores dos votos serão mostrados."
 
-#: views/problem.py:220
+#: views/problem.py:172
 msgid "No longer in blind contribution mode."
 msgstr "Não está mais no modo de contribuição às cegas."
 
-#: views/problem.py:221
+#: views/problem.py:173
 msgid "Problem unlocked for contributions."
 msgstr "Problema destravado para contribuições."
 
-#: views/problem.py:222
+#: views/problem.py:174
 msgid "Untilimed ideas per user."
 msgstr "Ideias ilimitadas por usuário."
 
-#: views/problem.py:223
+#: views/problem.py:175
 msgid "Only participants will be able to contribute."
 msgstr "Só participantes podem contribuir."
 
-#: views/problem.py:224
+#: views/problem.py:176
 msgid "The problem is no longer public."
 msgstr "O problema não é mais público."
 
-#: views/problem.py:225
+#: views/problem.py:177
 msgid "Ideas votation were closed."
 msgstr "A votação de ideias foi fechada."
 
-#: views/problem.py:226
+#: views/problem.py:178
 msgid "Vote counts will no longer be displayed."
 msgstr "O contador de votos não será mais mostrado."
 
-#: views/problem.py:227
+#: views/problem.py:179
 msgid "Vote authors will no longer be displayed."
 msgstr "Os autores dos votos não serão mais mostrados."
+
+#: views/problem.py:219
+msgid "Advanced options"
+msgstr "Opções avançadas"
 
 #: views/user.py:64 views/user.py:96
 msgid "Admin"
 msgstr "Admin"
+
+#~ msgid "Click on the ideas cell of each alternative to link ideas"
+#~ msgstr "Clique nas células"
+
+#~ msgid "Help text"
+#~ msgstr "Texto de ajuda"
+
+#~ msgid "Idea Quantifiers"
+#~ msgstr "Quantificadores de Ideias"
+
+#~ msgid "Add quantifier"
+#~ msgstr "Adicionar quantificador"
+
+#~ msgid "Voting"
+#~ msgstr "Votação"
+
+#~ msgid ""
+#~ "Type the name of the criteria to search. Go to the <a href=\"%s"
+#~ "\">criterias page</a> if you want to edit them."
+#~ msgstr ""
+#~ "Digite o nome do critério que você quer procurar. Vá para a <a href=\"%s"
+#~ "\">página dos critérios</a> se você quiser editá-los."
+
+#~ msgid "Parent"
+#~ msgstr "Pai"
+
+#~ msgid "Open participation"
+#~ msgstr "Participação aberta"
+
+#~ msgid "Any registered user can contribute to this problem."
+#~ msgstr "Qualquer usuário registrado poderá contribuir para este problema."
+
+#~ msgid "Public"
+#~ msgstr "Público"
+
+#~ msgid "The problem will be publicy available to anyone."
+#~ msgstr "Este problema ficará disponível publicamente para qualquer pessoa."
+
+#~ msgid "Locked"
+#~ msgstr "Travado"
+
+#~ msgid ""
+#~ "Lock the problem so it will be kept visible but no one will be able to "
+#~ "contribute."
+#~ msgstr ""
+#~ "Trava o problema e o mantém visível, mas ninguém mais poderá contribuir."
+
+#~ msgid "Blind contributions"
+#~ msgstr "Contribuição às cegas"
+
+#~ msgid "People can only see their own ideas."
+#~ msgstr "As pessoas podem somente ver as suas próprias ideias."
+
+#~ msgid "Max ideas per user"
+#~ msgstr "Máximo de ideias por usuário"
+
+#~ msgid ""
+#~ "Maximum number of ideas an user will be able to contribute to this "
+#~ "problem. Leave 0 for unlimited."
+#~ msgstr ""
+#~ "O número máximo de ideias que os usuários poderão dar para este problema. "
+#~ "Deixe 0 para ilimitado."
+
+#~ msgid "Enable voting for ideas"
+#~ msgstr "Habilitar as votações de ideias"
+
+#~ msgid "Users will be able to vote for the ideas."
+#~ msgstr "Usuários poderão votar nas ideias."
+
+#~ msgid "Display vote counts"
+#~ msgstr "Mostrar contador de votos"
+
+#~ msgid "Users will be able to see how many votes each idea had."
+#~ msgstr ""
+#~ "Usuários poderão ver quantos votos positivos ou negativos cada ideia "
+#~ "recebeu."
+
+#~ msgid "Display vote authors"
+#~ msgstr "Mostrar autores dos votos"
+
+#~ msgid "Ideas voting will be completely transparent."
+#~ msgstr "A votação de ideias será completamente transparente."
+
+#~ msgid "Number"
+#~ msgstr "Número"
+
+#~ msgid "True or False"
+#~ msgstr "Verdadeiro ou Falso"
+
+#~ msgid "Text"
+#~ msgstr "Texto"
+
+#~ msgid "Date range"
+#~ msgstr "Faixa de data"
+
+#~ msgid "Type"
+#~ msgstr "Tipo"
+
+#~ msgid "quantifier"
+#~ msgstr "quantificador"
+
+#~ msgid "invite"
+#~ msgstr "convite"
+
+#~ msgid "value"
+#~ msgstr "Valor"
+
+#~ msgid "quantifier value"
+#~ msgstr "valor do quantificador"
+
+#~ msgid "alternative item"
+#~ msgstr "item de alternativa"
+
+#~ msgid "Upvote"
+#~ msgstr "Favorável"
+
+#~ msgid "Downvote"
+#~ msgstr "Desfavorável"
+
+#~ msgid "Problems with the criteria \"%(criteria_name)s\""
+#~ msgstr "Problemas com o critério \"%(criteria_name)s\""
+
+#~ msgid "This problem is currently locked for new ideas"
+#~ msgstr "Este problema não está recebendo novas ideias"
+
+#~ msgid "You contributed with the maximum ideas allowed for this problem"
+#~ msgstr ""
+#~ "Você já contribuiu com o máximo de ideias permitidas para este problema"
+
+#~ msgid ""
+#~ "edit or delete your existing ideas if you change your mind about them"
+#~ msgstr "edite ou remova suas ideias existentes se você mudou de ideia"
+
+#~ msgid "You don't have permission to contribute to this problem"
+#~ msgstr "Você não tem permissão para contribuir com este problema"
+
+#~ msgid "Your idea"
+#~ msgstr "Sua ideia"
+
+#~ msgid ""
+#~ "This problem is in blind contribution mode. That means you can't see the "
+#~ "other users ideas until the manager turns the option off."
+#~ msgstr ""
+#~ "Este problema está no modo de contribuição às cegas. Isto significa que "
+#~ "você não poderá ver as ideias dos outros usuários até que o gestor do "
+#~ "problema desligue esta opção."
+
+#~ msgid "Are you sure? All existing data for this quantifier will be lost."
+#~ msgstr ""
+#~ "Você tem certeza? Todos os dados existentes para este quantificador serão "
+#~ "perdidos."
+
+#~ msgid "Results"
+#~ msgstr "Resultados"
+
+#~ msgid "New message"
+#~ msgstr "Nova mensagem"
+
+#~ msgid "This problem is public. Anyone on the Internet can read it."
+#~ msgstr "Este problema é público. Qualquer pessoa na Internet pode vê-lo."
+
+#~ msgid "This problem is not public. Only contributores can read it."
+#~ msgstr "Este problema não é público. Somente contribuidores podem vê-lo."
+
+#~ msgid "This problem is opened. Any logged user will be able to contribute."
+#~ msgstr ""
+#~ "Este problema está aberto. Qualquer usuário logado poderá contribuir com "
+#~ "ideias."
+
+#~ msgid ""
+#~ "This problem is locked. No one can contribute with any more ideas until a "
+#~ "manager opens it."
+#~ msgstr ""
+#~ "Este problema está travado. Ninguém pode contribuir até que um gerente o "
+#~ "destrave."
+
+#~ msgid ""
+#~ "This problem is in blind contribution mode. You can only see your own "
+#~ "ideas."
+#~ msgstr ""
+#~ "Este problema está em modo de contribuição às cegas. Você pode ver "
+#~ "somente as suas próprias ideias."
+
+#~ msgid "Ideas voting are opened. You can vote and downvote ideas."
+#~ msgstr ""
+#~ "A votação de ideias está aberta. Você pode votar positivo ou negativo nas "
+#~ "ideias."
+
+#~ msgid "revisions"
+#~ msgstr "revisões"
+
+#~ msgid "idea contribution"
+#~ msgstr "contribuição de ideia"
+
+#~ msgid "Votes"
+#~ msgstr "Votos"
+
+#~ msgid "There was a problem saving the quantifier '%s'."
+#~ msgstr "Houve um problema ao salvar o quantificador '%s'."
+
+#~ msgid "There was a problem saving a date quantifier."
+#~ msgstr "Houve um problema ao salvar o quantificador de data."
+
+#~ msgid "There was an error saving the quantifier '%s'."
+#~ msgstr "Houve um erro ao salvar o quantificador '%s'."
 
 #~ msgid "Help"
 #~ msgstr "Ajuda"
@@ -1313,9 +1348,6 @@ msgstr "Admin"
 #~ msgid "Parent:"
 #~ msgstr "Pai:"
 
-#~ msgid "Revisions for the idea"
-#~ msgstr "Revisões para a ideia"
-
 #~ msgid "Revisions for the problem"
 #~ msgstr "Revisões para o problema"
 
@@ -1343,9 +1375,6 @@ msgstr "Admin"
 
 #~ msgid "Tags"
 #~ msgstr "Tags"
-
-#~ msgid "Type to search for tags."
-#~ msgstr "Digite para procurar tags."
 
 #~ msgid "Label"
 #~ msgstr "Rótulo"

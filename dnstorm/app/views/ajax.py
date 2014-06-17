@@ -105,9 +105,13 @@ class AjaxView(View):
         order = models.Alternative.objects.filter(problem=problem).count() + 1
         a = models.Alternative(problem=problem, order=order)
         a.save()
+        a.fill_data()
         response = {
             'id': a.id,
-            'html': loader.render_to_string('problem_alternative.html', {'alternative': a})
+            'html': loader.render_to_string('problem_alternative.html', {
+                'alternative': a,
+                'problem_perm_manage': True
+            })
         }
         return HttpResponse(json.dumps(response), content_type='application/json')
 

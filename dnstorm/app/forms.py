@@ -89,10 +89,7 @@ class ProblemForm(forms.ModelForm):
                 'description',
             ),
             Fieldset(_('Criterias'),
-                Row(
-                    Column('criteria', css_class='large-10'),
-                    Column(HTML('<br/><a target="_blank" class="button small radius expand" href="%s">%s</a>' % (reverse('criteria_new'), _('New criteria'))), css_class='large-2')
-                ),
+                'criteria',
             ),
             Fieldset(_('Permissions'),
                 'contributor',

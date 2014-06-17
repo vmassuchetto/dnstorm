@@ -11,7 +11,7 @@
     <thead>
     <tr>
     <th>{% trans "Alternative" %}</th>
-    {% if problem_perm_manage %}<th>{% trans "Select ideas" %}</th>{% endif %}
+    {% if problem_perm_manage %}<th></th>{% endif %}
     <th class="voting-title">{% trans "Ideas" %}</th>
     {% for criteria in criterias %}
         <th class="criteria text-center" data-criteria="{{ criteria.id }}">
@@ -21,7 +21,7 @@
             </div>
         </th>
     {% endfor %}
-    {% if problem_perm_manage %}<th>{% trans "Delete" %}</th>{% endif %}
+    {% if problem_perm_manage %}<th></th>{% endif %}
     </tr>
     </thead>
 
@@ -37,12 +37,13 @@
 </div>
 
 {% if problem_perm_manage %}
-    <a class="button radius new-alternative"><i class="fi-plus"></i>&nbsp;{% trans "Add a new alternative" %}</a>
-    <h4>{% trans "Need some help?" %}</h4>
-    <div class="panel radius secondary">
+    <a class="button radius new-alternative"><i class="fi-plus"></i>&nbsp;{% trans "Add a new alternative" %}</a><br/>
+    <a class="button radius secondary tiny table-help-show"><i class="fi-info"></i>&nbsp;{% trans "Need some help?" %}</a>
+    <div class="table-help panel radius secondary">
     <ul>
-        {% if not alternatives %}<li>{% trans "To start building the table click on the 'add alternatives' button above" %}</li>{% endif %}
-        <li>{% trans "Click on the ideas cell of each alternative to link ideas" %}</li>
+        <li>{% blocktrans %}To start building the table click on "Add alternative"{% endblocktrans %}</li>
+        <li>{% blocktrans with icon="<i class='fi-plus'></i>" %}To put ideas into alternatives click on the {{ icon }} icon{% endblocktrans %}</li>
+        <li>{% blocktrans with icon="<i class='fi-x'></i>" %}To delete alternatives click on the {{ icon }} icon{% endblocktrans %}</li>
         {% url "problem_edit" problem.slug as problem_url %}
         <li>{% blocktrans with url=problem_url %}<a href="{{ url }}">Edit the problem</a> to create more criterias{% endblocktrans %}</li>
     </ul>

@@ -54,7 +54,6 @@ INSTALLED_APPS = (
     'ckeditor',
     'crispy_forms',
     'crispy_forms_foundation',
-    'compressor',
     'djangobower',
     'haystack',
     'registration',
@@ -75,12 +74,6 @@ BOWER_INSTALLED_APPS = (
 )
 
 BOWER_COMPONENTS_ROOT = SITE_ROOT + '/components/'
-
-# Compressor
-
-STATICFILES_FINDERS = global_settings.STATICFILES_FINDERS + (
-    'compressor.finders.CompressorFinder',
-)
 
 # Ajax lookups
 

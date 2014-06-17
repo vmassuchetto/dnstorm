@@ -9,7 +9,7 @@
     </td>
 
     {% if problem_perm_manage %}
-        <td><div class="cell-wrap"><a class="select-ideas add-icon" data-alternative="{{ alternative.id }}"><i class="fi-plus"></i></a></div></td>
+        <td><div class="cell-wrap"><a class="select-ideas add-icon" data-alternative="{{ alternative.id }}" data-tooltip title="{% trans "Select ideas for this alternative" %}"><i class="fi-plus"></i></a></div></td>
     {% endif %}
 
     <td class="alternative-ideas">
@@ -45,7 +45,7 @@
     {% endfor %}
 
     {% if problem_perm_manage %}
-        <td><div class="cell-wrap"><a class="delete-icon delete-alternative" data-alternative="{{ alternative.id }}"><i class="fi-x"></i></a></div></td>
+        <td><div class="cell-wrap"><a class="delete-icon delete-alternative" data-alternative="{{ alternative.id }}" data-tooltip title="{% trans "Delete alternative" %}"><i class="fi-x"></i></a></div></td>
     {% endif %}
 
 </tr>
