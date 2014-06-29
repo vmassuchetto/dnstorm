@@ -23,19 +23,16 @@
             <h2>{{ criteria.name }}</h2>
             <p>{{ criteria.description }}</p>
 
-            <div class="panel radius secondary">
+            <h4>{% trans "Quantification" %}</h4>
 
+            <table width="100%">
                 {% for s in criteria.stars %}
-                    <div class="row">
-                        <div class="columns large-2">
-                            <p class="right">{{ s.icons }}</p>
-                        </div>
-                        <div class="columns large-10">
-                            <p>{{ s.help }}</p>
-                        </div>
-                    </div>
+                    <tr>
+                        <td width="20%" class="text-left">{{ s.icons }}</td>
+                        <td class="text-left">{{ s.help }}</td>
+                    </tr>
                 {% endfor %}
-            </div>
+            </table>
 
             {% if problems %}
 
