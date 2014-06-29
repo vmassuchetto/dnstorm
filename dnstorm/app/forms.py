@@ -140,22 +140,22 @@ class IdeaForm(forms.ModelForm):
 
         if 'problem' in kwargs:
             idea = None
-            problem = kwargs['problem']
+            self.problem = kwargs['problem']
             del kwargs['problem']
         elif 'instance' in kwargs:
             idea = kwargs['instance']
-            problem = idea.problem
+            self.problem = idea.problem
         else:
             raise Http404
 
         super(IdeaForm, self).__init__(*args, **kwargs)
 
-        # Add criterias
+        # Dynamically add the criteria star fields as integers
 
         criteria_html = tuple()
         criteria_fields = tuple()
         context = dict()
-        for c in problem.criteria.all():
+        for c in self.problem.criteria.all():
             context['criteria'] = c
             s = get_object_or_none(models.IdeaCriteria, idea=idea, criteria=c)
             context['stars'] = s.stars if s else 0
@@ -163,30 +163,31 @@ class IdeaForm(forms.ModelForm):
             self.fields['criteria_%d' % c.id] = forms.IntegerField(label=c.name, initial=context['stars'])
             criteria_fields += (Field('criteria_%d' % c.id, type='hidden'),)
 
-        errors = ''
-        if re.match(r'.*criteria_.*', str(self.errors)):
-            errors = HTML('<small class="error">' + _('All quantifiers are needed to submit an idea.') + '</small>')
-
         layout_args = (
             HTML('<h3>' + _('Describe the idea') + '</h3>'),
             'title',
             'content',
-            HTML('<h3 class="top-1em">' + _('How this idea meet the problem criterias') + '</h3>'), errors) + criteria_html + criteria_fields + (HTML('<hr/>'),) + (Submit('submit', _('Submit'), css_class='right radius'),)
+            HTML('<h3 class="top-1em">' + _('How this idea meet the problem criterias') + '</h3>')) \
+                + criteria_html \
+                + criteria_fields \
+                + (HTML('<hr/>'),) \
+                + (Submit('submit', _('Submit'), css_class='right radius'),)
 
         # Form instantiation
+
         self.helper = FormHelper()
         self.helper.form_action = '.'
         self.helper.layout = Layout(*layout_args)
 
     def clean(self):
-        date_re = re.compile('quantifier_(?P<id>[0-9]+)_daterange_(01|02)')
-        date_ids = list(set([date_re.match(f).group('id') for f in self.fields if date_re.match(f)]))
-        for id in date_ids:
-            key = 'quantifier_' + id + '_daterange_'
-            if key + '01' not in self.cleaned_data or key + '02' not in self.cleaned_data:
-                raise forms.ValidationError(_('You need to provide the date fields.'))
-            if self.cleaned_data[key + '01'] > self.cleaned_data[key + '02']:
-                raise forms.ValidationError(_('The initial date is bigger than the end date.'))
+
+        # All criteria quantifications are required
+
+        for c in self.problem.criteria.all():
+            f = 'criteria_%d' % c.id
+            if f not in self.cleaned_data or self.cleaned_data[f] == 0:
+                raise forms.ValidationError(_('You need to provide a number of stars for all criterias.'))
+
         return self.cleaned_data
 
 class CommentForm(forms.ModelForm):

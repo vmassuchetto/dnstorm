@@ -160,6 +160,17 @@ form {
     @include border-radius($global-radius);
 }
 
+.nonfield-errors {
+    color: $white;
+    text-decoration: italic;
+    margin: 0;
+    ol {
+        padding: 0;
+        margin: 0;
+        list-style-type: none;
+    }
+}
+
 // Top bar
 
 .contain-to-grid .top-bar {
