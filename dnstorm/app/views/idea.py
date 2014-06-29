@@ -13,13 +13,16 @@ from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext as _
 from django.contrib import messages
 
+from dnstorm import settings
 from dnstorm.app import models
 from dnstorm.app.forms import IdeaForm
 from dnstorm.app import permissions
+from dnstorm.app.lib.diff import diff_prettyHtml
 
+import bleach
 import reversion
 import diff_match_patch as _dmp
-from dnstorm.app.lib.diff import diff_prettyHtml
+
 
 def idea_form_valid(obj, form):
     """
@@ -31,6 +34,11 @@ def idea_form_valid(obj, form):
     object = form.save(commit=False)
     object.problem = obj.problem if hasattr(obj, 'problem') else object.problem
     object.author = obj.request.user
+    object.content = bleach.clean(object.content,
+        tags=settings.SANITIZER_ALLOWED_TAGS,
+        attributes=settings.SANITIZER_ALLOWED_ATTRIBUTES,
+        styles=settings.SANITIZER_ALLOWED_STYLES,
+        strip=True, strip_comments=True)
     object.save()
 
     # Criterias ratings

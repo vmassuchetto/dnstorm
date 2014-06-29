@@ -22,6 +22,7 @@ from django.contrib import messages
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import User
 
+import bleach
 import reversion
 import diff_match_patch as _dmp
 
@@ -44,6 +45,11 @@ def problem_form_valid(obj, form):
 
     obj.object = form.save(commit=False)
     obj.object.author = obj.request.user
+    obj.object.description = bleach.clean(obj.object.description,
+        tags=settings.SANITIZER_ALLOWED_TAGS,
+        attributes=settings.SANITIZER_ALLOWED_ATTRIBUTES,
+        styles=settings.SANITIZER_ALLOWED_STYLES,
+        strip=True, strip_comments=True)
     obj.object.save()
 
     # Criterias

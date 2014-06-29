@@ -154,3 +154,9 @@ HAYSTACK_CONNECTIONS = {
         'ENGINE': 'haystack.backends.simple_backend.SimpleEngine',
     },
 }
+
+# HTML Sanitizer
+
+SANITIZER_ALLOWED_TAGS = ['a', 'strong', 'b', 'i', 'ul', 'li', 'ol', 'img', 'iframe', 'p', 'h4', 'h5', 'blockquote', 'strike']
+SANITIZER_ALLOWED_ATTRIBUTES = ['href', 'src']
+SANITIZER_ALLOWED_STYLES = []
