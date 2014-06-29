@@ -9,6 +9,8 @@ def problem(**kwargs):
         return False
     if user and user.is_superuser:
         return True
+    elif mode == 'view':
+        return True
     elif mode == 'manage':
         return obj.author == user or user in obj.manager.all()
     elif mode == 'contribute':
