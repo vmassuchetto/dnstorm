@@ -13,11 +13,17 @@
 </div>
 <div class="problem-info columns large-9 medium-9 small-12">
     <h4><a href="{% url "problem" problem.slug %}">{{ problem.title }}</a></h4>
-    <p class="problem-criteria left no-margin-bottom">
-        {% for criteria in problem.criteria.all %}
-            {% include "criteria_button.html" with size="tiny" %}
-        {% endfor %}
-    </p>
-    <h6 class="subheader right">{{ problem.last_activity|naturaltime }}</h6>
+    <div class="row collapse">
+        <div class="columns large-8">
+            <p class="problem-criteria no-margin-bottom text-left">
+                {% for criteria in problem.criteria.all %}
+                    {% include "criteria_button.html" with size="tiny" %}
+                {% endfor %}
+            </p>
+        </div>
+        <div class="columns large-4 text-right">
+            <h6 class="subheader">{{ problem.last_activity|naturaltime }}</h6>
+        </div>
+    </div>
 </div>
 </div>

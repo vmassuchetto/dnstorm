@@ -8,7 +8,7 @@
 {% block topright %}
     {% if perms.criteria.can_add %}
         <div class="left-1em">
-            <a class="button tiny success radius left-1em" href="{% url "criteria_new" %}">
+            <a class="button success radius left-1em" href="{% url "criteria_new" %}">
                 <i class="foundicon-page"></i> {% trans 'Create new criteria' %}
             </a>
         </div>

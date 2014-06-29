@@ -11,27 +11,30 @@
 
         {% if problems %}
 
-        <h2>{% trans "Problems" %}</h2>
+            <h2>{% trans "Problems" %}</h2>
 
-        {% for problem in problems %}
-            {% include "problem_row.html" %}
-        {% endfor %}
+            {% for problem in problems %}
+                {% include "problem_row.html" %}
+            {% endfor %}
 
-        {% include "pagination.html" with items=problems %}
+            {% include "pagination.html" with items=problems %}
 
         {% else %}
+
             <div class="panel radius">
-            <p>
-            {% if user.is_authenticated %}
-                {% url "problem_new" as url_problem_new %}
-                {% blocktrans %}No problem here. You can start by <a href="{{ url_problem_new }}">creating a new one</a>.{% endblocktrans %}
-            {% else %}
-                {% url "auth_login" as url_login %}
-                {% blocktrans %}Hi! There's no problem around for you. Try <a href="{{ url_login }}">loggin in</a> and creating a new one.{% endblocktrans %}
-            {% endif %}
-            </p>
+                <p>
+                {% if user.is_authenticated %}
+                    {% url "problem_new" as url_problem_new %}
+                    {% blocktrans %}No problem here. You can start by <a href="{{ url_problem_new }}">creating a new one</a>.{% endblocktrans %}
+                {% else %}
+                    {% url "auth_login" as url_login %}
+                    {% blocktrans %}Hi! There's no problem around for you. Try <a href="{{ url_login }}">loggin in</a> and creating a new one.{% endblocktrans %}
+                {% endif %}
+                </p>
             </div>
+
         {% endif %}
+
     </div>
 
     <div class="large-3 columns sidebar">
