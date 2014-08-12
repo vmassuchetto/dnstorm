@@ -28,20 +28,9 @@ class AjaxView(View):
         Ajax GET requests router.
         """
 
-        # Search for criterias in problem edition
-
-        if self.request.GET.get('term', None):
-            return self.problem_criteria_search()
-
-        # Vote for idea
-
-        elif self.request.GET.get('idea', None) \
-            and self.request.GET.get('weight', None):
-            return self.submit_idea_vote()
-
         # Delete comment
 
-        elif self.request.GET.get('delete_comment', None):
+        if self.request.GET.get('delete_comment', None):
             return self.delete_comment()
 
         # Delete idea
@@ -60,6 +49,11 @@ class AjaxView(View):
         elif self.request.GET.get('delete_alternative', None):
             return self.delete_alternative()
 
+        # Alternative vote
+
+        elif self.request.GET.get('vote_alternative', None):
+            return self.vote_alternative()
+
         # Failure
 
         return HttpResponseForbidden()
@@ -74,12 +68,6 @@ class AjaxView(View):
         if 'idea' and 'content' in self.request.POST or \
             'problem' and 'content' in self.request.POST:
             return self.submit_comment()
-
-        # Remove alternative
-
-        elif 'mode' in self.request.POST and 'remove-alternative' == self.request.POST['mode'] \
-            and 'object' in self.request.POST:
-            return self.table_remove_alternative()
 
         # Add ideas to some alternative
 
@@ -100,8 +88,10 @@ class AjaxView(View):
 
     def new_alternative(self):
         problem = get_object_or_404(models.Problem, id=self.request.GET['problem'])
-        if not permissions.problem(obj=problem, user=self.request.user, mode='manage'):
+        if not problem or not self.request.user.is_authenticated():
             raise Http404
+        if not permissions.problem(obj=problem, user=self.request.user, mode='manage'):
+            raise PermissionDenied
         order = models.Alternative.objects.filter(problem=problem).count() + 1
         a = models.Alternative(problem=problem, order=order)
         a.save()
@@ -117,8 +107,10 @@ class AjaxView(View):
 
     def delete_alternative(self):
         a = get_object_or_404(models.Alternative, id=self.request.GET.get('delete_alternative'))
-        if not permissions.problem(obj=a.problem, user=self.request.user, mode='manage'):
+        if not a or not self.request.user.is_authenticated():
             raise Http404
+        if not permissions.problem(obj=a.problem, user=self.request.user, mode='manage'):
+            raise PermissionDenied
         deleted_id = a.id
         problem = a.problem
         a.delete()
@@ -133,10 +125,27 @@ class AjaxView(View):
         }
         return HttpResponse(json.dumps(response), content_type='application/json')
 
+    def vote_alternative(self):
+        a = get_object_or_404(models.Alternative, id=self.request.GET.get('vote_alternative'))
+        if not a or not self.request.user.is_authenticated():
+            raise Http404
+        vote = models.Vote.objects.filter(alternative=a, author=self.request.user)
+        if len(vote) > 0:
+            vote.delete()
+            voted = False
+        else:
+            models.Vote(alternative=a, author=self.request.user).save()
+            voted = True
+        votes = models.Vote.objects.filter(alternative=a).count()
+        response = {'votes': votes, 'voted': voted}
+        return HttpResponse(json.dumps(response), content_type='application/json')
+
     def idea_alternative(self):
         alternative = get_object_or_404(models.Alternative, id=self.request.POST.get('alternative'))
-        if not permissions.problem(obj=alternative.problem, user=self.request.user, mode='manage'):
+        if not alternative or not self.request.user.is_authenticated():
             raise Http404
+        if not permissions.problem(obj=alternative.problem, user=self.request.user, mode='manage'):
+            raise PermissionDenied
         alternative.idea.clear()
         ideas = list()
         r = re.compile('idea\[[0-9]+\]')
@@ -154,46 +163,6 @@ class AjaxView(View):
             })
         }
         return HttpResponse(json.dumps(response), content_type='application/json')
-
-
-    def submit_idea_vote(self):
-        idea = get_object_or_404(Idea, pk=self.request.GET['idea'])
-        if not self.request.user.is_authenticated() \
-            or idea.author == self.request.user \
-            or not permissions.problem(obj=idea.problem, user=self.request.user, mode='contribute'):
-            raise PermissionDenied
-        weight = int(self.request.GET['weight'])
-        weight_choices = [ choice[0] for choice in \
-            [ field.choices for field in Vote._meta.fields if field.name == 'weight' ][0] ]
-        if weight not in weight_choices:
-            raise Http404()
-        existing = Vote.objects.filter(idea=idea, author=self.request.user)
-        cancel_vote = False
-        if len(existing) > 0 and existing[0].weight == weight:
-            cancel_vote = True
-        existing.delete()
-        if not cancel_vote:
-            models.Vote(idea=idea, weight=weight, author=self.request.user).save()
-        count = Vote.objects.filter(idea=idea).aggregate(Sum('weight'))['weight__sum']
-        return HttpResponse(json.dumps(count if count else 0), content_type='application/json')
-
-    def submit_alternative_vote(self):
-        alternative = get_object_or_404(Alternative, pk=self.request.GET['alternative'])
-        if not self.request.user.is_authenticated() \
-            or not permissions.problem(obj=alternative.problem, user=self.request.user, mode='contribute'):
-            raise PermissionDenied
-        weight = int(self.request.GET['weight'])
-        vote = Vote.objects.filter(alternative=alternative, author=self.request.user)
-        if weight <= 0:
-            vote.delete()
-
-            response = 0
-        elif weight == 1 and len(vote) > 0:
-            response = 1
-        elif weight == 1 and len(vote) == 0:
-            Vote(alternative=alternative, author=self.request.user, weight=1).save()
-            response = 1
-        return HttpResponse(json.dumps(response), content_type="application/json")
 
     def submit_comment(self):
         try:
@@ -218,6 +187,8 @@ class AjaxView(View):
         '''This is actually a delete toggle. It will delete over undeleted, and
         undelete over deleted items.'''
         comment = get_object_or_none(Comment, id=int(self.request.GET['delete_comment']))
+        if not comment:
+            raise Http404
         mode = 'undelete' if comment.deleted_by else 'delete'
         if not comment or not permissions.comment(obj=comment, user=self.request.user, mode=mode):
             return HttpResponse(0)
@@ -234,6 +205,8 @@ class AjaxView(View):
         '''This is actually a delete toggle. It will delete over undeleted, and
         undelete over deleted items.'''
         idea = get_object_or_none(Idea, id=int(self.request.GET['delete_idea']))
+        if not idea:
+            raise Http404
         mode = 'undelete' if idea.deleted_by else 'delete'
         if not idea or not permissions.idea(obj=idea, user=self.request.user, mode=mode):
             return HttpResponse(unmode)
