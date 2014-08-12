@@ -790,6 +790,20 @@ a.problem-action {
         vertical-align: middle;
         font-family: 'Open Sans';
     }
+    .alternative-vote {
+        i {
+            font-size: 40px;
+        }
+        font-size: 32px;
+        color: $light-grey;
+    }
+    .alternative-vote:hover {
+        cursor: pointer;
+    }
+    .alternative-vote.voted,
+    .alternative-vote.hover {
+        color: $yellow;
+    }
     .alternative-ideas {
         span.label {
             margin-bottom: emCalc(5px);

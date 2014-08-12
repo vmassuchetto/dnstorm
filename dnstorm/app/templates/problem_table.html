@@ -11,8 +11,9 @@
     <thead>
     <tr>
     <th>{% trans "Alternative" %}</th>
+    <th>{% trans "Vote" %}</th>
     {% if problem_perm_manage %}<th></th>{% endif %}
-    <th class="voting-title">{% trans "Ideas" %}</th>
+    <th>{% trans "Ideas" %}</th>
     {% for criteria in criterias %}
         <th class="criteria text-center" data-criteria="{{ criteria.id }}">
             <div class="title-inner title-admin">

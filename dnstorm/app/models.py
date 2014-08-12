@@ -295,8 +295,13 @@ class Alternative(models.Model):
     def type(self):
         return _('alternative')
 
-    def fill_data(self):
+    def fill_data(self, user=False):
+        """
+        Fill the alternative with problem and user-specific data.
+        """
         self.total_ideas = self.idea.all().count()
+        self.vote_count = Vote.objects.filter(alternative=self).count()
+        self.voted = Vote.objects.filter(alternative=self, author=user).exists() if isinstance(user, User) else False
         self.criteria = list()
         for c in self.problem.criteria.all():
             c.total_stars = IdeaCriteria.objects.filter(idea__in=self.idea.all(), criteria=c).aggregate(stars=Sum('stars'))['stars']

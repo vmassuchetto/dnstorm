@@ -403,6 +403,44 @@ $(document).on('click', '.delete-alternative-confirm', function(){
 });
 
 /**
+ * Strategy table: Vote
+ */
+$(document).on('mouseenter', '.alternative-vote .cell-wrap', function(){
+    $(this).parent().addClass('hover');
+});
+$(document).on('mouseleave', '.alternative-vote .cell-wrap', function(){
+    $(this).parent().removeClass('hover');
+});
+$(document).on('click', '.alternative-vote .cell-wrap', function(){
+
+    var obj = $(this).parent();
+    if (obj.hasClass('voted'))
+        obj.removeClass('voted');
+    else
+        obj.addClass('voted');
+
+    var vote_count = $(this);
+    var alternative = $(this).closest('.alternative').data('alternative');
+
+    $.ajax({
+        url: '/ajax/',
+        type: 'GET',
+        data: { 'vote_alternative': alternative },
+        complete: function(xhr, data) {
+            if (data == 'success') {
+                response = $.parseJSON(xhr.responseText);
+                if (response.voted)
+                    obj.addClass('voted');
+                else
+                    obj.removeClass('voted');
+                obj.find('.vote-count').text(response.votes);
+            }
+        }
+    });
+
+});
+
+/**
  * Strategy table: Select ideas
  */
 $(document).on('mouseenter', '.problem-table .cell-wrap', function(){

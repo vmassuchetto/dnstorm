@@ -301,7 +301,7 @@ class ProblemView(FormView):
 
         context['alternatives'] = list()
         for a in models.Alternative.objects.filter(problem=self.problem):
-            a.fill_data()
+            a.fill_data(self.request.user)
             context['alternatives'].append(a)
 
         # Ideas
