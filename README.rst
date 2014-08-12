@@ -58,6 +58,23 @@ Run your server:
 
 The application might be running at ``http://localhost:8000``.
 
+Graphviz
+--------
+
+You'll need Graphviz if you want to generate the system's UML model
+representation:
+
+::
+
+    apt-get install graphviz graphviz-dev pkg-config
+    pip install -r requirements.txt
+
+And to generate the thing:
+
+::
+
+    python manage.py graph_models -a -g -o project.png
+
 
 CSS
 ---

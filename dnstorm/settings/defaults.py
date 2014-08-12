@@ -55,6 +55,7 @@ INSTALLED_APPS = (
     'crispy_forms',
     'crispy_forms_foundation',
     'djangobower',
+    'django_extensions',
     'haystack',
     'registration',
     'reversion',
@@ -160,3 +161,8 @@ HAYSTACK_CONNECTIONS = {
 SANITIZER_ALLOWED_TAGS = ['a', 'strong', 'b', 'i', 'ul', 'li', 'ol', 'img', 'iframe', 'p', 'h4', 'h5', 'blockquote', 'strike']
 SANITIZER_ALLOWED_ATTRIBUTES = ['href', 'src']
 SANITIZER_ALLOWED_STYLES = []
+
+GRAPH_MODELS = {
+    'all_applications': True,
+    'group_models': True,
+}
