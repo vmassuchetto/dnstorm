@@ -155,6 +155,42 @@ $('.problem-idea-form-button').click(function(){
     $('.problem-idea-form').delay(300).fadeIn(300);
 });
 
+// Criteria on problem form
+
+var criteria_form = $('#criteria-form.reveal-modal');
+$('#criteria-form input[type="submit"]').click(function(e){
+    e.preventDefault();
+    var form = $('#criteria-form');
+    var form_data = $('#criteria-form form').serialize() + '&new_criteria=1';
+    var obj = $(this);
+    obj.addClass('loading');
+    $.ajax({
+        url: '/ajax/',
+        type: 'POST',
+        data: form_data,
+        complete: function(xhr, data) {
+            obj.removeClass('loading');
+            if (data == 'success') {
+                response = JSON.parse(xhr.responseText);
+                // Form errors handling
+                form.find('.holder').removeClass('error');
+                form.find('small.error').remove();
+                if (response.errors) {
+                    for (e in response.errors) {
+                        $('#div_id_' + e).addClass('error');
+                        $('#id_' + e).after('<small class="error">' + response.errors[e] + '</small>');
+                    }
+                    return false;
+                }
+                // Created successfully
+                $('#id_criteria').trigger('didAddPopup', [response.id, response.lookup_display]); // send event to django-ajax-selects
+                criteria_form.find('input[type="text"],textarea').each(function(){ $(this).val(''); });
+                criteria_form.foundation('reveal', 'close');
+            }
+        }
+    });
+});
+
 // When accessing the URL directly to an idea or comment in ProblemView
 
 if (window.location.hash.match(/#(idea|comment)-[0-9]+/)) {
@@ -215,7 +251,7 @@ $('.comment-form form').submit(function(e){
 // Delete comment
 
 $(document).on('click', '.comment-delete-toggle', function(){
-    var obj = $(this)
+    var obj = $(this);
     obj.addClass('loading');
     var comment = $(this).parents('.comment');
     $.ajax({
@@ -241,88 +277,6 @@ $(document).on('click', '.comment-delete-toggle', function(){
         }
     });
 });
-
-// Idea voting
-
-$('.problem-idea .voting a').click(function() {
-
-    if (typeof $(this).attr('disabled') !== 'undefined'
-        || typeof $(this).data('reveal-id') !== 'undefined')
-        return;
-
-    var action;
-    var idea = $(this).data('idea');
-
-    var upvoting = $(this).hasClass('upvote');
-    var downvoting = $(this).hasClass('downvote');
-
-    var upvote;
-    if (upvoting)
-        upvote = $(this);
-    else
-        upvote = $(this).siblings('.upvote');
-
-    var downvote;
-    if (downvoting)
-        downvote = $(this);
-    else
-        downvote = $(this).siblings('.downvote');
-
-    var upvoted = upvote.hasClass('success');
-    var downvoted = downvote.hasClass('alert');
-
-    upvote.removeClass('success');
-    downvote.removeClass('alert');
-
-    var sum;
-    if (upvoting && upvoted) {
-        sum = -1;
-    } else if (downvoting && downvoted) {
-        sum = 1;
-    } else if (upvoting && downvoted) {
-        sum = 2;
-        upvote.addClass('success');
-    } else if (downvoting && upvoted) {
-        sum = -2;
-        downvote.addClass('alert');
-    } else if (upvoting && !upvoted) {
-        sum = 1;
-        upvote.addClass('success');
-    } else if (downvoting && !downvoted) {
-        sum = -1;
-        downvote.addClass('alert');
-    }
-
-    var counter = $(this).siblings('.vote-count');
-    counter.html(parseInt(counter.text()) + sum);
-
-    var weight;
-    if (upvoting)
-        weight = 1;
-    else if (downvoting)
-        weight = -1;
-
-    $.ajax({
-        url: '/ajax/',
-        data: {
-            'idea': idea,
-            'weight': weight
-        },
-        complete: function(xhr, data) {
-            count = parseInt(xhr.responseText);
-            // Reset stuff if things go wrong
-            if (isNaN(count)) {
-                upvote.removeClass('success');
-                downvote.removeClass('alert');
-                counter.html(parseInt(counter.html()) - weight);
-            } else {
-                counter.html(count);
-            }
-        }
-    });
-
-});
-
 
 /**
  * Strategy table

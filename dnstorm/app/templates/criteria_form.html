@@ -1,0 +1,14 @@
+{% load crispy_forms_tags i18n %}
+
+<div class="row">
+<div class="columns large-12">
+    {% if criteria %}
+        {% url "criteria" criteria.slug as criteria_url %}
+        <h4>{% blocktrans with criteria_name=criteria.name %}Edit criteria "<a href="{{ criteria_url }}">{{ criteria_name }}</a>"{% endblocktrans %}</h4>
+    {% else %}
+        <h4>{% trans "Create a new criteria" %}</h4> 
+    {% endif %}
+    <hr/>
+    {% crispy form %}
+</div>
+</div>

@@ -63,9 +63,14 @@ class AjaxView(View):
         Ajax POST requests router.
         """
 
+        # New criteria on problem form
+
+        if self.request.POST.get('new_criteria', None):
+            return self.new_criteria(self.request.POST);
+
         # New comment
 
-        if 'idea' and 'content' in self.request.POST or \
+        elif 'idea' and 'content' in self.request.POST or \
             'problem' and 'content' in self.request.POST:
             return self.submit_comment()
 
@@ -85,6 +90,20 @@ class AjaxView(View):
             if r.match(key):
                 return True
         return False
+
+    def new_criteria(self, data):
+        if not self.request.user.is_authenticated():
+            raise Http404
+        criteria = CriteriaForm(data)
+        if not criteria.is_valid():
+            return HttpResponse(json.dumps({'errors':dict(criteria.errors)}), content_type='application/json')
+        criteria.save()
+        t = loader.get_template('criteria_lookup_display.html')
+        c = Context({'criteria': criteria.instance})
+        return HttpResponse(json.dumps({
+            'id': criteria.instance.id,
+            'lookup_display': t.render(c)
+        }), content_type='application/json')
 
     def new_alternative(self):
         problem = get_object_or_404(models.Problem, id=self.request.GET['problem'])

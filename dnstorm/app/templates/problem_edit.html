@@ -5,6 +5,13 @@
 
 {% block head %}{{ form.media }}{% endblock %}
 
+{% block modals %}
+    <div id="criteria-form" class="reveal-modal medium" data-reveal>
+        <a class="close-reveal-modal">&#215;</a>
+        {% include "criteria_form.html" with form=criteria_form %}
+    </div>
+{% endblock %}
+
 {% block content %}
     <div class="row">
     <div class="columns large-12">
