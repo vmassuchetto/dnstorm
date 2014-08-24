@@ -58,6 +58,23 @@ Run your server:
 
 The application might be running at ``http://localhost:8000``.
 
+
+Project URL
+-----------
+
+Change the project URL while in development or production by changing the URL
+in `sites framework
+<https://docs.djangoproject.com/en/1.5/ref/contrib/sites/>`_.
+
+::
+
+    python manage.py shell
+    from django.contrib.sites.models import Site
+    s = Site.objects.get(id=1)
+    s.domain = '<your domain>'
+    s.save()
+
+
 Graphviz
 --------
 
@@ -97,6 +114,16 @@ And then, to generate the static files:
     compass compile
 
 If you're developing, you might want to use ``compass watch`` instead.
+
+
+E-mails
+-------
+
+E-mail receival in development mode can be checked by a SMTP debugging server:
+
+::
+
+     python -m smtpd -n -c DebuggingServer localhost:1025
 
 
 Localization
