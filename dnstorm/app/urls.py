@@ -67,7 +67,7 @@ urlpatterns = patterns('',
 
     (r'^search/', search_view_factory(view_class=base.SearchView), {}, 'search'),
     (r'^avatar/', include('avatar.urls')),
-    url(r'^accounts/password/reset/confirm/(?P<uidb64>[0-9A-Za-z]+)-(?P<token>.+)/$', auth_views.password_reset_confirm, name='auth_password_reset_confirm'),
+    url(r'^accounts/password/reset/confirm/(?P<uidb36>[0-9A-Za-z]+)-(?P<token>.+)/$', auth_views.password_reset_confirm, name='auth_password_reset_confirm'),
     (r'^accounts/', include('django.contrib.auth.urls')),
     (r'^accounts/', include('registration.backends.default.urls')),
     (r'^lookups/', include(ajax_select_urls)),
