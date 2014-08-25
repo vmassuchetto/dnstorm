@@ -337,6 +337,7 @@ class Activity(models.Model):
     permissions are fetched and listed.
     """
 
+    type = models.TextField(blank=True, null=True)
     problem = models.ForeignKey(Problem, blank=True, null=True)
     idea = models.ForeignKey(Idea, blank=True, null=True)
     comment = models.ForeignKey(Comment, blank=True, null=True)
@@ -366,38 +367,41 @@ class ActivityManager(models.Manager):
         # Query
 
         params = self.get_params(**kwargs)
-        query = self.get_query_string()
+        query = self.get_query_string(params)
         select = query['select'] % params
+        where = query['where'] % params
+        order = query['order'] % params
         limit = query['limit'] % params
 
         # Results
 
-        query = select + limit
+        query = select + where + order + limit
+        print query
         cursor = connection.cursor()
         cursor.execute(query)
 
         dmp = _dmp.diff_match_patch()
 
-        # Activity types
-
-        re_problem = re.compile('^problem_[0-9]+')
-        re_idea = re.compile('^idea_[0-9]+')
-        re_comment = re.compile('^comment_[0-9]+')
-
         # Iterate
 
         activities = list()
         for q in cursor.fetchall():
+            print q
             a = Activity()
-            if re_problem.match(q[0]):
+            if 'problem' == q[0]:
+                a.type = 'problem'
                 a.problem = Problem.objects.get(id=q[1])
                 obj = a.problem
-            elif re_idea.match(q[0]):
-                a.idea = Idea.objects.get(id=q[1])
+            elif 'idea' == q[0]:
+                a.type = 'idea'
+                a.idea = Idea.objects.get(id=q[2])
                 obj = a.idea
-            elif re_comment.match(q[0]):
-                a.comment = Comment.objects.get(id=q[1])
+            elif 'comment' == q[0]:
+                a.type = 'comment'
+                a.comment = Comment.objects.get(id=q[3])
                 obj = a.comment
+
+            # Get version to show if it is a created or updated object
             versions = reversion.get_for_object(obj)
             a.status = 'updated' if len(versions) > 1 else 'created'
             a.user = versions[1].revision.user if len(versions) > 1 else obj.author
@@ -426,14 +430,18 @@ class ActivityManager(models.Manager):
             db_engine = 'mysql'
 
         params = {
-            'user': kwargs['user'] if 'user' in kwargs and int(kwargs['user']) else 0,
-            'offset': kwargs['offset'] if 'offset' in kwargs and int(kwargs['offset']) else 0,
-            'limit': kwargs['limit'] if 'limit' in kwargs and int(kwargs['limit']) < 5 else 10,
             'public': 'TRUE' if db_engine == 'postgresql' else '1',
-            'prefix': settings.DNSTORM['table_prefix']
+            'prefix': settings.DNSTORM['table_prefix'],
+            'user': kwargs['user'] if 'user' in kwargs and int(kwargs['user']) else 0,
+            'where': '',
+            'offset': kwargs['offset'] if 'offset' in kwargs and int(kwargs['offset']) else 0,
+            'limit': kwargs['limit'] if 'limit' in kwargs and int(kwargs['limit']) < 5 else 10
         }
 
-        if 'page' in kwargs and int(kwargs['page']):
+        if kwargs.get('problem', None):
+            params['where'] += ' AND problem = %d' % int(kwargs['problem'])
+
+        if kwargs.get('page', None):
             params['page'] = int(kwargs['page'])
             params['offset'] = (int(kwargs['page']) - 1) * 10
             params['limit'] = 10
@@ -485,8 +493,14 @@ class ActivityManager(models.Manager):
 
         return {
             'select': """
+                SELECT *
+                FROM (
                     SELECT
-                        'problem_' || p.id AS type,
+                        'problem' AS type,
+                        p.id AS problem,
+                        '' AS idea,
+                        '' AS comment,
+
                         p.id AS id,
                         p.updated AS date
                     FROM
@@ -498,7 +512,11 @@ class ActivityManager(models.Manager):
                         )
                 UNION
                     SELECT
-                        'idea_' || i.id AS type,
+                        'idea' AS type,
+                        i.problem_id AS problem,
+                        i.id AS idea,
+                        '' AS comment,
+
                         i.id AS id,
                         i.updated AS date
                     FROM
@@ -513,7 +531,11 @@ class ActivityManager(models.Manager):
                         )
                 UNION
                     SELECT
-                        'comment_' || c.id AS type,
+                        'comment' AS type,
+                        c.problem_id AS problem,
+                        c.idea_id AS idea,
+                        c.id AS comment,
+
                         c.id AS id,
                         c.updated AS date
                     FROM
@@ -529,6 +551,14 @@ class ActivityManager(models.Manager):
                             %(user)d = 0
                             OR c.author_id = %(user)d
                         )
+                )
+            """,
+
+            'where': """
+                WHERE 1 %(where)s
+            """,
+
+            'order': """
                 ORDER BY date DESC
             """,
 
@@ -536,4 +566,5 @@ class ActivityManager(models.Manager):
                 LIMIT %(limit)d
                 OFFSET %(offset)d
             """
+
         }

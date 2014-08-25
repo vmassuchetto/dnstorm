@@ -285,7 +285,7 @@ class ProblemView(FormView):
         context = super(ProblemView, self).get_context_data(**kwargs)
         user = get_user(self.request)
         context['breadcrumbs'] = self.get_breadcrumbs()
-        context['activities'] = models.ActivityManager().get_objects(limit=4)
+        context['activities'] = models.ActivityManager().get_objects(problem=self.problem.id, limit=8)
         context['title'] = self.problem.title
         context['sidebar'] = True
         context['problem'] = self.problem
