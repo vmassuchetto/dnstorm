@@ -2,12 +2,13 @@ import re
 import json
 
 from django import forms
-from django.http import Http404
+from django.http import Http404, QueryDict
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
 from django.template.loader import render_to_string
+from django.shortcuts import get_object_or_404
 
 from dnstorm.settings import LANGUAGES
 from dnstorm.app import models
@@ -73,7 +74,6 @@ class UserAdminForm(forms.ModelForm):
 class ProblemForm(forms.ModelForm):
     criteria = AutoCompleteSelectMultipleField('criteria', required=True)
     contributor = AutoCompleteSelectMultipleField('user', required=False)
-    manager = AutoCompleteSelectMultipleField('user', required=False)
 
     class Meta:
         model = models.Problem
@@ -83,6 +83,19 @@ class ProblemForm(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.form_action = '.'
         self.helper.form_class = 'problem-form'
+
+        invitations = list()
+        if self.instance:
+            users = list()
+            for i in self.instance.invitation_set.all():
+                u = User(username=i.email, email=i.email)
+                u.invitation = i.id
+                invitations.append(render_to_string('user_lookup_display.html', {'user': u}))
+
+        invitations_html = ''
+        if len(invitations) > 0:
+            invitations_html = '<div id="pending-invitations"><h6>%s</h6>%s</div>' % (_('Pending invitations'), ''.join(invitations))
+
         self.helper.layout = Layout(
             Fieldset(_('Problem description'),
                 'title',
@@ -92,8 +105,9 @@ class ProblemForm(forms.ModelForm):
                 'criteria',
             ),
             Fieldset(_('Permissions'),
+                'public',
                 'contributor',
-                'manager',
+                Row(Column(HTML(invitations_html)))
             ),
             ButtonHolder(
                 Submit('submit', _('Save'), css_class='radius'),
@@ -132,29 +146,53 @@ class CriteriaForm(forms.ModelForm):
             self.fields['help_star%d' % i].label = ''
 
 class IdeaForm(forms.ModelForm):
+    problem = forms.IntegerField()
 
     class Meta:
         model = models.Idea
 
     def __init__(self, *args, **kwargs):
 
-        if 'problem' in kwargs:
+        # There must always be a problem associated to an idea
+
+        self.problem = None
+        if len(args) > 0 and isinstance(args[0], QueryDict):
+            idea = None
+            self.problem = get_object_or_none(models.Problem, id=args[0].get('problem', None))
+
+        if not self.problem \
+            and 'problem' in kwargs \
+            and isinstance(kwargs['problem'], models.Problem):
             idea = None
             self.problem = kwargs['problem']
             del kwargs['problem']
-        elif 'instance' in kwargs:
+        elif not self.problem \
+            and 'problem' in kwargs \
+            and (isinstance(kwargs['problem'], int) \
+                or isinstance(kwargs['problem'], str)):
+            idea = None
+            self.problem = get_object_or_none(models.Problem, id=kwargs['problem'])
+        elif not self.problem \
+            and 'instance' in kwargs \
+            and isinstance(kwargs['instance'], models.Idea):
             idea = kwargs['instance']
             self.problem = idea.problem
-        else:
+
+        if not self.problem:
             raise Http404
 
         super(IdeaForm, self).__init__(*args, **kwargs)
 
-        # Dynamically add the criteria star fields as integers
-
         criteria_html = tuple()
         criteria_fields = tuple()
         context = dict()
+
+        # Problem identifier
+
+        criteria_fields += (Field('problem', value=self.problem.id, type='hidden'),)
+
+        # Dynamically add the criteria star fields as integers
+
         for c in self.problem.criteria.all():
             context['criteria'] = c
             s = get_object_or_none(models.IdeaCriteria, idea=idea, criteria=c)
@@ -164,10 +202,10 @@ class IdeaForm(forms.ModelForm):
             criteria_fields += (Field('criteria_%d' % c.id, type='hidden'),)
 
         layout_args = (
-            HTML('<h3>' + _('Describe the idea') + '</h3>'),
+            HTML('<h3>' + _('Give your idea') + '</h3>'),
             'title',
             'content',
-            HTML('<h3 class="top-1em">' + _('How this idea meet the problem criterias') + '</h3>')) \
+            HTML('<h5 class="top-1em">' + _('How this idea meet the problem criterias') + '</h5>')) \
                 + criteria_html \
                 + criteria_fields \
                 + (HTML('<hr/>'),) \
@@ -211,27 +249,6 @@ class CommentForm(forms.ModelForm):
         )
         super(CommentForm, self).__init__(*args, **kwargs)
         self.fields['content'].label = ''
-
-class MessageForm(forms.ModelForm):
-    subject = forms.CharField(label=_('Subject'), widget=forms.TextInput)
-
-    class Meta:
-        model = models.Message
-        exclude = ['problem', 'sender']
-
-    def __init__(self, *args, **kwargs):
-        self.helper = FormHelper()
-        self.helper.form_action = '.'
-        self.helper.layout = Layout(
-            Fieldset(_('Send message'),
-                'subject',
-                'content',
-                ButtonHolder(Submit('submit', _('Send message')), css_class='alignright'),
-            )
-        )
-        super(MessageForm, self).__init__(*args, **kwargs)
-        self.fields['subject'].help_text = _('The subject of the mail message to be sent.')
-        self.fields['content'].help_text = _('This message will be sent in plain text to everyone envolved with this problem (managers, invited users, idea contributors and commenters).')
 
 class AlternativeForm(forms.Form):
     problem = forms.IntegerField()

@@ -12,8 +12,11 @@ from django.db.models import Sum
 import reversion
 import diff_match_patch as _dmp
 from dnstorm import settings
+from dnstorm.app import permissions
+from dnstorm.app.lib.get import get_object_or_none
 from dnstorm.app.lib.diff import diff_prettyHtml
 
+from actstream import registry
 from ckeditor.fields import RichTextField
 from autoslug import AutoSlugField
 from registration.signals import user_activated
@@ -110,6 +113,18 @@ class Criteria(models.Model):
     created = models.DateTimeField(auto_now_add=True, editable=False, default='2001-01-01')
     updated = models.DateTimeField(auto_now=True, editable=False, default='2001-01-01')
 
+    def __init__(self, *args, **kwargs):
+        """
+        Insert extra data to ease the template rendering.
+        """
+        super(Criteria, self).__init__(*args, **kwargs)
+        self.helps = list()
+        for i in range(1,6):
+            self.helps.append({
+                'stars': mark_safe(''.join(['<i class="fi-star"></i>' for s in range(0,i)])),
+                'description': getattr(self, 'help_star%d' % i)
+            })
+
     class Meta:
         db_table = settings.DNSTORM['table_prefix'] + '_criteria'
 
@@ -142,8 +157,8 @@ class Problem(models.Model):
     description = RichTextField(verbose_name=_('Description'))
     criteria = models.ManyToManyField(Criteria, verbose_name=_('Criterias'), editable=False)
     author = models.ForeignKey(User, related_name='author', editable=False)
-    contributor = models.ManyToManyField(User, related_name='contributor', verbose_name=_('Contributors'), help_text=_('Users with permission to contribute to this problem.'), blank=True, null=True)
-    manager = models.ManyToManyField(User, related_name='manager', verbose_name=_('Managers'), help_text=_('Users with permission to manage this problem.'), blank=True, null=True)
+    contributor = models.ManyToManyField(User, related_name='contributor', verbose_name=_('Contributors'), blank=True, null=True)
+    public = models.BooleanField(verbose_name=_('Public'), help_text=_('Anyone is able to view and contribute to this problem.'), default=True)
     created = models.DateTimeField(auto_now_add=True, editable=False, default='2000-01-01')
     updated = models.DateTimeField(auto_now=True, editable=False, default='2000-01-01')
     last_activity = models.DateTimeField(auto_now=True, editable=False, default='2000-01-01')
@@ -167,6 +182,23 @@ class Problem(models.Model):
         return Alternative.objects.filter(problem=self).count()
 
 reversion.register(Problem)
+registry.register(Problem)
+
+class Invitation(models.Model):
+    """
+    Invitations are used to add non-registered users as collaborators of
+    problems. The user will have access granted to the problem when it
+    subscribes.
+    """
+
+    problem = models.ForeignKey(Problem)
+    email = models.EmailField()
+
+    class Meta:
+        db_table = settings.DNSTORM['table_prefix'] + '_invitation'
+
+    def type(self):
+        return _('invitation')
 
 class Idea(models.Model):
     """
@@ -198,6 +230,29 @@ class Idea(models.Model):
     def vote_count(self):
         w = Vote.objects.filter(idea=self).aggregate(models.Sum('weight'))['weight__sum']
         return w if w else 0
+
+    def fill_data(self, user=False):
+        """
+        Fill the idea with problem and user-specific data.
+        """
+        from dnstorm.app.forms import CommentForm
+        self.perms_edit = permissions.idea(obj=self, user=user, mode='manage')
+        self.comments = Comment.objects.filter(idea=self).order_by('created')
+
+        # Idea criterias
+
+        self.criterias = list()
+        for criteria in self.problem.criteria.all():
+            ic = get_object_or_none(IdeaCriteria, criteria=criteria.id, idea=self.id)
+            if not ic:
+                continue
+            criteria.stars = xrange(ic.stars)
+            self.criterias.append(criteria)
+
+        # Idea comments
+
+        for comment in self.comments:
+            comment.perms_edit = permissions.comment(obj=self.problem, user=user, mode='manage')
 
 reversion.register(Idea)
 
@@ -243,41 +298,6 @@ class Comment(models.Model):
 
     def type(self):
         return _('comment')
-
-class Message(models.Model):
-    """
-    Messages for users that managers can send to them.
-    """
-
-    problem = models.ForeignKey(Problem)
-    sender = models.ForeignKey(User, related_name='message_sender')
-    recipients = models.ManyToManyField(User, related_name='message_recipients')
-    subject = models.TextField(verbose_name=_('Subject'))
-    content = models.TextField(verbose_name=_('Content'))
-    created = models.DateTimeField(auto_now_add=True, editable=False, default='2000-01-01')
-
-    class Meta:
-        db_table = settings.DNSTORM['table_prefix'] + '_message'
-
-    def type(self):
-        return _('message')
-
-    def get_absolute_url(self, *args, **kwargs):
-        return reverse('message', kwargs={'slug': self.problem.slug, 'pk': self.id })
-
-    def get_message_recipients(self):
-        """
-        Fetches every user related to the problem: Author, managers,
-        contributors, and commenters.
-        """
-        recipients = [self.problem.author]
-        recipients = recipients + [user for user in self.problem.contributor.all()]
-        recipients = recipients + [user for user in self.problem.manager.all()]
-        for idea in Idea.objects.filter(problem=self.problem):
-            recipients.append(idea.author)
-            for comment in Comment.objects.filter(idea=idea):
-                recipients.append(comment.author)
-        return sorted(set(recipients))
 
 class Alternative(models.Model):
     """
@@ -376,7 +396,6 @@ class ActivityManager(models.Manager):
         # Results
 
         query = select + where + order + limit
-        print query
         cursor = connection.cursor()
         cursor.execute(query)
 
@@ -386,7 +405,6 @@ class ActivityManager(models.Manager):
 
         activities = list()
         for q in cursor.fetchall():
-            print q
             a = Activity()
             if 'problem' == q[0]:
                 a.type = 'problem'

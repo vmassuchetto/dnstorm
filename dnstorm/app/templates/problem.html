@@ -53,13 +53,18 @@
         </div>
 
     {% endif %}
+
+    {% if problem_perm_contribute %}
+        <div class="hide" data-problem="{{ problem.id }}" id="comment-form">{% crispy comment_form %}</div>
+    {% endif %}
+
 {% endblock %}
 
 {% block content %}
 
     {# Title #}
 
-    <div class="row collapse">
+    <div class="row">
     <div class="columns large-12 problem-title">
         <h2>{{ problem.title }}</h2>
     </div>
@@ -67,33 +72,65 @@
 
     {# Table #}
 
+    <div class="row table-button-row">
+        <div class="columns large-10 large-offset-1">
+            <a class="button expand table-button dropdown">{% trans "Strategy table" %}</a>
+        </div>
+    </div>
+
     {% include "problem_table.html" %}
 
     <div class="row">
-    <div class="columns large-9 problem-detail">
+    <div class="columns large-12 problem-detail">
 
         {# Description #}
 
-        <h3>{% trans "Problem description" %}</h3>
         <div class="description">
             {{ problem.description|safe }}
         </div>
 
+        {# Criterias #}
+
+        {% if problem.criteria.all %}
+            <div class="row">
+            <div class="columns large-12">
+            {% for criteria in problem.criteria.all %}
+                {% include "criteria_button.html" with show_description=1 %}
+            {% endfor %}
+            {% for criteria in problem.criteria.all %}
+                <div class="criteria-description panel radius secondary hide" id="criteria-{{ criteria.id }}">
+                    {% for help in criteria.helps %}
+                        <div class="row">
+                            <div class="columns large-2"><p class="text-right">{{ help.stars }}</p></div>
+                            <div class="columns large-10"><p>{{ help.description }}</p></div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+            </div>
+            </div>
+        {% endif %}
+
         {# Actions #}
 
         <div class="row">
-            <div class="columns large-7">
-                {% if problem_perm_contribute %}<a class="problem-action problem-comment" href="javascript:void(0);">{% trans "Comment" context "verb" %}</a>{% endif %}
-                {% if problem_perm_manage %}
+            <div class="columns large-8">
 
-                    <a class="problem-action" href="{% url "problem_edit" problem.slug %}">{% trans "Edit" %}</a>
-
-                    <a class="problem-action problem-delete" href="{% url "problem_delete" problem.slug %}">{% trans "Delete" %}</a>
-
+                <div class="row bottom-1em">
+                <div class="columns large-12">
+                {% if problem_perm_contribute %}
+                    <a class="problem-action action-comment" data-problem="{{ problem.id }}" href="javascript:void(0);">{% trans "Comment" context "verb" %}</a>
                 {% endif %}
+                {% if problem_perm_manage %}
+                    <a class="problem-action" href="{% url "problem_edit" problem.slug %}">{% trans "Edit" %}</a>
+                    <a class="problem-action problem-delete" href="{% url "problem_delete" problem.slug %}">{% trans "Delete" %}</a>
+                {% endif %}
+                </div>
+                </div>
+
             </div>
 
-            <div class="columns large-5">
+            <div class="columns large-4">
                 {% include "user_box.html" with user=problem.author date=problem.created link=problem.get_absolute_url %}
             </div>
         </div>
@@ -101,9 +138,7 @@
         {# Comment form #}
 
         {% if problem_perm_contribute %}
-            <div class="comment-form hide problem-comment-form" data-problem="{{ problem.id }}">
-                {% crispy problem_comment_form %}
-            </div>
+            <div class="comment-form hide" id="comment-form-problem" data-problem="{{ problem.id }}"></div>
         {% endif %}
 
         {# Comments #}
@@ -116,49 +151,37 @@
             {% endif %}
         </div>
 
-        <hr/>
+        {# Idea submit button #}
 
-        {# Idea form and button #}
+        {% if not user.is_authenticated %}
 
-        <div class="problem-idea-form-wrap">
+            <a class="large button expand secondary radius" href="{{ login_url }}">{% trans "Log in and submit your idea" %}</a>
 
-            {% if not user.is_authenticated %}
+        {% else %}{% if problem_perm_contribute %}
 
-                <a class="large button expand secondary radius" href="{{ login_url }}">{% trans "Log in and submit your idea" %}</a>
+            <a class="problem-idea-form-button button expand radius{% if form.errors %} hide{% endif %}"><i class="fi-lightbulb"></i> {% trans "Submit your idea to this problem" %}</a>
 
-            {% else %}
-
-                <a class="problem-idea-button problem-idea-form-button button expand radius{% if form.errors %} hide{% endif %}"><i class="fi-lightbulb"></i> {% trans "Submit your idea to this problem" %}{% if problem.max %}<br/><small>{% blocktrans count user_ideas_left as ideas %}you have {{ ideas }} idea left{% plural %}you have {{ ideas }} ideas left{% endblocktrans %}</small>{% endif %}</a>
-
-            {% endif %}
-
-            <div class="problem-idea-form {% if not form.errors %}hide{% endif %}" id="problem-idea-form">
-                {% crispy form %}
-            </div>
-
-        </div>
-
-        <hr/>
+        {% endif %}{% endif %}
 
         {# Ideas list #}
 
-        {% if ideas %}
-            <a name="ideas"></a>
-            <div class="problem-ideas">
-                {% for idea in ideas %}
-                    {% include "problem_idea.html" %}
-                    <hr/>
-                {% endfor %}
+        <a name="ideas"></a>
+        <div class="problem-ideas">
+            {% for idea in ideas %}
+                {% include "problem_idea.html" %}
+                <hr/>
+            {% endfor %}
+        </div>
+
+        {# Idea form and button #}
+
+        {% if problem_perm_contribute %}
+            <div class="problem-idea-form-wrap">
+                <div class="problem-idea-form" id="problem-idea-form">{% crispy form %}</div>
             </div>
         {% endif %}
 
     </div>
-
-    <div class="columns sidebar large-3">
-        {% include "problem_sidebar.html" %}
     </div>
-
-    </div>
-
 
 {% endblock %}

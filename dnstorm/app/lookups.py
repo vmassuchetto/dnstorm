@@ -1,3 +1,6 @@
+import re
+import random
+
 from django.db.models import Q
 from django.contrib.auth.models import User
 from django.template.loader import render_to_string
@@ -28,6 +31,17 @@ class UserLookup(object):
     model = User
 
     def get_query(self, q, request):
+        """
+        Will display and invitation button instead of the user result if it's
+        an e-mail.
+        """
+        e = re.compile('[^@]+@[^@]+\.[^@]+')
+        if e.match(q):
+            u = User(username=q, email=q)
+            u.id = random.randint(0, (2**32)-1)
+            u.invitation = True
+            u.button = '<div class="button no-margin-bottom radius small"><i class="fi-mail"></i> %s</div>' % q
+            return [u]
         qs = Q(username__icontains=q) \
             | Q(email__icontains=q) \
             | Q(first_name__icontains=q) \

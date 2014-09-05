@@ -24,7 +24,7 @@ import reversion
 import diff_match_patch as _dmp
 
 
-def idea_form_valid(obj, form):
+def idea_save(obj, form, return_format=None):
     """
     Validates the idea form for the ``IdeaUpdateView``.
     """
@@ -55,6 +55,9 @@ def idea_form_valid(obj, form):
     object.problem.last_activity = datetime.now()
     object.problem.save()
 
+    if return_format == 'obj':
+        return object
+
     messages.success(obj.request, _('Idea saved.'))
     return HttpResponseRedirect(object.get_absolute_url())
 
@@ -73,7 +76,7 @@ class IdeaUpdateView(UpdateView):
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         obj = get_object_or_404(models.Idea, id=kwargs['pk'])
-        if not permissions.idea(obj=obj, user=self.request.user, mode='edit'):
+        if not permissions.idea(obj=obj, user=self.request.user, mode='manage'):
             raise PermissionDenied
         return super(IdeaUpdateView, self).dispatch(request, *args, **kwargs)
 
@@ -86,7 +89,7 @@ class IdeaUpdateView(UpdateView):
 
     @reversion.create_revision()
     def form_valid(self, form):
-        return idea_form_valid(self, form)
+        return idea_save(self, form)
 
     def get_breadcrumbs(self):
         return [

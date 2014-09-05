@@ -25,6 +25,7 @@ from django.contrib.auth.models import User
 import bleach
 import reversion
 import diff_match_patch as _dmp
+from notification import models as notification
 
 from dnstorm import settings
 from dnstorm.app import permissions
@@ -32,9 +33,9 @@ from dnstorm.app.lib.diff import diff_prettyHtml
 from dnstorm.app.lib.get import get_object_or_none
 from dnstorm.app import models
 from dnstorm.app import forms
-from dnstorm.app.views.idea import idea_form_valid
+from dnstorm.app.views.idea import idea_save
 
-def problem_form_valid(obj, form):
+def problem_save(obj, form):
     """
     Save the object, clear the criterias and add the submited ones in
     ``request.POST``. This method will be the same for ProblemCreateView and
@@ -59,19 +60,49 @@ def problem_form_valid(obj, form):
     for c in models.Criteria.objects.filter(id__in=criterias):
         obj.object.criteria.add(c)
 
-    # Contributor
+    # Invitations
 
-    obj.object.contributor.through.objects.all().delete()
-    contributors = [i for i in obj.request.POST.get('contributor', '').split('|') if i.isdigit()]
-    for u in User.objects.filter(id__in=contributors):
+    from_user = obj.object.author.get_full_name()
+    emails = [u.email for u in obj.object.contributor.all()]
+    to_add = list()
+
+    for email in sorted(set(obj.request.POST.getlist('invitation', []))):
+
+        # User already invited
+        if models.Invitation.objects.filter(problem=obj.object.id, email=email).exists():
+            continue
+
+        # User is already a contributor
+        if email in emails:
+            continue
+
+        # Save user to add as contributor if exists
+        user = get_object_or_none(User, email=email)
+        if user:
+            to_add.append(user)
+            continue
+
+        models.Invitation(problem=obj.object, email=email).save()
+        fake_user = User(id=1, username=i, email=email)
+        notification.send([fake_user], 'invitation', { 'from_user': from_user, 'problem': obj.object })
+
+    # Contributors
+
+    new_contributors = User.objects.filter(id__in=[i for i in obj.request.POST.get('contributor', '').split('|') if i.isdigit()])
+    if not new_contributors:
+        obj.object.contributor.through.objects.all().delete()
+    current_contributors = obj.object.contributor.all()
+
+    c = [c.id for c in list(set(current_contributors) - set(new_contributors))]
+    obj.object.contributor.through.objects.filter(id__in=c).delete()
+
+    c = list(set(new_contributors) - set(current_contributors))
+    for u in c:
         obj.object.contributor.add(u)
+        notification.send([u], 'contributor', { 'from_user': from_user, 'problem': obj.object })
 
-    # Manager
-
-    obj.object.manager.through.objects.all().delete()
-    managers = [i for i in obj.request.POST.get('manager', '').split('|') if i.isdigit()]
-    for u in User.objects.filter(id__in=managers):
-        obj.object.manager.add(u)
+    for user in to_add:
+        obj.object.contributor.add(user)
 
     obj.object.save()
 
@@ -104,7 +135,7 @@ class ProblemCreateView(CreateView):
 
     @reversion.create_revision()
     def form_valid(self, form):
-        return problem_form_valid(self, form)
+        return problem_save(self, form)
 
 class ProblemUpdateView(UpdateView):
     template_name = 'problem_edit.html'
@@ -115,7 +146,7 @@ class ProblemUpdateView(UpdateView):
     @method_decorator(csrf_protect)
     def dispatch(self, *args, **kwargs):
         obj = get_object_or_404(models.Problem, slug=kwargs['slug'])
-        if not permissions.problem(obj=obj, user=self.request.user, mode='edit'):
+        if not permissions.problem(obj=obj, user=self.request.user, mode='manage'):
             raise PermissionDenied
         return super(ProblemUpdateView, self).dispatch(*args, **kwargs)
 
@@ -134,7 +165,7 @@ class ProblemUpdateView(UpdateView):
 
     @reversion.create_revision()
     def form_valid(self, form):
-        return problem_form_valid(self, form)
+        return problem_save(self, form)
 
 class ProblemDeleteView(DeleteView):
     template_name = 'problem_confirm_delete.html'
@@ -143,7 +174,7 @@ class ProblemDeleteView(DeleteView):
 
     def dispatch(self, *args, **kwargs):
         obj = get_object_or_404(Problem, slug=kwargs['slug'])
-        if not permissions.problem(obj=obj, user=self.request.user, mode='view'):
+        if not permissions.problem(obj=obj, user=self.request.user, mode='contribute'):
             raise PermissionDenied
         if len(self.request.POST) > 0:
             messages.success(self.request, _('Problem deleted'))
@@ -155,7 +186,7 @@ class ProblemRevisionView(DetailView):
 
     def dispatch(self, *args, **kwargs):
         obj = get_object_or_404(Problem, slug=kwargs['slug'])
-        if not permissions.problem(obj=obj, user=self.request.user, mode='view'):
+        if not permissions.problem(obj=obj, user=self.request.user, mode='contribute'):
             raise PermissionDenied
         return super(ProblemRevisionView, self).dispatch(*args, **kwargs)
 
@@ -257,7 +288,7 @@ class ProblemRevisionItemView(RedirectView):
 
     def dispatch(self, *args, **kwargs):
         obj = get_object_or_404(Problem, slug=kwargs['slug'])
-        if not permissions.problem(obj=obj, user=self.request.user, mode='view'):
+        if not permissions.problem(obj=obj, user=self.request.user, mode='contribute'):
             raise PermissionDenied
         return super(ProblemRevisionItemView, self).dispatch(*args, **kwargs)
 
@@ -272,7 +303,7 @@ class ProblemView(FormView):
     @method_decorator(csrf_protect)
     def dispatch(self, request, *args, **kwargs):
         self.problem = get_object_or_404(models.Problem, slug=self.kwargs['slug'])
-        if not permissions.problem(obj=self.problem, user=self.request.user, mode='view'):
+        if not permissions.problem(obj=self.problem, user=self.request.user, mode='contribute'):
             raise PermissionDenied
         return super(ProblemView, self).dispatch(request, *args, **kwargs)
 
@@ -285,15 +316,13 @@ class ProblemView(FormView):
         context = super(ProblemView, self).get_context_data(**kwargs)
         user = get_user(self.request)
         context['breadcrumbs'] = self.get_breadcrumbs()
-        context['activities'] = models.ActivityManager().get_objects(problem=self.problem.id, limit=8)
         context['title'] = self.problem.title
         context['sidebar'] = True
         context['problem'] = self.problem
         context['problem_perm_manage'] = permissions.problem(obj=self.problem, user=user, mode='manage')
         context['problem_perm_contribute'] = permissions.problem(obj=self.problem, user=user, mode='contribute')
         context['comments'] = models.Comment.objects.filter(problem=self.problem)
-        context['bulletin'] = models.Message.objects.filter(problem=self.problem).order_by('-created')[:4]
-        context['problem_comment_form'] = forms.CommentForm(initial={'problem': self.problem.id})
+        context['comment_form'] = forms.CommentForm()
         context['criterias'] = models.Criteria.objects.filter(problem=self.problem)
         context['all_ideas'] = models.Idea.objects.filter(problem=self.problem)
 
@@ -316,29 +345,10 @@ class ProblemView(FormView):
         # Voting and comments
 
         for idea in context['ideas']:
-            user_vote = models.Vote.objects.filter(idea=idea, author=user.id)
-            idea.user_vote = user_vote[0] if len(user_vote) else False
-            idea.perms_edit = permissions.idea(obj=idea, user=self.request.user, mode='edit')
-            idea.comments = models.Comment.objects.filter(idea=idea).order_by('created')
-            idea.comment_form = forms.CommentForm(initial={'idea': idea.id})
-
-            # Idea criterias
-
-            idea.criterias = list()
-            for criteria in self.problem.criteria.all():
-                ic = get_object_or_none(models.IdeaCriteria, criteria=criteria.id, idea=idea.id)
-                if not ic:
-                    continue
-                criteria.stars = xrange(ic.stars)
-                idea.criterias.append(criteria)
-
-            # Idea comments
-
-            for comment in idea.comments:
-                comment.perms_edit = permissions.comment(obj=comment, user=self.request.user, mode='edit')
+            idea.fill_data(user=self.request.user)
 
         for comment in context['comments']:
-            comment.perms_edit = permissions.comment(obj=comment, user=self.request.user, mode='edit')
+            comment.perms_edit = permissions.comment(obj=comment, user=self.request.user, mode='manage')
 
         return context
 
@@ -349,4 +359,4 @@ class ProblemView(FormView):
 
     @reversion.create_revision()
     def form_valid(self, form):
-        return idea_form_valid(self, form)
+        return idea_save(self, form)

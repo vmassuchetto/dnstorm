@@ -1,0 +1,9 @@
+{% load i18n %}
+<div class="row collapse{% if user.invitation %} user-invitation{% endif %}">
+    <div class="columns large-12">
+        <input class="no-margin-bottom" type="text" name="{{name}}_text" id="{{html_id}}_text" value="" autocomplete="off"  {{ extra_attrs }} />
+        <p class="help">{% trans "Select users with permission to contribute to this problem. Type e-mails to send invitations to non-registered users." %}</p>
+    </div>
+</div>
+<input type="hidden" name="{{ name }}" id="{{ html_id }}" value="{{ current_ids }}" data-ajax-select="autocompleteselectmultiple" data-plugin-options="{{ data_plugin_options }}" />
+<div id="{{ html_id }}_on_deck" class="results_on_deck"></div>

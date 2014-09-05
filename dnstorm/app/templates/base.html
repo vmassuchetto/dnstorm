@@ -7,9 +7,9 @@
     <meta name="viewport" content="width=device-width" />
     <title>{% if title %}{{ title }} | {{ options.site_title }}{% else %}{{ options.site_title }} | {{ options.site_description }}{% endif %}</title>
     <link rel="icon" href="{% static "img/favicon.ico" %}" />
-    <link rel="stylesheet" href="{% static 'css/app.css' %}" media="screen, projection" type="text/x-scss" />
-    <link rel="stylesheet" href="{% static "css/foundation-icons.css" %}" />
-    <link rel="stylesheet" href="{% static "css/jquery.jscrollpane.css" %}" />
+    <link type="text/css" rel="stylesheet" href="{% static 'css/app.css' %}" media="screen, projection" />
+    <link type="text/css" rel="stylesheet" href="{% static "css/foundation-icons.css" %}" />
+    <link type="text/css" rel="stylesheet" href="{% static "css/jquery.jscrollpane.css" %}" />
     <script type="text/javascript" src="{% static "js/modernizr.js" %}"></script>
     <script type="text/javascript" src="{% static "js/jquery.js" %}"></script>
     <script type="text/javascript" src="{% static "js/jquery.ui.custom.js" %}"></script>
@@ -54,6 +54,9 @@
         <ul class="right">
             <li class="divider"></li>
             {% if user.is_authenticated %}
+                <li class="divider"></li>
+                <li class="notification-icon highlighted"><a href="javascript:void(0);"><i class="fi-lightbulb"></i><span class="count">12</span></a></li>
+                <li class="divider"></li>
                 <li><a href="{% url "user" user %}">{{ user.get_full_name|default:user.username }}</a></li>
                 <li class="divider"></li>
                 {% if user.is_superuser or user.perms.dnstorm.can_change_option %}
@@ -87,16 +90,6 @@
     </div>
 </div>
 </div>
-{% endif %}
-{% endblock %}
-
-{% block messages %}
-{% if messages %}
-{% for message in messages %}
-    <div class="upper-bar-wrap message-bar{% if message.tags %} {{ message.tags }}{% endif %}">
-        <div class="row"><div class="columns large-12"><p>{{ message }}</p></div></div>
-    </div>
-{% endfor %}
 {% endif %}
 {% endblock %}
 

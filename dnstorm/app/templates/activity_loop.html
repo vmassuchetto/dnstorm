@@ -1,11 +1,9 @@
  {% load i18n humanize %}
 
 {% if activities %}
- <h4>{% if problem_sidebar %}{% trans "Latest activity for this problem" %}{% else %}{% trans "Latest activity" %}{% endif %}</h4>
- {% for activity in activities %}
-    {% include "activity_item.html" with item=activity sidebar=sidebar %}
- {% endfor %}
- <p class="text-right">
-    <a class="button tiny radius" href="{% url "activity" %}">{% trans "View all activities" %}</a>
-</p>
+    <h4>{% if problem_sidebar %}{% trans "Latest activity for this problem" %}{% else %}{% trans "Latest activity" %}{% endif %}</h4>
+    {% for activity in activities %}
+        {% include "activity_item.html" with item=activity sidebar=sidebar %}
+    {% endfor %}
+    <p><a class="button tiny radius" href="{% url "activity" %}">{% trans "View all activities" %}</a></p>
 {% endif %}

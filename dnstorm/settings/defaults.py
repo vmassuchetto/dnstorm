@@ -55,14 +55,12 @@ INSTALLED_APPS = (
     'crispy_forms',
     'crispy_forms_foundation',
     'djangobower',
-    'django_extensions',
+    #'django_extensions',
     'haystack',
+    'notification',
     'registration',
     'reversion',
-    'south',
-
-    # DNStorm app
-    'dnstorm.app',
+    'south'
 
 )
 

@@ -74,6 +74,10 @@ $.ajaxSetup({
     }
 });
 
+function scrollTo(selector) {
+    $('html, body').animate({ scrollTop: $(selector).offset().top }, 1000);
+}
+
 // Foundation
 
 $(document).foundation();
@@ -116,15 +120,7 @@ $('.revisions').ready(function(){
     $(raw[raw.length-1]).next('.diff').html($(raw[raw.length-1]).html());
 });
 
-// Show on click
-
-$(document).on('click', '.problem-comment', function(){
-    $('.problem-comment-form').fadeIn();
-});
-
-$(document).on('click', '.idea-comment', function(){
-    $('div#idea-' + parseInt($(this).data('idea')) + '-comment-form.comment-form').fadeIn();
-});
+// Show problem table on click
 
 $(document).on('click', '.show-problem-table', function(){
     if ($('#problem-table-row').css('display') == 'none') {
@@ -147,29 +143,80 @@ $('.select-on-click').click(function(){
     $(this).select();
 });
 
-// Show idea form
+// Scroll to idea form
 
 $('.problem-idea-form-button').click(function(){
-    $('.problem-idea-button').fadeOut(300);
-    CKEDITOR.instances.id_content.resize('100', '340');
-    $('.problem-idea-form').delay(300).fadeIn(300);
+    scrollTo('.problem-idea-form');
 });
 
-// Criteria on problem form
+/**
+ * Problem form: idea
+ */
 
-var criteria_form = $('#criteria-form.reveal-modal');
-$('#criteria-form input[type="submit"]').click(function(e){
+$(document).on('submit', '.problem-idea-form form', function(e){
     e.preventDefault();
-    var form = $('#criteria-form');
-    var form_data = $('#criteria-form form').serialize() + '&new_criteria=1';
-    var obj = $(this);
-    obj.addClass('loading');
+    if ($(this).attr('disabled') == 'disabled')
+        return false;
+    var button = $(this).find('input[type="submit"]');
+    button.attr('disabled', true);
+    button.addClass('loading');
+    var form = $('.problem-idea-form form');
+    form.find('textarea[name="content"]').val(CKEDITOR.instances.id_content.getData());
+    var form_data = form.serialize() + '&new_idea=1';
     $.ajax({
         url: '/ajax/',
         type: 'POST',
         data: form_data,
         complete: function(xhr, data) {
-            obj.removeClass('loading');
+            if (data == 'success') {
+                button.attr('disabled', false);
+                button.removeClass('loading');
+                response = JSON.parse(xhr.responseText);
+                // Form errors handling
+                form.find('.holder').removeClass('error');
+                form.find('small.error').remove();
+                if (response.errors) {
+                    for (e in response.errors) {
+                        if (e == '__all__') {
+                            form.find('h5').after('<small class="error">' + response.errors[e] + '</small>');
+                        } else {
+                            $('#div_id_' + e).addClass('error');
+                            $('#id_' + e).after('<small class="error">' + response.errors[e] + '</small>');
+                        }
+                    }
+                    return false;
+                }
+                // Created successfully
+                form.find('input[type="text"],textarea').val('');
+                CKEDITOR.instances['id_content'].setData('');
+                $('.criteria-vote .stars i').removeClass('selected');
+                $(response.html).appendTo('.problem-ideas').highlight('green', 2000);
+            }
+        }
+    });
+});
+
+/**
+ * Problem form: criteria
+ */
+
+var criteria_form = $('#criteria-form.reveal-modal');
+$('#criteria-form input[type="submit"]').click(function(e){
+    e.preventDefault();
+    if ($(this).attr('disabled') == 'disabled')
+        return false;
+    var form = $('#criteria-form');
+    var form_data = $('#criteria-form form').serialize() + '&new_criteria=1';
+    var button = $(this);
+    button.attr('disabled', true);
+    button.addClass('loading');
+    $.ajax({
+        url: '/ajax/',
+        type: 'POST',
+        data: form_data,
+        complete: function(xhr, data) {
+            button.attr('disabled', false);
+            button.removeClass('loading');
             if (data == 'success') {
                 response = JSON.parse(xhr.responseText);
                 // Form errors handling
@@ -186,6 +233,79 @@ $('#criteria-form input[type="submit"]').click(function(e){
                 $('#id_criteria').trigger('didAddPopup', [response.id, response.lookup_display]); // send event to django-ajax-selects
                 criteria_form.find('input[type="text"],textarea').each(function(){ $(this).val(''); });
                 criteria_form.foundation('reveal', 'close');
+            }
+        }
+    });
+});
+
+/**
+ * Problem form: collaborators
+ */
+
+if ($('.problem-edit').length > 0) {
+$(document).ready(function(){
+    var p = $('.problem-form #div_id_public input[type="checkbox"]');
+    var c = $('.problem-form #div_id_contributor, .problem-form #pending-invitations');
+    if (p.prop('checked'))
+        c.hide();
+    p.change(function(){
+        if (p.prop('checked')) {
+            p.attr('checked', '');
+            c.slideUp(300);
+        } else {
+            p.attr('checked', 'checked');
+            c.slideDown(300);
+        }
+    });
+});
+}
+
+/**
+ * Problem form: resend pending invitations
+ */
+
+$('.resend-button').on('click', function(e) {
+    e.preventDefault();
+    if ($(this).attr('disabled') == 'disabled')
+        return false;
+    var button = $(this);
+    var invitation = button.data('invitation');
+    button.attr('disabled', true);
+    button.addClass('loading');
+    $.ajax({
+        url: '/ajax/',
+        type: 'GET',
+        data: 'resend_invitation=' + invitation,
+        complete: function(xhr, data) {
+            button.removeClass('loading');
+            if (data == 'success') {
+                button.text('OK');
+            }
+        }
+    });
+});
+
+/**
+ * Problem form: delete pending invitations
+ */
+
+$('.delete-button').on('click', function(e) {
+    e.preventDefault();
+    if ($(this).attr('disabled') == 'disabled')
+        return false;
+    var button = $(this);
+    var invitation = button.data('invitation');
+    button.attr('disabled', true);
+    button.addClass('loading');
+    $.ajax({
+        url: '/ajax/',
+        type: 'GET',
+        data: 'delete_invitation=' + invitation,
+        complete: function(xhr, data) {
+            button.attr('disabled', false);
+            button.removeClass('loading');
+            if (data == 'success') {
+                $('#invitation-' + invitation).fadeOut(200).delay(200).delete();
             }
         }
     });
@@ -223,26 +343,52 @@ $('.criteria-vote .stars i').on('click', function(){
     $(this).parents('form').find('#id_criteria_' + $(this).data('criteria')).val($(this).index() + 1);
 });
 
+$('.button-criteria.dropdown').click(function(e){
+    var criteria_id = $(this).data('criteria');
+    var panel = $('#criteria-' + criteria_id);
+    $(".criteria-description:visible").not(panel).slideToggle(300);
+    panel.slideToggle(300);
+});
+
+// Show comment on click
+
+$(document).on('click', '.action-comment', function(e){
+    e.preventDefault();
+    var form = $('#comment-form');
+    var new_form = form.clone();
+    var obj;
+    if ($(this).data('problem')) {
+        new_form.find('input#id_problem').val($(this).data('problem'));
+        obj = $('div#comment-form-problem');
+    } else if ($(this).data('idea')) {
+        new_form.find('input#id_idea').val($(this).data('idea'));
+        obj = $('div#comment-form-idea-' + $(this).data('idea'));
+    }
+    obj.html(new_form.html()).removeClass('hide');
+});
+
 // Comment form submit
 
-$('.comment-form form').submit(function(e){
+$(document).on('submit', '.comment-form form', function(e){
     e.preventDefault();
-    var problem = $(this).parent().data('problem');
-    var idea = $(this).parent().data('idea');
-    var comments;
-    if (problem)
-        comments = $('#comments-problem-' + problem);
-    else if (idea)
-        comments = $('#comments-idea-' + idea);
+    var button = $(this).find('input[type="submit"]');
+    if (button.attr('disabled') == 'disabled')
+        return false;
+    var form_wrap = $(this).parent();
+    button.attr('disabled', true);
+    button.addClass('loading');
     $.ajax({
         url: '/ajax/',
         type: 'POST',
-        data: $(this).serialize(),
+        data: 'new_comment=1&' + $(this).serialize(),
         complete: function(xhr, data) {
+            button.attr('disabled', false);
+            button.removeClass('loading');
             if (data == 'success') {
-                var c = comments.append(xhr.responseText);
-                $('.comment-form').fadeOut(300);
-                comments.find('.comment').last().highlight();
+                response = $.parseJSON(xhr.responseText);
+                $(response.target).append(response.html);
+                $(response.target).find('.comment').last().highlight();
+                form_wrap.find('textarea').val('');
             }
         }
     });
@@ -282,6 +428,7 @@ $(document).on('click', '.comment-delete-toggle', function(){
  * Strategy table
  */
 
+var table_row = $('#problem-table-row');
 var table = $('.problem-table');
 
 function adjust_table_overflow() {
@@ -294,15 +441,22 @@ function adjust_table_overflow() {
     }
 }
 
+$(document).on('click', '.table-button', function(){
+    table_row.slideToggle(300);
+});
+
 $(document).on('click', '.table-help-show', function(){
-    $('.table-help').slideDown(300);
+    $(this).next().slideToggle(300);
 });
 
 /**
  * Strategy table: New alternative
  */
 $(document).on('click', '.new-alternative', function(){
+    if ($(this).attr('disabled') == 'disabled')
+        return false;
     var button = $(this);
+    button.attr('disabled', true);
     button.addClass('loading');
     $.ajax({
         url: '/ajax/',
@@ -312,12 +466,13 @@ $(document).on('click', '.new-alternative', function(){
             'problem': table.data('problem')
         },
         complete: function(xhr, data) {
+            button.attr('disabled', false);
+            button.removeClass('loading');
             if (data == 'success') {
                 response = $.parseJSON(xhr.responseText);
                 table.find('tbody').append(response.html);
                 table.find('#alternative-' + response.id).highlight('green');
             }
-            button.removeClass('loading');
         }
     });
     adjust_table_overflow();
@@ -333,6 +488,9 @@ $(document).on('click', '.delete-alternative', function(){
 });
 $(document).on('click', '.delete-alternative-confirm', function(){
     var button = $(this);
+    if ($(this).attr('disabled') == 'disabled')
+        return false;
+    button.attr('disabled', true);
     button.addClass('loading');
     $.ajax({
         url: '/ajax/',
@@ -341,6 +499,8 @@ $(document).on('click', '.delete-alternative-confirm', function(){
             'delete_alternative': alternative_delete_modal.data('alternative')
         },
         complete: function(xhr, data) {
+            button.attr('disabled', false);
+            button.removeClass('loading');
             if (data == 'success') {
                 alternative_delete_modal.foundation('reveal', 'close');
                 $('#alternative-' + alternative_delete_modal.data('alternative')).highlight('red').delay(200).remove();
@@ -351,7 +511,6 @@ $(document).on('click', '.delete-alternative-confirm', function(){
                 });
                 adjust_table_overflow();
             }
-            button.removeClass('loading');
         }
     });
 });
@@ -397,6 +556,7 @@ $(document).on('click', '.alternative-vote .cell-wrap', function(){
 /**
  * Strategy table: Select ideas
  */
+
 $(document).on('mouseenter', '.problem-table .cell-wrap', function(){
     $(this).find('.alternative-ideas a.button').fadeIn(200);
 });
@@ -438,6 +598,9 @@ $(document).on('click', '.problem-idea-modal', function(){
 });
 $(document).on('click', '.problem-idea-modal-save', function(){
     var button = $(this);
+    if ($(this).attr('disabled') == 'disabled')
+        return false;
+    button.attr('disabled', true);
     button.addClass('loading');
     var m = $('#select-idea-modal');
     var alternative_id = m.data('alternative');
@@ -450,13 +613,14 @@ $(document).on('click', '.problem-idea-modal-save', function(){
             'idea': m.data('idea')
         },
         complete: function(xhr, data) {
+            button.attr('disabled', false);
+            button.removeClass('loading');
             if (data == 'success') {
                 response = $.parseJSON(xhr.responseText);
                 $('#alternative-' + alternative_id).replaceWith(response.html);
                 m.foundation('reveal', 'close');
                 adjust_table_overflow();
             }
-            button.removeClass('loading');
         }
     });
 });

@@ -3,9 +3,6 @@
 <div class="row collapse" id="problem-table-row">
 
 <div class="columns large-12">
-<h3>{% trans "Strategy table" %}</h3>
-<hr/>
-<div class="bottom-1em">
 <table class="problem-table{% if criterias %} with-criterias{% endif %}" data-problem="{{ problem.id }}">
 
     <thead>
@@ -38,7 +35,8 @@
 </div>
 
 {% if problem_perm_manage %}
-    <a class="button radius new-alternative"><i class="fi-plus"></i>&nbsp;{% trans "Add a new alternative" %}</a><br/>
+    <div class="columns large-12">
+    <a class="button radius new-alternative tiny"><i class="fi-plus"></i>&nbsp;{% trans "Add a new alternative" %}</a>
     <a class="button radius secondary tiny table-help-show"><i class="fi-info"></i>&nbsp;{% trans "Need some help?" %}</a>
     <div class="table-help panel radius secondary">
     <ul>
@@ -49,7 +47,7 @@
         <li>{% blocktrans with url=problem_url %}<a href="{{ url }}">Edit the problem</a> to create more criterias{% endblocktrans %}</li>
     </ul>
     </div>
+    </div>
 {% endif %}
-</div>
 <hr/>
 </div>

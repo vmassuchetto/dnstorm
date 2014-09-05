@@ -1,0 +1,6 @@
+{% load i18n %}
+
+{% url "user" from_user.username as from_user_url %}
+{% url "problem" problem.slug as problem_url %}
+{% blocktrans from_user_username=from_user.username %}<p>You were invited by <a href="{{ from_user_url }}">{{ from_user }}</a> to discuss and collaborate on the problem '<a href="{% url problem %}">{{ problem.title }}</a>', that was created in DNStorm.</p>
+{% endblocktrans %}
