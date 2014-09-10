@@ -47,7 +47,11 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.humanize',
 
+    # DNStorm app
+    'dnstorm.app',
+
     # Required apps for DNStorm
+    'actstream',
     'avatar',
     'autoslug',
     'ajax_select',
@@ -159,6 +163,8 @@ HAYSTACK_CONNECTIONS = {
 SANITIZER_ALLOWED_TAGS = ['a', 'strong', 'b', 'i', 'ul', 'li', 'ol', 'img', 'iframe', 'p', 'h4', 'h5', 'blockquote', 'strike']
 SANITIZER_ALLOWED_ATTRIBUTES = ['href', 'src']
 SANITIZER_ALLOWED_STYLES = []
+
+# Graphviz
 
 GRAPH_MODELS = {
     'all_applications': True,

@@ -1,0 +1,15 @@
+{% load i18n %}
+
+{# Create problem #}
+
+{% if action.action_object_content_type|stringformat:"s" == "problem" and action.verb|stringformat:"s" == "created" %}
+{% url "problem" action.action_object as problem_url %}
+{% url "actor" action.actor as actor_url %}
+{% blocktrans with problem_title=action.action_object.title actor_name=action.actor %}<a href="{{ actor_url }}">{{ actor_name }}</a> created the problem <a href="{{ problem_url }}">{{ problem_title }}</a>{% endblocktrans %}
+{% endif %}
+
+{% if action.action_object_content_type|stringformat:"s" == "problem" and action.verb|stringformat:"s" == "edited" %}
+{% url "problem" action.action_object as problem_url %}
+{% url "actor" action.actor as actor_url %}
+{% blocktrans with problem_title=action.action_object.title actor_name=action.actor %}<a href="{{ actor_url }}">{{ actor_name }}</a> edited the problem <a href="{{ problem_url }}">{{ problem_title }}</a>{% endblocktrans %}
+{% endif %}

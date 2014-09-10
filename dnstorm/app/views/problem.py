@@ -23,8 +23,10 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import User
 
 import bleach
-import reversion
 import diff_match_patch as _dmp
+from actstream import action
+from actstream.actions import follow, unfollow
+from actstream.models import followers
 from notification import models as notification
 
 from dnstorm import settings
@@ -42,6 +44,10 @@ def problem_save(obj, form):
     ProblemUpdateView.
     """
 
+    # Remember if new
+
+    new = False if hasattr(obj.object, 'id') and isinstance(obj.object.id, int) else True
+
     # Save first
 
     obj.object = form.save(commit=False)
@@ -55,7 +61,7 @@ def problem_save(obj, form):
 
     # Criterias
 
-    obj.object.criteria.through.objects.all().delete()
+    obj.object.criteria.clear()
     criterias = [i for i in obj.request.POST.get('criteria', '').split('|') if i.isdigit()]
     for c in models.Criteria.objects.filter(id__in=criterias):
         obj.object.criteria.add(c)
@@ -86,7 +92,7 @@ def problem_save(obj, form):
         fake_user = User(id=1, username=i, email=email)
         notification.send([fake_user], 'invitation', { 'from_user': from_user, 'problem': obj.object })
 
-    # Contributors
+    # Update contributors
 
     new_contributors = User.objects.filter(id__in=[i for i in obj.request.POST.get('contributor', '').split('|') if i.isdigit()])
     if not new_contributors:
@@ -103,10 +109,23 @@ def problem_save(obj, form):
 
     for user in to_add:
         obj.object.contributor.add(user)
+        follow(user, obj.object)
 
     obj.object.save()
 
     # Success
+
+    _c = [o for o in obj.object.contributor.all()] + [obj.object.author]
+    _f = followers(obj.object)
+    for f in _f:
+        unfollow(f, obj.object) if f not in _c else None
+    for c in _c:
+        follow(c, obj.object, actor_only=False) if c not in _f else None
+
+    # Send an action
+
+    verb = 'created' if new else 'edited'
+    action.send(obj.object.author, verb=verb, action_object=obj.object)
 
     messages.success(obj.request, _('Problem saved'))
     return HttpResponseRedirect(reverse('problem', kwargs={'slug':obj.object.slug}))
@@ -133,7 +152,6 @@ class ProblemCreateView(CreateView):
             { 'title': _('Problems'), 'url': reverse('home') },
             { 'title': _('Create new problem'), 'url': reverse('problem_new'), 'classes': 'current' } ]
 
-    @reversion.create_revision()
     def form_valid(self, form):
         return problem_save(self, form)
 
@@ -163,7 +181,6 @@ class ProblemUpdateView(UpdateView):
             { 'title': self.object.title, 'url': self.object.get_absolute_url() },
             { 'title': _('Update'), 'url': reverse('problem_edit', kwargs={'slug':self.object.slug}), 'classes': 'current' } ]
 
-    @reversion.create_revision()
     def form_valid(self, form):
         return problem_save(self, form)
 
@@ -179,122 +196,6 @@ class ProblemDeleteView(DeleteView):
         if len(self.request.POST) > 0:
             messages.success(self.request, _('Problem deleted'))
         return super(ProblemDeleteView, self).dispatch(*args, **kwargs)
-
-class ProblemRevisionView(DetailView):
-    template_name = 'problem_revision.html'
-    model = models.Problem
-
-    def dispatch(self, *args, **kwargs):
-        obj = get_object_or_404(Problem, slug=kwargs['slug'])
-        if not permissions.problem(obj=obj, user=self.request.user, mode='contribute'):
-            raise PermissionDenied
-        return super(ProblemRevisionView, self).dispatch(*args, **kwargs)
-
-    def get_context_data(self, *args, **kwargs):
-        context = super(ProblemRevisionView, self).get_context_data(**kwargs)
-        context['breadcrumbs'] = self.get_breadcrumbs()
-
-        checkboxes = ('blind', 'locked', 'max', 'open', 'public', 'voting', 'vote_count', 'vote_author')
-        true_messages = {
-            'blind': _('The problem was set to blind contribution mode.'),
-            'locked': _('The problem was locked for contributions.'),
-            'max': _('Max ideas per user set to %d.'),
-            'open': _('Contributions opened for any logged user.'),
-            'public': _('Problem set to be publicly available.'),
-            'voting': _('Ideas votation were opened.'),
-            'vote_count': _('Vote counts will be displayed.'),
-            'vote_author': _('Vote authors will be displayed.')
-        }
-        false_messages = {
-            'blind': _('No longer in blind contribution mode.'),
-            'locked': _('Problem unlocked for contributions.'),
-            'max': _('Untilimed ideas per user.'),
-            'open': _('Only participants will be able to contribute.'),
-            'public': _('The problem is no longer public.'),
-            'voting': _('Ideas votation were closed.'),
-            'vote_count': _('Vote counts will no longer be displayed.'),
-            'vote_author': _('Vote authors will no longer be displayed.')
-        }
-
-        dmp = _dmp.diff_match_patch()
-        revisions = list()
-        versions = reversion.get_for_object(self.object)
-        for i in range(0, len(versions) - 1):
-            new = versions[i].object_version.object
-            old = versions[i+1].object_version.object
-            detail = ''
-
-            # Description diff
-
-            if new.title != old.title or new.description != old.description:
-                diff = dmp.diff_main('<h3>' + old.title + '</h3>' + old.description, '<h3>' + new.title + '</h3>' + new.description)
-                dmp.diff_cleanupSemantic(diff)
-                detail += diff_prettyHtml(diff)
-
-            # Criterias
-
-            new_criterias = [v for v in versions[i].revision.version_set.all() \
-                if v.content_type == ContentType.objects.get_for_model(Criteria)]
-            old_criterias = [v for v in versions[i+1].revision.version_set.all() \
-                if v.content_type == ContentType.objects.get_for_model(Criteria)]
-
-            criteria = [c.object_version.object for c in old_criterias] \
-                if [c.id for c in new_criterias] != [c.id for c in old_criterias] \
-                else None
-
-            # Advanced options
-
-            checkboxes_detail = ''
-            for c in checkboxes:
-                if getattr(new, c) != getattr(old, c):
-                    checkboxes_detail += '<li>%s%s%s</li>' % (
-                        '<ins>' if getattr(new, c) else '<del>',
-                        true_messages[c] if getattr(new, c) else false_messages[c],
-                        '</ins>' if getattr(new, c) else '</del>')
-
-            if checkboxes_detail:
-                detail += '<h5>' + _('Advanced options') + '</h5><ul>%s</ul>' % checkboxes_detail
-
-            revisions.append({
-                'id': versions[i].id,
-                'detail': detail,
-                'author': versions[i].object_version.object.author,
-                'updated': versions[i].object_version.object.updated,
-                'criteria': criteria
-            })
-
-
-        first = versions[len(versions)-1]
-        detail = '<h3>' + first.object_version.object.title + '</h3>' + first.object_version.object.description
-
-        revisions.append({
-            'id': first.id,
-            'detail': detail,
-            'author': first.object_version.object.author,
-            'updated': first.object_version.object.updated,
-            'criteria': first.object_version.object.criteria.all()
-        })
-        context['revisions'] = revisions
-        return context
-
-    def get_breadcrumbs(self):
-        return [
-            { 'title': _('Problems'), 'url': reverse('home') },
-            { 'title': self.object.title, 'url': self.object.get_absolute_url() },
-            { 'title': _('Revisions'), 'url': reverse('problem_revision', kwargs={'slug':self.object.slug}), 'classes': 'current' } ]
-
-class ProblemRevisionItemView(RedirectView):
-    permanent = True
-
-    def dispatch(self, *args, **kwargs):
-        obj = get_object_or_404(Problem, slug=kwargs['slug'])
-        if not permissions.problem(obj=obj, user=self.request.user, mode='contribute'):
-            raise PermissionDenied
-        return super(ProblemRevisionItemView, self).dispatch(*args, **kwargs)
-
-    def get_redirect_url(self, *args, **kwargs):
-        revision = get_object_or_404(reversion.models.Version, id=kwargs['pk'])
-        return reverse('problem_revision', kwargs={'id':revision.object.id}) + '#revision-' + str(revision.id)
 
 class ProblemView(FormView):
     template_name = 'problem.html'
@@ -348,7 +249,7 @@ class ProblemView(FormView):
             idea.fill_data(user=self.request.user)
 
         for comment in context['comments']:
-            comment.perms_edit = permissions.comment(obj=comment, user=self.request.user, mode='manage')
+            comment.perm_manage = permissions.comment(obj=comment, user=self.request.user, mode='manage')
 
         return context
 
@@ -357,6 +258,5 @@ class ProblemView(FormView):
             { 'title': _('Problems'), 'url': reverse('home') },
             { 'title': self.problem.title, 'url': self.problem.get_absolute_url(), 'classes': 'current' } ]
 
-    @reversion.create_revision()
     def form_valid(self, form):
         return idea_save(self, form)

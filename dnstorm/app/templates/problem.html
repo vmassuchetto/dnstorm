@@ -39,7 +39,7 @@
                         <i class="fi-check idea-status"></i>
                     </div>
                     <div class="columns large-11">
-                        {% include "problem_idea.html" %}
+                        {% include "idea.html" %}
                     </div>
                 </div>
             {% endfor %}
@@ -78,7 +78,7 @@
         </div>
     </div>
 
-    {% include "problem_table.html" %}
+    {% include "table.html" %}
 
     <div class="row">
     <div class="columns large-12 problem-detail">
@@ -168,7 +168,7 @@
         <a name="ideas"></a>
         <div class="problem-ideas">
             {% for idea in ideas %}
-                {% include "problem_idea.html" %}
+                {% include "idea.html" %}
                 <hr/>
             {% endfor %}
         </div>

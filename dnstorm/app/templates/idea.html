@@ -34,16 +34,9 @@
                         <div class="columns large-12 right idea-actions">
                             {% if idea_actions %}
 
-                                {% if problem_perm_contribute %}
-                                    <a class="problem-action action-comment" data-idea="{{ idea.id }}" href="javascript:void(0);">{% trans "Comment" context "verb" %}</a>
-                                {% endif %}
-
-                                {% if problem_perm_manage %}
+                                <a class="problem-action action-comment" data-idea="{{ idea.id }}" href="javascript:void(0);">{% trans "Comment" context "verb" %}</a>
+                                {% if idea.perm_manage %}
                                     <a class="problem-action problem-idea-edit" href="{% url "idea_edit" problem.slug idea.id %}">{% trans "Edit" %}</a>
-                                {% endif %}
-
-                                {% if idea.revision_count > 1 %}
-                                    <a class="problem-action problem-idea-revision" href="{% url "idea_revision" problem.slug idea.id %}">{% blocktrans count idea.revision_count as i %}{{ i }} revision{% plural %}{{ i }} revisions{% endblocktrans %}</a>
                                 {% endif %}
 
                                 {% if problem_perm_manage %}

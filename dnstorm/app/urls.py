@@ -26,16 +26,12 @@ urlpatterns = patterns('',
     (r'^problem/(?P<slug>[^/]+)/$', problem.ProblemView.as_view(), {}, 'problem'),
     (r'^problem/(?P<slug>[^/]+)/edit/$', problem.ProblemUpdateView.as_view(), {}, 'problem_edit'),
     (r'^problem/(?P<slug>[^/]+)/delete/$', problem.ProblemDeleteView.as_view(), {}, 'problem_delete'),
-    (r'^problem/(?P<slug>[^/]+)/revisions/$', problem.ProblemRevisionView.as_view(), {}, 'problem_revision'),
-    (r'^problem/(?P<slug>[^/]+)/revisions/#revision-(?P<revision_id>[^/]+)$', problem.ProblemRevisionItemView.as_view(), {}, 'problem_revision_item'),
     (r'^problem/(?P<slug>[^/]+)/#ideas$', problem.ProblemUpdateView.as_view(), {}, 'problem_ideas'),
 
     # Ideas
 
     (r'^problem/(?P<slug>[^/]+)/#idea-(?P<pk>[^/]+)$', idea.IdeaView.as_view(), {}, 'idea'),
     (r'^problem/(?P<slug>[^/]+)/idea/(?P<pk>[^/]+)/edit/$', idea.IdeaUpdateView.as_view(), {}, 'idea_edit'),
-    (r'^problem/(?P<slug>[^/]+)/idea/(?P<pk>[^/]+)/revisions/$', idea.IdeaRevisionView.as_view(), {}, 'idea_revision'),
-    (r'^problem/(?P<slug>[^/]+)/idea/(?P<pk>[^/]+)/revisions/#revision-(?P<revision_id>[^/]+)$', idea.IdeaRevisionView.as_view(), {}, 'idea_revision_item'),
 
     # Comments
 

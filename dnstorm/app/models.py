@@ -9,7 +9,6 @@ from django.utils.safestring import mark_safe
 from django.template.loader import render_to_string
 from django.db.models import Sum
 
-import reversion
 import diff_match_patch as _dmp
 from dnstorm import settings
 from dnstorm.app import permissions
@@ -172,17 +171,11 @@ class Problem(models.Model):
     def get_absolute_url(self, *args, **kwargs):
         return reverse('problem', args=[self.slug])
 
-    def revision_count(self):
-        return reversion.get_for_object(self).count()
-
     def idea_count(self):
         return Idea.objects.filter(problem=self).count()
 
     def alternative_count(self):
         return Alternative.objects.filter(problem=self).count()
-
-reversion.register(Problem)
-registry.register(Problem)
 
 class Invitation(models.Model):
     """
@@ -199,6 +192,8 @@ class Invitation(models.Model):
 
     def type(self):
         return _('invitation')
+
+#registry.register(Invitation)
 
 class Idea(models.Model):
     """
@@ -224,9 +219,6 @@ class Idea(models.Model):
     def get_absolute_url(self, *args, **kwargs):
         return reverse('idea', kwargs={'slug': self.problem.slug, 'pk': self.id})
 
-    def revision_count(self):
-        return reversion.get_for_object(self).count()
-
     def vote_count(self):
         w = Vote.objects.filter(idea=self).aggregate(models.Sum('weight'))['weight__sum']
         return w if w else 0
@@ -236,7 +228,7 @@ class Idea(models.Model):
         Fill the idea with problem and user-specific data.
         """
         from dnstorm.app.forms import CommentForm
-        self.perms_edit = permissions.idea(obj=self, user=user, mode='manage')
+        self.perm_manage = permissions.idea(obj=self, user=user, mode='manage')
         self.comments = Comment.objects.filter(idea=self).order_by('created')
 
         # Idea criterias
@@ -252,9 +244,7 @@ class Idea(models.Model):
         # Idea comments
 
         for comment in self.comments:
-            comment.perms_edit = permissions.comment(obj=self.problem, user=user, mode='manage')
-
-reversion.register(Idea)
+            comment.perm_manage = permissions.comment(obj=self.problem, user=user, mode='manage')
 
 class IdeaCriteria(models.Model):
     """
@@ -299,6 +289,8 @@ class Comment(models.Model):
     def type(self):
         return _('comment')
 
+#registry.register(Comment)
+
 class Alternative(models.Model):
     """
     Alternatives are the strategy table rows where ideas can be allocated.
@@ -329,6 +321,8 @@ class Alternative(models.Model):
             c.star_ratio = c.total_stars * 100 / self.total_ideas / 5 if c.total_stars > 0 and self.total_ideas > 0 else 0
             self.criteria.append(c)
 
+#registry.register(Alternative)
+
 class Vote(models.Model):
     """
     A vote for idea or for an alternative.
@@ -349,240 +343,3 @@ class Vote(models.Model):
 
     def type(self):
         return _('vote')
-
-class Activity(models.Model):
-    """
-    Abstract model to be filled by the ``ActivityManager`` class, where all
-    that's being happening in the platform according to the viewer's
-    permissions are fetched and listed.
-    """
-
-    type = models.TextField(blank=True, null=True)
-    problem = models.ForeignKey(Problem, blank=True, null=True)
-    idea = models.ForeignKey(Idea, blank=True, null=True)
-    comment = models.ForeignKey(Comment, blank=True, null=True)
-    description = models.TextField(blank=True, null=True)
-    user = models.ForeignKey(User, blank=True, null=True)
-    updated = models.DateTimeField(blank=True, null=True)
-
-    class Meta:
-        abstract = True
-        managed = False
-
-class ActivityManager(models.Manager):
-    """
-    Manager for retrieving activities from the database.
-    """
-
-    def type(self):
-        return _('activity')
-
-    def get_objects(self, *args, **kwargs):
-        """
-        Fetches activities related to problems, ideas and comments that can
-        be publicy visible or can be accessed by the current user. That's a RAW
-        SQL query that needs to work on all default engines.
-        """
-
-        # Query
-
-        params = self.get_params(**kwargs)
-        query = self.get_query_string(params)
-        select = query['select'] % params
-        where = query['where'] % params
-        order = query['order'] % params
-        limit = query['limit'] % params
-
-        # Results
-
-        query = select + where + order + limit
-        cursor = connection.cursor()
-        cursor.execute(query)
-
-        dmp = _dmp.diff_match_patch()
-
-        # Iterate
-
-        activities = list()
-        for q in cursor.fetchall():
-            a = Activity()
-            if 'problem' == q[0]:
-                a.type = 'problem'
-                a.problem = Problem.objects.get(id=q[1])
-                obj = a.problem
-            elif 'idea' == q[0]:
-                a.type = 'idea'
-                a.idea = Idea.objects.get(id=q[2])
-                obj = a.idea
-            elif 'comment' == q[0]:
-                a.type = 'comment'
-                a.comment = Comment.objects.get(id=q[3])
-                obj = a.comment
-
-            # Get version to show if it is a created or updated object
-            versions = reversion.get_for_object(obj)
-            a.status = 'updated' if len(versions) > 1 else 'created'
-            a.user = versions[1].revision.user if len(versions) > 1 else obj.author
-            a.date = obj.updated
-            if len(versions) > 1 and a.problem:
-                diff = dmp.diff_main('<h3>' + versions[1].object_version.object.title + '</h3>' + versions[1].object_version.object.description, '<h3>' + a.problem.title + '</h3>' + a.problem.description)
-                dmp.diff_cleanupSemantic(diff)
-                a.detail = diff_prettyHtml(diff)
-            activities.append(a)
-
-        return activities
-
-    def get_params(self, *args, **kwargs):
-        """
-        Supply the parameters for the activity query according to the DB
-        engine.
-        """
-
-        db_engine = ''
-        engine = settings.DATABASES['default']['ENGINE']
-        if re.match('.*sqlite3$', engine):
-            db_engine = 'sqlite3'
-        elif re.match('.*psycopg2$', engine):
-            db_engine = 'postgresql'
-        elif re.match('.*mysql$', engine):
-            db_engine = 'mysql'
-
-        params = {
-            'public': 'TRUE' if db_engine == 'postgresql' else '1',
-            'prefix': settings.DNSTORM['table_prefix'],
-            'user': kwargs['user'] if 'user' in kwargs and int(kwargs['user']) else 0,
-            'where': '',
-            'offset': kwargs['offset'] if 'offset' in kwargs and int(kwargs['offset']) else 0,
-            'limit': kwargs['limit'] if 'limit' in kwargs and int(kwargs['limit']) < 5 else 10
-        }
-
-        if kwargs.get('problem', None):
-            params['where'] += ' AND problem = %d' % int(kwargs['problem'])
-
-        if kwargs.get('page', None):
-            params['page'] = int(kwargs['page'])
-            params['offset'] = (int(kwargs['page']) - 1) * 10
-            params['limit'] = 10
-
-        return params
-
-    def get_pagination(self, *args, **kwargs):
-        """
-        Gets pagination links for a given set of query variables.
-        """
-
-        # Total results count
-
-        params = self.get_params(**kwargs)
-        page = params['page'] if 'page' in params else 1
-        total = self.get_total(**params)
-
-        # Pagination
-
-        pagination = dict()
-        pagination['previous_page_number'] = page - 1 if page > 1 else 0
-        pagination['next_page_number'] = page + 1 if (page + 1) * 10 < total else 0
-        pagination['has_previous'] = True if pagination['previous_page_number'] else False
-        pagination['has_next'] = True if pagination['next_page_number'] else False
-        pagination['number'] = page
-        pagination['paginator'] = { 'num_pages': total / 10 }
-        return pagination
-
-
-    def get_total(self, *args, **kwargs):
-        """
-        Fetchs only the total number of rows for an activity set. Used for
-        pagination.
-        """
-
-        query = self.get_query_string()
-        select = query['select'] % kwargs
-
-        query = "SELECT COUNT(*) FROM (%(select)s) AS data" % { 'select': select }
-        cursor = connection.cursor()
-        cursor.execute(query)
-        first = cursor.fetchone()
-        return first[0] if len(first) > 0 else 0
-
-    def get_query_string(self, *args, **kwargs):
-        """
-        Get the ``UNION`` SQL statement parts for the activity query.
-        """
-
-        return {
-            'select': """
-                SELECT *
-                FROM (
-                    SELECT
-                        'problem' AS type,
-                        p.id AS problem,
-                        '' AS idea,
-                        '' AS comment,
-
-                        p.id AS id,
-                        p.updated AS date
-                    FROM
-                        %(prefix)s_problem p
-                    WHERE 1=1
-                        AND (
-                            %(user)d = 0
-                            OR p.author_id = %(user)d
-                        )
-                UNION
-                    SELECT
-                        'idea' AS type,
-                        i.problem_id AS problem,
-                        i.id AS idea,
-                        '' AS comment,
-
-                        i.id AS id,
-                        i.updated AS date
-                    FROM
-                        %(prefix)s_idea i
-                    LEFT JOIN
-                        %(prefix)s_problem p
-                        ON p.id = i.problem_id
-                    WHERE 1=1
-                        AND (
-                            %(user)d = 0
-                            OR i.author_id = %(user)d
-                        )
-                UNION
-                    SELECT
-                        'comment' AS type,
-                        c.problem_id AS problem,
-                        c.idea_id AS idea,
-                        c.id AS comment,
-
-                        c.id AS id,
-                        c.updated AS date
-                    FROM
-                        %(prefix)s_comment c
-                    LEFT JOIN
-                        %(prefix)s_problem p
-                        ON p.id = c.problem_id
-                    LEFT JOIN
-                        %(prefix)s_idea i
-                        ON i.id = c.idea_id
-                    WHERE 1=1
-                        AND (
-                            %(user)d = 0
-                            OR c.author_id = %(user)d
-                        )
-                )
-            """,
-
-            'where': """
-                WHERE 1 %(where)s
-            """,
-
-            'order': """
-                ORDER BY date DESC
-            """,
-
-            'limit': """
-                LIMIT %(limit)d
-                OFFSET %(offset)d
-            """
-
-        }

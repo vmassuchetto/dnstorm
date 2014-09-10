@@ -13,6 +13,9 @@ from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext as _
 from django.contrib import messages
 
+from actstream import action
+from actstream.models import followers
+
 from dnstorm import settings
 from dnstorm.app import models
 from dnstorm.app.forms import IdeaForm
@@ -20,7 +23,6 @@ from dnstorm.app import permissions
 from dnstorm.app.lib.diff import diff_prettyHtml
 
 import bleach
-import reversion
 import diff_match_patch as _dmp
 
 
@@ -39,6 +41,11 @@ def idea_save(obj, form, return_format=None):
         attributes=settings.SANITIZER_ALLOWED_ATTRIBUTES,
         styles=settings.SANITIZER_ALLOWED_STYLES,
         strip=True, strip_comments=True)
+
+    # Remember if new
+
+    new = False if hasattr(object, 'id') and isinstance(object.id, int) else True
+
     object.save()
 
     # Criterias ratings
@@ -50,10 +57,11 @@ def idea_save(obj, form, return_format=None):
             criteria=models.Criteria.objects.get(id=c.id),
             stars=form.cleaned_data['criteria_%d' % c.id]).save()
 
-    # Problem activity update
+    # Send and action and follow the problem
 
-    object.problem.last_activity = datetime.now()
-    object.problem.save()
+    verb = 'created' if new else 'edited'
+    action.send(object.author, verb=verb, action_object=object, target=object.problem)
+    follow(object.author, object.problem) if object.author not in followers(object.problem) else None
 
     if return_format == 'obj':
         return object
@@ -84,10 +92,8 @@ class IdeaUpdateView(UpdateView):
         context = super(IdeaUpdateView, self).get_context_data(**kwargs)
         context['problem'] = get_object_or_404(models.Problem, id=self.object.problem.id)
         context['breadcrumbs'] = self.get_breadcrumbs()
-        context['activities'] = models.ActivityManager().get_objects(limit=4)
         return context
 
-    @reversion.create_revision()
     def form_valid(self, form):
         return idea_save(self, form)
 
@@ -97,51 +103,3 @@ class IdeaUpdateView(UpdateView):
             { 'title': self.object.problem.title, 'url': self.object.problem.get_absolute_url() },
             { 'title': '%s #%d' % (_('Idea'), self.object.id), 'url': reverse('idea', kwargs={ 'slug': self.object.problem.slug, 'pk': self.object.id }) },
             { 'title': _('Update'), 'url': reverse('idea_edit', kwargs={ 'slug':self.object.problem.slug, 'pk': self.object.id }), 'classes': 'current' } ]
-
-class IdeaRevisionView(DetailView):
-    template_name = 'idea_revision.html'
-    model = models.Idea
-
-    def get_context_data(self, *args, **kwargs):
-        context = super(IdeaRevisionView, self).get_context_data(**kwargs)
-        context['breadcrumbs'] = self.get_breadcrumbs()
-        context['problem'] = self.object.problem
-        context['activities'] = models.ActivityManager().get_objects(limit=4)
-        context['revisions'] = list()
-
-        dmp = _dmp.diff_match_patch()
-        versions = reversion.get_for_object(self.object)
-        for i in range(0, len(versions) - 1):
-            new = versions[i].object_version.object
-            old = versions[i+1].object_version.object
-            detail = ''
-
-            if new.title != old.title or new.content != old.content:
-                diff = dmp.diff_main('<h3>' + old.title + '</h3>' + old.content, '<h3>' + new.title + '</h3>' + new.content)
-                dmp.diff_cleanupSemantic(diff)
-                detail = diff_prettyHtml(diff)
-
-            context['revisions'].append({
-                'id': versions[i].id,
-                'detail': detail,
-                'author': versions[i].object_version.object.author,
-                'updated': versions[i].object_version.object.updated,
-            })
-
-        first = versions[len(versions)-1]
-        detail = '<h3>' + first.object_version.object.title + '</h3>' + first.object_version.object.content
-        context['revisions'].append({
-            'id': first.id,
-            'detail': detail,
-            'author': first.object_version.object.author,
-            'updated': first.object_version.object.updated,
-        })
-
-        return context
-
-    def get_breadcrumbs(self):
-        return [
-            { 'title': _('Problems'), 'url': reverse('home') },
-            { 'title': self.object.problem.title, 'url': self.object.problem.get_absolute_url() },
-            { 'title': '%s #%d' % (_('Idea'), self.object.id), 'url': reverse('idea', kwargs={ 'slug': self.object.problem.slug, 'pk': self.object.id }) },
-            { 'title': _('Revisions'), 'url': reverse('idea_revision', kwargs={'slug':self.object.problem.slug, 'pk': self.object.id}), 'classes': 'current' } ]

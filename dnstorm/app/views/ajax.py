@@ -11,6 +11,8 @@ from django.template import loader, Context
 
 from crispy_forms.utils import render_crispy_form
 from notification import models as notification
+from actstream import action
+from actstream.models import followers
 
 from dnstorm.app import models
 from dnstorm.app.forms import IdeaForm, CriteriaForm, CommentForm
@@ -126,7 +128,7 @@ class AjaxView(View):
         idea = idea_save(idea.instance, idea, 'obj')
         idea.fill_data()
         idea.comment_form = CommentForm()
-        t = loader.get_template('problem_idea.html')
+        t = loader.get_template('idea.html')
         c = Context({
             'idea': idea,
             'idea_actions': True,
@@ -169,7 +171,7 @@ class AjaxView(View):
         a.fill_data()
         response = {
             'id': a.id,
-            'html': loader.render_to_string('problem_alternative.html', {
+            'html': loader.render_to_string('alternative.html', {
                 'alternative': a,
                 'problem_perm_manage': True
             })
@@ -198,12 +200,20 @@ class AjaxView(View):
         comment = models.Comment(content=content, author=self.request.user)
         targe = False
         if problem:
+            obj = problem
             comment.problem = problem
             target = 'div#comments-problem-' + str(problem.id)
         if idea:
+            obj = idea
             comment.idea = idea
             target = 'div#comments-idea-' + str(idea.id)
         comment.save()
+
+        # Send an action and follow the problem
+
+        action.send(self.request.user, verb='commented', action_object=obj, target=_problem)
+        follow(self.request.user, _problem) if self.request.user not in followers(_problem) else None
+
         comment.perm_edit = permissions.problem(obj=_problem, user=self.request.user, mode='manage')
         t = loader.get_template('comment.html')
         c = Context({'comment': comment})
@@ -290,7 +300,7 @@ class AjaxView(View):
         alternative.save()
         alternative.fill_data()
         response = {
-            'html': loader.render_to_string('problem_alternative.html', {
+            'html': loader.render_to_string('alternative.html', {
                 'alternative': alternative,
                 'problem_perm_manage': True
             })

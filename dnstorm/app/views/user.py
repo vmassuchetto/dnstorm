@@ -13,7 +13,7 @@ from django.core.paginator import Paginator
 from django.core.exceptions import PermissionDenied
 
 from dnstorm.app.forms import UserAdminForm
-from dnstorm.app.models import ActivityManager, Problem, Idea, Comment, Option
+from dnstorm.app.models import Problem, Idea, Comment, Option
 
 class UserView(TemplateView):
     template_name = 'user.html'
@@ -22,7 +22,6 @@ class UserView(TemplateView):
         context = super(UserView, self).get_context_data(**kwargs)
         context['profile'] = get_object_or_404(User, username=kwargs['username'], is_active=True)
         context['breadcrumbs'] = self.get_breadcrumbs(username=context['username'])
-        context['activities'] = ActivityManager().get_objects(user=context['profile'].id, limit=20)
         context['problem_count'] = Problem.objects.filter(author=context['profile']).count()
         context['idea_count'] = Idea.objects.filter(author=context['profile']).count()
         context['comment_count'] = Comment.objects.filter(author=context['profile']).count()

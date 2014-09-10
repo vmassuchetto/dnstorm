@@ -3,7 +3,7 @@
  <div class="row collapse comment{% if comment.deleted_by %} deleted{% endif %}" id="comment-{{ comment.id }}">
     <div class="columns large-12">
         <div class="comment-content">
-            {{ comment.content }} &mdash; <a class="comment-author" href="{% url "user" comment.author %}">{{ comment.author.username }}</a> <a class="comment-date" href="#comment-{{ comment.id }}">{{ comment.created|naturaltime }}</a>{% if comment.perms_edit %} <a class="comment-delete-toggle{% if comment.deleted_by %} comment-undelete{% else %} comment-delete{% endif %}" data-comment="{{ comment.id }}">x</a>{% endif %}
+            {{ comment.content }} &mdash; <a class="comment-author" href="{% url "user" comment.author %}">{{ comment.author.username }}</a> <a class="comment-date" href="#comment-{{ comment.id }}">{{ comment.created|naturaltime }}</a>{% if comment.perm_manage %} <a class="comment-delete-toggle{% if comment.deleted_by %} comment-undelete{% else %} comment-delete{% endif %}" data-comment="{{ comment.id }}">x</a>{% endif %}
         </div>
     </div>
 </div>

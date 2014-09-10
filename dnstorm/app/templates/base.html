@@ -1,4 +1,4 @@
-{% load staticfiles i18n %}<!DOCTYPE html>
+{% load staticfiles i18n activity_tags avatar_tags %}<!DOCTYPE html>
 <!--[if IE 8]><html class="no-js lt-ie9" lang="en"><![endif]-->
 <!--[if gt IE 8]><!--><html class="no-js" lang="en"><!--<![endif]-->
 
@@ -55,12 +55,12 @@
             <li class="divider"></li>
             {% if user.is_authenticated %}
                 <li class="divider"></li>
-                <li class="notification-icon highlighted"><a href="javascript:void(0);"><i class="fi-lightbulb"></i><span class="count">12</span></a></li>
+                <li class="notification notification-icon"><a href="javascript:void(0);"><i class="fi-lightbulb"></i></a></li>
                 <li class="divider"></li>
                 <li><a href="{% url "user" user %}">{{ user.get_full_name|default:user.username }}</a></li>
                 <li class="divider"></li>
-                {% if user.is_superuser or user.perms.dnstorm.can_change_option %}
-                    <li><a href="{% url "admin_options" %}"><i class="foundicon-settings"></i></a></li>
+                {% if user.is_superuser %}
+                    <li><a href="{% url "admin_options" %}"><i class="fi-widget"></i></a></li>
                     <li class="divider"></li>
                 {% endif %}
                 <li><a href="{{ logout_url }}">{% trans 'Logout' %}</a></li>
@@ -95,7 +95,42 @@
 
 <div class="bottom-1em"></div>
 
-<div class="row show-for-medium-up">
+<div class="row show-for-medium-up" id="header-wrap">
+
+    {# Activity stream #}
+
+    {% if user.is_authenticated %}
+    <div id="activity" class="hide">
+        <div id="activity-box">
+        {% activity_stream 'user' user %}
+        {% if stream %}
+            {% for action in stream %}
+                <div class="row collapse">
+                    <div class="columns large-12">
+                        <div class="left avatar">{% avatar action.actor 32 %}</div>
+                        <div class="info">{% display_action action %}</div>
+                    </div>
+                    <hr/>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="row collapse">
+                <div class="columns large-12">
+                    <p class="button expand secondary" disabled="disabled">{% trans "No activity so far." %}</p>
+                </div>
+            </div>
+        {% endif %}
+        </div>
+        {% if stream %}
+            <div class="row">
+                <div class="columns large-12">
+                    <a class="button small radius expand no-margin-bottom" href="{% url "activity" %}">{% trans "View all activities" %}</a>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+    {% endif %}
+
     <div class="columns large-4 medium-4 text-left">
         <h1><a id="logo" href="{% url "home" %}">DNStorm</a></h1>
     </div>

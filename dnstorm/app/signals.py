@@ -5,6 +5,7 @@ from django.contrib.auth import login, authenticate
 
 from registration.signals import user_activated
 from notification import models as notification
+from actstream.actions import follow
 
 from dnstorm.app.models import Invitation
 
@@ -15,6 +16,7 @@ def register_invitations(sender, user, request, **kwarg):
     """
     for i in Invitation.objects.filter(email=user.email):
         i.problem.contributor.add(user)
+        follow(user, i.problem)
         notification.send([user], 'contributor', { 'from_user': i.problem.author, 'problem': i.problem })
         i.delete()
 

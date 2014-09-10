@@ -10,8 +10,6 @@ from django.views.decorators.csrf import csrf_protect
 from django.contrib import messages
 from django.utils.safestring import mark_safe
 
-import reversion
-
 from dnstorm.app import models
 from dnstorm.app import forms
 
@@ -22,7 +20,6 @@ class CriteriaListView(TemplateView):
     def get_context_data(self, *args, **kwargs):
         context = super(CriteriaListView, self).get_context_data(**kwargs)
         context['breadcrumbs'] = self.get_breadcrumbs()
-        context['activities'] = models.ActivityManager().get_objects(limit=4)
         context['sidebar'] = True
         criterias = Paginator(models.Criteria.objects.all().order_by('name'), 25)
         page = self.request.GET['page'] if 'page' in self.request.GET else 1
@@ -53,14 +50,12 @@ class CriteriaView(TemplateView):
             })
 
         context['breadcrumbs'] = self.get_breadcrumbs()
-        context['activities'] = models.ActivityManager().get_objects(limit=4)
         context['sidebar'] = True
         context['title'] = self.criteria.name
         context['criteria'] = self.criteria
         problems = Paginator(models.Problem.objects.filter(criteria=self.criteria).order_by('-created'), 25)
         page = self.request.GET['page'] if 'page' in self.request.GET else 1
         context['problems'] = problems.page(page)
-        context['activities'] = models.ActivityManager().get_objects(limit=4)
         return context
 
     def get_breadcrumbs(self):
@@ -87,7 +82,6 @@ class CriteriaCreateView(CreateView):
             { 'title': _('Criterias'), 'url': reverse('criteria_list') },
             { 'title': _('Create'), 'classes': 'current' } ]
 
-    @reversion.create_revision()
     def form_valid(self, form):
         self.object = form.save()
         messages.success(self.request, _('Criteria created.'))
@@ -114,7 +108,6 @@ class CriteriaUpdateView(UpdateView):
             { 'title': self.object.name, 'url': self.object.get_absolute_url() },
             { 'title': _('Edit'), 'classes': 'current' } ]
 
-    @reversion.create_revision()
     def form_valid(self, form):
         self.object.save()
         messages.success(self.request, _('Criteria saved.'))

@@ -170,6 +170,13 @@ form {
 
 // Top bar
 
+.top-bar {
+    .fi-widget {
+        font-size: 24px;
+    }
+}
+
+
 .contain-to-grid .top-bar {
     overflow: hidden;
 }
@@ -313,47 +320,6 @@ table.cke_dialog {
 p.pagination {
     color: $light-black;
     margin-top: 1em;
-}
-
-// Notifications
-
-.notification-icon {
-    a {
-        position: relative;
-        .fi-lightbulb {
-            font-size: 28px;
-            color: #FCDD09;
-        }
-        .count {
-            display: none;
-        }
-    }
-}
-
-.notification-icon.highlighted {
-    a {
-        &:hover {
-            background-color: #FCDD09 !important;
-            .fi-lightbulb {
-                color: #000000 !important;
-            }
-        }
-        .count {
-            display: block;
-            background-color: #FCDD09;
-            border-radius: 5px;
-            padding: 2px 4px;
-            color: #000000;
-            font-size: 10px;
-            font-weight: bold;
-            letter-spacing: -1px;
-            position: absolute;
-            right: 6px;
-            bottom: 12px;
-            line-height: 1;
-            border: 1px solid #000000;
-        }
-    }
 }
 
 // Problem
@@ -795,12 +761,14 @@ a.problem-action {
 
 // jScrollPane
 
-.jspVerticalBar,
+.jspVerticalBar {
+    margin-left: 1em;
+}
 .jspHorizontalBar {
     margin-top: 1em;
-    .jspDrag {
-        background-color: #A0A0A0;
-    }
+}
+.jspDrag {
+    background-color: #A0A0A0;
 }
 
 // Criteria modal
@@ -927,6 +895,66 @@ a.problem-action {
 
 .table-help {
     display: none;
+}
+
+#header-wrap {
+    position: relative;
+}
+
+// Notifications
+
+.notification-icon {
+    a {
+        position: relative;
+        .fi-lightbulb {
+            font-size: 28px;
+            color: #FCDD09;
+        }
+    }
+}
+
+.notification-icon.highlighted {
+    a {
+        background-color: #FCDD09 !important;
+        .fi-lightbulb {
+            color: #000000 !important;
+        }
+    }
+}
+
+// Activity
+
+#activity {
+    position: absolute;
+    top: -35px;
+    right: 10px;
+    z-index: 200;
+    width: 35%;
+    background: white;
+    padding: 1em;
+    border: 1px solid $grey;
+    border-radius: 3px;
+    #activity-box {
+        overflow: hidden;
+        height: 250px;
+        font-size: emCalc(12px);
+        line-height: 1.1;
+        margin: 0.5em 0;
+        hr {
+            margin: 0.5em 0;
+        }
+        .avatar,
+        .info {
+            margin-bottom: 0.5em;
+        }
+        .avatar {
+            margin-right: 5px;
+        }
+        .info {
+            display: block;
+            overflow: hidden;
+        }
+    }
 }
 
 .activity-item {

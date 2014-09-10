@@ -105,21 +105,6 @@ $(document).on('click', '.close-reveal-modal-button', function(){
     $(this).parents('.reveal-modal').foundation('reveal', 'close');
 });
 
-// Revision rendering in ProblemRevisionView
-
-$('.revisions').ready(function(){
-    var raw = $('.raw');
-    for (i=0; i < raw.length - 1; i++) {
-        h1 = $(raw[i+1]).html();
-        h2 = $(raw[i]).html();
-        if (h1 == h2)
-            continue;
-        d = diff(h1, h2);
-        $(raw[i]).next('.diff').html(d);
-    }
-    $(raw[raw.length-1]).next('.diff').html($(raw[raw.length-1]).html());
-});
-
 // Show problem table on click
 
 $(document).on('click', '.show-problem-table', function(){
@@ -147,6 +132,25 @@ $('.select-on-click').click(function(){
 
 $('.problem-idea-form-button').click(function(){
     scrollTo('.problem-idea-form');
+});
+
+/**
+ * Notifications
+ */
+
+$(document).on('click', '.notification-icon', function(e){
+    activity = $('#activity');
+    activity_button = $('#activity .button');
+    activity_box = $('#activity-box');
+    if (activity.is(':visible')) {
+        $(this).removeClass('highlighted');
+        activity.slideUp(200);
+    } else {
+        $(this).addClass('highlighted');
+        activity.slideDown(200);
+        activity_box.delay(200).jScrollPane();
+        activity_button.delay(200).focus();
+    }
 });
 
 /**

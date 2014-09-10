@@ -15,11 +15,11 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import login
 
-from dnstorm.app import permissions
-from dnstorm.app.models import Option, Problem, Idea, Comment, ActivityManager
-from dnstorm.app.forms import AdminOptionsForm
-
 from haystack.views import SearchView as HaystackSearchView
+
+from dnstorm.app import permissions
+from dnstorm.app.models import Option, Problem, Idea, Comment
+from dnstorm.app.forms import AdminOptionsForm
 
 class HomeView(TemplateView):
     """
@@ -31,8 +31,10 @@ class HomeView(TemplateView):
         context = super(HomeView, self).get_context_data(**kwargs)
         if self.request.user.is_authenticated():
             q_problems = Q(public=True) | Q(author=self.request.user.id) | Q(contributor=self.request.user.id)
+            user = self.request.user
         else:
             q_problems = Q(public=True)
+            user = None
         problems = Paginator(Problem.objects.filter(q_problems).distinct().order_by('-last_activity'), 25)
         page = self.request.GET['page'] if 'page' in self.request.GET else 1
         context['breadcrumbs'] = self.get_breadcrumbs()
@@ -94,8 +96,8 @@ class ActivityView(TemplateView):
         context = super(ActivityView, self).get_context_data(**kwargs)
         kwargs['page'] = int(self.request.GET['page']) if 'page' in self.request.GET else 1
         context['breadcrumbs'] = self.get_breadcrumbs()
-        context['activities'] = ActivityManager().get_objects(**kwargs)
-        context['pagination'] = ActivityManager().get_pagination(**kwargs)
+        #context['activities'] = ActivityManager().get_objects(**kwargs)
+        #context['pagination'] = ActivityManager().get_pagination(**kwargs)
         return context
 
     def get_breadcrumbs(self):
@@ -111,7 +113,7 @@ class SearchView(HaystackSearchView):
     def extra_context(self):
         return {
             'breadcrumbs': self.get_breadcrumbs(),
-            'activities': ActivityManager().get_objects(limit=4)
+            #'activities': ActivityManager().get_objects(limit=4)
         }
 
     def get_breadcrumbs(self):
