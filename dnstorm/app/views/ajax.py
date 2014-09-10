@@ -13,6 +13,7 @@ from crispy_forms.utils import render_crispy_form
 from notification import models as notification
 from actstream import action
 from actstream.models import followers
+from actstream.actions import follow
 
 from dnstorm.app import models
 from dnstorm.app.forms import IdeaForm, CriteriaForm, CommentForm
@@ -198,7 +199,7 @@ class AjaxView(View):
             raise Http404
 
         comment = models.Comment(content=content, author=self.request.user)
-        targe = False
+        target = False
         if problem:
             obj = problem
             comment.problem = problem
