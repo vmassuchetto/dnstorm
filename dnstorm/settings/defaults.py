@@ -59,11 +59,9 @@ INSTALLED_APPS = (
     'crispy_forms',
     'crispy_forms_foundation',
     'djangobower',
-    #'django_extensions',
     'haystack',
     'notification',
     'registration',
-    'reversion',
     'south'
 
 )
