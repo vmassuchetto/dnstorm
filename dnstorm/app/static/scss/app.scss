@@ -139,6 +139,9 @@ form {
         font-size: 1.2em;
         font-weight: bold;
     }
+    span.helptext {
+        display: none;
+    }
 }
 
 // Error panel
@@ -171,6 +174,7 @@ form {
 // Top bar
 
 .top-bar {
+    .fi-megaphone,
     .fi-widget {
         font-size: 24px;
     }
@@ -548,7 +552,7 @@ ul.ui-autocomplete .invitation,
 #id_contributor_on_deck {
     > div {
         float: left;
-        width: 25%;
+        width: 24%;
         border: 1px solid $light-grey;
         border-radius: 3px;
         margin: 0.2em;
@@ -747,7 +751,7 @@ ul.ui-autocomplete .invitation,
 a.problem-action {
     color: $light-black;
     font-size: 0.9em;
-    padding: 0.1em 0.2em;
+    padding: 0.1em 0.4em;
     text-transform: lowercase;
     &:hover {
         background: $light-black;

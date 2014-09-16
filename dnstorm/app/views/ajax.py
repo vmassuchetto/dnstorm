@@ -1,19 +1,21 @@
+import random
 import re
 
 from django.contrib.auth.models import User
 from django.http import Http404, HttpResponse, HttpResponseForbidden
 from django.db.models import Sum
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
+from django.core.urlresolvers import reverse
 from django.views.generic import View
 from django.utils.translation import ugettext_lazy as _
 from django.shortcuts import get_object_or_404
 from django.template import loader, Context
 
 from crispy_forms.utils import render_crispy_form
-from notification import models as notification
 from actstream import action
 from actstream.models import followers
 from actstream.actions import follow
+from notification import models as notification
 
 from dnstorm.app import models
 from dnstorm.app.forms import IdeaForm, CriteriaForm, CommentForm
@@ -78,6 +80,11 @@ class AjaxView(View):
         Ajax POST requests router.
         """
 
+        # Congtributors and invitations management
+
+        if self.request.POST.get('contributor', None):
+            return self.contributor()
+
         # New idea on problems
 
         if self.request.POST.get('new_idea', None):
@@ -113,9 +120,43 @@ class AjaxView(View):
                 return True
         return False
 
+    def contributor(self):
+        """
+        Manage problem contributors.
+        """
+        problem = get_object_or_404(models.Problem, id=self.request.POST['problem'])
+        if not permissions.problem(obj=problem, user=self.request.user, mode='manage'):
+            raise PermissionDenied
+
+        response = dict()
+
+        # Invitations
+
+        for email in self.request.POST.getlist('invitation'):
+            if User.objects.filter(email=email).exists() or \
+                models.Invitation.objects.filter(email=email).exists():
+                continue
+            hash = '%032x' % random.getrandbits(128)
+            while models.Invitation.objects.filter(hash=hash).exists():
+                hash = '%032x' % random.getrandbits(128)
+            i = models.Invitation.objects.create(problem=problem, email=email, hash=hash)
+            _user = User(id=0, username=email, email=email)
+            url = "%s?hash=%s" % (reverse('registration_register'), hash)
+            notification.send([_user], 'invitation', { 'problem': problem, 'url': url })
+            response.setdefault('invitation', list()).append(email)
+
+        # Contributors
+
+        for user in User.objects.filter(id__in=[i for i in self.request.POST.get('contributor').split('|') if i and int(i) > 0]):
+            problem.contributor.add(user)
+            follow(self.request.user, problem) if user not in followers(problem) else None
+            response.setdefault('contributor', list()).append(user.username)
+
+        return HttpResponse(json.dumps(response), content_type='application/json')
+
     def new_idea(self):
         """
-        Create a new idea.
+        Create a new problem idea.
         """
         if not self.request.user.is_authenticated():
             raise Http404
@@ -142,7 +183,7 @@ class AjaxView(View):
 
     def new_criteria(self):
         """
-        Create a new criteria.
+        Create a new problem criteria.
         """
         if not self.request.user.is_authenticated():
             raise Http404
@@ -181,7 +222,7 @@ class AjaxView(View):
 
     def new_comment(self):
         """
-        Create a new comment.
+        Create a new comment on a problem or idea.
         """
         problem = self.request.POST.get('problem', None)
         if problem:
@@ -337,7 +378,7 @@ class AjaxView(View):
             raise PermissionDenied
         fake_user = User(id=1, username='any', email=invitation.email)
         from_user = invitation.problem.author.get_full_name() if invitation.problem.author.get_full_name() else invitation.problem.author.username
-        notification.send([fake_user], 'invitation', { 'from_user': from_user, 'problem': invitation.problem })
+        #notification.send([fake_user], 'invitation', { 'from_user': from_user, 'problem': invitation.problem })
         return HttpResponse(1)
 
     def delete_invitation(self):

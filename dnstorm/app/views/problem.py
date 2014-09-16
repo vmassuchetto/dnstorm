@@ -27,7 +27,6 @@ import diff_match_patch as _dmp
 from actstream import action
 from actstream.actions import follow, unfollow
 from actstream.models import followers
-from notification import models as notification
 
 from dnstorm import settings
 from dnstorm.app import permissions
@@ -66,61 +65,7 @@ def problem_save(obj, form):
     for c in models.Criteria.objects.filter(id__in=criterias):
         obj.object.criteria.add(c)
 
-    # Invitations
-
-    from_user = obj.object.author.get_full_name()
-    emails = [u.email for u in obj.object.contributor.all()]
-    to_add = list()
-
-    for email in sorted(set(obj.request.POST.getlist('invitation', []))):
-
-        # User already invited
-        if models.Invitation.objects.filter(problem=obj.object.id, email=email).exists():
-            continue
-
-        # User is already a contributor
-        if email in emails:
-            continue
-
-        # Save user to add as contributor if exists
-        user = get_object_or_none(User, email=email)
-        if user:
-            to_add.append(user)
-            continue
-
-        models.Invitation(problem=obj.object, email=email).save()
-        fake_user = User(id=1, username=i, email=email)
-        notification.send([fake_user], 'invitation', { 'from_user': from_user, 'problem': obj.object })
-
-    # Update contributors
-
-    new_contributors = User.objects.filter(id__in=[i for i in obj.request.POST.get('contributor', '').split('|') if i.isdigit()])
-    if not new_contributors:
-        obj.object.contributor.through.objects.all().delete()
-    current_contributors = obj.object.contributor.all()
-
-    c = [c.id for c in list(set(current_contributors) - set(new_contributors))]
-    obj.object.contributor.through.objects.filter(id__in=c).delete()
-
-    c = list(set(new_contributors) - set(current_contributors))
-    for u in c:
-        obj.object.contributor.add(u)
-        notification.send([u], 'contributor', { 'from_user': from_user, 'problem': obj.object })
-
-    for user in to_add:
-        obj.object.contributor.add(user)
-        follow(user, obj.object)
-
     obj.object.save()
-
-    # Success
-
-    _c = [o for o in obj.object.contributor.all()] + [obj.object.author]
-    _f = followers(obj.object)
-    for f in _f:
-        unfollow(f, obj.object) if f not in _c else None
-    for c in _c:
-        follow(c, obj.object, actor_only=False) if c not in _f else None
 
     # Send an action
 
@@ -224,6 +169,7 @@ class ProblemView(FormView):
         context['problem_perm_contribute'] = permissions.problem(obj=self.problem, user=user, mode='contribute')
         context['comments'] = models.Comment.objects.filter(problem=self.problem)
         context['comment_form'] = forms.CommentForm()
+        context['contributor_form'] = forms.ContributorForm(problem=self.problem.id)
         context['criterias'] = models.Criteria.objects.filter(problem=self.problem)
         context['all_ideas'] = models.Idea.objects.filter(problem=self.problem)
 

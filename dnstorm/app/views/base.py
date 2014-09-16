@@ -1,4 +1,3 @@
-from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserChangeForm
 from django.db.models import Q
 from django.views.generic import DetailView, RedirectView
@@ -16,9 +15,10 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import login
 
 from haystack.views import SearchView as HaystackSearchView
+from registration.views import RegistrationView
 
 from dnstorm.app import permissions
-from dnstorm.app.models import Option, Problem, Idea, Comment
+from dnstorm.app.models import User, Option, Problem, Idea, Comment
 from dnstorm.app.forms import AdminOptionsForm
 
 class HomeView(TemplateView):

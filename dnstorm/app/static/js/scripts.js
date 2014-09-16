@@ -243,26 +243,29 @@ $('#criteria-form input[type="submit"]').click(function(e){
 });
 
 /**
- * Problem form: collaborators
+ * Problem: contributor management
  */
 
-if ($('.problem-edit').length > 0) {
-$(document).ready(function(){
-    var p = $('.problem-form #div_id_public input[type="checkbox"]');
-    var c = $('.problem-form #div_id_contributor, .problem-form #pending-invitations');
-    if (p.prop('checked'))
-        c.hide();
-    p.change(function(){
-        if (p.prop('checked')) {
-            p.attr('checked', '');
-            c.slideUp(300);
-        } else {
-            p.attr('checked', 'checked');
-            c.slideDown(300);
+$(document).on('submit', '#contributor-form', function(e){
+    e.preventDefault();
+    if ($(this).attr('disabled') == 'disabled')
+        return false;
+    var form = $(this);
+    var button = $(this).find('input[type="submit"]');
+    //button.attr('disabled', true);
+    button.addClass('loading');
+    $.ajax({
+        url: '/ajax/',
+        type: 'POST',
+        data: form.serialize() + '&action=contributor',
+        complete: function(xhr, data) {
+            button.removeClass('loading');
+            if (data == 'success') {
+                button.text('OK');
+            }
         }
     });
 });
-}
 
 /**
  * Problem form: resend pending invitations

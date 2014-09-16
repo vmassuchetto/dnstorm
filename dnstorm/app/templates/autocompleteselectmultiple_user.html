@@ -2,7 +2,7 @@
 <div class="row collapse{% if user.invitation %} user-invitation{% endif %}">
     <div class="columns large-12">
         <input class="no-margin-bottom" type="text" name="{{name}}_text" id="{{html_id}}_text" value="" autocomplete="off"  {{ extra_attrs }} />
-        <p class="help">{% trans "Select users with permission to contribute to this problem. Type e-mails to send invitations to non-registered users." %}</p>
+        <p class="help">{% trans "Type to search users and select them to add as contributors. Enter an e-mail address to invite invitation a non-registered user." %}</p>
     </div>
 </div>
 <input type="hidden" name="{{ name }}" id="{{ html_id }}" value="{{ current_ids }}" data-ajax-select="autocompleteselectmultiple" data-plugin-options="{{ data_plugin_options }}" />

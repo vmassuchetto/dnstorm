@@ -1,6 +1,0 @@
-{% load i18n %}
-
-{% blocktrans %}The problem you were participating in {{ site_name }} was updated by the manager.
-
-Check the problem here:
-{{ problem_url }}{% endblocktrans %}

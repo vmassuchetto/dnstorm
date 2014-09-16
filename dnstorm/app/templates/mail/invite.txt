@@ -1,9 +1,0 @@
-{% load i18n %}
-
-{% blocktrans %}{{ user }} is inviting you to participate in a problem discussion in {{ site_name }}.
-
-Click here to signup in {{ site_name }}:
-{{ signup_url }}
-
-Check the problem and start contributing here:
-{{ problem_url }}{% endblocktrans %}

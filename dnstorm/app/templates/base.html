@@ -59,6 +59,7 @@
                 <li class="divider"></li>
                 <li><a href="{% url "user" user %}">{{ user.get_full_name|default:user.username }}</a></li>
                 <li class="divider"></li>
+                {% block topicon %}{% endblock %}
                 {% if user.is_superuser %}
                     <li><a href="{% url "admin_options" %}"><i class="fi-widget"></i></a></li>
                     <li class="divider"></li>

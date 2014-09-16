@@ -14,11 +14,10 @@ from dnstorm.settings import LANGUAGES
 from dnstorm.app import models
 from dnstorm.app.lib.get import get_object_or_none
 
+from ajax_select.fields import AutoCompleteSelectMultipleField
 from crispy_forms.helper import FormHelper
 from crispy_forms_foundation.layout import *
-
-from ajax_select.fields import AutoCompleteSelectMultipleField
-from ajax_select import make_ajax_field
+from registration.forms import RegistrationFormUniqueEmail
 
 class AdminOptionsForm(forms.Form):
     site_title = forms.CharField(label=_('Site title'))
@@ -73,7 +72,6 @@ class UserAdminForm(forms.ModelForm):
 
 class ProblemForm(forms.ModelForm):
     criteria = AutoCompleteSelectMultipleField('criteria', required=True)
-    contributor = AutoCompleteSelectMultipleField('user', required=False)
 
     class Meta:
         model = models.Problem
@@ -83,19 +81,6 @@ class ProblemForm(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.form_action = '.'
         self.helper.form_class = 'problem-form'
-
-        invitations = list()
-        if self.instance:
-            users = list()
-            for i in self.instance.invitation_set.all():
-                u = User(username=i.email, email=i.email)
-                u.invitation = i.id
-                invitations.append(render_to_string('user_lookup_display.html', {'user': u}))
-
-        invitations_html = ''
-        if len(invitations) > 0:
-            invitations_html = '<div id="pending-invitations"><h6>%s</h6>%s</div>' % (_('Pending invitations'), ''.join(invitations))
-
         self.helper.layout = Layout(
             Fieldset(_('Problem description'),
                 'title',
@@ -106,8 +91,6 @@ class ProblemForm(forms.ModelForm):
             ),
             Fieldset(_('Permissions'),
                 'public',
-                'contributor',
-                Row(Column(HTML(invitations_html)))
             ),
             ButtonHolder(
                 Submit('submit', _('Save'), css_class='radius'),
@@ -117,6 +100,27 @@ class ProblemForm(forms.ModelForm):
 
         if self.instance.id:
             self.fields['criteria'].initial = [c.id for c in self.instance.criteria.all()]
+
+class ContributorForm(forms.Form):
+    contributor = AutoCompleteSelectMultipleField('user', required=False)
+    problem = forms.CharField(widget=forms.HiddenInput())
+
+    def __init__(self, *args, **kwargs):
+        if not dict(kwargs).setdefault('problem', None):
+            raise Exception('Wrong kwargs for ContributorForm')
+        problem = kwargs['problem']
+        kwargs.pop('problem')
+        self.helper = FormHelper()
+        self.helper.form_action = '.'
+        self.helper.layout = Layout(
+            'contributor',
+            'problem',
+            Row(Column(
+                Submit('submit', _('Save'), css_class='right radius'), css_class='large-12 top-1em',
+            )),
+        )
+        super(ContributorForm, self).__init__(*args, **kwargs)
+        self.fields['problem'].initial = problem
 
 class CriteriaForm(forms.ModelForm):
     description = forms.CharField(widget=forms.Textarea(attrs={'id': 'criteria_description'}))

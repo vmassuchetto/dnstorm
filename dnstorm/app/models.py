@@ -1,9 +1,11 @@
 import re
 from datetime import datetime
 
+from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.db import models, connection
+from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 from django.template.loader import render_to_string
@@ -157,7 +159,7 @@ class Problem(models.Model):
     criteria = models.ManyToManyField(Criteria, verbose_name=_('Criterias'), editable=False)
     author = models.ForeignKey(User, related_name='author', editable=False)
     contributor = models.ManyToManyField(User, related_name='contributor', verbose_name=_('Contributors'), blank=True, null=True)
-    public = models.BooleanField(verbose_name=_('Public'), help_text=_('Anyone is able to view and contribute to this problem.'), default=True)
+    public = models.BooleanField(verbose_name=_('Public'), help_text=_('Anyone is able to view and contribute to this problem. If not public, you\'ll need to set the contributors on the problem page.'), default=True)
     created = models.DateTimeField(auto_now_add=True, editable=False, default='2000-01-01')
     updated = models.DateTimeField(auto_now=True, editable=False, default='2000-01-01')
     last_activity = models.DateTimeField(auto_now=True, editable=False, default='2000-01-01')
@@ -186,14 +188,13 @@ class Invitation(models.Model):
 
     problem = models.ForeignKey(Problem)
     email = models.EmailField()
+    hash = models.CharField(max_length=128)
 
     class Meta:
         db_table = settings.DNSTORM['table_prefix'] + '_invitation'
 
     def type(self):
         return _('invitation')
-
-#registry.register(Invitation)
 
 class Idea(models.Model):
     """
@@ -289,8 +290,6 @@ class Comment(models.Model):
     def type(self):
         return _('comment')
 
-#registry.register(Comment)
-
 class Alternative(models.Model):
     """
     Alternatives are the strategy table rows where ideas can be allocated.
@@ -320,8 +319,6 @@ class Alternative(models.Model):
             c.total_stars = c.total_stars if c.total_stars else 0
             c.star_ratio = c.total_stars * 100 / self.total_ideas / 5 if c.total_stars > 0 and self.total_ideas > 0 else 0
             self.criteria.append(c)
-
-#registry.register(Alternative)
 
 class Vote(models.Model):
     """

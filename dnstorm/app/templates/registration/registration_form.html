@@ -5,13 +5,17 @@
 
 {% block content %}
     <div class="row">
-    <div class="large-4 large-offset-4 columns content">
-        <h4>{% trans "Create new user" %}</h4>
-        <form action="." method="POST">
-            {{ form }}
-            {% csrf_token %}
-            <input type="submit" class="button expand success" value="{% trans "Submit" %}" />
-        </form>
+    <div class="large-6 large-offset-3 columns content">
+        {% if user.is_authenticated %}
+            <span class="panel radius secondary text-center">{% trans "You are already logged in." %}</span>
+        {% else %}
+            <h4>{% trans "Create new user" %}</h4>
+            <form action="." method="POST">
+                {{ form }}
+                {% csrf_token %}
+                <input type="submit" class="button expand success" value="{% trans "Submit" %}" />
+            </form>
+        {% endif %}
     </div>
     </div>
 {% endblock %}

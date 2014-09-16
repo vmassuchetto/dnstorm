@@ -3,7 +3,17 @@
 
 {% block bodyclass %}problem{% endblock %}
 
-{% block head %}{{ form.media }}{% endblock %}
+{% block head %}
+    {{ form.media }}
+    {% if not problem.public %}
+        {{ contributor_form.media }}
+    {% endif %}
+{% endblock %}
+
+{% block topicon %}
+    <li><a href="javascript:void(0);"><i class="fi-megaphone"></i></a></li>
+    <li class="divider"></li>
+{% endblock %}
 
 {% block modals %}
     {% if problem_perm_manage %}
@@ -51,6 +61,21 @@
                 </div>
             </div>
         </div>
+
+        {# Contributors management #}
+
+        {% if not problem.public %}
+
+            <div id="contributors-modal" class="reveal-modal large" data-reveal>
+                <a class="close-reveal-modal">&#215;</a>
+                <h3>{% trans "Select contributors" %}</h3>
+                <hr/>
+                <form id="contributor-form">
+                    {% crispy contributor_form %}
+                </form>
+            </div>
+
+        {% endif %}
 
     {% endif %}
 
@@ -119,11 +144,12 @@
                 <div class="row bottom-1em">
                 <div class="columns large-12">
                 {% if problem_perm_contribute %}
-                    <a class="problem-action action-comment" data-problem="{{ problem.id }}" href="javascript:void(0);">{% trans "Comment" context "verb" %}</a>
+                    <a class="problem-action action-comment" data-problem="{{ problem.id }}" href="javascript:void(0);"><i class="fi-comments"></i>&nbsp;{% trans "Comment" context "verb" %}</a>
                 {% endif %}
                 {% if problem_perm_manage %}
-                    <a class="problem-action" href="{% url "problem_edit" problem.slug %}">{% trans "Edit" %}</a>
-                    <a class="problem-action problem-delete" href="{% url "problem_delete" problem.slug %}">{% trans "Delete" %}</a>
+                    <a class="problem-action" href="{% url "problem_edit" problem.slug %}"><i class="fi-pencil"></i>&nbsp;{% trans "Edit" %}</a>
+                    <a class="problem-action problem-delete" href="{% url "problem_delete" problem.slug %}"><i class="fi-x"></i>&nbsp;{% trans "Delete" %}</a>
+                    <a class="problem-action problem-manage-contributors" data-reveal-id="contributors-modal" href="javascript:void(0);"><i class="fi-torso"></i>&nbsp;{% trans "Manage contributors" %}</a>
                 {% endif %}
                 </div>
                 </div>
@@ -155,13 +181,14 @@
 
         {% if not user.is_authenticated %}
 
-            <a class="large button expand secondary radius" href="{{ login_url }}">{% trans "Log in and submit your idea" %}</a>
+            <a class="button expand secondary radius" href="{{ login_url }}">{% trans "Log in and submit your idea" %}</a>
 
         {% else %}{% if problem_perm_contribute %}
 
-            <a class="problem-idea-form-button button expand radius{% if form.errors %} hide{% endif %}"><i class="fi-lightbulb"></i> {% trans "Submit your idea to this problem" %}</a>
+            <a class="problem-idea-form-button button expand radius{% if form.errors %} hide{% endif %}"><i class="fi-lightbulb"></i> {% trans "Submit idea" %}</a>
 
         {% endif %}{% endif %}
+
 
         {# Ideas list #}
 

@@ -1,0 +1,6 @@
+{% load i18n %}
+
+{% blocktrans with problem_author=problem.author.get_full_name, problem_title=problem.title %}You were invited by {{ problem_author }} to discuss and collaborate on the problem: {{ problem_title }}.
+
+Visit this link to accept the invitation and register:
+{{ url}}{% endblocktrans %}

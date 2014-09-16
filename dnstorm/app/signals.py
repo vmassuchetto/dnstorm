@@ -3,11 +3,20 @@ from django.db.models import signals
 from django.utils.translation import ugettext_noop as _
 from django.contrib.auth import login, authenticate
 
-from registration.signals import user_activated
+from registration.signals import user_activated, user_registered
 from notification import models as notification
 from actstream.actions import follow
 
 from dnstorm.app.models import Invitation
+
+def register_user(sender, user, request, **kwargs):
+    """
+    Creates the user with the custom user model.
+    """
+    user = models.User(user = user)
+    user.save()
+
+user_registered.connect(register_user)
 
 def register_invitations(sender, user, request, **kwarg):
     """
@@ -37,11 +46,7 @@ def create_notice_types(app, created_models, verbosity, **kwargs):
     """
     notification.create_notice_type(
         'invitation',
-        _('invitation received for a problem'),
+        _('Invitation received'),
         _('you have received an invitation to collaborate in problem'))
-    notification.create_notice_type(
-        'contributor',
-        _('you were added as a contributor in a problem'),
-        _('you have been added as a contributor of a problem'))
 
 signals.post_syncdb.connect(create_notice_types, sender=notification)

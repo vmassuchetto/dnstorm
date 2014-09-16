@@ -6,8 +6,6 @@ from dnstorm.app.views import *
 
 from ajax_select import urls as ajax_select_urls
 from haystack.views import search_view_factory
-from registration.forms import RegistrationFormUniqueEmail
-from registration.backends.default.views import RegistrationView
 
 js_info_dict = {
     'packages': ('app',),
@@ -59,7 +57,6 @@ urlpatterns = patterns('',
     ('^activity/', include('actstream.urls')),
     (r'^search/', search_view_factory(view_class=base.SearchView), {}, 'search'),
     (r'^avatar/', include('avatar.urls')),
-    url(r'^accounts/register/$', RegistrationView.as_view(form_class=RegistrationFormUniqueEmail), name='registration_register'),
     (r'^accounts/login/$', base.LoginView.as_view(), {}, 'login_redirect'),
     url(r'^accounts/password/reset/confirm/(?P<uidb36>[0-9A-Za-z]+)-(?P<token>.+)/$', auth_views.password_reset_confirm, name='auth_password_reset_confirm'),
     (r'^accounts/', include('django.contrib.auth.urls')),
