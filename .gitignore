@@ -1,8 +1,10 @@
-# Vi
+# Vim
 *~
-*.swp
-*.swo
+*.swl
 *.swm
+*.swn
+*.swo
+*.swp
 
 # Sass
 .sass-cache/
