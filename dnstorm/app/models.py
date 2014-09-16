@@ -196,6 +196,9 @@ class Invitation(models.Model):
     def type(self):
         return _('invitation')
 
+    def get_absolute_url(self):
+        return '%s?hash=%s' % (reverse('home'), self.hash)
+
 class Idea(models.Model):
     """
     Ideas are the second main entity in the platform, as the

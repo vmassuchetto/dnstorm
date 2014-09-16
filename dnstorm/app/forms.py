@@ -106,21 +106,37 @@ class ContributorForm(forms.Form):
     problem = forms.CharField(widget=forms.HiddenInput())
 
     def __init__(self, *args, **kwargs):
+
         if not dict(kwargs).setdefault('problem', None):
             raise Exception('Wrong kwargs for ContributorForm')
-        problem = kwargs['problem']
+        problem = get_object_or_404(models.Problem, id=kwargs['problem'])
         kwargs.pop('problem')
+
+        # Invitations section HTML
+
+        invitations_html = list()
+        invitations = models.Invitation.objects.filter(problem=problem).order_by('email')
+
+        for i in invitations:
+            u = User(username=i.email, email=i.email)
+            u.invitation = i.id
+            invitations_html.append(render_to_string('user_lookup_display.html', {'user': u}))
+
+        invitations_html = '<div id="pending-invitations"><h6>%s</h6>%s</div>' % (_('Pending invitations'), ''.join(invitations_html)) if len(invitations) > 0 else ''
+
         self.helper = FormHelper()
         self.helper.form_action = '.'
         self.helper.layout = Layout(
             'contributor',
             'problem',
+            Row(Column(HTML(invitations_html))),
             Row(Column(
                 Submit('submit', _('Save'), css_class='right radius'), css_class='large-12 top-1em',
             )),
         )
         super(ContributorForm, self).__init__(*args, **kwargs)
-        self.fields['problem'].initial = problem
+        self.fields['problem'].initial = problem.id
+        self.fields['contributor'].initial = [c.id for c in problem.contributor.all()]
 
 class CriteriaForm(forms.ModelForm):
     description = forms.CharField(widget=forms.Textarea(attrs={'id': 'criteria_description'}))

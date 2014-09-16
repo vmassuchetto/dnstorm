@@ -252,7 +252,7 @@ $(document).on('submit', '#contributor-form', function(e){
         return false;
     var form = $(this);
     var button = $(this).find('input[type="submit"]');
-    //button.attr('disabled', true);
+    button.attr('disabled', true);
     button.addClass('loading');
     $.ajax({
         url: '/ajax/',
@@ -260,6 +260,7 @@ $(document).on('submit', '#contributor-form', function(e){
         data: form.serialize() + '&action=contributor',
         complete: function(xhr, data) {
             button.removeClass('loading');
+            button.attr('disabled', false);
             if (data == 'success') {
                 button.text('OK');
             }

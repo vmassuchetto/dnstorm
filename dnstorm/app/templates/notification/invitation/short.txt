@@ -1,1 +1,1 @@
-{% load i18n %}{% blocktrans %}You were invited by {{ from_user }} to discuss a problem{% endblocktrans %}
+{% load i18n %}{% blocktrans with problem_author=invitation.problem.author.get_full_name %}You were invited by {{ problem_author }} to discuss a problem{% endblocktrans %}

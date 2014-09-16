@@ -9,15 +9,6 @@ from actstream.actions import follow
 
 from dnstorm.app.models import Invitation
 
-def register_user(sender, user, request, **kwargs):
-    """
-    Creates the user with the custom user model.
-    """
-    user = models.User(user = user)
-    user.save()
-
-user_registered.connect(register_user)
-
 def register_invitations(sender, user, request, **kwarg):
     """
     Add user as a prooblem contributors on account activation according to
@@ -26,7 +17,6 @@ def register_invitations(sender, user, request, **kwarg):
     for i in Invitation.objects.filter(email=user.email):
         i.problem.contributor.add(user)
         follow(user, i.problem)
-        notification.send([user], 'contributor', { 'from_user': i.problem.author, 'problem': i.problem })
         i.delete()
 
 user_activated.connect(register_invitations)

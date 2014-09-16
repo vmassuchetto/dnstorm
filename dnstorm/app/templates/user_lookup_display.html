@@ -1,6 +1,6 @@
 {% load i18n %}
 
-<div class="row collapse user{% if user.invitation %} invitation{% endif %}">
+<div {% if user.invitation %}data-invitation="{{ user.invitation }}" id="invitation-{{ user.invitation }}" {% endif %}class="row collapse user{% if user.invitation %} invitation{% endif %}">
     <div class="columns large-12">
         {% if user.invitation %}
             <div class="avatar left"><i class="fi-mail"></i></div>

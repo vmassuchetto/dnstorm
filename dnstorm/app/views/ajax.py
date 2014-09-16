@@ -14,7 +14,7 @@ from django.template import loader, Context
 from crispy_forms.utils import render_crispy_form
 from actstream import action
 from actstream.models import followers
-from actstream.actions import follow
+from actstream.actions import follow, unfollow
 from notification import models as notification
 
 from dnstorm.app import models
@@ -139,18 +139,27 @@ class AjaxView(View):
             hash = '%032x' % random.getrandbits(128)
             while models.Invitation.objects.filter(hash=hash).exists():
                 hash = '%032x' % random.getrandbits(128)
-            i = models.Invitation.objects.create(problem=problem, email=email, hash=hash)
-            _user = User(id=0, username=email, email=email)
-            url = "%s?hash=%s" % (reverse('registration_register'), hash)
-            notification.send([_user], 'invitation', { 'problem': problem, 'url': url })
+            invitation = models.Invitation.objects.create(problem=problem, email=email, hash=hash)
+            notification.send([User(id=0, username=email, email=email)], 'invitation', { 'invitation': invitation })
             response.setdefault('invitation', list()).append(email)
 
         # Contributors
 
-        for user in User.objects.filter(id__in=[i for i in self.request.POST.get('contributor').split('|') if i and int(i) > 0]):
+        current_contributors = problem.contributor.all()
+        new_contributors =  User.objects.filter(id__in=[i for i in self.request.POST.get('contributor').split('|') if i and int(i) > 0])
+
+        for user in new_contributors:
             problem.contributor.add(user)
-            follow(self.request.user, problem) if user not in followers(problem) else None
+            follow(user, problem) if user not in followers(problem) else None
             response.setdefault('contributor', list()).append(user.username)
+
+        for user in current_contributors:
+            if user in new_contributors:
+                continue
+            problem.contributor.remove(user)
+            unfollow(user, problem)
+
+        # Response
 
         return HttpResponse(json.dumps(response), content_type='application/json')
 
@@ -371,14 +380,12 @@ class AjaxView(View):
 
     def resend_invitation(self):
         """
-        Resends an invitation.
+        Resend an invitation.
         """
         invitation = get_object_or_404(models.Invitation, id=self.request.GET.get('resend_invitation', None))
         if not permissions.problem(obj=invitation.problem, user=self.request.user, mode='manage'):
             raise PermissionDenied
-        fake_user = User(id=1, username='any', email=invitation.email)
-        from_user = invitation.problem.author.get_full_name() if invitation.problem.author.get_full_name() else invitation.problem.author.username
-        #notification.send([fake_user], 'invitation', { 'from_user': from_user, 'problem': invitation.problem })
+        notification.send([User(id=0, username=invitation.email, email=invitation.email)], 'invitation', { 'invitation': invitation })
         return HttpResponse(1)
 
     def delete_invitation(self):
