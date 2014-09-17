@@ -143,16 +143,6 @@
             {% endblock %}
         </div>
 
-        <form class="search-form" action="{% block search_url %}{% url "search" %}{% endblock %}" method="GET">
-            <div class="row collapse right search-form show-for-medium-up">
-                <div class="columns large-8 medium-8">
-                    <input type="text" name="q" placeholder="{% block search_placeholder %}{% trans "Search" %}{% endblock %}"{% if query %} value="{{ query }}"{% endif %} />
-                </div>
-                <div class="columns large-4 medium-2">
-                    <button type="submit" class="button postfix secondary radius"><i class="fi-zoom-in size-24"></i></button>
-                </div>
-            </div>
-        </form>
     </div>
 </div>
 

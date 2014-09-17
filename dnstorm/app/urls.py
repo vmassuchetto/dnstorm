@@ -4,7 +4,6 @@ from django.utils.functional import curry
 from django.views.defaults import *
 
 from ajax_select import urls as ajax_select_urls
-from haystack.views import search_view_factory
 
 from dnstorm import settings
 from dnstorm.app.forms import RegistrationForm
@@ -58,7 +57,6 @@ urlpatterns = patterns('',
     # Other apps
 
     ('^activity/', include('actstream.urls')),
-    (r'^search/', search_view_factory(view_class=base.SearchView), {}, 'search'),
     (r'^avatar/', include('avatar.urls')),
     (r'^accounts/login/$', base.LoginView.as_view(), {}, 'login_redirect'),
     (r'^accounts/register/$', base.RegistrationView.as_view(), {}, 'registration_register'),

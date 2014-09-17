@@ -59,7 +59,6 @@ INSTALLED_APPS = (
     'crispy_forms',
     'crispy_forms_foundation',
     'djangobower',
-    'haystack',
     'notification',
     'registration',
     'south'
@@ -147,14 +146,6 @@ CKEDITOR_CONFIGS = {
 
 TEMPLATE_PACK = 'foundation-5'
 CRISPY_TEMPLATE_PACK = 'foundation-5'
-
-# Haystack
-
-HAYSTACK_CONNECTIONS = {
-    'default': {
-        'ENGINE': 'haystack.backends.simple_backend.SimpleEngine',
-    },
-}
 
 # HTML Sanitizer
 

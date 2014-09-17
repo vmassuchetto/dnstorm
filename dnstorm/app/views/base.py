@@ -14,7 +14,6 @@ from django.views.generic.base import TemplateView, View
 from django.views.generic.edit import FormView, UpdateView
 
 from actstream.actions import follow
-from haystack.views import SearchView as HaystackSearchView
 from registration.backends.default.views import RegistrationView as BaseRegistrationView
 from registration import signals as registration_signals
 
@@ -156,22 +155,6 @@ class ActivityView(TemplateView):
     def get_breadcrumbs(self):
         return [
             { 'title': _('Activity'), 'classes': 'current' }
-        ]
-
-class SearchView(HaystackSearchView):
-    """
-    Seach view using Haystack.
-    """
-
-    def extra_context(self):
-        return {
-            'breadcrumbs': self.get_breadcrumbs(),
-        }
-
-    def get_breadcrumbs(self):
-        return [
-            { 'title': _('Search'), 'classes': 'unavailable' },
-            { 'title': self.request.GET['q'], 'classes': 'current' }
         ]
 
 class LoginView(View):
