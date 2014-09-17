@@ -124,7 +124,7 @@ form {
     .ctrlHolder {
         margin-bottom: emCalc(15px);
     }
-    .formHint, .hint, p.help {
+    .formHint, .hint, p.help, span.helptext {
         font-size: 11px;
         color: $light-black;
         margin: 0;
@@ -138,9 +138,6 @@ form {
         padding: 0 0 0 emCalc(4px);
         font-size: 1.2em;
         font-weight: bold;
-    }
-    span.helptext {
-        display: none;
     }
 }
 

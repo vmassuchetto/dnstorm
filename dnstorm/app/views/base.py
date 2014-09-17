@@ -1,25 +1,27 @@
-from django.contrib.auth.forms import UserChangeForm
+from django.contrib.auth import login, authenticate
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from django.core.exceptions import PermissionDenied
+from django.core.paginator import Paginator
+from django.core.urlresolvers import reverse
 from django.db.models import Q
+from django.http import Http404, HttpResponseRedirect, QueryDict
+from django.shortcuts import get_object_or_404
+from django.utils.decorators import method_decorator
+from django.utils.translation import ugettext as _
 from django.views.generic import DetailView, RedirectView
 from django.views.generic.base import TemplateView, View
 from django.views.generic.edit import FormView, UpdateView
-from django.http import Http404, HttpResponseRedirect
-from django.shortcuts import get_object_or_404
-from django.http import Http404
-from django.utils.translation import ugettext as _
-from django.core.urlresolvers import reverse
-from django.core.paginator import Paginator
-from django.core.exceptions import PermissionDenied
-from django.utils.decorators import method_decorator
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.views import login
 
+from actstream.actions import follow
 from haystack.views import SearchView as HaystackSearchView
-from registration.views import RegistrationView
+from registration.backends.default.views import RegistrationView as BaseRegistrationView
+from registration import signals as registration_signals
 
 from dnstorm.app import permissions
-from dnstorm.app.models import User, Option, Problem, Idea, Comment
-from dnstorm.app.forms import AdminOptionsForm
+from dnstorm.app.forms import AdminOptionsForm, RegistrationForm
+from dnstorm.app.lib.utils import get_object_or_none
+from dnstorm.app.models import Option, Problem, Idea, Comment, Invitation
 
 class HomeView(TemplateView):
     """
@@ -44,6 +46,56 @@ class HomeView(TemplateView):
     def get_breadcrumbs(self):
         return [
             { 'title': _('Problems'), 'classes': 'current' } ]
+
+class RegistrationView(BaseRegistrationView):
+    form_class = RegistrationForm
+
+    def get_context_data(self, *args, **kwargs):
+        """
+        Display all the problems the user will gain access to contribution if a
+        valid hash is provided with the registration link.
+        """
+        context = super(RegistrationView, self).get_context_data()
+        _hash = self.request.GET.get('hash', self.request.POST.get('hash', None))
+        if self.request.POST:
+            context['form'] = RegistrationForm(self.request.POST)
+        elif _hash:
+            context['form'] = RegistrationForm(hash=_hash)
+        else:
+            context['form'] = RegistrationForm()
+
+        if _hash:
+            invitation = get_object_or_404(Invitation, hash=_hash)
+            context['problems'] = [i.problem for i in Invitation.objects.filter(email=invitation.email)]
+
+        return context
+
+    def register(self, request, **cleaned_data):
+        """
+        Register the user without an activation link and add it as a
+        contributor of the problems with pending invitations.
+        """
+
+        # Create user
+
+        username, email, password = cleaned_data['username'], cleaned_data['email'], cleaned_data['password1']
+        new_user = User.objects.create(username=username, email=email, password=password)
+
+        # Invitations
+
+        _hash = request.POST.get('hash', None)
+        invitation = get_object_or_none(Invitation, hash=_hash) if _hash else None
+        if invitation:
+            for i in Invitation.objects.filter(email=invitation.email):
+                i.problem.contributor.add(new_user)
+                follow(new_user, i.problem)
+                i.delete()
+            invitation.delete()
+
+        # Auto-login via signaly handler
+
+        registration_signals.user_registered.send(sender=self.__class__, user=new_user, request=request)
+        return new_user
 
 class AdminOptionsView(FormView):
     """

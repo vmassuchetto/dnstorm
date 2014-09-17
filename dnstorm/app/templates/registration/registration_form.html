@@ -10,11 +10,17 @@
             <span class="panel radius secondary text-center">{% trans "You are already logged in." %}</span>
         {% else %}
             <h4>{% trans "Create new user" %}</h4>
-            <form action="." method="POST">
-                {{ form }}
-                {% csrf_token %}
-                <input type="submit" class="button expand success" value="{% trans "Submit" %}" />
-            </form>
+            {% if problems %}
+                <hr/>
+                <p>{% trans "After registering you'll get contribution access to the following problems:" %}</p>
+                <ul>
+                {% for problem in problems %}
+                    <li>{{ problem.title }}</li>
+                {% endfor %}
+                </ul>
+                <hr/>
+            {% endif %}
+            {% crispy form %}
         {% endif %}
     </div>
     </div>

@@ -1,34 +1,22 @@
 from django.conf import settings
 from django.db.models import signals
 from django.utils.translation import ugettext_noop as _
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login
 
-from registration.signals import user_activated, user_registered
+from registration.signals import user_registered
 from notification import models as notification
 from actstream.actions import follow
 
 from dnstorm.app.models import Invitation
 
-def register_invitations(sender, user, request, **kwarg):
+def login_on_registration(sender, user, request, **kwargs):
     """
-    Add user as a prooblem contributors on account activation according to
-    pending invitations.
-    """
-    for i in Invitation.objects.filter(email=user.email):
-        i.problem.contributor.add(user)
-        follow(user, i.problem)
-        i.delete()
-
-user_activated.connect(register_invitations)
-
-def login_on_activation(sender, user, request, **kwargs):
-    """
-    Logs in the user after account activation.
+    Logs in the user after registration.
     """
     user.backend = 'django.contrib.auth.backends.ModelBackend'
     login(request, user)
 
-user_activated.connect(login_on_activation)
+user_registered.connect(login_on_registration)
 
 def create_notice_types(app, created_models, verbosity, **kwargs):
     """

@@ -128,8 +128,6 @@ class AjaxView(View):
         if not permissions.problem(obj=problem, user=self.request.user, mode='manage'):
             raise PermissionDenied
 
-        response = dict()
-
         # Invitations
 
         for email in self.request.POST.getlist('invitation'):
@@ -141,7 +139,6 @@ class AjaxView(View):
                 hash = '%032x' % random.getrandbits(128)
             invitation = models.Invitation.objects.create(problem=problem, email=email, hash=hash)
             notification.send([User(id=0, username=email, email=email)], 'invitation', { 'invitation': invitation })
-            response.setdefault('invitation', list()).append(email)
 
         # Contributors
 
@@ -151,7 +148,6 @@ class AjaxView(View):
         for user in new_contributors:
             problem.contributor.add(user)
             follow(user, problem) if user not in followers(problem) else None
-            response.setdefault('contributor', list()).append(user.username)
 
         for user in current_contributors:
             if user in new_contributors:
@@ -161,7 +157,7 @@ class AjaxView(View):
 
         # Response
 
-        return HttpResponse(json.dumps(response), content_type='application/json')
+        return HttpResponse(json.dumps('OK'), content_type='application/json')
 
     def new_idea(self):
         """

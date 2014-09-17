@@ -1,11 +1,12 @@
 from django.contrib.auth import views as auth_views
 from django.conf.urls import patterns, include, url
 
-from dnstorm import settings
-from dnstorm.app.views import *
-
 from ajax_select import urls as ajax_select_urls
 from haystack.views import search_view_factory
+
+from dnstorm import settings
+from dnstorm.app.views import *
+from dnstorm.app.forms import RegistrationForm
 
 js_info_dict = {
     'packages': ('app',),
@@ -35,13 +36,12 @@ urlpatterns = patterns('',
 
     (r'^problem/(?P<slug>[^/]+)/#comment-(?P<pk>[^/]+)$', base.CommentView.as_view(), {}, 'comment'),
 
-    # Criterias
+    # Users
 
-    (r'^criteria/$', criteria.CriteriaListView.as_view(), {}, 'criteria_list'),
-    (r'^criteria/new/$', criteria.CriteriaCreateView.as_view(), {}, 'criteria_new'),
-    (r'^criteria/(?P<slug>[^/]+)/$', criteria.CriteriaView.as_view(), {}, 'criteria'),
-    (r'^criteria/(?P<slug>[^/]+)/edit/$', criteria.CriteriaUpdateView.as_view(), {}, 'criteria_edit'),
     (r'^users/(?P<username>[^/]+)/$', user.UserView.as_view(), {}, 'user'),
+
+    # Activity
+
     (r'^activity/$', base.ActivityView.as_view(), {}, 'activity'),
 
     # DNStorm admin
@@ -58,6 +58,7 @@ urlpatterns = patterns('',
     (r'^search/', search_view_factory(view_class=base.SearchView), {}, 'search'),
     (r'^avatar/', include('avatar.urls')),
     (r'^accounts/login/$', base.LoginView.as_view(), {}, 'login_redirect'),
+    (r'^accounts/register/$', base.RegistrationView.as_view(), {}, 'registration_register'),
     url(r'^accounts/password/reset/confirm/(?P<uidb36>[0-9A-Za-z]+)-(?P<token>.+)/$', auth_views.password_reset_confirm, name='auth_password_reset_confirm'),
     (r'^accounts/', include('django.contrib.auth.urls')),
     (r'^accounts/', include('registration.backends.default.urls')),

@@ -10,6 +10,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 from django.template.loader import render_to_string
 from django.db.models import Sum
+from django.contrib.sites.models import Site
 
 import diff_match_patch as _dmp
 from dnstorm import settings
@@ -197,7 +198,7 @@ class Invitation(models.Model):
         return _('invitation')
 
     def get_absolute_url(self):
-        return '%s?hash=%s' % (reverse('home'), self.hash)
+        return 'http://%s%s?hash=%s' % (Site.objects.get_current(), reverse('registration_register'), self.hash)
 
 class Idea(models.Model):
     """

@@ -2,6 +2,7 @@
 
 {% blocktrans %}Hello!
 
-You just created an account in {{ site }}. Here's your activation key: {{ activation_key }}
+You just created an account in {{ site }}.
 
-Activate your account by clicking on the this link: {{site}}/accounts/activate/{{ activation_key }}/{% endblocktrans %}
+Activate your account by clicking on the this link:
+http://{{site}}/accounts/activate/{{ activation_key }}/{% endblocktrans %}

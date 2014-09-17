@@ -1,23 +1,43 @@
-import re
 import json
+import re
 
 from django import forms
-from django.http import Http404, QueryDict
-from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse
+from django.http import Http404, QueryDict
+from django.shortcuts import get_object_or_404
+from django.template.loader import render_to_string
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
-from django.template.loader import render_to_string
-from django.shortcuts import get_object_or_404
-
-from dnstorm.settings import LANGUAGES
-from dnstorm.app import models
-from dnstorm.app.lib.get import get_object_or_none
 
 from ajax_select.fields import AutoCompleteSelectMultipleField
 from crispy_forms.helper import FormHelper
 from crispy_forms_foundation.layout import *
 from registration.forms import RegistrationFormUniqueEmail
+
+from dnstorm.app import models
+from dnstorm.app.lib.get import get_object_or_none
+from dnstorm.settings import LANGUAGES
+
+class RegistrationForm(RegistrationFormUniqueEmail):
+    hash = forms.CharField(widget=forms.HiddenInput())
+
+    def __init__(self, *args, **kwargs):
+        _hash = kwargs.pop('hash') if 'hash' in kwargs else None
+        self.helper = FormHelper()
+        self.helper.form_action = '.'
+        self.helper.layout = Layout(
+            'username',
+            'email',
+            'password1',
+            'password2',
+            'hash',
+            ButtonHolder(
+                Submit('submit', _('Register'), css_class='radius expand'),
+            ),
+        )
+        super(RegistrationForm, self).__init__(*args, **kwargs)
+        self.fields['hash'].initial = _hash if _hash else 0
 
 class AdminOptionsForm(forms.Form):
     site_title = forms.CharField(label=_('Site title'))

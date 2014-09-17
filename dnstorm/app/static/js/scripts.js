@@ -262,7 +262,7 @@ $(document).on('submit', '#contributor-form', function(e){
             button.removeClass('loading');
             button.attr('disabled', false);
             if (data == 'success') {
-                button.text('OK');
+                $('#contributors-modal').foundation('reveal', 'close');
             }
         }
     });
@@ -313,7 +313,7 @@ $('.delete-button').on('click', function(e) {
             button.attr('disabled', false);
             button.removeClass('loading');
             if (data == 'success') {
-                $('#invitation-' + invitation).fadeOut(200).delay(200).delete();
+                $('#invitation-' + invitation).fadeOut(200).delay(200).remove();
             }
         }
     });
