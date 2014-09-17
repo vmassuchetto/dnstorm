@@ -5,7 +5,7 @@
 {% block "content" %}
 
     <div class="row">
-    <div class="columns large-9 search-results">
+    <div class="columns large-12 search-results">
 
         {% if query %}
             <h3>{% blocktrans %}Search results for "{{ query }}"{% endblocktrans %}</h3>
@@ -59,10 +59,6 @@
 
         {% include "pagination.html" with items=page %}
 
-    </div>
-
-    <div class="columns sidebar large-3">
-        {% include "sidebar.html" %}
     </div>
     </div>
 

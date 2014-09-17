@@ -2,26 +2,25 @@ import random
 import re
 
 from django.contrib.auth.models import User
-from django.http import Http404, HttpResponse, HttpResponseForbidden
-from django.db.models import Sum
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.core.urlresolvers import reverse
-from django.views.generic import View
-from django.utils.translation import ugettext_lazy as _
+from django.db.models import Sum
+from django.http import Http404, HttpResponse, HttpResponseForbidden
 from django.shortcuts import get_object_or_404
 from django.template import loader, Context
+from django.utils.translation import ugettext_lazy as _
+from django.views.generic import View
 
-from crispy_forms.utils import render_crispy_form
 from actstream import action
-from actstream.models import followers
-from actstream.actions import follow, unfollow
+from actstream.actions import follow, unfollow, is_following
+from crispy_forms.utils import render_crispy_form
 from notification import models as notification
 
 from dnstorm.app import models
-from dnstorm.app.forms import IdeaForm, CriteriaForm, CommentForm
-from dnstorm.app.views.idea import idea_save
 from dnstorm.app import permissions
-from dnstorm.app.lib.utils import get_object_or_none
+from dnstorm.app.forms import IdeaForm, CriteriaForm, CommentForm
+from dnstorm.app.utils import get_object_or_none, activity_count, activity_reset_counter as _activity_reset_counter
+from dnstorm.app.views.idea import idea_save
 
 import json
 
@@ -70,6 +69,11 @@ class AjaxView(View):
 
         elif self.request.GET.get('delete_invitation', None):
             return self.delete_invitation()
+
+        # Reset activity counter
+
+        elif self.request.GET.get('activity_reset_counter', None):
+            return self.activity_reset_counter()
 
         # Failure
 
@@ -147,7 +151,7 @@ class AjaxView(View):
 
         for user in new_contributors:
             problem.contributor.add(user)
-            follow(user, problem) if user not in followers(problem) else None
+            follow(user, problem, actor_only=False) if not is_following(user, problem) else None
 
         for user in current_contributors:
             if user in new_contributors:
@@ -159,10 +163,21 @@ class AjaxView(View):
 
         return HttpResponse(json.dumps('OK'), content_type='application/json')
 
+    def activity_reset_counter(self):
+        """
+        Reset the activity counter.
+        """
+
+        if not self.request.user.is_authenticated():
+            raise Http404
+        _activity_reset_counter(self.request.user)
+        return HttpResponse(json.dumps({'ok': 1}), content_type='application/json')
+
     def new_idea(self):
         """
         Create a new problem idea.
         """
+
         if not self.request.user.is_authenticated():
             raise Http404
         idea = IdeaForm(self.request.POST)
@@ -258,8 +273,9 @@ class AjaxView(View):
 
         # Send an action and follow the problem
 
+        follow(self.request.user, _problem, actor_only=False) if not is_following(self.request.user, _problem) else None
         action.send(self.request.user, verb='commented', action_object=obj, target=_problem)
-        follow(self.request.user, _problem) if self.request.user not in followers(_problem) else None
+        activity_count(_problem)
 
         comment.perm_edit = permissions.problem(obj=_problem, user=self.request.user, mode='manage')
         t = loader.get_template('comment.html')

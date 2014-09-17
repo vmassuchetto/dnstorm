@@ -3,25 +3,22 @@ from datetime import datetime
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
+from django.contrib.sites.models import Site
 from django.core.urlresolvers import reverse
 from django.db import models, connection
-from django.utils import timezone
-from django.utils.translation import ugettext_lazy as _
-from django.utils.safestring import mark_safe
-from django.template.loader import render_to_string
 from django.db.models import Sum
-from django.contrib.sites.models import Site
-
-import diff_match_patch as _dmp
-from dnstorm import settings
-from dnstorm.app import permissions
-from dnstorm.app.lib.get import get_object_or_none
-from dnstorm.app.lib.diff import diff_prettyHtml
+from django.template.loader import render_to_string
+from django.utils import timezone
+from django.utils.safestring import mark_safe
+from django.utils.translation import ugettext_lazy as _
 
 from actstream import registry
-from ckeditor.fields import RichTextField
 from autoslug import AutoSlugField
+from ckeditor.fields import RichTextField
 from registration.signals import user_activated
+
+from dnstorm import settings
+from dnstorm.app import permissions
 
 class Option(models.Model):
     """
@@ -42,14 +39,6 @@ class Option(models.Model):
     def type(self):
         return _('option')
 
-    def get_or_create(self, **kwargs):
-        if 'name' not in kwargs or 'value' not in kwargs or len(kwargs) > 2:
-            raise Exception('"name" and "value" are the required key arguments.')
-        try:
-            return Option.objects.get(name=kwargs['name'])
-        except Option.DoesNotExist:
-            return Option(**kwargs)
-
     def get(self, *args):
         """
         The site options are defined and saved by the OptionsForm fields,
@@ -58,7 +47,7 @@ class Option(models.Model):
         option name is invalid.
         """
 
-        if len(args) <= 0:
+        if len(args) <= 0 or len(args) > 1:
             return None
         try:
             option = Option.objects.get(name=args[0])
@@ -69,6 +58,20 @@ class Option(models.Model):
                 return None
             value = defaults[args[0]]
         return value
+
+    def update(self, *args):
+        """
+        Update a value based on the option name.
+        """
+        if len(args) <= 0 or len(args) > 2:
+            return None
+        try:
+            option = Option.objects.get(name=args[0])
+        except Option.DoesNotExist:
+            option = Option(name=args[0], value=None)
+        option.value = args[1]
+        option.save()
+        return True
 
     def get_defaults(self, *args, **kwargs):
         """
@@ -232,7 +235,6 @@ class Idea(models.Model):
         """
         Fill the idea with problem and user-specific data.
         """
-        from dnstorm.app.forms import CommentForm
         self.perm_manage = permissions.idea(obj=self, user=user, mode='manage')
         self.comments = Comment.objects.filter(idea=self).order_by('created')
 
@@ -240,8 +242,9 @@ class Idea(models.Model):
 
         self.criterias = list()
         for criteria in self.problem.criteria.all():
-            ic = get_object_or_none(IdeaCriteria, criteria=criteria.id, idea=self.id)
-            if not ic:
+            try:
+                ic = IdeaCriteria.objects.get(criteria=criteria.id, idea=self.id)
+            except IdeaCriteria.DoesNotExist:
                 continue
             criteria.stars = xrange(ic.stars)
             self.criterias.append(criteria)

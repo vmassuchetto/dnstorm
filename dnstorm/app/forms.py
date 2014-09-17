@@ -16,7 +16,7 @@ from crispy_forms_foundation.layout import *
 from registration.forms import RegistrationFormUniqueEmail
 
 from dnstorm.app import models
-from dnstorm.app.lib.get import get_object_or_none
+from dnstorm.app.utils import get_object_or_none
 from dnstorm.settings import LANGUAGES
 
 class RegistrationForm(RegistrationFormUniqueEmail):
@@ -241,8 +241,9 @@ class IdeaForm(forms.ModelForm):
             self.fields['criteria_%d' % c.id] = forms.IntegerField(label=c.name, initial=context['stars'])
             criteria_fields += (Field('criteria_%d' % c.id, type='hidden'),)
 
+        title = _('Edit your idea') if idea else _('Give your idea')
         layout_args = (
-            HTML('<h3>' + _('Give your idea') + '</h3>'),
+            HTML('<h3>' + title + '</h3>'),
             'title',
             'content',
             HTML('<h5 class="top-1em">' + _('How this idea meet the problem criterias') + '</h5>')) \

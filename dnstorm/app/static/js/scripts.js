@@ -138,7 +138,22 @@ $('.problem-idea-form-button').click(function(){
  * Notifications
  */
 
+function activity_reset_counter() {
+    var notification = $('.notification');
+    var activity_counter = $('.notification .counter');
+    if (parseInt(activity_counter.text()) > 0) {
+        activity_counter.text('0');
+        notification.removeClass('alert');
+        $.ajax({
+            url: '/ajax/',
+            type: 'GET',
+            data: 'activity_reset_counter=1',
+        });
+    }
+}
+
 $(document).on('click', '.notification-icon', function(e){
+    activity_reset_counter();
     activity = $('#activity');
     activity_button = $('#activity .button');
     activity_box = $('#activity-box');

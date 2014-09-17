@@ -1,30 +1,27 @@
-import re
-import json
 from datetime import datetime
+import bleach
+import json
+import re
 
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import get_object_or_404
-from django.core.exceptions import PermissionDenied
-from django.views.generic import DetailView, RedirectView
-from django.views.generic.edit import UpdateView
-from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext as _
-from django.contrib import messages
+from django.views.generic import DetailView, RedirectView
+from django.views.generic.edit import UpdateView
 
 from actstream import action
-from actstream.models import followers
+from actstream.actions import follow, is_following
 
 from dnstorm import settings
 from dnstorm.app import models
-from dnstorm.app.forms import IdeaForm
 from dnstorm.app import permissions
-from dnstorm.app.lib.diff import diff_prettyHtml
-
-import bleach
-import diff_match_patch as _dmp
-
+from dnstorm.app.forms import IdeaForm
+from dnstorm.app.utils import get_object_or_none, activity_count
 
 def idea_save(obj, form, return_format=None):
     """
@@ -59,9 +56,9 @@ def idea_save(obj, form, return_format=None):
 
     # Send and action and follow the problem
 
-    verb = 'created' if new else 'edited'
-    action.send(object.author, verb=verb, action_object=object, target=object.problem)
-    follow(object.author, object.problem) if object.author not in followers(object.problem) else None
+    follow(object.author, object.problem, actor_only=False) if not is_following(object.author, object.problem) else None
+    action.send(object.author, verb='created' if new else 'edited', action_object=object, target=object.problem)
+    activity_count(object.problem)
 
     if return_format == 'obj':
         return object
@@ -90,7 +87,7 @@ class IdeaUpdateView(UpdateView):
 
     def get_context_data(self, *args, **kwargs):
         context = super(IdeaUpdateView, self).get_context_data(**kwargs)
-        context['problem'] = get_object_or_404(models.Problem, id=self.object.problem.id)
+        context['problem'] = self.object.problem
         context['breadcrumbs'] = self.get_breadcrumbs()
         return context
 

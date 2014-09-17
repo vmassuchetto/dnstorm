@@ -53,7 +53,7 @@
             <li class="divider"></li>
             {% if user.is_authenticated %}
                 <li class="divider"></li>
-                <li class="notification notification-icon"><a href="javascript:void(0);"><i class="fi-lightbulb"></i></a></li>
+                <li class="notification notification-icon{% if user_activity_counter > "0" %} alert{% endif %}"><a href="javascript:void(0);"><i class="fi-lightbulb"></i><span class="counter">{{ user_activity_counter }}</span></a></li>
                 <li class="divider"></li>
                 <li><a href="{% url "user" user %}">{{ user.get_full_name|default:user.username }}</a></li>
                 <li class="divider"></li>
@@ -101,9 +101,8 @@
     {% if user.is_authenticated %}
     <div id="activity" class="hide">
         <div id="activity-box">
-        {% activity_stream 'user' user %}
-        {% if stream %}
-            {% for action in stream %}
+        {% if user_activity %}
+            {% for action in user_activity %}
                 <div class="row collapse">
                     <div class="columns large-12">
                         <div class="left avatar">{% avatar action.actor 32 %}</div>
@@ -120,7 +119,7 @@
             </div>
         {% endif %}
         </div>
-        {% if stream %}
+        {% if user_activity %}
             <div class="row">
                 <div class="columns large-12">
                     <a class="button small radius expand no-margin-bottom" href="{% url "activity" %}">{% trans "View all activities" %}</a>

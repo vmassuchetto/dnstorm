@@ -1,39 +1,36 @@
+from datetime import datetime
+import bleach
 import re
 import time
-from datetime import datetime
 
-from django.shortcuts import get_object_or_404
-from django.core.urlresolvers import reverse
-from django.core.exceptions import PermissionDenied
-from django.http import Http404, HttpResponseRedirect
-from django.views.generic import DetailView
-from django.views.generic.edit import FormView, CreateView, UpdateView, DeleteView
-from django.views.generic.base import TemplateView, RedirectView
+from django.contrib import messages
 from django.contrib.auth import get_user
 from django.contrib.auth.decorators import login_required
-from django.utils.translation import ugettext as _
-from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import csrf_protect
-from django.utils.html import strip_tags
-from django.template.loader import render_to_string
+from django.contrib.auth.models import User
+from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import PermissionDenied
+from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.db.models.query import EmptyQuerySet
-from django.contrib import messages
-from django.contrib.contenttypes.models import ContentType
-from django.contrib.auth.models import User
+from django.http import Http404, HttpResponseRedirect
+from django.shortcuts import get_object_or_404
+from django.template.loader import render_to_string
+from django.utils.decorators import method_decorator
+from django.utils.html import strip_tags
+from django.utils.translation import ugettext as _
+from django.views.decorators.csrf import csrf_protect
+from django.views.generic import DetailView
+from django.views.generic.base import TemplateView, RedirectView
+from django.views.generic.edit import FormView, CreateView, UpdateView, DeleteView
 
-import bleach
-import diff_match_patch as _dmp
 from actstream import action
-from actstream.actions import follow, unfollow
-from actstream.models import followers
+from actstream.actions import follow, is_following
 
 from dnstorm import settings
-from dnstorm.app import permissions
-from dnstorm.app.lib.diff import diff_prettyHtml
-from dnstorm.app.lib.get import get_object_or_none
-from dnstorm.app import models
 from dnstorm.app import forms
+from dnstorm.app import models
+from dnstorm.app import permissions
+from dnstorm.app.utils import get_object_or_none, activity_count
 from dnstorm.app.views.idea import idea_save
 
 def problem_save(obj, form):
@@ -67,10 +64,11 @@ def problem_save(obj, form):
 
     obj.object.save()
 
-    # Send an action
+    # Follow and send an action for the problem
 
-    verb = 'created' if new else 'edited'
-    action.send(obj.object.author, verb=verb, action_object=obj.object)
+    follow(obj.object.author, obj.object, actor_only=False) if not is_following(obj.object.author, obj.object) else None
+    action.send(obj.object.author, verb='created' if new else 'edited', action_object=obj.object)
+    activity_count(obj.object)
 
     messages.success(obj.request, _('Problem saved'))
     return HttpResponseRedirect(reverse('problem', kwargs={'slug':obj.object.slug}))

@@ -20,7 +20,7 @@ from registration import signals as registration_signals
 
 from dnstorm.app import permissions
 from dnstorm.app.forms import AdminOptionsForm, RegistrationForm
-from dnstorm.app.lib.utils import get_object_or_none
+from dnstorm.app.utils import get_object_or_none, activity_count
 from dnstorm.app.models import Option, Problem, Idea, Comment, Invitation
 
 class HomeView(TemplateView):
@@ -88,7 +88,8 @@ class RegistrationView(BaseRegistrationView):
         if invitation:
             for i in Invitation.objects.filter(email=invitation.email):
                 i.problem.contributor.add(new_user)
-                follow(new_user, i.problem)
+                follow(new_user, i.problem, actor_only=False)
+                activity_count(i.problem)
                 i.delete()
             invitation.delete()
 
@@ -165,7 +166,6 @@ class SearchView(HaystackSearchView):
     def extra_context(self):
         return {
             'breadcrumbs': self.get_breadcrumbs(),
-            #'activities': ActivityManager().get_objects(limit=4)
         }
 
     def get_breadcrumbs(self):
