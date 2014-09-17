@@ -1,14 +1,11 @@
 {% extends "base.html" %}
-{% load humanize i18n %}
-
-{% block bodyclass %}404{% endblock %}
+{% load i18n %}
 
 {% block content %}
-
     <div class="row">
-        <div class="panel">
-            {% trans "The page you are trying to access does not exist." %}
+        <div class="large-12 columns content">
+            <h3>{% trans "Page not found" %}</h3>
+            <div class="panel error"><p>{% blocktrans %}The page you are trying to access does not exist.{% endblocktrans %}</p></div>
         </div>
     </div>
-
 {% endblock %}

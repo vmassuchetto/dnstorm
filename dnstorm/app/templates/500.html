@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+    <div class="row">
+        <div class="large-12 columns content">
+            <h3>{% trans "Server error" %}</h3>
+            <div class="panel error"><p>{% blocktrans %}An unexpected application error occurred. Please report this problem toe the system administrator.{% endblocktrans %}</p></div>
+        </div>
+    </div>
+{% endblock %}

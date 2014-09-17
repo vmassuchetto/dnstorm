@@ -1,16 +1,19 @@
-from django.contrib.auth import views as auth_views
 from django.conf.urls import patterns, include, url
+from django.contrib.auth import views as auth_views
+from django.utils.functional import curry
+from django.views.defaults import *
 
 from ajax_select import urls as ajax_select_urls
 from haystack.views import search_view_factory
 
 from dnstorm import settings
-from dnstorm.app.views import *
 from dnstorm.app.forms import RegistrationForm
+from dnstorm.app.views import *
 
-js_info_dict = {
-    'packages': ('app',),
-}
+js_info_dict = {'packages': ('app',)}
+handler500 = curry(server_error, template_name='500.html')
+handler404 = curry(page_not_found, template_name='404.html')
+handler403 = curry(permission_denied, template_name='403.html')
 
 urlpatterns = patterns('',
 
