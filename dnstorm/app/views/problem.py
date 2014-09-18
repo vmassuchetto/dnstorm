@@ -9,6 +9,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import PermissionDenied
+from django.core.paginator import Paginator
 from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.db.models.query import EmptyQuerySet
@@ -25,6 +26,7 @@ from django.views.generic.edit import FormView, CreateView, UpdateView, DeleteVi
 
 from actstream import action
 from actstream.actions import follow, is_following
+from actstream.models import target_stream
 
 from dnstorm import settings
 from dnstorm.app import forms
@@ -92,7 +94,6 @@ class ProblemCreateView(CreateView):
 
     def get_breadcrumbs(self):
         return [
-            { 'title': _('Problems'), 'url': reverse('home') },
             { 'title': _('Create new problem'), 'url': reverse('problem_new'), 'classes': 'current' } ]
 
     def form_valid(self, form):
@@ -120,7 +121,6 @@ class ProblemUpdateView(UpdateView):
 
     def get_breadcrumbs(self):
         return [
-            { 'title': _('Problems'), 'url': reverse('home') },
             { 'title': self.object.title, 'url': self.object.get_absolute_url() },
             { 'title': _('Update'), 'url': reverse('problem_edit', kwargs={'slug':self.object.slug}), 'classes': 'current' } ]
 
@@ -199,8 +199,27 @@ class ProblemView(FormView):
 
     def get_breadcrumbs(self):
         return [
-            { 'title': _('Problems'), 'url': reverse('home') },
             { 'title': self.problem.title, 'url': self.problem.get_absolute_url(), 'classes': 'current' } ]
 
     def form_valid(self, form):
         return idea_save(self, form)
+
+class ProblemActivityView(TemplateView):
+    template_name = 'activity.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        self.problem = get_object_or_404(models.Problem, slug=self.kwargs['slug'])
+        return super(ProblemActivityView, self).dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(ProblemActivityView, self).get_context_data(**kwargs)
+        context['breadcrumbs'] = self.get_breadcrumbs()
+        activities = Paginator(target_stream(self.problem), 20)
+        context['problem'] = self.problem
+        context['activities'] = activities.page(self.request.GET.get('page', 1))
+        return context
+
+    def get_breadcrumbs(self):
+        return [
+            { 'title': self.problem.title, 'url': self.problem.get_absolute_url() },
+            { 'title': _('Activity'), 'url': reverse('problem_activity', kwargs={'slug':self.problem.slug}), 'classes': 'current' } ]

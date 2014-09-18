@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% load avatar_tags humanize i18n %}
+
+{% block bodyclass %}activity{% endblock %}
+
+{% block topbutton %}
+    {% if problem %}
+        <a class="button secondary small radius right" href=""><i class="fi-arrow-left"></i>&nbsp;{% trans "Go back to problem" %}</a>
+    {% endif %}
+{% endblock %}
+
+{% block content %} 
+
+    <div class="row">
+        <div class="columns large-12">
+
+            {% if profile %}
+                {% include "activity_profile.html" %}
+            {% else %} {% if problem %}
+                <h3>{{ problem.title }}</h3>
+                <hr/>
+            {% else %}
+                <h3>{% trans "General activity" %}</h3>
+            {% endif %} {% endif %}
+
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="columns large-12 activities">
+
+            {% for action in activities %}
+                {% include "activity_row.html" %}
+            {% endfor %}
+
+            {% include "pagination.html" with items=activities %}
+
+        </div>
+    </div>
+{% endblock %}

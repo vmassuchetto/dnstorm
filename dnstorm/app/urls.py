@@ -45,6 +45,7 @@ urlpatterns = patterns('',
     # Activity
 
     (r'^activity/$', base.ActivityView.as_view(), {}, 'activity'),
+    (r'^problem/(?P<slug>[^/]+)/activity/$', problem.ProblemActivityView.as_view(), {}, 'problem_activity'),
 
     # DNStorm admin
 

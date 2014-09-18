@@ -1,0 +1,27 @@
+{% load activity_tags humanize %}
+
+<div class="row">
+
+    <div class="columns large-1 action-label">
+
+        {% if action.verb|stringformat:"s" == "started following" %}
+            <i class="fi-torsos"></i>
+        {% else %} {% if action.verb|stringformat:"s" == "created" %}
+            <i class="fi-page-add"></i>
+        {% else %} {% if action.verb|stringformat:"s" == "edited" %}
+            <i class="fi-page-edit"></i>
+        {% else %} {% if action.verb|stringformat:"s" == "commented" %}
+            <i class="fi-comments"></i>
+        {% endif %} {% endif %} {% endif %} {% endif %}
+
+    </div>
+
+    <div class="columns large-9 action-description">
+        <p>{% display_action action %}</p>
+    </div>
+
+    <div class="columns large-2 action-date text-right">
+        <h6 class="subheader">{{ action.timestamp|naturaltime }}</h6>
+    </div>
+
+</div>

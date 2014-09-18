@@ -40,28 +40,30 @@
             <li class="divider"></li>
             <li><a href="{% url "home" %}">{% trans "Home" %}</a></li>
             <li class="divider"></li>
-            <li><a href="{% url "home" %}">{% trans "Problems" %}</a></li>
-            <li class="divider"></li>
-            <li><a href="{% url "activity" %}">{% trans "Activity" %}</a></li>
-            <li class="divider"></li>
+            {% if user.is_authenticated %}
+                <li><a href="{% url "activity" %}">{% trans "Activity" %}</a></li>
+                <li class="divider"></li>
+            {% endif %}
             {% if user.is_superuser %}
                 <li><a href="{% url "admin_user" %}">{% trans "Users" %}</a></li>
                 <li class="divider"></li>
             {% endif %}
         </ul>
         <ul class="right">
-            <li class="divider"></li>
             {% if user.is_authenticated %}
+                <li class="has-form"><a class="button success radius" href="{% url 'problem_new' %}"><i class="fi-page-add"></i>&nbsp;{% trans 'Create new problem' %}</a></li>
                 <li class="divider"></li>
-                <li class="notification notification-icon{% if user_activity_counter > "0" %} alert{% endif %}"><a href="javascript:void(0);"><i class="fi-lightbulb"></i><span class="counter">{{ user_activity_counter }}</span></a></li>
-                <li class="divider"></li>
-                <li><a href="{% url "user" user %}">{{ user.get_full_name|default:user.username }}</a></li>
+                <li class="has-icon notification notification-icon{% if user_activity_counter > "0" %} alert{% endif %}"><a href="javascript:void(0);"><i class="fi-lightbulb"></i><span class="counter">{{ user_activity_counter }}</span></a></li>
                 <li class="divider"></li>
                 {% block topicon %}{% endblock %}
                 {% if user.is_superuser %}
-                    <li><a href="{% url "admin_options" %}"><i class="fi-widget"></i></a></li>
+                    <li class="has-icon"><a href="{% url "admin_options" %}"><i class="fi-widget"></i></a></li>
                     <li class="divider"></li>
                 {% endif %}
+                <li class="divider"></li>
+                <li class="has-icon torso"><a href="{% url "user" user %}"><i class="fi-torso"></i></a></li>
+                <li><a href="{% url "user" user %}">{{ user.get_full_name|default:user.username }}</a></li>
+                <li class="divider"></li>
                 <li><a href="{{ logout_url }}">{% trans 'Logout' %}</a></li>
             {% else %}
                 <li><a href="{{ login_url }}">{% trans 'Login' %}</a></li>
@@ -104,11 +106,10 @@
         {% if user_activity %}
             {% for action in user_activity %}
                 <div class="row collapse">
-                    <div class="columns large-12">
+                    <div class="columns large-12 activity-item">
                         <div class="left avatar">{% avatar action.actor 32 %}</div>
                         <div class="info">{% display_action action %}</div>
                     </div>
-                    <hr/>
                 </div>
             {% endfor %}
         {% else %}
@@ -122,7 +123,7 @@
         {% if user_activity %}
             <div class="row">
                 <div class="columns large-12">
-                    <a class="button small radius expand no-margin-bottom" href="{% url "activity" %}">{% trans "View all activities" %}</a>
+                    <a class="button small secondary radius expand no-margin-bottom" href="{% url "activity" %}">{% trans "View all activities" %}</a>
                 </div>
             </div>
         {% endif %}
@@ -133,16 +134,7 @@
         <h1><a id="logo" href="{% url "home" %}">DNStorm</a></h1>
     </div>
     <div class="columns large-8 medium-8">
-        <div class="right">
-            {% block topright %}
-                {% if user.is_authenticated %}
-                    <div class="left-1em">
-                        <a class="button success radius" href="{% url 'problem_new' %}">{% trans 'Create new problem' %}</a>
-                    </div>
-                {% endif %}
-            {% endblock %}
-        </div>
-
+        {% block topbutton %}{% endblock %}
     </div>
 </div>
 

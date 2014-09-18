@@ -10,11 +10,6 @@
     {% endif %}
 {% endblock %}
 
-{% block topicon %}
-    <li><a href="javascript:void(0);"><i class="fi-megaphone"></i></a></li>
-    <li class="divider"></li>
-{% endblock %}
-
 {% block modals %}
     {% if problem_perm_manage %}
 
@@ -85,14 +80,23 @@
 
 {% endblock %}
 
+{% block topicon %}
+    <li class="has-icon"><a href="javascript:void(0);"><i class="fi-megaphone"></i></a></li>
+    <li class="divider"></li>
+{% endblock %}
+
+{% block topbutton %}
+    <a href="{% url "problem_activity" problem.slug %}" class="button secondary radius right small"><i class="fi-clock"></i>&nbsp;{% trans "Problem activity" %}</a>
+{% endblock %}
+
 {% block content %}
 
     {# Title #}
 
     <div class="row">
-    <div class="columns large-12 problem-title">
-        <h2>{{ problem.title }}</h2>
-    </div>
+        <div class="columns large-12 problem-title">
+            <h3>{{ problem.title }}</h3>
+        </div>
     </div>
 
     {# Table #}

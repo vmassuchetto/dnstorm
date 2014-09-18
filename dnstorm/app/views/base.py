@@ -1,6 +1,6 @@
-from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.contrib.auth.views import login
 from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
 from django.core.urlresolvers import reverse
@@ -14,6 +14,7 @@ from django.views.generic.base import TemplateView, View
 from django.views.generic.edit import FormView, UpdateView
 
 from actstream.actions import follow
+from actstream.models import user_stream
 from registration.backends.default.views import RegistrationView as BaseRegistrationView
 from registration import signals as registration_signals
 
@@ -36,10 +37,9 @@ class HomeView(TemplateView):
         else:
             q_problems = Q(public=True)
             user = None
-        problems = Paginator(Problem.objects.filter(q_problems).distinct().order_by('-last_activity'), 25)
-        page = self.request.GET['page'] if 'page' in self.request.GET else 1
         context['breadcrumbs'] = self.get_breadcrumbs()
-        context['problems'] = problems.page(page)
+        problems = Paginator(Problem.objects.filter(q_problems).distinct().order_by('-last_activity'), 25)
+        context['problems'] = problems.page(self.request.GET.get('page', 1))
         return context
 
     def get_breadcrumbs(self):
@@ -144,12 +144,17 @@ class CommentView(RedirectView):
 class ActivityView(TemplateView):
     template_name = 'activity.html'
 
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        if not self.request.user.is_authenticated():
+            raise PermissionDenied
+        return super(ActivityView, self).dispatch(*args, **kwargs)
+
     def get_context_data(self, *args, **kwargs):
         context = super(ActivityView, self).get_context_data(**kwargs)
-        kwargs['page'] = int(self.request.GET['page']) if 'page' in self.request.GET else 1
         context['breadcrumbs'] = self.get_breadcrumbs()
-        #context['activities'] = ActivityManager().get_objects(**kwargs)
-        #context['pagination'] = ActivityManager().get_pagination(**kwargs)
+        activities = Paginator(user_stream(self.request.user), 20)
+        context['activities'] = activities.page(self.request.GET.get('page', 1))
         return context
 
     def get_breadcrumbs(self):

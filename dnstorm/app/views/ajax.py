@@ -12,6 +12,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.views.generic import View
 
 from actstream import action
+from actstream.models import actor_stream
 from actstream.actions import follow, unfollow, is_following
 from crispy_forms.utils import render_crispy_form
 from notification import models as notification
@@ -74,6 +75,11 @@ class AjaxView(View):
 
         elif self.request.GET.get('activity_reset_counter', None):
             return self.activity_reset_counter()
+
+        # Endless navigation
+
+        elif 'user' == self.request.GET.get('load_more', None):
+            return self.activity_user()
 
         # Failure
 
@@ -222,6 +228,7 @@ class AjaxView(View):
         """
         Create a new alternative.
         """
+
         problem = get_object_or_404(models.Problem, id=self.request.GET['problem'])
         if not problem or not self.request.user.is_authenticated():
             raise Http404
@@ -347,6 +354,7 @@ class AjaxView(View):
         """
         Select an idea for an alternative.
         """
+
         alternative = get_object_or_404(models.Alternative, id=self.request.POST.get('alternative'))
         if not alternative or not self.request.user.is_authenticated():
             raise Http404

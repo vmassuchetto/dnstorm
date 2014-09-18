@@ -1,30 +1,35 @@
 import cPickle as pickle
 
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.core.exceptions import PermissionDenied
+from django.core.paginator import Paginator
+from django.core.urlresolvers import reverse
+from django.shortcuts import get_object_or_404
+from django.utils.decorators import method_decorator
+from django.utils.translation import ugettext as _
 from django.views.generic import RedirectView
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import UpdateView
-from django.utils.decorators import method_decorator
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404
-from django.utils.translation import ugettext as _
-from django.core.urlresolvers import reverse
-from django.core.paginator import Paginator
-from django.core.exceptions import PermissionDenied
+
+from actstream.models import actor_stream
 
 from dnstorm.app.forms import UserAdminForm
 from dnstorm.app.models import Problem, Idea, Comment, Option
 
 class UserView(TemplateView):
-    template_name = 'user.html'
+    template_name = 'activity.html'
 
     def get_context_data(self, *args, **kwargs):
         context = super(UserView, self).get_context_data(**kwargs)
-        context['profile'] = get_object_or_404(User, username=kwargs['username'], is_active=True)
+        user = get_object_or_404(User, username=kwargs['username'], is_active=True)
+        user.problem_count = Problem.objects.filter(author=user).count()
+        user.idea_count = Idea.objects.filter(author=user).count()
+        user.comment_count = Comment.objects.filter(author=user).count()
+        context['profile'] = user
         context['breadcrumbs'] = self.get_breadcrumbs(username=context['username'])
-        context['problem_count'] = Problem.objects.filter(author=context['profile']).count()
-        context['idea_count'] = Idea.objects.filter(author=context['profile']).count()
-        context['comment_count'] = Comment.objects.filter(author=context['profile']).count()
+        activities = Paginator(actor_stream(context['profile']), 20)
+        context['activities'] = activities.page(self.request.GET.get('page', 1))
         return context
 
     def get_breadcrumbs(self, **kwargs):

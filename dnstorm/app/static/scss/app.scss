@@ -168,31 +168,6 @@ form {
     }
 }
 
-// Top bar
-
-.top-bar {
-    .fi-megaphone,
-    .fi-widget {
-        font-size: 24px;
-    }
-}
-
-
-.contain-to-grid .top-bar {
-    overflow: hidden;
-}
-
-.upper-bar-wrap {
-    @include crumb-container;
-    width: 100%;
-    margin: 0;
-    .upper-bar-inner {
-        border: 0;
-        margin: 0;
-        padding: 0;
-    }
-}
-
 // Messages
 
 .message-bar {
@@ -245,24 +220,50 @@ h1 {
     }
 }
 
-.top-bar h1 {
-    line-height: 1;
-    text-align: left;
-    a {
-        font-family: 'Montserrat Subrayada', sans-serif;
-        color: darken($white, 10%);
-        letter-spacing: emCalc(-3px);
-        @include text-shadow(
-            darken($white, 40%) 1px 1px 0,
-            darken($white, 60%) 2px 2px 0,
-            darken($white, 80%) 3px 3px 0,
-            darken($white, 100%) 4px 4px 0
-        );
-        &:hover {
-            color: lighten($white, 20%);
+.top-bar {
+    height: 40px;
+    h1 {
+        line-height: 1;
+        text-align: left;
+        a {
+            font-family: 'Montserrat Subrayada', sans-serif;
+            color: darken($white, 10%);
+            letter-spacing: emCalc(-3px);
+            @include text-shadow(
+                darken($white, 40%) 1px 1px 0,
+                darken($white, 60%) 2px 2px 0,
+                darken($white, 80%) 3px 3px 0,
+                darken($white, 100%) 4px 4px 0
+            );
+            &:hover {
+                color: lighten($white, 20%);
+            }
         }
     }
+    ul.right li.torso a {
+        padding-right: 0;
+    }
+    .has-icon i {
+        font-size: emCalc(24px);
+    }
 }
+
+.contain-to-grid .top-bar {
+    overflow: hidden;
+}
+
+.upper-bar-wrap {
+    @include crumb-container;
+    width: 100%;
+    margin: 0;
+    .upper-bar-inner {
+        border: 0;
+        margin: 0;
+        padding: 0;
+    }
+}
+
+
 
 a.logo-faded {
     font-family: 'Montserrat Subrayada', sans-serif;
@@ -331,6 +332,11 @@ p.pagination {
     }
 }
 
+h6.subheader {
+    margin: 0;
+    font-size: emCalc(14px);
+}
+
 .list-item {
     padding: emCalc(6px);
     margin: emCalc(6x);
@@ -343,10 +349,6 @@ p.pagination {
             lighten($black, 60%) 1px 1px 0,
             lighten($black, 80%) 2px 2px 0
         );
-    }
-    h6.subheader {
-        margin: 0;
-        font-size: emCalc(14px);
     }
     .counter {
         text-align: center;
@@ -455,8 +457,46 @@ p.pagination {
     }
 }
 
-.user-labels span {
-    margin: emCalc(4px);
+.user-labels {
+    margin: 0;
+    padding: 0;
+    .user-label {
+        margin: 0 emCalc(4px) 0 0;
+        font-size: emCalc(22px);
+        font-weight: bold;
+        padding: emCalc(6px) emCalc(8px);
+        line-height: emCalc(28px);
+        border: 1px solid $light-grey;
+        i {
+            font-size: emCalc(28px);
+        }
+        span.caption {
+            font-size: emCalc(11px);
+            text-transform: lowercase;
+        }
+    }
+}
+
+.activities {
+    .row {
+        border-bottom: 1px dotted #ccc;
+        padding: emCalc(5px) 0;
+    }
+    p {
+        margin: 0;
+        padding: 0;
+    }
+    .action-description,
+    .action-date {
+        padding-top: emCalc(3px);
+    }
+    .action-label {
+        text-align: right;
+        i {
+            color: $light-grey;
+            font-size: emCalc(32px);
+        }
+    }
 }
 
 .ui-corner-all,
@@ -907,9 +947,7 @@ a.problem-action {
 .notification-icon {
     a {
         position: relative;
-        .fi-lightbulb {
-            font-size: 28px;
-        }
+        line-height: 1;
         .counter {
             display: none;
         }
@@ -953,7 +991,7 @@ a.problem-action {
 #activity {
     position: absolute;
     top: -35px;
-    right: 10px;
+    right: 150px;
     z-index: 200;
     width: 35%;
     background: white;
@@ -969,10 +1007,6 @@ a.problem-action {
         hr {
             margin: 0.5em 0;
         }
-        .avatar,
-        .info {
-            margin-bottom: 0.5em;
-        }
         .avatar {
             margin-right: 5px;
         }
@@ -981,31 +1015,10 @@ a.problem-action {
             overflow: hidden;
         }
     }
-}
-
-.activity-item {
-    a.th {
-        max-width: 80%;
-    }
-    .label {
-        margin-top: 0.5em;
-    }
-    .detail {
-        margin: 1em 0 0;
-        padding: 0 0 0 1em;
-        border-left: 5px solid lighten($black, 65%);
-    }
-}
-
-.sidebar {
     .activity-item {
-        .activity-info p {
-            font-size: 95%;
-            line-height: 1.2;
-        }
-    }
-    .label-quantifier {
-        margin: emCalc(4px) emCalc(2px);
+        border-bottom: 1px dotted $grey;
+        margin: 0;
+        padding: emCalc(5px) 0;
     }
 }
 
