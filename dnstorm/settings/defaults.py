@@ -54,7 +54,6 @@ INSTALLED_APPS = (
     'ckeditor',
     'crispy_forms',
     'crispy_forms_foundation',
-    #'djangobower',
     'notification',
     'registration',
     'south'
