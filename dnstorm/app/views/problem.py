@@ -189,6 +189,7 @@ class ProblemView(FormView):
         context['criterias'] = list()
         for c in models.Criteria.objects.filter(problem=self.problem):
             c.problem_count = models.Problem.objects.filter(criteria=c).count()
+            context['criterias'].append(c)
 
         # Alternatives
 
