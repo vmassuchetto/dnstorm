@@ -28,6 +28,14 @@
     width: 100%;
 }
 
+.no-margin {
+    margin: 0;
+}
+
+.no-padding {
+    margin: 0;
+}
+
 .top-1em {
     padding-top: 1em !important;
 }
@@ -96,17 +104,59 @@ hr {
     }
 }
 
-.button-criteria {
-    transition: all 0.5s ease;
-    @include button(rem-calc(2px), $cyan, $button-radius, false, false, false);
-    &:hover {
-        background-color: $dark-cyan;
-        color: $white;
+.criteria-button {
+    display: inline;
+    position: relative;
+    .criteria-display {
+        @include button(rem-calc(6px), $cyan, $button-radius, false, false, false);
+        transition: all 0.5s ease;
+        margin-bottom: 0;
+        &:hover {
+            background-color: $dark-cyan;
+            color: $white;
+        }
+    }
+    .criteria-description {
+        @include panel($cyan, 20px);
+        border-radius: 3px;
+        display: none;
+        font-size: emCalc(12px);
+        padding: emCalc(8px) !important;
+        position: absolute;
+        z-index: 200;
+        top: 0;
+        left: 0;
+        width: 300px;
+        height: auto;
+        p {
+            margin: 0;
+            font-size: emCalc(11px);
+        }
+        .top {
+            font-weight: bold;
+            color: $white;
+            border-bottom: 1px solid $light-grey;
+            padding-bottom: emCalc(20px);
+            margin-bottom: emCalc(6px);
+        }
+        .star-description {
+            padding-left: emCalc(8px);
+        }
     }
 }
 
-.button.yellow {
-    @include button(rem-calc(2px), $yellow, $global-radius, false, true, false);
+.criteria-button.expanded {
+    float: left;
+    width: 100%;
+    .criteria-display {
+        display: none;
+    }
+    .criteria-description {
+        display: block;
+        position: static;
+        width: 100%;
+        height: auto;
+    }
 }
 
 
@@ -118,8 +168,11 @@ form {
         line-height: 1;
         padding: emCalc(8px) 0;
     }
+    input[type='text'] {
+        margin: 0 0 emCalc(5px) 0;
+    }
     input[type='checkbox'] {
-        margin:0 3px 0 0;
+        margin:0 emCalc(3px) 0 0;
     }
     .ctrlHolder {
         margin-bottom: emCalc(15px);
@@ -320,8 +373,8 @@ table.cke_dialog {
 // Pagination
 
 p.pagination {
-    color: $light-black;
-    margin-top: 1em;
+    color: $grey;
+    padding-top: emCalc(30px);
 }
 
 // Problem
@@ -403,9 +456,6 @@ h6.subheader {
     p {
         margin: 0.3rem 0;
     }
-    p.criteria-description {
-        line-height: 1.1;
-    }
 }
 
 .criteria-list-item {
@@ -418,6 +468,8 @@ h6.subheader {
 }
 
 .criteria-vote {
+    border-top: 1px dotted $light-grey;
+    padding: emCalc(15px) 0;
     .stars {
         font-size: 1.6em;
         color: $light-grey;
@@ -432,14 +484,6 @@ h6.subheader {
     margin-top: emCalc(30px);
 }
 
-.criteria-description {
-    padding: rem-calc(10);
-    p {
-        padding: 0;
-        margin: rem-calc(8) 0;
-        line-height: 1;
-    }
-}
 
 .user-box {
     @include panel(lighten($black, 70%), 5px);
@@ -477,24 +521,65 @@ h6.subheader {
     }
 }
 
-.activities {
-    .row {
-        border-bottom: 1px dotted #ccc;
-        padding: emCalc(5px) 0;
+.activity-item {
+    border-bottom: 1px dotted #ccc;
+    padding: emCalc(15px) 0;
+    .th {
+        margin: 0 emCalc(8px) 0 0;
     }
-    p {
-        margin: 0;
-        padding: 0;
-    }
-    .action-description,
-    .action-date {
-        padding-top: emCalc(3px);
-    }
-    .action-label {
-        text-align: right;
-        i {
-            color: $light-grey;
-            font-size: emCalc(32px);
+    .action-info {
+        padding-left: emCalc(60px);
+        .action-description {
+            min-height: emCalc(32px);
+            margin: 0 0 emCalc(8px) 0;
+            padding: 0;
+            .action-label {
+                float: left;
+                margin: 0 emCalc(8px) 0 0;
+                i {
+                    color: $light-grey;
+                    font-size: emCalc(32px);
+                }
+            }
+            .action-text {
+                padding-top: emCalc(5px);
+                .action-date {
+                    font-size: emCalc(12px);
+                }
+            }
+        }
+        .action-diff {
+            padding: emCalc(6px) emCalc(10px);
+            margin: emCalc(10px) 0 0 0;
+            border-left: 3px dotted $light-grey;
+            ins {
+                color: #004800;
+                background-color: #DFD;
+                text-decoration: none;
+            }
+            del {
+                color: #480007;
+                background-color: #FDD;
+                text-decoration: line-through;
+            }
+            h3 {
+                font-size: emCalc(14px);
+            }
+            p.info {
+                padding: emCalc(6px) emCalc(4px) 0 0;
+                i.fi-target-two,
+                i.fi-lock,
+                i.fi-unlock,
+                .criteria {
+                    padding: 0 emCalc(4px) 0 emCalc(8px);
+                }
+            }
+            p {
+                margin: 0;
+                padding: 0 0 emCalc(6px) 0;
+                font-size: emCalc(12px);
+                line-height: 1.1;
+            }
         }
     }
 }

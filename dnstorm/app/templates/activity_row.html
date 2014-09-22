@@ -1,27 +1,30 @@
-{% load activity_tags humanize %}
+{% load activity_tags humanize avatar_tags %}
 
-<div class="row">
+<div class="row collapse activity-item">
+    <div class="columns large-12 action-avatar">
+        <div class="left th">{% avatar action.actor 32 %}</div>
+        <div class="action-info">
+            <div class="action-description">
+                <div class="action-label">
+                    {% if action.verb|stringformat:"s" == "started following" %}
+                        <i class="fi-torsos"></i>
+                    {% else %} {% if action.verb|stringformat:"s" == "created" %}
+                        <i class="fi-page-add"></i>
+                    {% else %} {% if action.verb|stringformat:"s" == "edited" %}
+                        <i class="fi-page-edit"></i>
+                    {% else %} {% if action.verb|stringformat:"s" == "commented" %}
+                        <i class="fi-comments"></i>
+                    {% endif %} {% endif %} {% endif %} {% endif %}
+                </div>
+                <div class="action-text">
+                    {% display_action action %}
+                    <span class="action-date subheader">{{ action.timestamp|naturaltime }}</span>
+                </div>
+            </div>
 
-    <div class="columns large-1 action-label">
-
-        {% if action.verb|stringformat:"s" == "started following" %}
-            <i class="fi-torsos"></i>
-        {% else %} {% if action.verb|stringformat:"s" == "created" %}
-            <i class="fi-page-add"></i>
-        {% else %} {% if action.verb|stringformat:"s" == "edited" %}
-            <i class="fi-page-edit"></i>
-        {% else %} {% if action.verb|stringformat:"s" == "commented" %}
-            <i class="fi-comments"></i>
-        {% endif %} {% endif %} {% endif %} {% endif %}
-
+            {% if action.data.diff %}
+                <div class="action-diff">{{ action.data.diff|safe }}</div>
+            {% endif %}
+        </div>
     </div>
-
-    <div class="columns large-9 action-description">
-        <p>{% display_action action %}</p>
-    </div>
-
-    <div class="columns large-2 action-date text-right">
-        <h6 class="subheader">{{ action.timestamp|naturaltime }}</h6>
-    </div>
-
 </div>

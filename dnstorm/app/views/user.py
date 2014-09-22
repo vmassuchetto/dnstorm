@@ -14,7 +14,7 @@ from django.views.generic.edit import UpdateView
 
 from actstream.models import actor_stream
 
-from dnstorm.app.forms import UserAdminForm
+from dnstorm.app.forms import AdminUserForm
 from dnstorm.app.models import Problem, Idea, Comment, Option
 
 class UserView(TemplateView):
@@ -71,7 +71,7 @@ class AdminUserListView(TemplateView):
 class AdminUserUpdateView(UpdateView):
     template_name = 'admin_user_edit.html'
     model = User
-    form_class = UserAdminForm
+    form_class = AdminUserForm
 
     def get_object(self, queryset=None):
         return get_object_or_404(User, id=self.kwargs['user_id'])

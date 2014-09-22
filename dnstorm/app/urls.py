@@ -38,6 +38,11 @@ urlpatterns = patterns('',
 
     (r'^problem/(?P<slug>[^/]+)/#comment-(?P<pk>[^/]+)$', base.CommentView.as_view(), {}, 'comment'),
 
+    # Criteria
+
+    (r'^criterias/$', base.CriteriasView.as_view(), {}, 'criterias'),
+    (r'^criterias/(?P<slug>[^/]+)$', base.CriteriaView.as_view(), {}, 'criteria'),
+
     # Users
 
     (r'^users/(?P<username>[^/]+)/$', user.UserView.as_view(), {}, 'user'),
@@ -57,7 +62,6 @@ urlpatterns = patterns('',
 
     # Other apps
 
-    ('^activity/', include('actstream.urls')),
     (r'^avatar/', include('avatar.urls')),
     (r'^accounts/login/$', base.LoginView.as_view(), {}, 'login_redirect'),
     (r'^accounts/register/$', base.RegistrationView.as_view(), {}, 'registration_register'),

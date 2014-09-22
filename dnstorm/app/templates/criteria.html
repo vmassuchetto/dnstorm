@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% load avatar_tags humanize i18n %}
+
+{% block bodyclass %}criterias{% endblock %}
+
+{% block topbutton %}
+    {% if problem %}
+        <a class="button secondary small radius right" href="{% url "problem" problem.slug %}"><i class="fi-arrow-left"></i>&nbsp;{% trans "Go back to problem" %}</a>
+    {% endif %}
+{% endblock %}
+
+{% block content %} 
+
+    {% for criteria in criterias %}
+
+        {% if forloop.counter|divisibleby:3 or forloop.first %}
+            <div class="row">
+        {% endif %}
+
+        <div class="criteria columns large-4">{% include "criteria_button.html" with expanded=True %}</div>
+
+        {% if forloop.counter|divisibleby:3 or forloop.last %}
+            </div>
+        {% endif %}
+
+    {% endfor %}
+
+    <div class="row">
+        <div class="columns large-12">
+            {% include "pagination.html" with items=criterias %}
+        </div>
+    </div>
+
+{% endblock %}

@@ -247,6 +247,7 @@ class Idea(models.Model):
             except IdeaCriteria.DoesNotExist:
                 continue
             criteria.stars = xrange(ic.stars)
+            criteria.stars_number = ic.stars
             self.criterias.append(criteria)
 
         # Idea comments

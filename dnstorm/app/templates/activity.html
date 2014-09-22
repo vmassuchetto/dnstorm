@@ -5,7 +5,7 @@
 
 {% block topbutton %}
     {% if problem %}
-        <a class="button secondary small radius right" href=""><i class="fi-arrow-left"></i>&nbsp;{% trans "Go back to problem" %}</a>
+        <a class="button secondary small radius right" href="{% url "problem" problem.slug %}"><i class="fi-arrow-left"></i>&nbsp;{% trans "Go back to problem" %}</a>
     {% endif %}
 {% endblock %}
 
@@ -17,7 +17,7 @@
             {% if profile %}
                 {% include "activity_profile.html" %}
             {% else %} {% if problem %}
-                <h3>{{ problem.title }}</h3>
+                <h3><i class="fi-clock"></i>&nbsp;{{ problem.title }}</h3>
                 <hr/>
             {% else %}
                 <h3>{% trans "General activity" %}</h3>
@@ -27,7 +27,7 @@
     </div>
 
     <div class="row">
-        <div class="columns large-12 activities">
+        <div class="columns large-12">
 
             {% for action in activities %}
                 {% include "activity_row.html" %}

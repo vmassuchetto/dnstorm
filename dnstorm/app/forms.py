@@ -1,5 +1,6 @@
 import json
 import re
+import urlparse
 
 from django import forms
 from django.contrib.auth.models import User
@@ -16,7 +17,7 @@ from crispy_forms_foundation.layout import *
 from registration.forms import RegistrationFormUniqueEmail
 
 from dnstorm.app import models
-from dnstorm.app.utils import get_object_or_none
+from dnstorm.app.utils import get_object_or_none, get_option
 from dnstorm.settings import LANGUAGES
 
 class RegistrationForm(RegistrationFormUniqueEmail):
@@ -40,8 +41,8 @@ class RegistrationForm(RegistrationFormUniqueEmail):
         self.fields['hash'].initial = _hash if _hash else 0
 
 class AdminOptionsForm(forms.Form):
-    site_title = forms.CharField(label=_('Site title'))
-    site_description = forms.CharField(label=_('Site description'))
+    site_title = forms.CharField(label=_('Site title'), help_text=_('Page title for browsers'))
+    site_url = forms.CharField(label=_('Site URL'), help_text=_('Site domain for URL generation with http scheme. Examples: \'http://domain.com\', \'https://subdomain.domain.com\', \'http://domain:port\''))
 
     def __init__(self, *args, **kwargs):
         self.helper = FormHelper()
@@ -49,21 +50,27 @@ class AdminOptionsForm(forms.Form):
         self.helper.layout = Layout(
             Fieldset(_('Site'),
                 'site_title',
-                'site_description'
+                'site_url',
             ),
             ButtonHolder(
-                Submit('submit', _('Save'), css_class='radius'),
+                Submit('submit', _('Save'), css_class='right radius'),
             ),
         )
         super(AdminOptionsForm, self).__init__(*args, **kwargs)
 
         # Form defaults or saved values
 
-        option = Option()
         for field in self.fields:
-            self.fields[field].initial = option.get(field)
+            self.fields[field].initial = get_option(field)
 
-class UserAdminForm(forms.ModelForm):
+    def clean_site_url(self):
+        url = urlparse.urlparse(self.cleaned_data['site_url'])
+        if not url.netloc:
+            raise forms.ValidationError(_('Wrong domain format.'))
+        return self.cleaned_data['site_url']
+
+
+class AdminUserForm(forms.ModelForm):
 
     class Meta:
         model = User
@@ -85,7 +92,7 @@ class UserAdminForm(forms.ModelForm):
                 'is_superuser',
                 ButtonHolder(
                     actions,
-                    Submit('submit', _('Save'), css_class='radius'),
+                    Submit('submit', _('Save'), css_class='right radius'),
                 ),
             )
         )
@@ -102,18 +109,18 @@ class ProblemForm(forms.ModelForm):
         self.helper.form_action = '.'
         self.helper.form_class = 'problem-form'
         self.helper.layout = Layout(
-            Fieldset(_('Problem description'),
+            Fieldset('<i class="fi-puzzle"></i>&nbsp;' + _('Problem description'),
                 'title',
                 'description',
             ),
-            Fieldset(_('Criterias'),
+            Fieldset('<i class="fi-target-two"></i>&nbsp;' + _('Criterias'),
                 'criteria',
             ),
-            Fieldset(_('Permissions'),
+            Fieldset('<i class="fi-lock"></i>&nbsp;' + _('Permissions'),
                 'public',
             ),
             ButtonHolder(
-                Submit('submit', _('Save'), css_class='radius'),
+                Submit('submit', _('Save'), css_class='right radius'),
             ),
         )
         super(ProblemForm, self).__init__(*args, **kwargs)
@@ -178,7 +185,7 @@ class CriteriaForm(forms.ModelForm):
         for i in range(1,6):
             layout_args += (Row(Column(HTML('<label class="right inline">' + star * i + '</label>'), css_class='large-2'), Column(Field('help_star%d' % i), css_class='large-10')),)
         layout_args += (ButtonHolder(
-            Submit('submit', _('Save'), css_class='radius'),
+            Submit('submit', _('Save'), css_class='right radius'),
         ),)
         self.helper.layout = Layout(*layout_args)
         super(CriteriaForm, self).__init__(*args, **kwargs)
@@ -249,7 +256,6 @@ class IdeaForm(forms.ModelForm):
             HTML('<h5 class="top-1em">' + _('How this idea meet the problem criterias') + '</h5>')) \
                 + criteria_html \
                 + criteria_fields \
-                + (HTML('<hr/>'),) \
                 + (Submit('submit', _('Submit'), css_class='right radius'),)
 
         # Form instantiation
@@ -285,7 +291,7 @@ class CommentForm(forms.ModelForm):
             Field('idea', type='hidden'),
             Row(
                 Column('content', css_class='large-10'),
-                Column(Submit('submit', _('Submit'), css_class='button tiny radius'), css_class='large-2 alignright'),
+                Column(Submit('submit', _('Submit'), css_class='button small radius'), css_class='large-2 alignright'),
             )
         )
         super(CommentForm, self).__init__(*args, **kwargs)
@@ -308,7 +314,7 @@ class AlternativeForm(forms.Form):
             Field('object', type='hidden'),
             Field('problem', type='hidden'),
             ButtonHolder(
-                Submit('submit', _('Save'), css_class='radius'),
+                Submit('submit', _('Save'), css_class='right radius'),
             ),
         )
         super(AlternativeForm, self).__init__(*args, **kwargs)

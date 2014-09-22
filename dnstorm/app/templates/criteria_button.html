@@ -1,1 +1,20 @@
-<a class="button {% if size %}{{ size }}{% else %}small{% endif %} radius button-criteria{% if show_description %} dropdown{% endif %}{% if with_stars %} button-criteria-with-stars{% endif %}" data-criteria="{{ criteria.id }}" {% if with_link %}href="{{ criteria.get_absolute_url }}"{% endif %}>{% if with_stars %}{% for star in criteria.stars %}<i class="fi-star"></i>{% endfor %}&nbsp;{% endif %}{{ criteria.name }}</a>
+{% load i18n %}
+
+<div class="criteria-button{% if expanded %} expanded{% endif %}">
+
+    <a class="criteria-display button small radius" href="javascript:void(0);">{% if with_stars %}{% for star in criteria.stars %}<i class="fi-star"></i>{% endfor %}{% else %}<i class="fi-target-two"></i>{% endif %}&nbsp;{{ criteria.name }}</a>
+
+    <div class="criteria-description">
+        <div class="top">
+            <span class="title">{{ criteria.name }}</span><a class="problem-count right button secondary tiny radius" href="{% url "criteria" criteria.slug %}">{% blocktrans with problem_count=criteria.problem_count %}used in {{ problem_count }} problems{% endblocktrans %}</a>
+        </div>
+        {% for help in criteria.helps %}
+            <div class="row collapse">
+                <div class="columns large-3 text-right star"><p class="text-right">{{ help.stars }}</p></div>
+                <div class="columns large-9 text-left star-description"><p>{{ help.description }}</p></div>
+            </div>
+        {% endfor %}
+    </div>
+
+</div>
+

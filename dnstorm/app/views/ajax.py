@@ -281,7 +281,9 @@ class AjaxView(View):
         # Send an action and follow the problem
 
         follow(self.request.user, _problem, actor_only=False) if not is_following(self.request.user, _problem) else None
-        action.send(self.request.user, verb='commented', action_object=obj, target=_problem)
+        a = action.send(self.request.user, verb='commented', action_object=obj, target=_problem)
+        a[0][1].data = {'diff': content}
+        a[0][1].save()
         activity_count(_problem)
 
         comment.perm_edit = permissions.problem(obj=_problem, user=self.request.user, mode='manage')

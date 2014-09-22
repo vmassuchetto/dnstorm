@@ -5,9 +5,7 @@
 
 {% block head %}
     {{ form.media }}
-    {% if not problem.public %}
-        {{ contributor_form.media }}
-    {% endif %}
+    {{ contributor_form.media }}
 {% endblock %}
 
 {% block modals %}
@@ -59,18 +57,17 @@
 
         {# Contributors management #}
 
-        {% if not problem.public %}
-
-            <div id="contributors-modal" class="reveal-modal large" data-reveal>
-                <a class="close-reveal-modal">&#215;</a>
-                <h3>{% trans "Select contributors" %}</h3>
-                <hr/>
-                <form id="contributor-form">
-                    {% crispy contributor_form %}
-                </form>
-            </div>
-
-        {% endif %}
+        <div id="contributors-modal" class="reveal-modal large" data-reveal>
+            <a class="close-reveal-modal">&#215;</a>
+            <h3>{% trans "Select contributors" %}</h3>
+            <hr/>
+            {% if problem.public %}
+                <div class="panel"><p>{% trans "The problem is public and anyone can contribute to it, but you can still use this form to invite non-registered users or prepare to switch the problem to private mode." %}</p></div>
+            {% endif %}
+            <form id="contributor-form">
+                {% crispy contributor_form %}
+            </form>
+        </div>
 
     {% endif %}
 
@@ -126,16 +123,6 @@
             {% for criteria in problem.criteria.all %}
                 {% include "criteria_button.html" with show_description=1 %}
             {% endfor %}
-            {% for criteria in problem.criteria.all %}
-                <div class="criteria-description panel radius secondary hide" id="criteria-{{ criteria.id }}">
-                    {% for help in criteria.helps %}
-                        <div class="row">
-                            <div class="columns large-2"><p class="text-right">{{ help.stars }}</p></div>
-                            <div class="columns large-10"><p>{{ help.description }}</p></div>
-                        </div>
-                    {% endfor %}
-                </div>
-            {% endfor %}
             </div>
             </div>
         {% endif %}
@@ -181,32 +168,20 @@
             {% endif %}
         </div>
 
-        {# Idea submit button #}
-
-        {% if not user.is_authenticated %}
-
-            <a class="button expand secondary radius" href="{{ login_url }}">{% trans "Log in and submit your idea" %}</a>
-
-        {% else %}{% if problem_perm_contribute %}
-
-            <a class="problem-idea-form-button button expand radius{% if form.errors %} hide{% endif %}"><i class="fi-lightbulb"></i> {% trans "Submit idea" %}</a>
-
-        {% endif %}{% endif %}
-
-
         {# Ideas list #}
 
         <a name="ideas"></a>
         <div class="problem-ideas">
             {% for idea in ideas %}
-                {% include "idea.html" %}
                 <hr/>
+                {% include "idea.html" %}
             {% endfor %}
         </div>
 
         {# Idea form and button #}
 
         {% if problem_perm_contribute %}
+            <hr/>
             <div class="problem-idea-form-wrap">
                 <div class="problem-idea-form" id="problem-idea-form">{% crispy form %}</div>
             </div>

@@ -1,4 +1,5 @@
 from datetime import datetime
+from lxml.html.diff import htmldiff
 import bleach
 import json
 import re
@@ -9,6 +10,7 @@ from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import get_object_or_404
+from django.template.loader import render_to_string
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext as _
 from django.views.generic import DetailView, RedirectView
@@ -28,9 +30,18 @@ def idea_save(obj, form, return_format=None):
     Validates the idea form for the ``IdeaUpdateView``.
     """
 
+    object = form.save(commit=False)
+
+    # Remember if new
+
+    new = False if hasattr(object, 'id') and isinstance(object.id, int) else True
+    if not new:
+        old_idea = get_object_or_404(models.Idea, id=object.id)
+        old_idea.fill_data()
+        old_diffhtml = render_to_string('idea_diffbase.html', {'idea': old_idea}) if not new else None
+
     # Save idea
 
-    object = form.save(commit=False)
     object.problem = obj.problem if hasattr(obj, 'problem') else object.problem
     object.author = obj.request.user
     object.content = bleach.clean(object.content,
@@ -38,11 +49,6 @@ def idea_save(obj, form, return_format=None):
         attributes=settings.SANITIZER_ALLOWED_ATTRIBUTES,
         styles=settings.SANITIZER_ALLOWED_STYLES,
         strip=True, strip_comments=True)
-
-    # Remember if new
-
-    new = False if hasattr(object, 'id') and isinstance(object.id, int) else True
-
     object.save()
 
     # Criterias ratings
@@ -54,10 +60,22 @@ def idea_save(obj, form, return_format=None):
             criteria=models.Criteria.objects.get(id=c.id),
             stars=form.cleaned_data['criteria_%d' % c.id]).save()
 
+    # Get a content diff/
+
+    object.fill_data()
+    new_diffhtml = render_to_string('idea_diffbase.html', {'idea': object})
+    if not new:
+        ideadiff = htmldiff(old_diffhtml, new_diffhtml)
+    else:
+        ideadiff = new_diffhtml
+
     # Send and action and follow the problem
 
     follow(object.author, object.problem, actor_only=False) if not is_following(object.author, object.problem) else None
-    action.send(object.author, verb='created' if new else 'edited', action_object=object, target=object.problem)
+    a = action.send(object.author, verb='created' if new else 'edited', action_object=object, target=object.problem)
+    if ideadiff:
+        a[0][1].data = {'diff': ideadiff}
+        a[0][1].save()
     activity_count(object.problem)
 
     if return_format == 'obj':

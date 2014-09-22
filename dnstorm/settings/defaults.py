@@ -20,10 +20,6 @@ MEDIA_URL = ''
 STATIC_ROOT = 'static'
 STATIC_URL = '/static/'
 
-MIDDLEWARE_CLASSES = global_settings.MIDDLEWARE_CLASSES + (
-    'reversion.middleware.RevisionMiddleware',
-)
-
 TEMPLATE_CONTEXT_PROCESSORS = global_settings.TEMPLATE_CONTEXT_PROCESSORS + (
     'django.core.context_processors.request',
     'dnstorm.app.context_processors.base',
@@ -58,7 +54,7 @@ INSTALLED_APPS = (
     'ckeditor',
     'crispy_forms',
     'crispy_forms_foundation',
-    'djangobower',
+    #'djangobower',
     'notification',
     'registration',
     'south'
@@ -126,6 +122,12 @@ DNSTORM = {
 # Registration
 
 ACCOUNT_ACTIVATION_DAYS = 3
+
+# Activity stream
+
+ACTSTREAM_SETTINGS = {
+    'USE_JSONFIELD': True
+}
 
 # CKEditor
 

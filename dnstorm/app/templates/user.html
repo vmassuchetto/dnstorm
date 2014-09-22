@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% load avatar_tags humanize i18n %}
+
+{% block bodyclass %}user{% endblock %}
+
+{% block content %}
+
+    <div class="row">
+        <div class="columns large-12 activities">
+
+            {% for action in activities %}
+                {% include "activity_row.html" %}
+            {% endfor %}
+
+            {% include "pagination.html" with items=activities %}
+
+        </div>
+    </div>
+{% endblock %}

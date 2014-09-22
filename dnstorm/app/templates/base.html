@@ -5,7 +5,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
-    <title>{% if title %}{{ title }} | {{ options.site_title }}{% else %}{{ options.site_title }} | {{ options.site_description }}{% endif %}</title>
+    <title>{% if site_title %}{{ site_title }} | {{ options.site_title }}{% else %}{{ options.site_title }}{% endif %}</title>
     <link rel="icon" href="{% static "img/favicon.ico" %}" />
     <link type="text/css" rel="stylesheet" href="{% static 'css/app.css' %}" media="screen, projection" />
     <link type="text/css" rel="stylesheet" href="{% static "css/foundation-icons.css" %}" />
@@ -40,12 +40,10 @@
             <li class="divider"></li>
             <li><a href="{% url "home" %}">{% trans "Home" %}</a></li>
             <li class="divider"></li>
+            <li><a href="{% url "criterias" %}">{% trans "Criterias" %}</a></li>
+            <li class="divider"></li>
             {% if user.is_authenticated %}
                 <li><a href="{% url "activity" %}">{% trans "Activity" %}</a></li>
-                <li class="divider"></li>
-            {% endif %}
-            {% if user.is_superuser %}
-                <li><a href="{% url "admin_user" %}">{% trans "Users" %}</a></li>
                 <li class="divider"></li>
             {% endif %}
         </ul>

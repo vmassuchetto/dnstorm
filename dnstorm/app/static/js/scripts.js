@@ -366,11 +366,23 @@ $('.criteria-vote .stars i').on('click', function(){
     $(this).parents('form').find('#id_criteria_' + $(this).data('criteria')).val($(this).index() + 1);
 });
 
-$('.button-criteria.dropdown').click(function(e){
-    var criteria_id = $(this).data('criteria');
-    var panel = $('#criteria-' + criteria_id);
-    $(".criteria-description:visible").not(panel).slideToggle(300);
-    panel.slideToggle(300);
+var timeout;
+$('.criteria-button:not(.expanded)').hover(function() {
+    var description = $(this).find('.criteria-description');
+    if (!timeout) {
+        timeout = window.setTimeout(function() {
+            timeout = null;
+            description.fadeIn();
+        }, 500);
+    }
+}, function () {
+    var description = $(this).find('.criteria-description');
+    if (timeout) {
+        window.clearTimeout(timeout);
+        timeout = null;
+    } else {
+        description.fadeOut();
+    }
 });
 
 // Show comment on click

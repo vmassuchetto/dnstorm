@@ -1,4 +1,5 @@
 from datetime import datetime
+from lxml.html.diff import htmldiff
 import bleach
 import re
 import time
@@ -26,13 +27,13 @@ from django.views.generic.edit import FormView, CreateView, UpdateView, DeleteVi
 
 from actstream import action
 from actstream.actions import follow, is_following
-from actstream.models import target_stream
+from actstream.models import any_stream
 
 from dnstorm import settings
 from dnstorm.app import forms
 from dnstorm.app import models
 from dnstorm.app import permissions
-from dnstorm.app.utils import get_object_or_none, activity_count
+from dnstorm.app.utils import get_object_or_none, activity_count, get_option
 from dnstorm.app.views.idea import idea_save
 
 def problem_save(obj, form):
@@ -42,13 +43,15 @@ def problem_save(obj, form):
     ProblemUpdateView.
     """
 
+    obj.object = form.save(commit=False)
+
     # Remember if new
 
     new = False if hasattr(obj.object, 'id') and isinstance(obj.object.id, int) else True
+    old_diffhtml = render_to_string('problem_diffbase.html', {'problem': get_object_or_404(models.Problem, id=obj.object.id)}) if not new else None
 
-    # Save first
+    # Save problem
 
-    obj.object = form.save(commit=False)
     obj.object.author = obj.request.user
     obj.object.description = bleach.clean(obj.object.description,
         tags=settings.SANITIZER_ALLOWED_TAGS,
@@ -57,8 +60,6 @@ def problem_save(obj, form):
         strip=True, strip_comments=True)
     obj.object.save()
 
-    # Criterias
-
     obj.object.criteria.clear()
     criterias = [i for i in obj.request.POST.get('criteria', '').split('|') if i.isdigit()]
     for c in models.Criteria.objects.filter(id__in=criterias):
@@ -66,10 +67,21 @@ def problem_save(obj, form):
 
     obj.object.save()
 
+    # Get a content diff
+
+    new_diffhtml = render_to_string('problem_diffbase.html', {'problem': obj.object})
+    if not new:
+        problemdiff = htmldiff(old_diffhtml, new_diffhtml)
+    else:
+        problemdiff = new_diffhtml
+
     # Follow and send an action for the problem
 
     follow(obj.object.author, obj.object, actor_only=False) if not is_following(obj.object.author, obj.object) else None
-    action.send(obj.object.author, verb='created' if new else 'edited', action_object=obj.object)
+    a = action.send(obj.object.author, verb='created' if new else 'edited', action_object=obj.object)
+    if problemdiff:
+        a[0][1].data = {'diff': problemdiff}
+        a[0][1].save()
     activity_count(obj.object)
 
     messages.success(obj.request, _('Problem saved'))
@@ -87,6 +99,7 @@ class ProblemCreateView(CreateView):
 
     def get_context_data(self, *args, **kwargs):
         context = super(ProblemCreateView, self).get_context_data(**kwargs)
+        context['site_title'] = '%s | %s' % (_('Create problem'), get_option('site_title'))
         context['breadcrumbs'] = self.get_breadcrumbs()
         context['title'] = _('Create new problem')
         context['criteria_form'] = forms.CriteriaForm()
@@ -114,6 +127,7 @@ class ProblemUpdateView(UpdateView):
 
     def get_context_data(self, *args, **kwargs):
         context = super(ProblemUpdateView, self).get_context_data(**kwargs)
+        context['site_title'] = '%s | %s' % (self.object.title, _('Edit'))
         context['breadcrumbs'] = self.get_breadcrumbs()
         context['title'] = _('Edit problem')
         context['criteria_form'] = forms.CriteriaForm()
@@ -127,8 +141,7 @@ class ProblemUpdateView(UpdateView):
     def form_valid(self, form):
         return problem_save(self, form)
 
-class ProblemDeleteView(DeleteView):
-    template_name = 'problem_confirm_delete.html'
+class ProblemDeleteView(RedirectView):
     model = models.Problem
     success_url = '/'
 
@@ -159,6 +172,7 @@ class ProblemView(FormView):
     def get_context_data(self, *args, **kwargs):
         context = super(ProblemView, self).get_context_data(**kwargs)
         user = get_user(self.request)
+        context['site_title'] = '%s | %s' % (self.problem.title, get_option('site_title'))
         context['breadcrumbs'] = self.get_breadcrumbs()
         context['title'] = self.problem.title
         context['sidebar'] = True
@@ -168,8 +182,13 @@ class ProblemView(FormView):
         context['comments'] = models.Comment.objects.filter(problem=self.problem)
         context['comment_form'] = forms.CommentForm()
         context['contributor_form'] = forms.ContributorForm(problem=self.problem.id)
-        context['criterias'] = models.Criteria.objects.filter(problem=self.problem)
         context['all_ideas'] = models.Idea.objects.filter(problem=self.problem)
+
+        # Criterias
+
+        context['criterias'] = list()
+        for c in models.Criteria.objects.filter(problem=self.problem):
+            c.problem_count = models.Problem.objects.filter(criteria=c).count()
 
         # Alternatives
 
@@ -209,12 +228,15 @@ class ProblemActivityView(TemplateView):
 
     def dispatch(self, request, *args, **kwargs):
         self.problem = get_object_or_404(models.Problem, slug=self.kwargs['slug'])
+        if not permissions.problem(obj=self.problem, user=self.request.user, mode='contribute'):
+            raise PermissionDenied
         return super(ProblemActivityView, self).dispatch(request, *args, **kwargs)
 
     def get_context_data(self, *args, **kwargs):
         context = super(ProblemActivityView, self).get_context_data(**kwargs)
+        activities = Paginator(any_stream(self.problem), 20)
+        context['site_title'] = '%s | %s' % (self.problem.title, _('Problem activity'))
         context['breadcrumbs'] = self.get_breadcrumbs()
-        activities = Paginator(target_stream(self.problem), 20)
         context['problem'] = self.problem
         context['activities'] = activities.page(self.request.GET.get('page', 1))
         return context

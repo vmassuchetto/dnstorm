@@ -22,7 +22,7 @@
             </p>
         </div>
         <div class="columns large-4 text-right">
-            <h6 class="subheader">{{ problem.last_activity|naturaltime }}</h6>
+            <h6 class="subheader">{% blocktrans with time=problem.last_activity|naturaltime %}last modified {{ time }}{% endblocktrans %}</h6>
         </div>
     </div>
 </div>

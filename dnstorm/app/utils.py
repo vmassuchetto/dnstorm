@@ -1,3 +1,5 @@
+from diff_match_patch import diff_match_patch as _dmp
+
 from actstream.models import followers
 
 from dnstorm.app.models import Option

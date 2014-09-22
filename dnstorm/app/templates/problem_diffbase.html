@@ -1,0 +1,12 @@
+{% load i18n %}
+
+<h3>{{ problem.title }}</h3>
+
+{{ problem.description|safe }}
+
+<p class="info">
+{% for criteria in problem.criteria.all %}
+<i class="fi-target-two"></i>&nbsp;{{ criteria.name }}
+{% endfor %}
+{% if problem.public %}<i class="fi-unlock"></i>&nbsp;{% trans "Public" %}{% else %}<i class="fi-lock"></i>&nbsp;{% trans "Private" %}{% endif %}
+</p>

@@ -10,7 +10,7 @@
 
         {% if problems %}
 
-            <h2>{% trans "Problems" %}</h2>
+            <h3>{% trans "Problems" %}{% if criteria %} &mdash; {% trans "criteria" %} {{ criteria.name }}{% endif %}</h3>
 
             {% for problem in problems %}
                 {% include "problem_row.html" %}
