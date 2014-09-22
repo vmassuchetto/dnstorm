@@ -1,6 +1,6 @@
 {% load i18n humanize %}
 
-<div class="row collapse list-item problem-list-item">
+<div class="row collapse list-item problem-list-item"{% if forloop.counter == 1 %} id="problem-first"{% endif %}>
 <div class="columns large-3 medium-3 show-for-medium-up">
     <div class="counter problem-idea-counter left">
         <span class="number">{{ problem.idea_count }}</span>

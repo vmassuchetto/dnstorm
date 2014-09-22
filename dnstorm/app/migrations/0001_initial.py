@@ -39,6 +39,7 @@ class Migration(SchemaMigration):
             ('slug', self.gf('autoslug.fields.AutoSlugField')(unique=True, max_length=60, populate_from='title', unique_with=())),
             ('description', self.gf('ckeditor.fields.RichTextField')()),
             ('author', self.gf('django.db.models.fields.related.ForeignKey')(related_name='author', to=orm['auth.User'])),
+            ('public', self.gf('django.db.models.fields.BooleanField')(default=True)),
             ('created', self.gf('django.db.models.fields.DateTimeField')(default='2000-01-01', auto_now_add=True, blank=True)),
             ('updated', self.gf('django.db.models.fields.DateTimeField')(default='2000-01-01', auto_now=True, blank=True)),
             ('last_activity', self.gf('django.db.models.fields.DateTimeField')(default='2000-01-01', auto_now=True, blank=True)),
@@ -63,14 +64,14 @@ class Migration(SchemaMigration):
         ))
         db.create_unique(m2m_table_name, ['problem_id', 'user_id'])
 
-        # Adding M2M table for field manager on 'Problem'
-        m2m_table_name = db.shorten_name('dnstorm_problem_manager')
-        db.create_table(m2m_table_name, (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('problem', models.ForeignKey(orm[u'app.problem'], null=False)),
-            ('user', models.ForeignKey(orm[u'auth.user'], null=False))
+        # Adding model 'Invitation'
+        db.create_table('dnstorm_invitation', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('problem', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['app.Problem'])),
+            ('email', self.gf('django.db.models.fields.EmailField')(max_length=75)),
+            ('hash', self.gf('django.db.models.fields.CharField')(max_length=128)),
         ))
-        db.create_unique(m2m_table_name, ['problem_id', 'user_id'])
+        db.send_create_signal(u'app', ['Invitation'])
 
         # Adding model 'Idea'
         db.create_table('dnstorm_idea', (
@@ -106,26 +107,6 @@ class Migration(SchemaMigration):
             ('updated', self.gf('django.db.models.fields.DateTimeField')(default='2000-01-01', auto_now=True, blank=True)),
         ))
         db.send_create_signal(u'app', ['Comment'])
-
-        # Adding model 'Message'
-        db.create_table('dnstorm_message', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('problem', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['app.Problem'])),
-            ('sender', self.gf('django.db.models.fields.related.ForeignKey')(related_name='message_sender', to=orm['auth.User'])),
-            ('subject', self.gf('django.db.models.fields.TextField')()),
-            ('content', self.gf('django.db.models.fields.TextField')()),
-            ('created', self.gf('django.db.models.fields.DateTimeField')(default='2000-01-01', auto_now_add=True, blank=True)),
-        ))
-        db.send_create_signal(u'app', ['Message'])
-
-        # Adding M2M table for field recipients on 'Message'
-        m2m_table_name = db.shorten_name('dnstorm_message_recipients')
-        db.create_table(m2m_table_name, (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('message', models.ForeignKey(orm[u'app.message'], null=False)),
-            ('user', models.ForeignKey(orm[u'auth.user'], null=False))
-        ))
-        db.create_unique(m2m_table_name, ['message_id', 'user_id'])
 
         # Adding model 'Alternative'
         db.create_table('dnstorm_alternative', (
@@ -174,8 +155,8 @@ class Migration(SchemaMigration):
         # Removing M2M table for field contributor on 'Problem'
         db.delete_table(db.shorten_name('dnstorm_problem_contributor'))
 
-        # Removing M2M table for field manager on 'Problem'
-        db.delete_table(db.shorten_name('dnstorm_problem_manager'))
+        # Deleting model 'Invitation'
+        db.delete_table('dnstorm_invitation')
 
         # Deleting model 'Idea'
         db.delete_table('dnstorm_idea')
@@ -185,12 +166,6 @@ class Migration(SchemaMigration):
 
         # Deleting model 'Comment'
         db.delete_table('dnstorm_comment')
-
-        # Deleting model 'Message'
-        db.delete_table('dnstorm_message')
-
-        # Removing M2M table for field recipients on 'Message'
-        db.delete_table(db.shorten_name('dnstorm_message_recipients'))
 
         # Deleting model 'Alternative'
         db.delete_table('dnstorm_alternative')
@@ -203,6 +178,21 @@ class Migration(SchemaMigration):
 
 
     models = {
+        u'actstream.action': {
+            'Meta': {'ordering': "('-timestamp',)", 'object_name': 'Action'},
+            'action_object_content_type': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'action_object'", 'null': 'True', 'to': u"orm['contenttypes.ContentType']"}),
+            'action_object_object_id': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True', 'blank': 'True'}),
+            'actor_content_type': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'actor'", 'to': u"orm['contenttypes.ContentType']"}),
+            'actor_object_id': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
+            'data': ('jsonfield.fields.JSONField', [], {'null': 'True', 'blank': 'True'}),
+            'description': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'public': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
+            'target_content_type': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'target'", 'null': 'True', 'to': u"orm['contenttypes.ContentType']"}),
+            'target_object_id': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True', 'blank': 'True'}),
+            'timestamp': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
+            'verb': ('django.db.models.fields.CharField', [], {'max_length': '255'})
+        },
         u'app.alternative': {
             'Meta': {'object_name': 'Alternative', 'db_table': "'dnstorm_alternative'"},
             'created': ('django.db.models.fields.DateTimeField', [], {'default': "'2001-01-01'", 'auto_now_add': 'True', 'blank': 'True'}),
@@ -254,15 +244,12 @@ class Migration(SchemaMigration):
             'idea': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['app.Idea']"}),
             'stars': ('django.db.models.fields.PositiveSmallIntegerField', [], {'default': '0'})
         },
-        u'app.message': {
-            'Meta': {'object_name': 'Message', 'db_table': "'dnstorm_message'"},
-            'content': ('django.db.models.fields.TextField', [], {}),
-            'created': ('django.db.models.fields.DateTimeField', [], {'default': "'2000-01-01'", 'auto_now_add': 'True', 'blank': 'True'}),
+        u'app.invitation': {
+            'Meta': {'object_name': 'Invitation', 'db_table': "'dnstorm_invitation'"},
+            'email': ('django.db.models.fields.EmailField', [], {'max_length': '75'}),
+            'hash': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'problem': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['app.Problem']"}),
-            'recipients': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'message_recipients'", 'symmetrical': 'False', 'to': u"orm['auth.User']"}),
-            'sender': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'message_sender'", 'to': u"orm['auth.User']"}),
-            'subject': ('django.db.models.fields.TextField', [], {})
+            'problem': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['app.Problem']"})
         },
         u'app.option': {
             'Meta': {'object_name': 'Option', 'db_table': "'dnstorm_option'"},
@@ -279,7 +266,7 @@ class Migration(SchemaMigration):
             'description': ('ckeditor.fields.RichTextField', [], {}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'last_activity': ('django.db.models.fields.DateTimeField', [], {'default': "'2000-01-01'", 'auto_now': 'True', 'blank': 'True'}),
-            'manager': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'manager'", 'null': 'True', 'symmetrical': 'False', 'to': u"orm['auth.User']"}),
+            'public': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'slug': ('autoslug.fields.AutoSlugField', [], {'unique': 'True', 'max_length': '60', 'populate_from': "'title'", 'unique_with': '()'}),
             'title': ('django.db.models.fields.CharField', [], {'max_length': '90'}),
             'updated': ('django.db.models.fields.DateTimeField', [], {'default': "'2000-01-01'", 'auto_now': 'True', 'blank': 'True'})

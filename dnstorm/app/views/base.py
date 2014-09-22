@@ -40,6 +40,10 @@ class HomeView(TemplateView):
         else:
             q_problems = Q(public=True)
             user = None
+        first_time = get_option('firsttime_homeview')
+        if not first_time:
+            context['first_time'] = True
+            #update_option('firsttime_homeview', True)
         context['breadcrumbs'] = self.get_breadcrumbs()
         problems = Paginator(Problem.objects.filter(q_problems).distinct().order_by('-last_activity'), 25)
         context['problems'] = problems.page(self.request.GET.get('page', 1))
