@@ -160,7 +160,7 @@ class ProblemView(FormView):
     @method_decorator(csrf_protect)
     def dispatch(self, request, *args, **kwargs):
         self.problem = get_object_or_404(models.Problem, slug=self.kwargs['slug'])
-        if not permissions.problem(obj=self.problem, user=self.request.user, mode='contribute'):
+        if not permissions.problem(obj=self.problem, user=self.request.user, mode='view'):
             raise PermissionDenied
         return super(ProblemView, self).dispatch(request, *args, **kwargs)
 
