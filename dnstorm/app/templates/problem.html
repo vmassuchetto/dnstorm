@@ -119,7 +119,7 @@
 
         {% if problem.criteria.all %}
             <div class="row">
-            <div class="columns large-12">
+            <div class="columns large-12 problem-criterias">
             {% for criteria in problem.criteria.all %}
                 {% include "criteria_button.html" with show_description=1 %}
             {% endfor %}
