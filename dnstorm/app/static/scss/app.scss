@@ -158,11 +158,18 @@ hr {
             font-weight: bold;
             color: $white;
             border-bottom: 1px solid $light-grey;
-            padding-bottom: emCalc(20px);
+            padding-bottom: emCalc(6px);
             margin-bottom: emCalc(6px);
+            .problem-count {
+                margin: emCalc(6px) 0 0 0;
+            }
         }
-        .star-description {
-            padding-left: emCalc(8px);
+        .star-row {
+            padding: emCalc(6px) 0;
+            border-bottom: 1px dotted $light-grey;
+            .star-description {
+                padding-left: emCalc(8px);
+            }
         }
     }
 }
