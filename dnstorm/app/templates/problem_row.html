@@ -12,17 +12,17 @@
     </div>
 </div>
 <div class="problem-info columns large-9 medium-9 small-12">
-    <h4><a href="{% url "problem" problem.slug %}">{{ problem.title }}</a></h4>
     <div class="row collapse">
-        <div class="columns large-8">
-            <p class="problem-criteria no-margin-bottom text-left">
-                {% for criteria in problem.criteria.all %}
-                    {% include "criteria_button.html" with size="tiny" %}
-                {% endfor %}
-            </p>
+        <div class="columns large-12">
+            <h4 class="left"><a href="{% url "problem" problem.slug %}">{{ problem.title }}</a></h4>
         </div>
-        <div class="columns large-4 text-right">
-            <h6 class="subheader">{% blocktrans with time=problem.last_activity|naturaltime %}last modified {{ time }}{% endblocktrans %}</h6>
+    </div>
+    <div class="row collapse">
+        <div class="columns large-12">
+            {% for criteria in problem.criteria.all %}
+                {% include "criteria_button.html" with size="tiny" %}
+            {% endfor %}
+            <h6 class="subheader right">{% blocktrans with time=problem.last_activity|naturaltime %}last modified {{ time }}{% endblocktrans %}</h6>
         </div>
     </div>
 </div>

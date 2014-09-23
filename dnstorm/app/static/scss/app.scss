@@ -126,7 +126,8 @@ hr {
 /* Criteria buttons */
 
 .criteria-button {
-    display: inline;
+    float: left;
+    margin: emCalc(6px) emCalc(4px);
     position: relative;
     .criteria-display {
         @include button(rem-calc(6px), $cyan, $button-radius, false, false, false);
@@ -459,6 +460,9 @@ h6.subheader {
     }
     .problem-alternative-counter {
         margin-right: 1em;
+    }
+    h6 {
+        margin: emCalc(8px) emCalc(6px);
     }
 }
 
