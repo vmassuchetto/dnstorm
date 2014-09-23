@@ -1,13 +1,13 @@
 {% load i18n %}
 
 <div class="row criteria-vote">
-    <div class="columns large-3 stars">
+    <div class="columns large-2 stars">
         <i class="fi-star{% if stars >= 1 %} selected{% endif %}" data-criteria="{{ criteria.id }}" data-tooltip title="{{ criteria.help_star1 }}"></i>
         <i class="fi-star{% if stars >= 2 %} selected{% endif %}" data-criteria="{{ criteria.id }}" data-tooltip title="{{ criteria.help_star2 }}"></i>
         <i class="fi-star{% if stars >= 3 %} selected{% endif %}" data-criteria="{{ criteria.id }}" data-tooltip title="{{ criteria.help_star3 }}"></i>
         <i class="fi-star{% if stars >= 4 %} selected{% endif %}" data-criteria="{{ criteria.id }}" data-tooltip title="{{ criteria.help_star4 }}"></i>
         <i class="fi-star{% if stars >= 5 %} selected{% endif %}" data-criteria="{{ criteria.id }}" data-tooltip title="{{ criteria.help_star5 }}"></i>
     </div>
-    <div class="columns large-3 name">{{ criteria.name }}</div>
-    <div class="columns large-6 description">{{ criteria.description }}</div>
+    <div class="columns large-4 criteria-name">{% include "criteria_button.html" %}</div>
+    <div class="columns large-6 criteria-description">{{ criteria.description }}</div>
 </div>

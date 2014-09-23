@@ -167,7 +167,7 @@ hr {
         .star-row {
             padding: emCalc(4px) 0;
             .star-description {
-                padding: emCalc(2px) 0 0 emCalc(8px);
+                padding: emCalc(2px) 0 0 emCalc(8px) !important;
                 p {
                     line-height: 1.2;
                 }
@@ -190,6 +190,27 @@ hr {
     }
 }
 
+/* Criteria vote */
+
+.criteria-vote {
+    border-top: 1px dotted $light-grey;
+    padding: emCalc(15px) 0;
+    .stars {
+        font-size: 1.6em;
+        color: $light-grey;
+        i.selecting,
+        i.selected {
+            color: $yellow;
+        }
+    }
+    .criteria-description {
+        padding-top: emCalc(6px);
+        color: $light-black;
+        font-size: emCalc(13px);
+        line-height: 1.2;
+        margin: 0;
+    }
+}
 
 // Forms
 
