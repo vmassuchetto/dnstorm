@@ -195,6 +195,9 @@ form {
     input[type='checkbox'] {
         margin:0 emCalc(3px) 0 0;
     }
+    textarea {
+        line-height: 1.5;
+    }
     .ctrlHolder {
         margin-bottom: emCalc(15px);
     }
@@ -804,7 +807,6 @@ ul.ui-autocomplete .invitation,
 .comment-form {
     textarea {
         height: emCalc(80px);
-        line-height: 1.5;
     }
 }
 
