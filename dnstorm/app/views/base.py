@@ -34,12 +34,12 @@ class HomeView(TemplateView):
 
     def get_context_data(self, *args, **kwargs):
         context = super(HomeView, self).get_context_data(**kwargs)
-        if self.request.user.is_authenticated():
+        if self.request.user.is_superuser:
+            q_problems = Q()
+        elif self.request.user.is_authenticated():
             q_problems = Q(public=True) | Q(author=self.request.user.id) | Q(contributor=self.request.user.id)
-            user = self.request.user
         else:
             q_problems = Q(public=True)
-            user = None
         first_time = get_option('firsttime_homeview')
         if not first_time:
             context['first_time'] = True
