@@ -66,6 +66,10 @@ class RegistrationView(BaseRegistrationView):
         context['site_title'] = '%s | %s' % (_('Register'), get_option('site_title'))
 
         _hash = self.request.GET.get('hash', self.request.POST.get('hash', None))
+        try:
+            _hash = int(_hash)
+        except:
+            None
         if self.request.POST:
             context['form'] = RegistrationForm(self.request.POST)
         elif _hash:
