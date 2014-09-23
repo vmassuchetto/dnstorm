@@ -1,6 +1,7 @@
 <div class="row collapse criteria" id="criteria-{{ criteria.id }}">
     <div class="columns large-12">
-        {{ criteria.name }}<br/>
-        <small>{{ criteria.description }}</small>
+        <span class="ui-icon ui-icon-edit"><a class="criteria-edit" href="javascript:void(0);" data-id="{{ criteria.id }}"><i class="fi-pencil"></i></a></span>
+        <span class="criteria-name">{{ criteria.name }}</span><br/>
+        <small class="criteria-description">{{ criteria.description }}</small>
     </div>
 </div>

@@ -220,42 +220,85 @@ $(document).on('submit', '.problem-idea-form form', function(e){
  */
 
 var criteria_form = $('#criteria-form.reveal-modal');
-$('#criteria-form input[type="submit"]').click(function(e){
+
+// New criteria
+
+$('.criteria-new').on('click', function(e){
     e.preventDefault();
-    if ($(this).attr('disabled') == 'disabled')
-        return false;
-    var form = $('#criteria-form');
-    var form_data = $('#criteria-form form').serialize() + '&new_criteria=1';
-    var button = $(this);
-    button.attr('disabled', true);
-    button.addClass('loading');
-    $.ajax({
-        url: '/ajax/',
-        type: 'POST',
-        data: form_data,
-        complete: function(xhr, data) {
-            button.attr('disabled', false);
-            button.removeClass('loading');
-            if (data == 'success') {
-                response = JSON.parse(xhr.responseText);
-                // Form errors handling
-                form.find('.holder').removeClass('error');
-                form.find('small.error').remove();
-                if (response.errors) {
-                    for (e in response.errors) {
-                        $('#div_id_' + e).addClass('error');
-                        $('#id_' + e).after('<small class="error">' + response.errors[e] + '</small>');
-                    }
-                    return false;
-                }
-                // Created successfully
-                $('#id_criteria').trigger('didAddPopup', [response.id, response.lookup_display]); // send event to django-ajax-selects
-                criteria_form.find('input[type="text"],textarea').each(function(){ $(this).val(''); });
-                criteria_form.foundation('reveal', 'close');
-            }
-        }
-    });
+    criteria_form.trigger('reset');
+    criteria_form.foundation('reveal', 'open');
 });
+
+// Criteria submit
+
+function criteria_form_trigger(){
+    $('#criteria-form input[type="submit"]').on('click', function(e){
+        e.preventDefault();
+        if ($(this).attr('disabled') == 'disabled')
+            return false;
+        var form = $('#criteria-form');
+        var form_data = $('#criteria-form form').serialize() + '&new_criteria=1';
+        var button = $(this);
+        button.attr('disabled', true);
+        button.addClass('loading');
+        $.ajax({
+            url: '/ajax/',
+            type: 'POST',
+            data: form_data,
+            complete: function(xhr, data) {
+                button.attr('disabled', false);
+                button.removeClass('loading');
+                if (data == 'success') {
+                    response = JSON.parse(xhr.responseText);
+                    // Form errors handling
+                    form.find('.holder').removeClass('error');
+                    form.find('small.error').remove();
+                    if (response.errors) {
+                        for (e in response.errors) {
+                            $('#div_id_' + e).addClass('error');
+                            $('#id_' + e).after('<small class="error">' + response.errors[e] + '</small>');
+                        }
+                        return false;
+                    }
+                    // Created successfully
+                    obj = $('#id_criteria_on_deck_' + response.id);
+                    if (obj.length > 0) {
+                        obj.find('.criteria-name').text(response.name);
+                        obj.find('.criteria-description').text(response.description);
+                    } else {
+                        $('#id_criteria').trigger('didAddPopup', [response.id, response.lookup_display]); // send event to django-ajax-selects
+                    }
+                    criteria_form.trigger('reset');
+                    criteria_form.foundation('reveal', 'close');
+                }
+            }
+        });
+    });
+}
+criteria_form_trigger();
+
+// Criteria edit
+
+$(document).ready(function(){
+    $('.criteria-edit').on('click', function(e){
+        $(this).data('id');
+        e.preventDefault();
+        $.ajax({
+            url: '/ajax/',
+            type: 'GET',
+            data: 'criteria_form=' + $(this).data('id'),
+            complete: function(xhr, data) {
+                if (data == 'success') {
+                    response = JSON.parse(xhr.responseText);
+                    criteria_form.find('form').replaceWith(response.html);
+                    criteria_form.foundation('reveal', 'open');
+                    criteria_form_trigger();
+                }
+            }
+        });
+    })
+});
+
 
 /**
  * Problem: contributor management

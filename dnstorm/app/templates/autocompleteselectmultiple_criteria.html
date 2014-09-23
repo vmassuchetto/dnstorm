@@ -5,7 +5,7 @@
         <p class="help">{% trans "Type to search for criterias." %}</p>
     </div>
     <div class="columns large-2">
-        <a class="button postfix small radius expand" data-reveal-id="criteria-form" href="javascript:void(0);">{% trans "New criteria" %}</a>
+        <a class="button postfix small radius expand criteria-new" href="javascript:void(0);">{% trans "New criteria" %}</a>
     </div>
 </div>
 <input type="hidden" name="{{ name }}" id="{{ html_id }}" value="{{ current_ids }}" data-ajax-select="autocompleteselectmultiple" data-plugin-options="{{ data_plugin_options }}" />

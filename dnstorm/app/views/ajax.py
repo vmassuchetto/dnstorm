@@ -1,6 +1,7 @@
 import random
 import re
 
+from django import forms
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.core.urlresolvers import reverse
@@ -76,10 +77,10 @@ class AjaxView(View):
         elif self.request.GET.get('activity_reset_counter', None):
             return self.activity_reset_counter()
 
-        # Endless navigation
+        # Criteria form for ajax edit
 
-        elif 'user' == self.request.GET.get('load_more', None):
-            return self.activity_user()
+        elif self.request.GET.get('criteria_form', None):
+            return self.criteria_form()
 
         # Failure
 
@@ -213,7 +214,8 @@ class AjaxView(View):
         """
         if not self.request.user.is_authenticated():
             raise Http404
-        criteria = CriteriaForm(self.request.POST)
+        instance = get_object_or_none(models.Criteria, id=self.request.POST.get('id')) if self.request.POST.get('id') else None
+        criteria = CriteriaForm(self.request.POST, instance=instance)
         if not criteria.is_valid():
             return HttpResponse(json.dumps({'errors':dict(criteria.errors)}), content_type='application/json')
         criteria.save()
@@ -221,8 +223,21 @@ class AjaxView(View):
         c = Context({'criteria': criteria.instance})
         return HttpResponse(json.dumps({
             'id': criteria.instance.id,
+            'name': criteria.instance.name,
+            'description': criteria.instance.description,
             'lookup_display': t.render(c)
         }), content_type='application/json')
+
+    def criteria_form(self):
+        """
+        Returns the criteria form of an instance.
+        """
+        if not self.request.user.is_authenticated():
+            raise Http404
+        instance = get_object_or_404(models.Criteria, id=self.request.GET.get('criteria_form', None))
+        criteria = CriteriaForm(instance=instance)
+        criteria.fields['id'] = forms.CharField(widget=forms.HiddenInput(attrs={'value': instance.id}))
+        return HttpResponse(json.dumps({'html': render_crispy_form(criteria)}), content_type='application/json')
 
     def new_alternative(self):
         """

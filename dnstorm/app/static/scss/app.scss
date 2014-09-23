@@ -118,7 +118,7 @@ hr {
             color: $light-black;
             display: block;
             line-height: 1.5;
-            padding: emCalc(5px) emCalc(30px) 0 0;
+            padding: emCalc(8px) 0 0 0;
         }
     }
 }
@@ -148,7 +148,7 @@ hr {
         z-index: 200;
         top: 0;
         left: 0;
-        width: 300px;
+        width: 350px;
         height: auto;
         p {
             margin: 0;
@@ -165,10 +165,12 @@ hr {
             }
         }
         .star-row {
-            padding: emCalc(6px) 0;
-            border-bottom: 1px dotted $light-grey;
+            padding: emCalc(4px) 0;
             .star-description {
-                padding-left: emCalc(8px);
+                padding: emCalc(2px) 0 0 emCalc(8px);
+                p {
+                    line-height: 1.2;
+                }
             }
         }
     }
@@ -709,21 +711,27 @@ ul.ui-autocomplete .invitation,
         width: 100%;
         display: inline-block;
         position: relative;
-        .ui-icon.ui-icon-trash {
-            font-family: "foundation-icons";
-            color: white;
+        .ui-icon {
+            position: absolute;
+            z-index: 99;
             font-style: normal;
             font-weight: normal;
             font-variant: normal;
             text-transform: none;
-            line-height: 1;
-            -webkit-font-smoothing: antialiased;
-            display: inline-block;
             text-decoration: inherit;
-            position: absolute;
+            line-height: 1;
+            display: inline-block;
+            -webkit-font-smoothing: antialiased;
+        }
+        .ui-icon.ui-icon-edit {
+            right: emCalc(25px);
+            top: emCalc(3px);
+        }
+        .ui-icon.ui-icon-trash {
+            color: $white;
+            font-family: "foundation-icons";
+            right: emCalc(4px);
             top: emCalc(10px);
-            right: 4px;
-            z-index: 99;
         }
     }
 }

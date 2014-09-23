@@ -179,6 +179,7 @@ class CriteriaForm(forms.ModelForm):
         layout_args = (
             Row(Column('name', css_class='large-12')),
             Row(Column('description', css_class='large-12')),
+            'id',
             Row(Column(HTML('<h4>' + _('Quantification') + '</h4>'), css_class='large-12')),
             Row(Column(HTML('<p class="formHint quantifier-help">' + _('Users will use 5 stars to rate how ideas match each criteria. Describe what each number of star means.') + '</p>'), css_class="large-12"))
         )
