@@ -104,6 +104,27 @@ hr {
     }
 }
 
+/* Criteria form entry */
+
+#div_id_criteria {
+    #id_criteria_on_deck {
+        > div {
+            padding: emCalc(10px) 0;
+            margin: 0;
+            border-top: 1px dotted $light-grey;
+        }
+        small {
+            font-size: emCalc(12px);
+            color: $light-black;
+            display: block;
+            line-height: 1.5;
+            padding: emCalc(5px) emCalc(30px) 0 0;
+        }
+    }
+}
+
+/* Criteria buttons */
+
 .criteria-button {
     display: inline;
     position: relative;
@@ -447,47 +468,6 @@ h6.subheader {
     }
 }
 
-.problem-icons {
-    margin: 0;
-    font-size: emCalc(50px);
-}
-
-#criterias .criteria {
-    border-bottom: 1px solid $light-grey;
-    margin: 0.5em;
-    padding: 0.5em;
-    p {
-        margin: 0.3rem 0;
-    }
-}
-
-.criteria-list-item {
-    .counter {
-        width: 98.333%;
-    }
-    .columns.criteria-info {
-        padding-left: emCalc(10px);
-    }
-}
-
-.criteria-vote {
-    border-top: 1px dotted $light-grey;
-    padding: emCalc(15px) 0;
-    .stars {
-        font-size: 1.6em;
-        color: $light-grey;
-        i.selecting,
-        i.selected {
-            color: $yellow;
-        }
-    }
-}
-
-.new-criteria-button {
-    margin-top: emCalc(30px);
-}
-
-
 .user-box {
     @include panel(lighten($black, 70%), 5px);
     @include border-radius($global-radius);
@@ -727,7 +707,7 @@ ul.ui-autocomplete .invitation,
             display: inline-block;
             text-decoration: inherit;
             position: absolute;
-            top: 2px;
+            top: emCalc(10px);
             right: 4px;
             z-index: 99;
         }
