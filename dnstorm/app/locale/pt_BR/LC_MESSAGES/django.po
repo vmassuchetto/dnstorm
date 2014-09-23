@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DNStorm\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-09-22 00:16-0300\n"
-"PO-Revision-Date: 2014-09-22 00:19-0300\n"
+"POT-Creation-Date: 2014-09-23 19:56-0300\n"
+"PO-Revision-Date: 2014-09-23 19:58-0300\n"
 "Last-Translator: Vinicius Massuchetto <vmassuchetto@gmail.com>\n"
 "Language-Team: \n"
 "Language: pt_BR\n"
@@ -32,9 +32,8 @@ msgid "Page title for browsers"
 msgstr "Título da página para os navegadores"
 
 #: forms.py:45
-#, fuzzy
 msgid "Site URL"
-msgstr "Site"
+msgstr "URL do site"
 
 #: forms.py:45
 msgid ""
@@ -48,7 +47,7 @@ msgstr ""
 msgid "Site"
 msgstr "Site"
 
-#: forms.py:56 forms.py:95 forms.py:123 forms.py:161 forms.py:188 forms.py:317
+#: forms.py:56 forms.py:95 forms.py:123 forms.py:161 forms.py:189 forms.py:318
 msgid "Save"
 msgstr "Salvar"
 
@@ -73,8 +72,8 @@ msgstr "Editar o usuário \"%s\""
 msgid "Problem description"
 msgstr "Descrição do problema"
 
-#: forms.py:116 models.py:163 templates/base.html:43 views/base.py:169
-#: views/base.py:176 views/base.py:194 views/criteria.py:31
+#: forms.py:116 models.py:163 templates/base.html:43 views/base.py:173
+#: views/base.py:180 views/base.py:198 views/criteria.py:31
 #: views/criteria.py:63 views/criteria.py:82 views/criteria.py:107
 msgid "Criterias"
 msgstr "Critérios"
@@ -87,11 +86,11 @@ msgstr "Permissões"
 msgid "Pending invitations"
 msgstr "Convites em aberto"
 
-#: forms.py:182
+#: forms.py:183
 msgid "Quantification"
 msgstr "Quantificação"
 
-#: forms.py:183
+#: forms.py:184
 msgid ""
 "Users will use 5 stars to rate how ideas match each criteria. Describe what "
 "each number of star means."
@@ -99,34 +98,34 @@ msgstr ""
 "Os usuários utilizarão 5 estrelas para avaliar como as ideias abordam cada "
 "critério. Descreva o que cada número de estrelas significa."
 
-#: forms.py:251
+#: forms.py:252
 msgid "Edit your idea"
 msgstr "Editar sua ideia"
 
-#: forms.py:251
+#: forms.py:252
 msgid "Give your idea"
 msgstr "Dê a sua ideia"
 
-#: forms.py:256
+#: forms.py:257
 msgid "How this idea meet the problem criterias"
 msgstr "Como esta ideia atende os critérios do problema"
 
-#: forms.py:259 forms.py:294
+#: forms.py:260 forms.py:295
 #: templates/registration/password_change_form.html:12
 #: templates/registration/password_reset_confirm.html:13
 #: templates/registration/password_reset_form.html:14
 msgid "Submit"
 msgstr "Enviar"
 
-#: forms.py:274
+#: forms.py:275
 msgid "You need to provide a number of stars for all criterias."
 msgstr "Você precisa fornecer um número de estrelas para todos os critérios."
 
-#: forms.py:302 models.py:160
+#: forms.py:303 models.py:160
 msgid "Title"
 msgstr "Título"
 
-#: forms.py:303 models.py:162
+#: forms.py:304 models.py:162
 msgid "Description"
 msgstr "Descrição"
 
@@ -264,14 +263,12 @@ msgstr ""
 "administrador do sistema."
 
 #: templates/activity.html:8 templates/criteria.html:8
-#, fuzzy
 msgid "Go back to problem"
-msgstr "Voltar ao problema"
+msgstr "Voltar ao problema\t"
 
 #: templates/activity.html:23
-#, fuzzy
 msgid "General activity"
-msgstr "atividade"
+msgstr "Atividade do site"
 
 #: templates/activity_profile.html:15
 msgid "comments"
@@ -319,8 +316,8 @@ msgstr ""
 msgid "Home"
 msgstr "Início"
 
-#: templates/base.html:46 views/base.py:210 views/base.py:217
-#: views/problem.py:247
+#: templates/base.html:46 views/base.py:214 views/base.py:221
+#: views/problem.py:248
 msgid "Activity"
 msgstr "Atividade"
 
@@ -354,10 +351,10 @@ msgstr ""
 "O <a href=\"%(dnstorm_url)s\">DNStorm</a> é um software livre distribuído "
 "sob a licença <a href=\"%(gpl_url)s\">GPL2</a>."
 
-#: templates/criteria_button.html:9
-#, fuzzy, python-format
+#: templates/criteria_button.html:10
+#, python-format
 msgid "used in %(problem_count)s problems"
-msgstr "Você foi convidado por %(problem_author)s para discutir um problema"
+msgstr "usado em %(problem_count)s problemas"
 
 #: templates/criteria_form.html:7
 #, python-format
@@ -391,17 +388,17 @@ msgstr ""
 "Oi! Não tem nenhum problema por aqui. Você precisa <a href=\"%(url_login)s"
 "\">se logar</a> para criar um."
 
-#: templates/idea.html:37 templates/problem.html:138
+#: templates/idea.html:38 templates/problem.html:138
 msgctxt "verb"
 msgid "Comment"
 msgstr "Comentar"
 
-#: templates/idea.html:39 templates/problem.html:141 views/criteria.py:109
+#: templates/idea.html:41 templates/problem.html:141 views/criteria.py:109
 #: views/problem.py:130
 msgid "Edit"
 msgstr "Editar"
 
-#: templates/idea.html:43 templates/problem.html:142
+#: templates/idea.html:45 templates/problem.html:142
 msgid "Delete"
 msgstr "Remover"
 
@@ -444,10 +441,9 @@ msgstr ""
 "usar este formulário para convidar usuários não registrador ou preparar-se "
 "para tornar o problema privado."
 
-#: templates/problem.html:86 views/problem.py:238
-#, fuzzy
+#: templates/problem.html:86 views/problem.py:239
 msgid "Problem activity"
-msgstr "Problema salvo"
+msgstr "Atividade do problema"
 
 #: templates/problem.html:103
 msgid "Strategy table"
@@ -708,7 +704,7 @@ msgstr "A criação de contas está fechada neste site."
 
 #: templates/registration/registration_complete.html:8
 msgid "Your account is activated"
-msgstr "Sua chave de ativação"
+msgstr "Sua conta está criada"
 
 #: templates/registration/registration_complete.html:9
 #, python-format
@@ -759,19 +755,17 @@ msgstr[1] "dias"
 msgid "%(number)d %(type)s"
 msgstr "%(number)d %(type)s"
 
-#: views/base.py:125
-#, fuzzy
+#: views/base.py:129
 msgid "Site options"
-msgstr "Descrição do site"
+msgstr "Opções do site"
 
-#: views/base.py:127 views/base.py:132
+#: views/base.py:131 views/base.py:136
 msgid "Options"
 msgstr "Opções"
 
-#: views/base.py:186
-#, fuzzy
+#: views/base.py:190
 msgid "Criteria problems"
-msgstr "Criar novo problema"
+msgstr "Critérios do problema"
 
 #: views/criteria.py:83
 msgid "Create"
@@ -802,9 +796,8 @@ msgid "Problem saved"
 msgstr "Problema salvo"
 
 #: views/problem.py:102
-#, fuzzy
 msgid "Create problem"
-msgstr "Criar novo problema"
+msgstr "Criar problema\t"
 
 #: views/problem.py:132
 msgid "Edit problem"
