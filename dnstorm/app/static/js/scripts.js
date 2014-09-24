@@ -15,15 +15,6 @@ if (!String.prototype.format) {
   };
 }
 
-// Get unique IDs
-
-function get_id() {
-    id = Math.floor((Math.random()*10000)+1); 
-    while ($('#' + id).length > 0)
-        id = Math.floor((Math.random()*10000)+1);
-    return id;
-}
-
 // CSRF
 
 function getCookie(name) {
@@ -507,20 +498,20 @@ $(document).on('click', '.comment-delete-toggle', function(){
  */
 
 var table_row = $('#problem-table-row');
+var table_wrap = $('.problem-table-wrap');
 var table = $('.problem-table');
 
 function adjust_table_overflow() {
-    if ($('.problem-table-wrap').lenght <= 0 || !table)
+    if (table_wrap.lenght <= 0 || !table)
         return;
-    h = table.height() + 30;
-    $('.problem-table-wrap').height(h);
     if (table.width() > $('.problem-table-wrap').width()) {
-        $('.problem-table-wrap').jScrollPane();
+        table_wrap.jScrollPane();
     }
 }
 
 $(document).on('click', '.table-button', function(){
     table_row.slideToggle(300);
+    adjust_table_overflow();
 });
 
 $(document).on('click', '.table-help-show', function(){

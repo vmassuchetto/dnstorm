@@ -155,14 +155,19 @@ hr {
             font-size: emCalc(11px);
         }
         .top {
-            font-weight: bold;
             color: $white;
             border-bottom: 1px solid $light-grey;
-            padding-bottom: emCalc(6px);
+            padding: 0 emCalc(6px) emCalc(6px) emCalc(8px);
             margin-bottom: emCalc(6px);
-            .problem-count {
-                margin: emCalc(6px) 0 0 0;
+            font-size: emCalc(14px);
+        }
+        .bottom {
+            a {
+                color: $white;
             }
+            border-top: 1px solid $light-grey;
+            padding-top: emCalc(6px);
+            margin-top: emCalc(6px);
         }
         .star-row {
             padding: emCalc(4px) 0;
@@ -371,7 +376,11 @@ h1 {
     }
 }
 
-
+.top-buttons {
+    a.button {
+        margin: emCalc(12px) 0 0 emCalc(6px);
+    }
+}
 
 a.logo-faded {
     font-family: 'Montserrat Subrayada', sans-serif;
@@ -508,8 +517,10 @@ h6.subheader {
 .user-box {
     @include panel(lighten($black, 70%), 5px);
     @include border-radius($global-radius);
+    max-width: 240px;
     .avatar {
         @include thumb(1px, $light-black);
+        margin-right: emCalc(6px);
     }
     .contributed {
         color: $light-black;
@@ -1028,6 +1039,10 @@ a.problem-action {
             }
         }
     }
+}
+
+.table-action-buttons {
+    margin-top: emCalc(15px);
 }
 
 .table-button-row {
