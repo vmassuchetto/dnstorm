@@ -92,7 +92,7 @@ class RegistrationView(BaseRegistrationView):
         # Create user
 
         username, email, password = cleaned_data['username'], cleaned_data['email'], cleaned_data['password1']
-        new_user = User.objects.create(username=username, email=email, password=password)
+        new_user = User.objects.create(username=username, email=email, password=password, is_staff=True)
 
         # Invitations
 
