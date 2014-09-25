@@ -663,7 +663,10 @@ ul.ui-autocomplete {
         line-height: 1;
         .criteria,
         .user {
-            padding: 4px 10px;
+            padding: emCalc(6px) emCalc(8px);
+        }
+        .criteria .ui-icon-edit {
+            display: none;
         }
     }
 }
