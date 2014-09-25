@@ -4,6 +4,7 @@ import urlparse
 
 from django import forms
 from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserChangeForm, PasswordChangeForm
 from django.core.urlresolvers import reverse
 from django.http import Http404, QueryDict
 from django.shortcuts import get_object_or_404
@@ -69,34 +70,39 @@ class AdminOptionsForm(forms.Form):
             raise forms.ValidationError(_('Wrong domain format.'))
         return self.cleaned_data['site_url']
 
+class UserForm(UserChangeForm):
+    first_name = forms.CharField(label=_('Display name'), help_text=_('How your name will be displayed. Username will be used if not provided.'))
 
-class AdminUserForm(forms.ModelForm):
-
-    class Meta:
-        model = User
-        fields = ['username', 'email', 'first_name', 'last_name', 'is_superuser']
-
-    def __init__(self, *args, **kw):
-        super(UserAdminForm, self).__init__(*args, **kw)
-        if self.instance.is_active:
-            actions = HTML('<a data-reveal-id="deactivate-modal" data-reveal href="javascript:void(0)" class="left button secondary tiny radius alert">' + _('Deactivate account') + '</a>')
-        else:
-            actions = HTML('<a data-reveal-id="activate-modal" data-reveal href="javascript:void(0)" class="left button secondary tiny radius success">' + _('Activate account') + '</a>')
+    def __init__(self, *args, **kwargs):
+        request = kwargs.pop('request')
+        super(UserForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.layout = Layout(
-            Fieldset(_('Edit user "%s"' % self.instance.username),
-                'username',
+            Fieldset('<i class="fi-torso"></i>&nbsp;' + _('Edit user \'%s\'' % self.instance.username),
                 'email',
                 'first_name',
-                'last_name',
-                'is_superuser',
+                'is_superuser' if request.user.is_superuser else '',
                 ButtonHolder(
-                    actions,
                     Submit('submit', _('Save'), css_class='right radius'),
+                    HTML('<a class="button secondary radius right" href="">%s</a>' % _('Change user password')),
                 ),
             )
         )
 
+class UserPasswordForm(PasswordChangeForm):
+
+    def __init__(self, *args, **kwargs):
+        super(UserForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            Fieldset('<i class="fi-torso"></i>&nbsp;' + _('Change \'%s\' password' % self.instance.username),
+                'password1',
+                'password2',
+                ButtonHolder(
+                    Submit('submit', _('Save'), css_class='right radius'),
+                ),
+            )
+        )
 class ProblemForm(forms.ModelForm):
     criteria = AutoCompleteSelectMultipleField('criteria', required=True)
 

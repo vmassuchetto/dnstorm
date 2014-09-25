@@ -12,8 +12,9 @@ from django.views.generic.edit import UpdateView
 
 from actstream.models import actor_stream
 
-from dnstorm.app.forms import AdminUserForm
+from dnstorm.app.forms import UserForm, UserPasswordForm
 from dnstorm.app.models import Problem, Idea, Comment, Option
+from dnstorm.app.utils import get_option, get_object_or_none
 
 class UserView(TemplateView):
     template_name = 'activity.html'
@@ -36,38 +37,73 @@ class UserView(TemplateView):
             { 'title': _('Users'), 'classes': 'unavailable' },
             { 'title': kwargs['username'], 'classes': 'current' } ]
 
-class AdminUserListView(TemplateView):
-    template_name = 'admin_user.html'
-
-    @method_decorator(login_required)
-    def dispatch(self, *args, **kwargs):
-        if not self.request.user.is_superuser:
-            raise PermissionDenied
-        return super(AdminUserListView, self).dispatch(*args, **kwargs)
+class UsersView(TemplateView):
+    template_name = 'users.html'
 
     def get_context_data(self, *args, **kwargs):
-        context = super(AdminUserListView, self).get_context_data(**kwargs)
-        if 'q' in self.request.GET:
-            users = User.objects.filter(
-                Q(username__icontains=self.request.GET['q']) | \
-                Q(first_name__icontains=self.request.GET['q']) | \
-                Q(last_name__icontains=self.request.GET['q']) | \
-                Q(email__icontains=self.request.GET['q']))
-        else:
-            users = User.objects.all()
-        users = Paginator(users, 50)
+        context = super(UsersView, self).get_context_data(**kwargs)
+        users = Paginator(User.objects.all().order_by('username'), 100)
         page = self.request.GET['page'] if 'page' in self.request.GET else 1
-        context['title'] = _('Users admin')
+        context['site_title'] = '%s | %s' % (_('Users'), get_option('site_title'))
         context['breadcrumbs'] = self.get_breadcrumbs()
         context['users'] = users.page(page)
         return context
 
     def get_breadcrumbs(self, **kwargs):
-        return [
-            { 'title': _('Admin'), 'classes': 'unavailable' },
-            { 'title': _('Users'), 'classes': 'current' } ]
+        return [{ 'title': _('Users'), 'classes': 'current' }]
 
-class AdminUserUpdateView(UpdateView):
+class UserUpdateView(UpdateView):
+    form_class = UserForm
+    model = User
+
+    def dispatch(self, *args, **kwargs):
+        obj = get_object_or_404(User, username=kwargs['username'])
+        if not self.request.user.is_superuser and self.request.user != obj:
+            raise PermissionDenied
+        self.object = obj
+        return super(UserUpdateView, self).dispatch(*args, **kwargs)
+
+    def get_form_kwargs(self, *args, **kwargs):
+        return {'request': self.request}
+
+    def get_object(self, *args, **kwargs):
+        return self.object
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(UserUpdateView, self).get_context_data(**kwargs)
+        context['site_title'] = '%s | %s' % (self.object.username, _('Update user'))
+        context['profile'] = self.object
+        context['breadcrumbs'] = self.get_breadcrumbs()
+        return context
+
+    def get_breadcrumbs(self, **kwargs):
+        return [{ 'title': _('Users'), 'classes': 'current' }]
+
+class UserUpdatePasswordView(UpdateView):
+    form_class = UserPasswordForm
+    model = User
+
+    def dispatch(self, *args, **kwargs):
+        obj = get_object_or_404(User, username=kwargs['username'])
+        if not self.request.user.is_superuser and self.request.user != obj:
+            raise PermissionDenied
+        self.object = obj
+        return super(UserUpdatePasswordView, self).dispatch(*args, **kwargs)
+
+    def get_object(self, *args, **kwargs):
+        return self.object
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(UserUpdatePasswordView, self).get_context_data(**kwargs)
+        context['site_title'] = '%s | %s' % (self.object.username, _('Update user password'))
+        context['breadcrumbs'] = self.get_breadcrumbs()
+        return context
+
+    def get_breadcrumbs(self, **kwargs):
+        return [{ 'title': _('Users'), 'classes': 'current' }]
+
+
+'''class AdminUserUpdateView(UpdateView):
     template_name = 'admin_user_edit.html'
     model = User
     form_class = AdminUserForm
@@ -132,4 +168,4 @@ class AdminUserDeactivateView(RedirectView):
         user.first_name = ''
         user.last_name = ''
         user.save()
-        return reverse('admin_user_edit', kwargs={'user_id': user.id})
+        return reverse('admin_user_edit', kwargs={'user_id': user.id})'''

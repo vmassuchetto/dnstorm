@@ -42,6 +42,8 @@
             <li class="divider"></li>
             <li><a href="{% url "criterias" %}">{% trans "Criterias" %}</a></li>
             <li class="divider"></li>
+            <li><a href="{% url "users" %}">{% trans "Users" %}</a></li>
+            <li class="divider"></li>
             {% if user.is_authenticated %}
                 <li><a href="{% url "activity" %}">{% trans "Activity" %}</a></li>
                 <li class="divider"></li>

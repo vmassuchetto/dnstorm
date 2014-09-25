@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load avatar_tags humanize i18n %}
+
+{% block bodyclass %}users{% endblock %}
+
+{% block content %}
+
+    <div class="row">
+        <div class="columns large-12"><h3>{% trans "Users" %}</h3></div>
+    </div>
+
+    {% for user in users %}
+
+        {% if forloop.counter|divisibleby:4 or forloop.first %}
+            <div class="row">
+        {% endif %}
+
+        <div class="criteria columns large-3">{% include "user_box.html" with expanded=True date=user.date_joined %}</div>
+
+        {% if forloop.counter|divisibleby:4 or forloop.last %}
+            </div>
+        {% endif %}
+
+    {% endfor %}
+
+    <div class="row">
+        <div class="columns large-12">
+            {% include "pagination.html" with items=users %}
+        </div>
+    </div>
+
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags i18n %}
+
+{% block bodyclass %}admin-options{% endblock %}
+
+{% block content %}
+
+    <div class="row">
+    <div class="large-12 columns options">
+        <h4>{{ title }}</h4>
+        {% crispy form %}
+    </div>
+    </div>
+
+{% endblock %}
