@@ -115,7 +115,7 @@ class AdminOptionsView(FormView):
     """
     Admin options page for superusers.
     """
-    template_name = 'admin_options.html'
+    template_name = 'options.html'
     form_class = AdminOptionsForm
 
     @method_decorator(login_required)
@@ -151,7 +151,7 @@ class AdminOptionsView(FormView):
         s.domain = url.netloc
         s.save()
 
-        return HttpResponseRedirect(reverse('admin_options'))
+        return HttpResponseRedirect(reverse('options'))
 
 class CommentView(RedirectView):
     """

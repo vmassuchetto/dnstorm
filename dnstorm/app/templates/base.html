@@ -49,13 +49,12 @@
         </ul>
         <ul class="right">
             {% if user.is_authenticated %}
-                <li class="has-form"><a class="button success radius" href="{% url 'problem_new' %}"><i class="fi-page-add"></i>&nbsp;{% trans 'Create new problem' %}</a></li>
                 <li class="divider"></li>
                 <li class="has-icon notification notification-icon{% if user_activity_counter > "0" %} alert{% endif %}"><a href="javascript:void(0);"><i class="fi-lightbulb"></i><span class="counter">{{ user_activity_counter }}</span></a></li>
                 <li class="divider"></li>
                 {% block topicon %}{% endblock %}
                 {% if user.is_superuser %}
-                    <li class="has-icon"><a href="{% url "admin_options" %}"><i class="fi-widget"></i></a></li>
+                    <li class="has-icon"><a href="{% url "options" %}"><i class="fi-widget"></i></a></li>
                     <li class="divider"></li>
                 {% endif %}
                 <li class="divider"></li>
@@ -64,6 +63,7 @@
                 <li class="divider"></li>
                 <li><a href="{{ logout_url }}">{% trans 'Logout' %}</a></li>
             {% else %}
+                <li class="divider"></li>
                 <li><a href="{{ login_url }}">{% trans 'Login' %}</a></li>
                 <li class="divider"></li>
                 <li><a href="{% url "registration_register" %}">{% trans 'Register' %}</a></li>
@@ -131,7 +131,8 @@
     <div class="columns large-4 medium-4 text-left">
         <h1><a id="logo" href="{% url "home" %}">DNStorm</a></h1>
     </div>
-    <div class="columns large-8 medium-8">
+    <div class="columns top-buttons large-8 medium-8">
+        <a class="button radius small right" href="{% url 'problem_new' %}"><i class="fi-page-add"></i>&nbsp;{% trans 'Create new problem' %}</a>
         {% block topbutton %}{% endblock %}
     </div>
 </div>
@@ -148,12 +149,8 @@
     </div>
 </footer>
 
-{% block afterfooter %}{% endblock %}
-
 <script type="text/javascript" src="{% static "js/foundation.min.js" %}"></script>
 <script type="text/javascript" src="{% static "js/scripts.js" %}"></script>
-
-{% block endbody %}{% endblock %}
 
 </body>
 </html>

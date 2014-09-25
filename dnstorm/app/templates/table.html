@@ -2,8 +2,8 @@
 
 <div class="row collapse" id="problem-table-row">
 
-<div class="columns large-12">
-<table class="problem-table{% if criterias %} with-criterias{% endif %}" data-problem="{{ problem.id }}">
+<div class="columns large-12 problem-table-wrap">
+<table class="problem-table" data-problem="{{ problem.id }}">
 
     <thead>
     <tr>
@@ -35,18 +35,18 @@
 </div>
 
 {% if problem_perm_manage %}
-    <div class="columns large-12">
-    <a class="button radius new-alternative tiny"><i class="fi-plus"></i>&nbsp;{% trans "Add a new alternative" %}</a>
-    <a class="button radius secondary tiny table-help-show"><i class="fi-info"></i>&nbsp;{% trans "Need some help?" %}</a>
-    <div class="table-help panel radius secondary">
-    <ul>
-        <li>{% blocktrans %}To start building the table click on "Add alternative"{% endblocktrans %}</li>
-        <li>{% blocktrans with icon="<i class='fi-plus'></i>" %}To put ideas into alternatives click on the {{ icon }} icon{% endblocktrans %}</li>
-        <li>{% blocktrans with icon="<i class='fi-x'></i>" %}To delete alternatives click on the {{ icon }} icon{% endblocktrans %}</li>
-        {% url "problem_edit" problem.slug as problem_url %}
-        <li>{% blocktrans with url=problem_url %}<a href="{{ url }}">Edit the problem</a> to create more criterias{% endblocktrans %}</li>
-    </ul>
-    </div>
+    <div class="columns large-12 table-action-buttons">
+        <a class="button radius new-alternative tiny"><i class="fi-plus"></i>&nbsp;{% trans "Add a new alternative" %}</a>
+        <a class="button radius secondary tiny table-help-show"><i class="fi-info"></i>&nbsp;{% trans "Need some help?" %}</a>
+        <div class="table-help panel radius secondary">
+            <ul>
+                <li>{% blocktrans %}To start building the table click on "Add alternative"{% endblocktrans %}</li>
+                <li>{% blocktrans with icon="<i class='fi-plus'></i>" %}To put ideas into alternatives click on the {{ icon }} icon{% endblocktrans %}</li>
+                <li>{% blocktrans with icon="<i class='fi-x'></i>" %}To delete alternatives click on the {{ icon }} icon{% endblocktrans %}</li>
+                {% url "problem_edit" problem.slug as problem_url %}
+                <li>{% blocktrans with url=problem_url %}<a href="{{ url }}">Edit the problem</a> to create more criterias{% endblocktrans %}</li>
+            </ul>
+        </div>
     </div>
 {% endif %}
 <hr/>

@@ -45,20 +45,21 @@ urlpatterns = patterns('',
 
     # Users
 
+    (r'^users/$', user.UsersView.as_view(), {}, 'users'),
     (r'^users/(?P<username>[^/]+)/$', user.UserView.as_view(), {}, 'user'),
+    (r'^users/(?P<username>[^/]+)/edit/$', user.UserUpdateView.as_view(), {}, 'user_edit'),
+    (r'^users/(?P<username>[^/]+)/edit/password/$', user.UserUpdatePasswordView.as_view(), {}, 'user_edit_password'),
+    #(r'^admin/users/(?P<user_id>[^/]+)/activate/$', user.AdminUserActivateView.as_view(), {}, 'admin_user_activate'),
+    #(r'^admin/users/(?P<user_id>[^/]+)/deactivate/$', user.AdminUserDeactivateView.as_view(), {}, 'admin_user_deactivate'),
 
     # Activity
 
     (r'^activity/$', base.ActivityView.as_view(), {}, 'activity'),
     (r'^problem/(?P<slug>[^/]+)/activity/$', problem.ProblemActivityView.as_view(), {}, 'problem_activity'),
 
-    # DNStorm admin
+    # DNStorm options
 
-    (r'^admin/options/$', base.AdminOptionsView.as_view(), {}, 'admin_options'),
-    (r'^admin/users/$', user.AdminUserListView.as_view(), {}, 'admin_user'),
-    (r'^admin/users/(?P<user_id>[^/]+)/$', user.AdminUserUpdateView.as_view(), {}, 'admin_user_edit'),
-    (r'^admin/users/(?P<user_id>[^/]+)/activate/$', user.AdminUserActivateView.as_view(), {}, 'admin_user_activate'),
-    (r'^admin/users/(?P<user_id>[^/]+)/deactivate/$', user.AdminUserDeactivateView.as_view(), {}, 'admin_user_deactivate'),
+    (r'^options/$', base.AdminOptionsView.as_view(), {}, 'options'),
 
     # Other apps
 

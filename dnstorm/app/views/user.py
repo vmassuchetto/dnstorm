@@ -1,5 +1,3 @@
-import cPickle as pickle
-
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.exceptions import PermissionDenied
@@ -26,6 +24,7 @@ class UserView(TemplateView):
         user.problem_count = Problem.objects.filter(author=user).count()
         user.idea_count = Idea.objects.filter(author=user).count()
         user.comment_count = Comment.objects.filter(author=user).count()
+        context['site_title'] = '%s | %s' % (user.username, _('User profile'))
         context['profile'] = user
         context['breadcrumbs'] = self.get_breadcrumbs(username=context['username'])
         activities = Paginator(actor_stream(context['profile']), 20)

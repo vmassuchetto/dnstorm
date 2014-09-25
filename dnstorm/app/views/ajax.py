@@ -135,6 +135,7 @@ class AjaxView(View):
         """
         Manage problem contributors.
         """
+
         problem = get_object_or_404(models.Problem, id=self.request.POST['problem'])
         if not permissions.problem(obj=problem, user=self.request.user, mode='manage'):
             raise PermissionDenied

@@ -15,7 +15,9 @@ if (!String.prototype.format) {
   };
 }
 
-// CSRF
+/**
+ * CSRF token handling
+ */
 
 function getCookie(name) {
     var cookieValue = null;
@@ -105,18 +107,6 @@ $(document).on('click', '.show-problem-table', function(){
     } else {
         $('#problem-table-row').fadeOut(300);
     }
-});
-
-// Hide after click
-
-$('.hide-after-click').click(function(){
-    $(this).fadeOut(300);
-});
-
-// Select all on click
-
-$('.select-on-click').click(function(){
-    $(this).select();
 });
 
 // Scroll to idea form

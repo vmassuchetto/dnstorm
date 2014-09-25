@@ -146,7 +146,7 @@ class ProblemDeleteView(RedirectView):
     success_url = '/'
 
     def dispatch(self, *args, **kwargs):
-        obj = get_object_or_404(Problem, slug=kwargs['slug'])
+        obj = get_object_or_404(models.Problem, slug=kwargs['slug'])
         if not permissions.problem(obj=obj, user=self.request.user, mode='contribute'):
             raise PermissionDenied
         if len(self.request.POST) > 0:

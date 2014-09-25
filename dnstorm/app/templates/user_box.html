@@ -1,28 +1,23 @@
 {% load i18n avatar_tags %}
 
-<div class="user-box text-right">
+<div class="user-box">
     <div class="row collapse">
-    <div class="columns large-10">
-
-        {% if date %}<span class="contributed">{% endif %}
-        {% if date and link %}
-            <a href="{{ link }}">
-        {% endif %}
-        {% if date %}
-            {{ date|date:"d b Y" }} {% trans "at" %} {{ date|date:"H:i" }}
-        {% endif %}
-        {% if date and link %}
-            </a>
-        {% endif %}
-        {% if date %}</span><br/>{% endif %}
-
-        <a class="username" href="{% url "user" user.username %}">{{ user.username }}</a>
-
+        <div class="columns large-12">
+            <a class="avatar left" href="{% url "user" user.username %}">{% avatar user 32 %}</a>
+            <div class="info">
+                {% if date %}<span class="contributed">{% endif %}
+                {% if date and link %}
+                    <a href="{{ link }}">
+                {% endif %}
+                {% if date %}
+                    {% blocktrans with day=date|date:"d b Y" hour=date|date:"H:i" %}{{ day }} at {{ hour }}{% endblocktrans %}
+                {% endif %}
+                {% if date and link %}
+                    </a>
+                {% endif %}
+                {% if date %}</span><br/>{% endif %}
+                <a class="username" href="{% url "user" user.username %}">{{ user.username }}</a>
+            </div>
+        </div>
     </div>
-
-    <div class="columns large-2">
-        <a class="avatar" href="{% url "user" user.username %}">{% avatar user 32 %}</a>
-    </div>
-    </div>
-
 </div>

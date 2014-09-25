@@ -5,23 +5,30 @@
 
 {% block content %}
     <div class="row">
-    <div class="large-6 large-offset-3 columns content">
+
         {% if user.is_authenticated %}
-            <span class="panel radius secondary text-center">{% trans "You are already logged in." %}</span>
+
+            <div class="columns large-12">
+                <div class="panel radius secondary"><p>{% trans "You are already logged in." %}</p></div>
+            </div>
+
         {% else %}
-            <h4>{% trans "Create new user" %}</h4>
-            {% if problems %}
-                <hr/>
-                <p>{% trans "After registering you'll get contribution access to the following problems:" %}</p>
-                <ul>
-                {% for problem in problems %}
-                    <li>{{ problem.title }}</li>
-                {% endfor %}
-                </ul>
-                <hr/>
-            {% endif %}
-            {% crispy form %}
+
+            <div class="large-6 large-offset-3 columns content">
+                <h4>{% trans "Create new user" %}</h4>
+                {% if problems %}
+                    <hr/>
+                    <p>{% trans "After registering you'll get contribution access to the following problems:" %}</p>
+                    <ul>
+                    {% for problem in problems %}
+                        <li>{{ problem.title }}</li>
+                    {% endfor %}
+                    </ul>
+                    <hr/>
+                {% endif %}
+                {% crispy form %}
+            </div>
+
         {% endif %}
-    </div>
     </div>
 {% endblock %}
