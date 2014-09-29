@@ -16,10 +16,6 @@
 
             <div class="large-6 large-offset-3 columns content">
                 <h4>{% trans "Create new user" %}</h4>
-                {% if not request.GET.hash %}
-                    <hr/>
-                    <p>{% blocktrans %}If your email is already registered, then you'll probably need to use an invitation link or <a href="{{ url }}">reset your password</a>.{% endblocktrans %}</p>
-                {% endif %}
                 {% if problems %}
                     <hr/>
                     <p>{% trans "After registering you'll get contribution access to the following problems:" %}</p>

@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DNStorm\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-09-23 19:56-0300\n"
-"PO-Revision-Date: 2014-09-23 19:58-0300\n"
+"POT-Creation-Date: 2014-09-29 01:37-0300\n"
+"PO-Revision-Date: 2014-09-29 01:38-0300\n"
 "Last-Translator: Vinicius Massuchetto <vmassuchetto@gmail.com>\n"
 "Language-Team: \n"
 "Language: pt_BR\n"
@@ -18,24 +18,24 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 1.5.4\n"
 
-#: forms.py:37 templates/base.html:69 templates/registration/login.html:46
+#: forms.py:38 templates/base.html:83 templates/registration/login.html:43
 #: views/base.py:66
 msgid "Register"
 msgstr "Criar conta"
 
-#: forms.py:44
+#: forms.py:45
 msgid "Site title"
 msgstr "Título do site"
 
-#: forms.py:44
+#: forms.py:45
 msgid "Page title for browsers"
 msgstr "Título da página para os navegadores"
 
-#: forms.py:45
+#: forms.py:46
 msgid "Site URL"
 msgstr "URL do site"
 
-#: forms.py:45
+#: forms.py:46
 msgid ""
 "Site domain for URL generation with http scheme. Examples: 'http://domain."
 "com', 'https://subdomain.domain.com', 'http://domain:port'"
@@ -43,54 +43,66 @@ msgstr ""
 "Domínio do site para geração das URLs com o protocolo http. Exemplo: 'http://"
 "dominio.com', 'https://subdominio.dominio.com', 'http://dominio:porta'"
 
-#: forms.py:51
+#: forms.py:52
 msgid "Site"
 msgstr "Site"
 
-#: forms.py:56 forms.py:95 forms.py:123 forms.py:161 forms.py:189 forms.py:318
+#: forms.py:57 forms.py:86 forms.py:102 forms.py:137 forms.py:178 forms.py:206
+#: forms.py:335
 msgid "Save"
 msgstr "Salvar"
 
-#: forms.py:69
+#: forms.py:70
 msgid "Wrong domain format."
 msgstr "Formato de domínio inválido."
 
-#: forms.py:82
-msgid "Deactivate account"
-msgstr "Desativar conta"
+#: forms.py:74
+msgid "Display name"
+msgstr "Nome de exibição"
 
-#: forms.py:84
-msgid "Activate account"
-msgstr "Ativar conta"
+#: forms.py:74
+msgid "How your name will be displayed. Username will be used if not provided."
+msgstr ""
+"Como o seu nome será mostrado. O nome de usuário será utilizado se você não "
+"fornecer um."
 
-#: forms.py:87
+#: forms.py:81
 #, python-format
-msgid "Edit user \"%s\""
+msgid "Edit user '%s'"
 msgstr "Editar o usuário \"%s\""
 
-#: forms.py:112
+#: forms.py:87
+msgid "Change user password"
+msgstr "Modificar a senha do usuário"
+
+#: forms.py:98
+#, python-format
+msgid "Change '%s' password"
+msgstr "Modificar a senha de '%s'"
+
+#: forms.py:122
 msgid "Problem description"
 msgstr "Descrição do problema"
 
-#: forms.py:116 models.py:163 templates/base.html:43 views/base.py:173
+#: forms.py:128 models.py:163 templates/base.html:55 views/base.py:173
 #: views/base.py:180 views/base.py:198 views/criteria.py:31
 #: views/criteria.py:63 views/criteria.py:82 views/criteria.py:107
 msgid "Criterias"
 msgstr "Critérios"
 
-#: forms.py:119
+#: forms.py:131
 msgid "Permissions"
 msgstr "Permissões"
 
-#: forms.py:152
+#: forms.py:169
 msgid "Pending invitations"
 msgstr "Convites em aberto"
 
-#: forms.py:183
+#: forms.py:200
 msgid "Quantification"
 msgstr "Quantificação"
 
-#: forms.py:184
+#: forms.py:201
 msgid ""
 "Users will use 5 stars to rate how ideas match each criteria. Describe what "
 "each number of star means."
@@ -98,34 +110,34 @@ msgstr ""
 "Os usuários utilizarão 5 estrelas para avaliar como as ideias abordam cada "
 "critério. Descreva o que cada número de estrelas significa."
 
-#: forms.py:252
+#: forms.py:269
 msgid "Edit your idea"
 msgstr "Editar sua ideia"
 
-#: forms.py:252
+#: forms.py:269
 msgid "Give your idea"
 msgstr "Dê a sua ideia"
 
-#: forms.py:257
+#: forms.py:274
 msgid "How this idea meet the problem criterias"
 msgstr "Como esta ideia atende os critérios do problema"
 
-#: forms.py:260 forms.py:295
+#: forms.py:277 forms.py:312
 #: templates/registration/password_change_form.html:12
 #: templates/registration/password_reset_confirm.html:13
 #: templates/registration/password_reset_form.html:14
 msgid "Submit"
 msgstr "Enviar"
 
-#: forms.py:275
+#: forms.py:292
 msgid "You need to provide a number of stars for all criterias."
 msgstr "Você precisa fornecer um número de estrelas para todos os critérios."
 
-#: forms.py:303 models.py:160
+#: forms.py:320 models.py:160
 msgid "Title"
 msgstr "Título"
 
-#: forms.py:304 models.py:162
+#: forms.py:321 models.py:162
 msgid "Description"
 msgstr "Descrição"
 
@@ -173,15 +185,15 @@ msgstr "Descrição para 5 estrelas"
 msgid "criteria"
 msgstr "critério"
 
-#: models.py:165
+#: models.py:166
 msgid "Contributors"
 msgstr "Colaboradores"
 
-#: models.py:166 templates/problem_diffbase.html:11
+#: models.py:167 templates/problem_diffbase.html:11
 msgid "Public"
 msgstr "Público"
 
-#: models.py:166
+#: models.py:167
 msgid ""
 "Anyone is able to view and contribute to this problem. If not public, you'll "
 "need to set the contributors on the problem page."
@@ -190,39 +202,51 @@ msgstr ""
 "que o problema não seja público deverá escolher os colaboradores na página "
 "do problema."
 
-#: models.py:175
+#: models.py:168
+msgid "Open edit"
+msgstr "Edição aberta"
+
+#: models.py:168
+msgid ""
+"Let users change the title and description of problems and ideas as "
+"coauthors."
+msgstr ""
+"Permitir que os usuários mudem o título e descrição do problema e das ideias "
+"como co-autores."
+
+#: models.py:177
 msgid "problem"
 msgstr "Problema"
 
-#: models.py:201
+#: models.py:203
 msgid "invitation"
 msgstr "convite"
 
-#: models.py:214
+#: models.py:216
 msgid "title"
 msgstr "título"
 
-#: models.py:225 templates/problem_row.html:7
+#: models.py:227 templates/problem_row.html:7
 msgid "idea"
 msgstr "ideia"
 
-#: models.py:277
+#: models.py:285
 msgid "idea criteria"
 msgstr "critério da ideia"
 
-#: models.py:289
+#: models.py:297
 msgid "Comment"
 msgstr "Comentário"
 
-#: models.py:299
+#: models.py:306
 msgid "comment"
 msgstr "comentário"
 
-#: models.py:315 templates/problem_row.html:11
+#: models.py:323 templates/problem_row.html:11
 msgid "alternative"
 msgstr "alternativa"
 
-#: models.py:350
+#: models.py:359
 msgid "vote"
 msgstr "voto"
 
@@ -287,6 +311,10 @@ msgstr "Problemas"
 msgid "member since %(time)s"
 msgstr "membro desde %(time)s"
 
+#: templates/activity_profile.html:23
+msgid "Update user information"
+msgstr "Atualizar as informações do usuário"
+
 #: templates/alternative.html:18
 msgid "Select ideas for this alternative"
 msgstr "Selecione ideias para esta alternativa"
@@ -312,37 +340,58 @@ msgstr ""
 "colaboradores. Entre com um endereço de e-mail para convidar um usuário que "
 "não esteja registrado."
 
-#: templates/base.html:41 templates/base.html.py:84
+#: templates/base.html:25
+msgid "Ooops... server error. Sorry."
+msgstr "Ooops... erro do servidor. Desculpe"
+
+#: templates/base.html:26
+msgid ""
+"There was something wrong with your request and we don't know what happened. "
+"Please contact your system administrator if this problem persists."
+msgstr ""
+"Houve algo de errado com sua requisição e não sabemos direito o que "
+"aconteceu. Contate o administrador do sistema se este problema persistir."
+
+#: templates/base.html:29
+msgid "OK"
+msgstr "OK"
+
+#: templates/base.html:53 templates/base.html.py:98
 msgid "Home"
 msgstr "Início"
 
-#: templates/base.html:46 views/base.py:214 views/base.py:221
-#: views/problem.py:248
+#: templates/base.html:57 templates/users.html:9 views/user.py:37
+#: views/user.py:47 views/user.py:53 views/user.py:80 views/user.py:103
+msgid "Users"
+msgstr "Usuários"
+
+#: templates/base.html:60 views/base.py:214 views/base.py:221
+#: views/problem.py:264
 msgid "Activity"
 msgstr "Atividade"
 
-#: templates/base.html:52 views/problem.py:104 views/problem.py:110
-msgid "Create new problem"
-msgstr "Criar novo problema"
-
-#: templates/base.html:65
+#: templates/base.html:78
 msgid "Logout"
 msgstr "Sair"
 
-#: templates/base.html:67 templates/registration/login.html:21
+#: templates/base.html:81 templates/registration/login.html:21
 #: templates/registration/login.html:35
 msgid "Login"
 msgstr "Login"
 
-#: templates/base.html:116
+#: templates/base.html:130
 msgid "No activity so far."
 msgstr "Nenhuma atividade até agora."
 
-#: templates/base.html:124
+#: templates/base.html:138
 msgid "View all activities"
 msgstr "Ver todas as atividades"
 
-#: templates/base.html:146
+#: templates/base.html:150 views/problem.py:114 views/problem.py:119
+msgid "Create new problem"
+msgstr "Criar novo problema"
+
+#: templates/base.html:163
 #, python-format
 msgid ""
 "<a href=\"%(dnstorm_url)s\">DNStorm</a> is a free softwares licensed under "
@@ -351,7 +400,7 @@ msgstr ""
 "O <a href=\"%(dnstorm_url)s\">DNStorm</a> é um software livre distribuído "
 "sob a licença <a href=\"%(gpl_url)s\">GPL2</a>."
 
-#: templates/criteria_button.html:10
+#: templates/criteria_button.html:21
 #, python-format
 msgid "used in %(problem_count)s problems"
 msgstr "usado em %(problem_count)s problemas"
@@ -366,7 +415,7 @@ msgstr ""
 msgid "Create a new criteria"
 msgstr "Criar novo critério"
 
-#: templates/home.html:13 views/base.py:54 views/idea.py:117
+#: templates/home.html:13 views/base.py:54 views/idea.py:124
 msgid "Problems"
 msgstr "Problemas"
 
@@ -394,13 +443,21 @@ msgid "Comment"
 msgstr "Comentar"
 
 #: templates/idea.html:41 templates/problem.html:141 views/criteria.py:109
-#: views/problem.py:130
+#: views/problem.py:140
 msgid "Edit"
 msgstr "Editar"
 
-#: templates/idea.html:45 templates/problem.html:142
+#: templates/idea.html:44 templates/problem.html:144
 msgid "Delete"
 msgstr "Remover"
+
+#: templates/idea.html:54 templates/problem.html:154
+msgid "edited"
+msgstr "editado"
+
+#: templates/idea.html:59 templates/problem.html:159
+msgid "created"
+msgstr "criado"
 
 #: templates/pagination.html:9
 #, python-format
@@ -441,7 +498,7 @@ msgstr ""
 "usar este formulário para convidar usuários não registrador ou preparar-se "
 "para tornar o problema privado."
 
-#: templates/problem.html:86 views/problem.py:239
+#: templates/problem.html:86 views/problem.py:255
 msgid "Problem activity"
 msgstr "Atividade do problema"
 
@@ -449,13 +506,21 @@ msgstr "Atividade do problema"
 msgid "Strategy table"
 msgstr "Tabela de estratégias"
 
-#: templates/problem.html:143
+#: templates/problem.html:145
 msgid "Manage contributors"
 msgstr "Gerenciar colaboradores"
 
 #: templates/problem_diffbase.html:11
 msgid "Private"
 msgstr "Privado"
+
+#: templates/problem_diffbase.html:12
+msgid "Open"
+msgstr "Aberto"
+
+#: templates/problem_diffbase.html:12
+msgid "Closed"
+msgstr "Fechado"
 
 #: templates/problem_row.html:11
 msgid "alternatives"
@@ -505,9 +570,10 @@ msgstr "Para deletar alternativas clique no ícone %(icon)s"
 msgid "<a href=\"%(url)s\">Edit the problem</a> to create more criterias"
 msgstr "<a href=\"%(url)s\">Edite o problema</a> para criar mais critérios"
 
-#: templates/user_box.html:12
-msgid "at"
-msgstr "em"
+#: templates/user_box.html:13
+#, python-format
+msgid "%(day)s at %(hour)s"
+msgstr "%(day)s às %(hour)s"
 
 #: templates/user_lookup_display.html:8
 msgid "Remove"
@@ -587,7 +653,21 @@ msgstr ""
 "\">comentou</a> a ideia <a href=\"%(idea_url)s\">%(idea_title)s</a> no "
 "problema <a href=\"%(problem_url)s\">%(problem_title)s</a>"
 
-#: templates/notification/invitation/full.txt:5
+#: templates/notification/email_body.txt:2
+#, python-format
+msgid ""
+"This is an automatic e-mail sent from %(site_title)s. To see other notices "
+"check your account on %(site_url)s.\n"
+"\n"
+"If you don't know the DNStorm software, check this link: %(dnstorm_url)s\n"
+msgstr ""
+"Este é um e-mail automático enviado pelo %(site_title)s. Para ver outras "
+"notificações acesse a sua conta em %(site_url)s.\n"
+"\n"
+"Se você ainda não conhece o software DNStorm, visite este link: "
+"%(dnstorm_url)s\n"
+
+#: templates/notification/invitation/full.txt:1
 #, python-format
 msgid ""
 "You were invited by %(problem_author)s to discuss and collaborate on the "
@@ -647,11 +727,11 @@ msgid "Activate your account on %(site)s"
 msgstr "Ative sua conta em %(site)s"
 
 #: templates/registration/login.html:13
-#: templates/registration/registration_form.html:10
+#: templates/registration/registration_form.html:12
 msgid "You are already logged in."
 msgstr "Você já está logado."
 
-#: templates/registration/login.html:43
+#: templates/registration/login.html:49
 #: templates/registration/password_reset_form.html:9
 msgid "Reset password"
 msgstr "Recuperar senha"
@@ -715,45 +795,16 @@ msgstr ""
 "Bem-vindo ao DNStorm. Você já pode <a href=\"%(home_url)s\">começar a "
 "contribuir com os problemas</a>."
 
-#: templates/registration/registration_form.html:12
+#: templates/registration/registration_form.html:18
 msgid "Create new user"
 msgstr "Criar novo usuário"
 
-#: templates/registration/registration_form.html:15
+#: templates/registration/registration_form.html:21
 msgid ""
 "After registering you'll get contribution access to the following problems:"
 msgstr ""
 "Depois de se registrar você vai ter acesso de contribuição aos seguintes "
 "problemas:"
-
-#: templatetags/date_diff.py:21
-msgid "year"
-msgid_plural "years"
-msgstr[0] "ano"
-msgstr[1] "anos"
-
-#: templatetags/date_diff.py:22
-msgid "month"
-msgid_plural "months"
-msgstr[0] "mês"
-msgstr[1] "meses"
-
-#: templatetags/date_diff.py:23
-msgid "week"
-msgid_plural "weeks"
-msgstr[0] "semana"
-msgstr[1] "semanas"
-
-#: templatetags/date_diff.py:24
-msgid "day"
-msgid_plural "days"
-msgstr[0] "dia"
-msgstr[1] "dias"
-
-#: templatetags/date_diff.py:32
-#, python-format
-msgid "%(number)d %(type)s"
-msgstr "%(number)d %(type)s"
 
 #: views/base.py:129
 msgid "Site options"
@@ -779,45 +830,83 @@ msgstr "Critério salvo."
 msgid "Criteria saved."
 msgstr "Critério salvo."
 
-#: views/idea.py:84
+#: views/idea.py:88
 msgid "Idea saved."
 msgstr "Ideia salva."
 
-#: views/idea.py:119
+#: views/idea.py:126
 msgid "Idea"
 msgstr "Ideia"
 
-#: views/idea.py:120 views/problem.py:139
+#: views/idea.py:127 views/problem.py:148
 msgid "Update"
 msgstr "Atualização"
 
-#: views/problem.py:87
+#: views/problem.py:97
 msgid "Problem saved"
 msgstr "Problema salvo"
 
-#: views/problem.py:102
+#: views/problem.py:112
 msgid "Create problem"
 msgstr "Criar problema\t"
 
-#: views/problem.py:132
+#: views/problem.py:142
 msgid "Edit problem"
 msgstr "Editar problema"
 
-#: views/problem.py:153
+#: views/problem.py:175
 msgid "Problem deleted"
 msgstr "Problema removido"
 
-#: views/user.py:37 views/user.py:69 views/user.py:101
-msgid "Users"
-msgstr "Usuários"
+#: views/user.py:28
+msgid "User profile"
+msgstr "Perfil do usuário"
 
-#: views/user.py:61
-msgid "Users admin"
-msgstr "Administração de usuários"
+#: views/user.py:74
+msgid "Update user"
+msgstr "Atualizar usuário"
 
-#: views/user.py:68 views/user.py:100
-msgid "Admin"
-msgstr "Admin"
+#: views/user.py:98
+msgid "Update user password"
+msgstr "Atualizar a senha do usuário"
+
+#~ msgid "Deactivate account"
+#~ msgstr "Desativar conta"
+
+#~ msgid "Activate account"
+#~ msgstr "Ativar conta"
+
+#~ msgid "at"
+#~ msgstr "em"
+
+#~ msgid "year"
+#~ msgid_plural "years"
+#~ msgstr[0] "ano"
+#~ msgstr[1] "anos"
+
+#~ msgid "month"
+#~ msgid_plural "months"
+#~ msgstr[0] "mês"
+#~ msgstr[1] "meses"
+
+#~ msgid "week"
+#~ msgid_plural "weeks"
+#~ msgstr[0] "semana"
+#~ msgstr[1] "semanas"
+
+#~ msgid "day"
+#~ msgid_plural "days"
+#~ msgstr[0] "dia"
+#~ msgstr[1] "dias"
+
+#~ msgid "%(number)d %(type)s"
+#~ msgstr "%(number)d %(type)s"
+
+#~ msgid "Users admin"
+#~ msgstr "Administração de usuários"
+
+#~ msgid "Admin"
+#~ msgstr "Admin"
 
 #~ msgid "Log in and submit your idea"
 #~ msgstr "Faça login para enviar sua ideia"
@@ -895,9 +984,6 @@ msgstr "Admin"
 
 #~ msgid "SUPER"
 #~ msgstr "SUPER"
-
-#~ msgid "View profile"
-#~ msgstr "Ver perfil"
 
 #~ msgid ""
 #~ "Are you sure? The user <b>%(user)s</b> will be anonymized in all previous "
@@ -1068,9 +1154,6 @@ msgstr "Admin"
 
 #~ msgid "message"
 #~ msgstr "mensagem"
-
-#~ msgid "edited"
-#~ msgstr "editado"
 
 #~ msgid "Revisions for the idea <a href=\"%(idea_url)s\">#%(idea_id)s</a>"
 #~ msgstr "Revisões para a ideia <a href=\"%(idea_url)s\">#%(idea_id)s</a>"
