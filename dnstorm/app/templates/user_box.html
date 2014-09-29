@@ -1,6 +1,6 @@
 {% load i18n avatar_tags %}
 
-<div class="user-box">
+<div class="user-box{% if clean %} user-box-clean{% endif %}">
     <div class="row collapse">
         <div class="columns large-12">
             <a class="avatar left" href="{% url "user" user.username %}">{% avatar user 32 %}</a>

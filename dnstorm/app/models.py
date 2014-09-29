@@ -162,8 +162,10 @@ class Problem(models.Model):
     description = RichTextField(verbose_name=_('Description'))
     criteria = models.ManyToManyField(Criteria, verbose_name=_('Criterias'), editable=False)
     author = models.ForeignKey(User, related_name='author', editable=False)
+    coauthor = models.ManyToManyField(User, related_name='problem_coauthor', editable=False, blank=True, null=True)
     contributor = models.ManyToManyField(User, related_name='contributor', verbose_name=_('Contributors'), blank=True, null=True)
-    public = models.BooleanField(verbose_name=_('Public'), help_text=_('Anyone is able to view and contribute to this problem. If not public, you\'ll need to set the contributors on the problem page.'), default=True)
+    public = models.BooleanField(verbose_name=_('Public'), help_text=_('Anyone is able to view and contribute to this problem. If not public, you\'ll need to set the contributors on the problem page.'), default=True, blank=True)
+    open = models.BooleanField(verbose_name=_('Open edit'), help_text=_('Let users change the title and description of problems and ideas as coauthors.'), default=True, blank=True)
     created = models.DateTimeField(auto_now_add=True, editable=False, default='2000-01-01')
     updated = models.DateTimeField(auto_now=True, editable=False, default='2000-01-01')
     last_activity = models.DateTimeField(auto_now=True, editable=False, default='2000-01-01')
@@ -214,7 +216,7 @@ class Idea(models.Model):
     title = models.CharField(verbose_name=_('title'), max_length=90)
     content = RichTextField(config_name='idea_content')
     author = models.ForeignKey(User, editable=False)
-    deleted_by = models.ForeignKey(User, editable=False, related_name='idea_deleted_by', null=True, blank=True)
+    coauthor = models.ManyToManyField(User, related_name='idea_coauthor', editable=False, blank=True, null=True)
     created = models.DateTimeField(auto_now_add=True, editable=False, default='2000-01-01')
     updated = models.DateTimeField(auto_now=True, editable=False, default='2000-01-01')
 
@@ -235,8 +237,14 @@ class Idea(models.Model):
         """
         Fill the idea with problem and user-specific data.
         """
+
         self.perm_manage = permissions.idea(obj=self, user=user, mode='manage')
         self.comments = Comment.objects.filter(idea=self).order_by('created')
+
+        # Idea coauthor
+
+        coauthor = self.coauthor.count()
+        self.coauthor_ = self.coauthor.all()[coauthor-1] if coauthor > 0 else None
 
         # Idea criterias
 
@@ -288,7 +296,6 @@ class Comment(models.Model):
     idea = models.ForeignKey(Idea, editable=False, blank=True, null=True)
     content = models.TextField(verbose_name=_('Comment'))
     author = models.ForeignKey(User, editable=False)
-    deleted_by = models.ForeignKey(User, editable=False, related_name='comment_deleted_by', null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True, editable=False, default='2000-01-01')
     updated = models.DateTimeField(auto_now=True, editable=False, default='2000-01-01')
 
@@ -307,6 +314,7 @@ class Alternative(models.Model):
     idea = models.ManyToManyField(Idea, editable=False, null=True, blank=True)
     order = models.PositiveSmallIntegerField(editable=False, default=0)
     created = models.DateTimeField(auto_now_add=True, editable=False, default='2001-01-01')
+    updated = models.DateTimeField(auto_now=True, editable=False, default='2000-01-01')
 
     class Meta:
         db_table = settings.DNSTORM['table_prefix'] + '_alternative'
@@ -342,6 +350,7 @@ class Vote(models.Model):
     author = models.ForeignKey(User)
     weight = models.SmallIntegerField(editable=False, default=0)
     created = models.DateTimeField(auto_now_add=True, editable=False, default='2001-01-01')
+    updated = models.DateTimeField(auto_now=True, editable=False, default='2000-01-01')
 
     class Meta:
         db_table = settings.DNSTORM['table_prefix'] + '_vote'

@@ -13,6 +13,7 @@ from django.shortcuts import get_object_or_404
 from django.template.loader import render_to_string
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext as _
+from django.views.decorators.csrf import csrf_protect
 from django.views.generic import DetailView, RedirectView
 from django.views.generic.edit import UpdateView
 
@@ -30,40 +31,43 @@ def idea_save(obj, form, return_format=None):
     Validates the idea form for the ``IdeaUpdateView``.
     """
 
-    object = form.save(commit=False)
+    obj.object = form.save(commit=False)
 
     # Remember if new
 
-    new = False if hasattr(object, 'id') and isinstance(object.id, int) else True
+    new = False if hasattr(obj.object, 'id') and isinstance(obj.object.id, int) else True
     if not new:
-        old_idea = get_object_or_404(models.Idea, id=object.id)
+        old_idea = get_object_or_404(models.Idea, id=obj.object.id)
         old_idea.fill_data()
         old_diffhtml = render_to_string('idea_diffbase.html', {'idea': old_idea}) if not new else None
 
     # Save idea
 
-    object.problem = obj.problem if hasattr(obj, 'problem') else object.problem
-    object.author = obj.request.user
-    object.content = bleach.clean(object.content,
+    if new:
+        obj.object.author = obj.request.user
+    obj.object.problem = obj.problem if hasattr(obj, 'problem') else obj.object.problem
+    obj.object.content = bleach.clean(obj.object.content,
         tags=settings.SANITIZER_ALLOWED_TAGS,
         attributes=settings.SANITIZER_ALLOWED_ATTRIBUTES,
         styles=settings.SANITIZER_ALLOWED_STYLES,
         strip=True, strip_comments=True)
-    object.save()
+    obj.object.save()
+    if obj.object.author.id != obj.request.user.id:
+        obj.object.coauthor.add(obj.request.user)
 
     # Criterias ratings
 
-    models.IdeaCriteria.objects.filter(idea=object).delete()
-    for c in object.problem.criteria.all():
+    models.IdeaCriteria.objects.filter(idea=obj.object).delete()
+    for c in obj.object.problem.criteria.all():
         models.IdeaCriteria(
-            idea=models.Idea.objects.get(id=object.id),
+            idea=models.Idea.objects.get(id=obj.object.id),
             criteria=models.Criteria.objects.get(id=c.id),
             stars=form.cleaned_data['criteria_%d' % c.id]).save()
 
     # Get a content diff/
 
-    object.fill_data()
-    new_diffhtml = render_to_string('idea_diffbase.html', {'idea': object})
+    obj.object.fill_data()
+    new_diffhtml = render_to_string('idea_diffbase.html', {'idea': obj.object})
     if not new:
         ideadiff = htmldiff(old_diffhtml, new_diffhtml)
     else:
@@ -71,18 +75,18 @@ def idea_save(obj, form, return_format=None):
 
     # Send and action and follow the problem
 
-    follow(object.author, object.problem, actor_only=False) if not is_following(object.author, object.problem) else None
-    a = action.send(object.author, verb='created' if new else 'edited', action_object=object, target=object.problem)
+    follow(obj.object.author, obj.object.problem, actor_only=False) if not is_following(obj.object.author, obj.object.problem) else None
+    a = action.send(obj.object.author, verb='created' if new else 'edited', action_object=obj.object, target=obj.object.problem)
     if ideadiff:
         a[0][1].data = {'diff': ideadiff}
         a[0][1].save()
-    activity_count(object.problem)
+    activity_count(obj.object.problem)
 
     if return_format == 'obj':
-        return object
+        return obj.object
 
     messages.success(obj.request, _('Idea saved.'))
-    return HttpResponseRedirect(object.get_absolute_url())
+    return HttpResponseRedirect(obj.object.get_absolute_url())
 
 class IdeaView(RedirectView):
     permanent = True
@@ -97,10 +101,13 @@ class IdeaUpdateView(UpdateView):
     model = models.Idea
 
     @method_decorator(login_required)
+    @method_decorator(csrf_protect)
     def dispatch(self, request, *args, **kwargs):
         obj = get_object_or_404(models.Idea, id=kwargs['pk'])
-        if not permissions.idea(obj=obj, user=self.request.user, mode='manage'):
+        if not permissions.idea(obj=obj, user=self.request.user, mode='edit'):
             raise PermissionDenied
+        obj.request = request
+        self.idea = obj
         return super(IdeaUpdateView, self).dispatch(request, *args, **kwargs)
 
     def get_context_data(self, *args, **kwargs):

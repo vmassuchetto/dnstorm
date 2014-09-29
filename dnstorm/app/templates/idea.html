@@ -29,7 +29,7 @@
 
             <div class="row">
 
-                <div class="columns large-9">
+                <div class="columns large-6">
                     <div class="row collapse">
                         <div class="columns large-12 right idea-actions">
                             {% if idea_actions %}
@@ -37,10 +37,9 @@
                                 {% if problem_perm_contribute %}
                                     <a class="problem-action action-comment" data-idea="{{ idea.id }}" href="javascript:void(0);"><i class="fi-comments"></i>&nbsp;{% trans "Comment" context "verb" %}</a>
                                 {% endif %}
-                                {% if idea.perm_manage %}
+                                {% if problem_perm_manage or problem_perm_edit %}
                                     <a class="problem-action problem-idea-edit" href="{% url "idea_edit" problem.slug idea.id %}"><i class="fi-pencil"></i>&nbsp;{% trans "Edit" %}</a>
                                 {% endif %}
-
                                 {% if problem_perm_manage %}
                                     <a class="problem-action problem-idea-delete-toggle idea-delete" href="javascript:void(0);" data-idea="{{ idea.id }}"><i class="fi-x"></i>&nbsp;{% trans "Delete" %}</a>
                                 {% endif %}
@@ -50,7 +49,14 @@
                     </div>
                 </div>
 
-                <div class="columns large-3">
+                {% if idea.coauthor_ %}
+                    <div class="columns medium-3 large-3">
+                        <small>{% trans "edited" %}</small>
+                        {% include "user_box.html" with clean=True user=idea.coauthor_ date=idea.updated link=idea.get_absolute_url %}
+                    </div>
+                {% endif %}
+                <div class="columns medium-3 large-3">
+                    {% if idea.coauthor_ %}<small>{% trans "created" %}</small>{% endif %}
                     {% include "user_box.html" with user=idea.author date=idea.created link=idea.get_absolute_url %}
                 </div>
 

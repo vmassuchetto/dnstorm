@@ -48,22 +48,32 @@ def problem_save(obj, form):
     # Remember if new
 
     new = False if hasattr(obj.object, 'id') and isinstance(obj.object.id, int) else True
-    old_diffhtml = render_to_string('problem_diffbase.html', {'problem': get_object_or_404(models.Problem, id=obj.object.id)}) if not new else None
+    if not new:
+        old = get_object_or_404(models.Problem, id=obj.object.id)
+        old_diffhtml = render_to_string('problem_diffbase.html', {'problem': old}) if not new else None
 
     # Save problem
 
-    obj.object.author = obj.request.user
+    obj.object.author = obj.request.user if new else old.author
     obj.object.description = bleach.clean(obj.object.description,
         tags=settings.SANITIZER_ALLOWED_TAGS,
         attributes=settings.SANITIZER_ALLOWED_ATTRIBUTES,
         styles=settings.SANITIZER_ALLOWED_STYLES,
         strip=True, strip_comments=True)
+    if not obj.object.public:
+        obj.object.public = old.public
+    if not obj.object.open:
+        obj.object.open = old.open
     obj.object.save()
 
-    obj.object.criteria.clear()
-    criterias = [i for i in obj.request.POST.get('criteria', '').split('|') if i.isdigit()]
-    for c in models.Criteria.objects.filter(id__in=criterias):
-        obj.object.criteria.add(c)
+    if permissions.problem(obj=obj.object, user=obj.request.user, mode='manage'):
+        obj.object.criteria.clear()
+        criterias = [i for i in obj.request.POST.get('criteria', '').split('|') if i.isdigit()]
+        for c in models.Criteria.objects.filter(id__in=criterias):
+            obj.object.criteria.add(c)
+
+    if obj.object.author.id != obj.request.user.id:
+        obj.object.coauthor.add(obj.request.user)
 
     obj.object.save()
 
@@ -77,8 +87,8 @@ def problem_save(obj, form):
 
     # Follow and send an action for the problem
 
-    follow(obj.object.author, obj.object, actor_only=False) if not is_following(obj.object.author, obj.object) else None
-    a = action.send(obj.object.author, verb='created' if new else 'edited', action_object=obj.object)
+    follow(obj.request.user, obj.object, actor_only=False) if not is_following(obj.request.user, obj.object) else None
+    a = action.send(obj.request.user, verb='created' if new else 'edited', action_object=obj.object)
     if problemdiff:
         a[0][1].data = {'diff': problemdiff}
         a[0][1].save()
@@ -102,7 +112,6 @@ class ProblemCreateView(CreateView):
         context['site_title'] = '%s | %s' % (_('Create problem'), get_option('site_title'))
         context['breadcrumbs'] = self.get_breadcrumbs()
         context['title'] = _('Create new problem')
-        context['criteria_form'] = forms.CriteriaForm()
         return context
 
     def get_breadcrumbs(self):
@@ -121,8 +130,9 @@ class ProblemUpdateView(UpdateView):
     @method_decorator(csrf_protect)
     def dispatch(self, *args, **kwargs):
         obj = get_object_or_404(models.Problem, slug=kwargs['slug'])
-        if not permissions.problem(obj=obj, user=self.request.user, mode='manage'):
+        if not permissions.problem(obj=obj, user=self.request.user, mode='edit'):
             raise PermissionDenied
+        self.problem = obj
         return super(ProblemUpdateView, self).dispatch(*args, **kwargs)
 
     def get_context_data(self, *args, **kwargs):
@@ -130,7 +140,6 @@ class ProblemUpdateView(UpdateView):
         context['site_title'] = '%s | %s' % (self.object.title, _('Edit'))
         context['breadcrumbs'] = self.get_breadcrumbs()
         context['title'] = _('Edit problem')
-        context['criteria_form'] = forms.CriteriaForm()
         return context
 
     def get_breadcrumbs(self):
@@ -140,6 +149,19 @@ class ProblemUpdateView(UpdateView):
 
     def form_valid(self, form):
         return problem_save(self, form)
+
+    def get_form_kwargs(self):
+        kwargs = super(ProblemUpdateView, self).get_form_kwargs()
+        if self.request.POST.get('title', None) \
+            and self.request.POST.get('description', None) \
+            and 'criteria' not in self.request.POST \
+            and permissions.problem(obj=self.problem, user=self.request.user, mode='edit'):
+            kwargs['criteria_required'] = False
+        else:
+            kwargs['criteria_required'] = True
+        kwargs['problem_perm_edit'] = permissions.problem(obj=self.problem, user=self.request.user, mode='edit')
+        kwargs['problem_perm_manage'] = permissions.problem(obj=self.problem, user=self.request.user, mode='manage')
+        return kwargs
 
 class ProblemDeleteView(RedirectView):
     model = models.Problem
@@ -172,17 +194,20 @@ class ProblemView(FormView):
     def get_context_data(self, *args, **kwargs):
         context = super(ProblemView, self).get_context_data(**kwargs)
         user = get_user(self.request)
+        coauthor = self.problem.coauthor.count()
         context['site_title'] = '%s | %s' % (self.problem.title, get_option('site_title'))
         context['breadcrumbs'] = self.get_breadcrumbs()
         context['title'] = self.problem.title
         context['sidebar'] = True
         context['problem'] = self.problem
         context['problem_perm_manage'] = permissions.problem(obj=self.problem, user=user, mode='manage')
+        context['problem_perm_edit'] = permissions.problem(obj=self.problem, user=user, mode='edit')
         context['problem_perm_contribute'] = permissions.problem(obj=self.problem, user=user, mode='contribute')
+        context['coauthor'] = self.problem.coauthor.all()[coauthor-1] if coauthor > 0 else None
         context['comments'] = models.Comment.objects.filter(problem=self.problem)
         context['comment_form'] = forms.CommentForm()
         context['contributor_form'] = forms.ContributorForm(problem=self.problem.id)
-        context['all_ideas'] = models.Idea.objects.filter(problem=self.problem)
+        context['ideas'] = models.Idea.objects.filter(problem=self.problem)
 
         # Criterias
 
@@ -197,15 +222,6 @@ class ProblemView(FormView):
         for a in models.Alternative.objects.filter(problem=self.problem):
             a.fill_data(self.request.user)
             context['alternatives'].append(a)
-
-        # Ideas
-
-        ideas_qs = Q(problem=self.problem) & permissions.idea_queryset(user=user)
-        if ideas_qs:
-            context['ideas'] = models.Idea.objects.filter(ideas_qs)
-        else:
-            context['ideas'] = models.Idea.objects.none()
-        context['idea_actions'] = True
 
         # Voting and comments
 

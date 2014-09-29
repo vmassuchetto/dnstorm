@@ -41,7 +41,7 @@ class RegistrationForm(RegistrationFormUniqueEmail):
         super(RegistrationForm, self).__init__(*args, **kwargs)
         self.fields['hash'].initial = _hash if _hash else 0
 
-class AdminOptionsForm(forms.Form):
+class OptionsForm(forms.Form):
     site_title = forms.CharField(label=_('Site title'), help_text=_('Page title for browsers'))
     site_url = forms.CharField(label=_('Site URL'), help_text=_('Site domain for URL generation with http scheme. Examples: \'http://domain.com\', \'https://subdomain.domain.com\', \'http://domain:port\''))
 
@@ -110,28 +110,39 @@ class ProblemForm(forms.ModelForm):
         model = models.Problem
 
     def __init__(self, *args, **kwargs):
+        problem_perm_edit = kwargs.pop('problem_perm_edit') if 'problem_perm_edit' in kwargs else False
+        problem_perm_manage = kwargs.pop('problem_perm_manage') if 'problem_perm_manage' in kwargs else False
+        criteria_required = kwargs.pop('criteria_required') if 'criteria_required' in kwargs else True
         self.instance = kwargs['instance'] if 'instance' in kwargs else False
         self.helper = FormHelper()
         self.helper.form_action = '.'
         self.helper.form_class = 'problem-form'
-        self.helper.layout = Layout(
+
+        layout_args = (
             Fieldset('<i class="fi-puzzle"></i>&nbsp;' + _('Problem description'),
                 'title',
                 'description',
-            ),
-            Fieldset('<i class="fi-target-two"></i>&nbsp;' + _('Criterias'),
-                'criteria',
-            ),
-            Fieldset('<i class="fi-lock"></i>&nbsp;' + _('Permissions'),
-                'public',
-            ),
+            ),)
+        if not self.instance or problem_perm_manage:
+            layout_args += (
+                Fieldset('<i class="fi-target-two"></i>&nbsp;' + _('Criterias'),
+                    'criteria',
+                ),
+                Fieldset('<i class="fi-lock"></i>&nbsp;' + _('Permissions'),
+                    'public',
+                    'open',
+                ),)
+        layout_args += (
             ButtonHolder(
                 Submit('submit', _('Save'), css_class='right radius'),
-            ),
-        )
+            ),)
+        self.helper.layout = Layout(*layout_args)
+
         super(ProblemForm, self).__init__(*args, **kwargs)
 
-        if self.instance.id:
+        if criteria_required == False:
+            self.fields['criteria'].required = False
+        elif self.instance.id:
             self.fields['criteria'].initial = [c.id for c in self.instance.criteria.all()]
 
 class ContributorForm(forms.Form):
@@ -160,10 +171,10 @@ class ContributorForm(forms.Form):
         self.helper = FormHelper()
         self.helper.form_action = '.'
         self.helper.layout = Layout(
-            'contributor',
-            'problem',
+            Row(Column('contributor', css_class='large-12')),
             Row(Column(HTML(invitations_html))),
             Row(Column(
+                'problem',
                 Submit('submit', _('Save'), css_class='right radius'), css_class='large-12 top-1em',
             )),
         )

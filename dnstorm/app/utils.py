@@ -1,5 +1,6 @@
 from actstream.models import followers
 
+from dnstorm.app import DNSTORM_URL
 from dnstorm.app.models import Option
 
 def get_object_or_none(klass, *args, **kwargs):
@@ -47,3 +48,15 @@ def activity_count(obj):
         except:
             count = 0
         update_option(name, count+1)
+
+def email_context(more_context=dict()):
+    """
+    Puts ``more_context`` with the standard context variables required for
+    sending e-mails.
+    """
+
+    return dict(dict({
+        'dnstorm_url': DNSTORM_URL,
+        'site_title': get_option('site_title'),
+        'site_url': get_option('site_url')
+    }).items() + more_context.items())

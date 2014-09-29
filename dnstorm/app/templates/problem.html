@@ -130,15 +130,17 @@
         {# Actions #}
 
         <div class="row">
-            <div class="columns large-9">
+            <div class="columns medium-6 large-6">
 
                 <div class="row bottom-1em">
                 <div class="columns large-12">
                 {% if problem_perm_contribute %}
                     <a class="problem-action action-comment" data-problem="{{ problem.id }}" href="javascript:void(0);"><i class="fi-comments"></i>&nbsp;{% trans "Comment" context "verb" %}</a>
                 {% endif %}
-                {% if problem_perm_manage %}
+                {% if problem_perm_manage or problem_perm_edit %}
                     <a class="problem-action" href="{% url "problem_edit" problem.slug %}"><i class="fi-pencil"></i>&nbsp;{% trans "Edit" %}</a>
+                {% endif %}
+                {% if problem_perm_manage %}
                     <a class="problem-action problem-delete" href="{% url "problem_delete" problem.slug %}"><i class="fi-x"></i>&nbsp;{% trans "Delete" %}</a>
                     <a class="problem-action problem-manage-contributors" data-reveal-id="contributors-modal" href="javascript:void(0);"><i class="fi-torso"></i>&nbsp;{% trans "Manage contributors" %}</a>
                 {% endif %}
@@ -147,7 +149,14 @@
 
             </div>
 
-            <div class="columns large-3">
+            {% if coauthor %}
+                <div class="columns medium-3 large-3">
+                    <small>{% trans "edited" %}</small>
+                    {% include "user_box.html" with clean=True user=coauthor date=problem.updated link=problem.get_absolute_url %}
+                </div>
+            {% endif %}
+            <div class="columns medium-3 large-3">
+                {% if coauthor %}<small>{% trans "created" %}</small>{% endif %}
                 {% include "user_box.html" with user=problem.author date=problem.created link=problem.get_absolute_url %}
             </div>
         </div>
@@ -174,7 +183,7 @@
         <div class="problem-ideas">
             {% for idea in ideas %}
                 <hr/>
-                {% include "idea.html" %}
+                {% include "idea.html" with idea_actions=True %}
             {% endfor %}
         </div>
 

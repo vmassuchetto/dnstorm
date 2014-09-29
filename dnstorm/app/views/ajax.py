@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.core.urlresolvers import reverse
 from django.db.models import Sum
-from django.http import Http404, HttpResponse, HttpResponseForbidden
+from django.http import Http404, HttpResponse, HttpResponseForbidden, HttpResponseServerError
 from django.shortcuts import get_object_or_404
 from django.template import loader, Context
 from django.utils.translation import ugettext_lazy as _
@@ -21,7 +21,7 @@ from notification import models as notification
 from dnstorm.app import models
 from dnstorm.app import permissions
 from dnstorm.app.forms import IdeaForm, CriteriaForm, CommentForm
-from dnstorm.app.utils import get_object_or_none, activity_count, activity_reset_counter as _activity_reset_counter
+from dnstorm.app.utils import get_object_or_none, email_context, activity_count, activity_reset_counter as _activity_reset_counter
 from dnstorm.app.views.idea import idea_save
 
 import json
@@ -133,8 +133,10 @@ class AjaxView(View):
 
     def contributor(self):
         """
-        Manage problem contributors.
+        Manage problem contributors with invitations.
         """
+
+        # Validation
 
         problem = get_object_or_404(models.Problem, id=self.request.POST['problem'])
         if not permissions.problem(obj=problem, user=self.request.user, mode='manage'):
@@ -146,6 +148,7 @@ class AjaxView(View):
             if User.objects.filter(email=email).exists() or \
                 models.Invitation.objects.filter(email=email).exists():
                 continue
+
             hash = '%032x' % random.getrandbits(128)
             while models.Invitation.objects.filter(hash=hash).exists():
                 hash = '%032x' % random.getrandbits(128)
@@ -169,7 +172,7 @@ class AjaxView(View):
 
         # Response
 
-        return HttpResponse(json.dumps('OK'), content_type='application/json')
+        return HttpResponse()
 
     def activity_reset_counter(self):
         """
@@ -206,7 +209,7 @@ class AjaxView(View):
         })
         return HttpResponse(json.dumps({
             'id': idea.id,
-            'html': t.render(c)
+            'html': '<hr/>' + t.render(c)
         }), content_type='application/json')
 
     def new_criteria(self):
@@ -267,6 +270,9 @@ class AjaxView(View):
         """
         Create a new comment on a problem or idea.
         """
+
+        # Validation
+
         problem = self.request.POST.get('problem', None)
         if problem:
             problem = get_object_or_none(models.Problem, id=problem)
@@ -282,6 +288,8 @@ class AjaxView(View):
         if not content:
             raise Http404
 
+        # Save comment
+
         comment = models.Comment(content=content, author=self.request.user)
         target = False
         if problem:
@@ -293,8 +301,9 @@ class AjaxView(View):
             comment.idea = idea
             target = 'div#comments-idea-' + str(idea.id)
         comment.save()
+        comment.perm_edit = permissions.problem(obj=_problem, user=self.request.user, mode='manage')
 
-        # Send an action and follow the problem
+        # Action
 
         follow(self.request.user, _problem, actor_only=False) if not is_following(self.request.user, _problem) else None
         a = action.send(self.request.user, verb='commented', action_object=obj, target=_problem)
@@ -302,7 +311,8 @@ class AjaxView(View):
         a[0][1].save()
         activity_count(_problem)
 
-        comment.perm_edit = permissions.problem(obj=_problem, user=self.request.user, mode='manage')
+        # Response
+
         t = loader.get_template('comment.html')
         c = Context({'comment': comment})
         return HttpResponse(json.dumps({'target': target, 'html': re.sub("\n", '', t.render(c))}), content_type='application/json')
@@ -373,11 +383,14 @@ class AjaxView(View):
         Select an idea for an alternative.
         """
 
+        # Validation
+
         alternative = get_object_or_404(models.Alternative, id=self.request.POST.get('alternative'))
-        if not alternative or not self.request.user.is_authenticated():
-            raise Http404
         if not permissions.problem(obj=alternative.problem, user=self.request.user, mode='manage'):
-            raise PermissionDenied
+            return HttpResponseForbidden()
+
+        # Select idea
+
         alternative.idea.clear()
         ideas = list()
         r = re.compile('idea\[[0-9]+\]')
@@ -388,12 +401,12 @@ class AjaxView(View):
             alternative.idea.add(i)
         alternative.save()
         alternative.fill_data()
-        response = {
-            'html': loader.render_to_string('alternative.html', {
-                'alternative': alternative,
-                'problem_perm_manage': True
-            })
-        }
+
+        # Response
+
+        response = {'html': loader.render_to_string('alternative.html', {
+            'alternative': alternative,
+            'problem_perm_manage': True})}
         return HttpResponse(json.dumps(response), content_type='application/json')
 
     def delete_idea(self):
@@ -401,25 +414,26 @@ class AjaxView(View):
         Delete an idea. This is actually a delete toggle. It will delete over
         undeleted, and undelete over deleted items.
         """
-        idea = get_object_or_none(Idea, id=int(self.request.GET['delete_idea']))
-        if not idea:
-            raise Http404
+
+        # Validation
+
+        idea = get_object_or_404(Idea, id=int(self.request.GET['delete_idea']))
         mode = 'undelete' if idea.deleted_by else 'delete'
-        if not idea or not permissions.idea(obj=idea, user=self.request.user, mode=mode):
-            return HttpResponse(unmode)
-        if idea.deleted_by:
-            idea.deleted_by = None
-            response_mode = 'delete'
-        else:
-            idea.deleted_by = self.request.user
-            response_mode = 'undelete'
+        if not permissions.idea(obj=idea, user=self.request.user, mode='manage'):
+            return HttpResponseForbidden()
+
+        # Response
+
         idea.save()
-        return HttpResponse(response_mode)
+        return HttpResponse()
 
     def resend_invitation(self):
         """
         Resend an invitation.
         """
+
+        # Validation
+
         invitation = get_object_or_404(models.Invitation, id=self.request.GET.get('resend_invitation', None))
         if not permissions.problem(obj=invitation.problem, user=self.request.user, mode='manage'):
             raise PermissionDenied
@@ -430,9 +444,14 @@ class AjaxView(View):
         """
         Deletes an invitation.
         """
+
+        # Validation
+
         invitation = get_object_or_404(models.Invitation, id=self.request.GET.get('delete_invitation', None))
         if not permissions.problem(obj=invitation.problem, user=self.request.user, mode='manage'):
-            raise PermissionDenied
+            return HttpResponseForbidden()
+
+
         invitation.delete()
-        return HttpResponse(1)
+        return HttpResponse()
 

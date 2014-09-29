@@ -22,7 +22,7 @@ from registration.backends.default.views import RegistrationView as BaseRegistra
 from registration import signals as registration_signals
 
 from dnstorm.app import permissions
-from dnstorm.app.forms import AdminOptionsForm, RegistrationForm
+from dnstorm.app.forms import OptionsForm, RegistrationForm
 from dnstorm.app.utils import get_object_or_none, activity_count, get_option, update_option
 from dnstorm.app.models import Option, Problem, Idea, Comment, Criteria, Invitation
 
@@ -111,21 +111,21 @@ class RegistrationView(BaseRegistrationView):
         registration_signals.user_registered.send(sender=self.__class__, user=new_user, request=request)
         return new_user
 
-class AdminOptionsView(FormView):
+class OptionsView(FormView):
     """
     Admin options page for superusers.
     """
     template_name = 'options.html'
-    form_class = AdminOptionsForm
+    form_class = OptionsForm
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
         if not self.request.user.is_superuser:
             raise PermissionDenied()
-        return super(AdminOptionsView, self).dispatch(*args, **kwargs)
+        return super(OptionsView, self).dispatch(*args, **kwargs)
 
     def get_context_data(self, *args, **kwargs):
-        context = super(AdminOptionsView, self).get_context_data(**kwargs)
+        context = super(OptionsView, self).get_context_data(**kwargs)
         context['site_title'] = '%s | %s' % (_('Site options'), get_option('site_title'))
         context['breadcrumbs'] = self.get_breadcrumbs()
         context['title'] = _('Options')

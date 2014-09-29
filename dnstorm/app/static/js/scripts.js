@@ -64,6 +64,9 @@ $.ajaxSetup({
             // Using the CSRFToken value acquired earlier
             xhr.setRequestHeader("X-CSRFToken", csrftoken);
         }
+    },
+    error : function(jqXHR, textStatus, errorThrown) {
+        $('#response-error-modal').foundation('reveal', 'open');
     }
 });
 

@@ -39,11 +39,14 @@
                 <hr/>
 
                 <div class="row">
-                    <div class="columns large-6">
-                        <a class="button radius secondary expand" href="{% url 'auth_password_reset' %}">{% trans "Reset password" %}</a>
+                    <div class="columns large-12">
+                        <a class="button radius expand" href="{% url 'registration_register' %}">{% trans "Register" %}</a>
                     </div>
-                    <div class="columns large-6">
-                        <a class="button radius secondary expand" href="{% url 'registration_register' %}">{% trans "Register" %}</a>
+                </div>
+
+                <div class="row">
+                    <div class="columns large-12">
+                        <a class="button radius alert expand" href="{% url 'auth_password_reset' %}">{% trans "Reset password" %}</a>
                     </div>
                 </div>
 

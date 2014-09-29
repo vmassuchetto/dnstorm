@@ -9,4 +9,5 @@
 <i class="fi-target-two"></i>&nbsp;{{ criteria.name }}
 {% endfor %}
 {% if problem.public %}<i class="fi-unlock"></i>&nbsp;{% trans "Public" %}{% else %}<i class="fi-lock"></i>&nbsp;{% trans "Private" %}{% endif %}
+<i class="fi-edit"></i>&nbsp;{% if problem.open %}{% trans "Open" %}{% else %}{% trans "Closed" %}{% endif %}
 </p>

@@ -59,7 +59,7 @@ urlpatterns = patterns('',
 
     # DNStorm options
 
-    (r'^options/$', base.AdminOptionsView.as_view(), {}, 'options'),
+    (r'^options/$', base.OptionsView.as_view(), {}, 'options'),
 
     # Other apps
 

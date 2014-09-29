@@ -1,8 +1,4 @@
-{% load i18n %}
-
-{% url "registration_register" as register_url %}
-
-{% blocktrans with problem_author=invitation.problem.author.get_full_name problem_title=invitation.problem.title invitation_url=invitation.get_absolute_url %}You were invited by {{ problem_author }} to discuss and collaborate on the problem: {{ problem_title }}.
+{% load i18n %}{% url "registration_register" as register_url %}{% blocktrans with problem_author=invitation.problem.author problem_title=invitation.problem.title invitation_url=invitation.get_absolute_url %}You were invited by {{ problem_author }} to discuss and collaborate on the problem: {{ problem_title }}.
 
 Visit this link to accept the invitation and register:
 {{ invitation_url }}{% endblocktrans %}
