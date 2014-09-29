@@ -153,7 +153,7 @@ class AjaxView(View):
             while models.Invitation.objects.filter(hash=hash).exists():
                 hash = '%032x' % random.getrandbits(128)
             invitation = models.Invitation.objects.create(problem=problem, email=email, hash=hash)
-            notification.send([User(id=0, username=email, email=email)], 'invitation', { 'invitation': invitation })
+            notification.send([User(id=0, username=email, email=email)], 'invitation', email_context({ 'invitation': invitation }))
 
         # Contributors
 
@@ -437,7 +437,7 @@ class AjaxView(View):
         invitation = get_object_or_404(models.Invitation, id=self.request.GET.get('resend_invitation', None))
         if not permissions.problem(obj=invitation.problem, user=self.request.user, mode='manage'):
             raise PermissionDenied
-        notification.send([User(id=0, username=invitation.email, email=invitation.email)], 'invitation', { 'invitation': invitation })
+        notification.send([User(id=0, username=invitation.email, email=invitation.email)], 'invitation', email_context({ 'invitation': invitation }))
         return HttpResponse(1)
 
     def delete_invitation(self):
