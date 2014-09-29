@@ -57,7 +57,7 @@ class OptionsForm(forms.Form):
                 Submit('submit', _('Save'), css_class='right radius'),
             ),
         )
-        super(AdminOptionsForm, self).__init__(*args, **kwargs)
+        super(OptionsForm, self).__init__(*args, **kwargs)
 
         # Form defaults or saved values
 
