@@ -1,0 +1,5 @@
+{% load i18n %}{{ message }}
+{% blocktrans %}This is an automatic e-mail sent from {{ site_title }}. To see other notices check your account on {{ site_url }}.
+
+If you don't know the DNStorm software, check this link: {{ dnstorm_url }}
+{% endblocktrans %}
