@@ -14,7 +14,7 @@ def problem(**kwargs):
     elif mode == 'contribute':
         return user.is_authenticated() and (obj.public or (obj.author == user or user in obj.contributor.all()))
     elif mode == 'edit':
-        return user.is_authenticated() and ((obj.public and obj.open) or (not obj.public and obj.open and user in obj.contributor.all()))
+        return user.is_authenticated() and ((obj.public and obj.open) or (obj.open and user in obj.contributor.all()) or (obj.author == user))
     elif mode == 'manage':
         return obj.author == user
     return False
@@ -30,7 +30,7 @@ def idea(**kwargs):
     elif mode == 'manage':
         return obj.author == user or obj.problem.author == user
     elif mode == 'edit':
-        return user.is_authenticated() and ((obj.problem.public and obj.problem.open) or (not obj.problem.public and obj.problem.open and user in obj.problem.contributor.all()))
+        return user.is_authenticated() and ((obj.problem.public and obj.problem.open) or (obj.problem.open and user in obj.problem.contributor.all()) or (obj.problem.author == user))
     return False
 
 def idea_queryset(**kwargs):
