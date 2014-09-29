@@ -439,7 +439,7 @@ class AjaxView(View):
         invitation = get_object_or_404(models.Invitation, id=self.request.GET.get('resend_invitation', None))
         if not permissions.problem(obj=invitation.problem, user=self.request.user, mode='manage'):
             raise PermissionDenied
-        u = User.objects.create(username=email, email=email)
+        u = User.objects.create(username=invitation.email, email=invitation.email)
         notification.send([u], 'invitation', email_context({ 'invitation': invitation }))
         u.delete()
         return HttpResponse(1)
