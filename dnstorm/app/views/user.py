@@ -1,8 +1,10 @@
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
 from django.core.urlresolvers import reverse
+from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext as _
@@ -55,6 +57,9 @@ class UsersView(TemplateView):
 class UserUpdateView(UpdateView):
     form_class = UserForm
     model = User
+    '''exclude = ['username', 'password', 'last_login', 'groups',
+        'user_permissions', 'is_staff', 'is_active', 'last_name',
+        'date_joined']'''
 
     def dispatch(self, *args, **kwargs):
         obj = get_object_or_404(User, username=kwargs['username'])
@@ -64,7 +69,11 @@ class UserUpdateView(UpdateView):
         return super(UserUpdateView, self).dispatch(*args, **kwargs)
 
     def get_form_kwargs(self, *args, **kwargs):
-        return {'request': self.request}
+        kwargs['instance'] = self.object
+        kwargs['request'] = self.request
+        if self.request.POST:
+            kwargs['data'] = self.request.POST
+        return kwargs
 
     def get_object(self, *args, **kwargs):
         return self.object
@@ -78,6 +87,22 @@ class UserUpdateView(UpdateView):
 
     def get_breadcrumbs(self, **kwargs):
         return [{ 'title': _('Users'), 'classes': 'current' }]
+
+    def form_valid(self, form):
+        """
+        Checks for the given fields and changes the user object accordingly.
+        Not nice, perhaps, some permissions handling are required here.
+        """
+        user_obj = get_object_or_404(User, id=form.cleaned_data['user_id'])
+        form_obj = form.save(commit=False)
+        if not self.request.user.is_superuser and (self.request.user != obj or form_obj.is_superuser):
+            raise PermissionDenied
+        user_obj.email = form_obj.email
+        user_obj.first_name = form_obj.first_name
+        user_obj.is_superuser = form_obj.is_superuser
+        user_obj.save()
+        messages.success(self.request, _('User information saved'))
+        return HttpResponseRedirect(reverse('user', kwargs={'username': user_obj.username}))
 
 class UserUpdatePasswordView(UpdateView):
     form_class = UserPasswordForm

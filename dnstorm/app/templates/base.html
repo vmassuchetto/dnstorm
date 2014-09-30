@@ -1,4 +1,4 @@
-{% load staticfiles i18n activity_tags avatar_tags %}<!DOCTYPE html>
+{% load staticfiles i18n activity_tags avatar_tags display_name %}<!DOCTYPE html>
 <!--[if IE 8]><html class="no-js lt-ie9" lang="en"><![endif]-->
 <!--[if gt IE 8]><!--><html class="no-js" lang="en"><!--<![endif]-->
 
@@ -73,7 +73,7 @@
                 {% endif %}
                 <li class="divider"></li>
                 <li class="has-icon torso"><a href="{% url "user" user %}"><i class="fi-torso"></i></a></li>
-                <li><a href="{% url "user" user %}">{{ user.get_full_name|default:user.username }}</a></li>
+                <li><a href="{% url "user" user %}">{% display_name user %}</a></li>
                 <li class="divider"></li>
                 <li><a href="{{ logout_url }}">{% trans 'Logout' %}</a></li>
             {% else %}
@@ -135,7 +135,7 @@
         {% if user_activity %}
             <div class="row">
                 <div class="columns large-12">
-                    <a class="button small secondary radius expand no-margin-bottom" href="{% url "activity" %}">{% trans "View all activities" %}</a>
+                    <a class="button small radius expand no-margin-bottom" href="{% url "activity" %}">{% trans "View all activities" %}</a>
                 </div>
             </div>
         {% endif %}

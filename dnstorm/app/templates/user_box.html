@@ -1,4 +1,4 @@
-{% load i18n avatar_tags %}
+{% load i18n avatar_tags display_name %}
 
 <div class="user-box{% if clean %} user-box-clean{% endif %}">
     <div class="row collapse">
@@ -16,7 +16,7 @@
                     </a>
                 {% endif %}
                 {% if date %}</span><br/>{% endif %}
-                <a class="username" href="{% url "user" user.username %}">{{ user.username }}</a>
+                <a class="username" href="{% url "user" user.username %}">{% display_name user %}</a>
             </div>
         </div>
     </div>

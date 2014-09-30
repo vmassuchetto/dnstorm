@@ -11,13 +11,13 @@
 
     {% for user in users %}
 
-        {% if forloop.counter|divisibleby:4 or forloop.first %}
+        {% if forloop.counter|divisibleby:3 or forloop.first %}
             <div class="row">
         {% endif %}
 
-        <div class="criteria columns large-3">{% include "user_box.html" with expanded=True date=user.date_joined %}</div>
+        <div class="criteria columns small-4 medium-4 large-4">{% include "user_box.html" with expanded=True date=user.date_joined %}</div>
 
-        {% if forloop.counter|divisibleby:4 or forloop.last %}
+        {% if forloop.counter|divisibleby:3 or forloop.last %}
             </div>
         {% endif %}
 

@@ -70,11 +70,17 @@ class OptionsForm(forms.Form):
             raise forms.ValidationError(_('Wrong domain format.'))
         return self.cleaned_data['site_url']
 
-class UserForm(UserChangeForm):
-    first_name = forms.CharField(label=_('Display name'), help_text=_('How your name will be displayed. Username will be used if not provided.'))
+class UserForm(forms.ModelForm):
+    user_id = forms.IntegerField('user_id', widget=forms.HiddenInput())
+
+    class Meta:
+        model = User
 
     def __init__(self, *args, **kwargs):
-        request = kwargs.pop('request')
+        try:
+            request = kwargs.pop('request')
+        except:
+            raise Exception(_('Wrong form kwargs.'))
         super(UserForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.layout = Layout(
@@ -82,12 +88,18 @@ class UserForm(UserChangeForm):
                 'email',
                 'first_name',
                 'is_superuser' if request.user.is_superuser else '',
+                'user_id',
                 ButtonHolder(
-                    Submit('submit', _('Save'), css_class='right radius'),
+                    Submit('submit', _('Save'), css_class='right radius left-1em'),
                     HTML('<a class="button secondary radius right" href="">%s</a>' % _('Change user password')),
                 ),
             )
         )
+        self.fields['email'].required = True
+        self.fields['first_name'].label = _('Display name')
+        self.fields['user_id'].initial = self.instance.id
+        for f in ['username', 'password', 'last_login', 'date_joined']:
+            self.fields[f].required = False
 
 class UserPasswordForm(PasswordChangeForm):
 
