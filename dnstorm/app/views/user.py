@@ -57,9 +57,6 @@ class UsersView(TemplateView):
 class UserUpdateView(UpdateView):
     form_class = UserForm
     model = User
-    '''exclude = ['username', 'password', 'last_login', 'groups',
-        'user_permissions', 'is_staff', 'is_active', 'last_name',
-        'date_joined']'''
 
     def dispatch(self, *args, **kwargs):
         obj = get_object_or_404(User, username=kwargs['username'])
@@ -93,6 +90,7 @@ class UserUpdateView(UpdateView):
         Checks for the given fields and changes the user object accordingly.
         Not nice, perhaps, some permissions handling are required here.
         """
+
         user_obj = get_object_or_404(User, id=form.cleaned_data['user_id'])
         form_obj = form.save(commit=False)
         if not self.request.user.is_superuser and (self.request.user != user_obj or form_obj.is_superuser):
@@ -126,7 +124,6 @@ class UserUpdatePasswordView(UpdateView):
 
     def get_breadcrumbs(self, **kwargs):
         return [{ 'title': _('Users'), 'classes': 'current' }]
-
 
 '''class AdminUserUpdateView(UpdateView):
     template_name = 'admin_user_edit.html'
