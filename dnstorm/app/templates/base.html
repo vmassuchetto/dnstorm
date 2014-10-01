@@ -110,7 +110,12 @@
 {% if messages %}
 {% for message in messages %}
     <div class="upper-bar-wrap message-bar{% if message.tags %} {{ message.tags }}{% endif %}">
-        <div class="row"><div class="columns large-12"><p>{{ message }}</p></div></div>
+        <div class="row">
+            <div class="columns large-12">
+                <p>{{ message }}</p>
+                <a class="close">&#215;</a>
+            </div>
+        </div>
     </div>
 {% endfor %}
 {% endif %}

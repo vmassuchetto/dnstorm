@@ -94,6 +94,11 @@ $.fn.highlight = function (color, duration) {
     });
 };
 
+// Top message close button
+$('.message-bar').on('click', '.close', function(){
+    $(this).parent().parent().parent().slideUp();
+});
+
 // Modal cancel button
 // When we want to use a "Cancel" button instead of the "X" at the top
 
