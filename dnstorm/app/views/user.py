@@ -95,7 +95,7 @@ class UserUpdateView(UpdateView):
         """
         user_obj = get_object_or_404(User, id=form.cleaned_data['user_id'])
         form_obj = form.save(commit=False)
-        if not self.request.user.is_superuser and (self.request.user != obj or form_obj.is_superuser):
+        if not self.request.user.is_superuser and (self.request.user != user_obj or form_obj.is_superuser):
             raise PermissionDenied
         user_obj.email = form_obj.email
         user_obj.first_name = form_obj.first_name
