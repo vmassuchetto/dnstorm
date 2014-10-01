@@ -106,6 +106,16 @@
 {% endif %}
 {% endblock %}
 
+{% block messages %}
+{% if messages %}
+{% for message in messages %}
+    <div class="upper-bar-wrap message-bar{% if message.tags %} {{ message.tags }}{% endif %}">
+        <div class="row"><div class="columns large-12"><p>{{ message }}</p></div></div>
+    </div>
+{% endfor %}
+{% endif %}
+{% endblock %}
+
 <div class="bottom-1em"></div>
 
 <div class="row show-for-medium-up" id="header-wrap">
