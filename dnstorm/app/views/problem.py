@@ -112,6 +112,7 @@ class ProblemCreateView(CreateView):
         context['site_title'] = '%s | %s' % (_('Create problem'), get_option('site_title'))
         context['breadcrumbs'] = self.get_breadcrumbs()
         context['title'] = _('Create new problem')
+        context['criteria_form'] = forms.CriteriaForm()
         return context
 
     def get_breadcrumbs(self):
@@ -140,6 +141,7 @@ class ProblemUpdateView(UpdateView):
         context['site_title'] = '%s | %s' % (self.object.title, _('Edit'))
         context['breadcrumbs'] = self.get_breadcrumbs()
         context['title'] = _('Edit problem')
+        context['criteria_form'] = forms.CriteriaForm()
         return context
 
     def get_breadcrumbs(self):
