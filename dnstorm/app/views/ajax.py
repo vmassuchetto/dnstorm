@@ -20,7 +20,7 @@ from notification import models as notification
 
 from dnstorm.app import models
 from dnstorm.app import permissions
-from dnstorm.app.forms import IdeaForm, CriteriaForm, CommentForm
+from dnstorm.app.forms import IdeaForm, CriteriaForm, CommentForm, ContributorForm
 from dnstorm.app.utils import get_object_or_none, email_context, activity_count, activity_reset_counter as _activity_reset_counter
 from dnstorm.app.views.idea import idea_save
 
@@ -174,7 +174,8 @@ class AjaxView(View):
 
         # Response
 
-        return HttpResponse()
+        form = ContributorForm(problem=problem.id)
+        return HttpResponse(json.dumps({'form': render_crispy_form(form)}), content_type='application/json')
 
     def activity_reset_counter(self):
         """

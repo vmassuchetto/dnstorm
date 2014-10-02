@@ -309,17 +309,32 @@ $(document).on('submit', '#contributor-form', function(e){
             button.removeClass('loading');
             button.attr('disabled', false);
             if (data == 'success') {
+                response = JSON.parse(xhr.responseText);
                 $('#contributors-modal').foundation('reveal', 'close');
+                $('#contributor-form').html(response.form);
             }
         }
     });
 });
 
 /**
+ * Problem form: display activation link
+ */
+
+$(document).on('click', '.activation-link-button', function(e) {
+    e.preventDefault();
+    $(this).parent().parent().find('.activation-link').slideToggle();
+});
+
+$(document).on('click', '.activation-link', function(e) {
+    $(this).select();
+})
+
+/**
  * Problem form: resend pending invitations
  */
 
-$('.resend-button').on('click', function(e) {
+$(document).on('click', '.resend-button', function(e) {
     e.preventDefault();
     if ($(this).attr('disabled') == 'disabled')
         return false;

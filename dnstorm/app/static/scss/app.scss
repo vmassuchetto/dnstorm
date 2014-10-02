@@ -713,6 +713,7 @@ ul.ui-autocomplete .invitation,
     .avatar {
         padding: 2px 5px;
     }
+    .activation-link-button,
     .resend-button,
     .delete-button {
         display: none;
@@ -752,6 +753,9 @@ ul.ui-autocomplete .invitation,
         padding: 2px;
         margin-right: 5px;
         box-shadow: none;
+    }
+    .activation-link {
+        display: none;
     }
 }
 
