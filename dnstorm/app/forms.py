@@ -43,6 +43,7 @@ class RegistrationForm(RegistrationFormUniqueEmail):
 
 class OptionsForm(forms.Form):
     site_title = forms.CharField(label=_('Site title'), help_text=_('Page title for browsers'))
+    site_description = forms.CharField(label=_('Site description'), help_text=_('Page description for browsers'))
     site_url = forms.CharField(label=_('Site URL'), help_text=_('Site domain for URL generation with http scheme. Examples: \'http://domain.com\', \'https://subdomain.domain.com\', \'http://domain:port\''))
 
     def __init__(self, *args, **kwargs):
@@ -51,6 +52,7 @@ class OptionsForm(forms.Form):
         self.helper.layout = Layout(
             Fieldset(_('Site'),
                 'site_title',
+                'site_description',
                 'site_url',
             ),
             ButtonHolder(
