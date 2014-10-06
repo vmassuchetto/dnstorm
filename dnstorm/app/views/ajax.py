@@ -207,8 +207,11 @@ class AjaxView(View):
         t = loader.get_template('idea.html')
         c = Context({
             'idea': idea,
+            'problem': idea.problem,
             'idea_actions': True,
-            'problem_perm_contribute': True
+            'problem_perm_contribute': True,
+            'problem_perm_edit': True,
+            'problem_perm_manage': True
         })
         return HttpResponse(json.dumps({
             'id': idea.id,

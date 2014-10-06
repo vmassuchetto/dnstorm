@@ -476,34 +476,32 @@ $(document).on('submit', '.comment-form form', function(e){
     });
 });
 
-// Delete comment
+/**
+ * Format DeleteForm for delete actions
+ */
 
-$(document).on('click', '.comment-delete-toggle', function(){
-    var obj = $(this);
-    obj.addClass('loading');
-    var comment = $(this).parents('.comment');
-    $.ajax({
-        url: '/ajax/',
-        type: 'GET',
-        data: {
-            'delete_comment': $(this).data('comment')
-        },
-        complete: function(xhr, data) {
-            if (data == 'success') {
-                c = comment.find('.comment-delete-toggle');
-                if (xhr.responseText == 'undelete') {
-                    comment.addClass('deleted');
-                    c.removeClass('comment-delete');
-                    c.addClass('comment-undelete');
-                } else {
-                    c.removeClass('comment-undelete');
-                    c.addClass('comment-delete');
-                    comment.removeClass('deleted');
-                }
-            }
-            obj.removeClass('loading');
-        }
+function toggle_delete(type, id) {
+    var delete_modal = $('#delete-modal');
+    delete_modal.find('#id_delete_problem,#id_delete_idea,#id_delete_comment').each(function(){
+        $(this).val('');
     });
+    if (type == 'problem')
+        delete_modal.find('#id_delete_problem').val(id);
+    else if (type == 'idea')
+        delete_modal.find('#id_delete_idea').val(id);
+    else if (type == 'comment')
+        delete_modal.find('#id_delete_comment').val(id);
+    delete_modal.foundation('reveal', 'open');
+}
+
+$(document).on('click', '.problem-delete', function(){
+    toggle_delete('problem', $(this).data('problem'));
+});
+$(document).on('click', '.idea-delete', function(){
+    toggle_delete('idea', $(this).data('idea'));
+});
+$(document).on('click', '.comment-delete', function(){
+    toggle_delete('comment', $(this).data('comment'));
 });
 
 /**

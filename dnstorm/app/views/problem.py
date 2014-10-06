@@ -60,10 +60,6 @@ def problem_save(obj, form):
         attributes=settings.SANITIZER_ALLOWED_ATTRIBUTES,
         styles=settings.SANITIZER_ALLOWED_STYLES,
         strip=True, strip_comments=True)
-    if not obj.object.public:
-        obj.object.public = old.public
-    if not obj.object.open:
-        obj.object.open = old.open
     obj.object.save()
 
     if permissions.problem(obj=obj.object, user=obj.request.user, mode='manage'):
@@ -165,18 +161,6 @@ class ProblemUpdateView(UpdateView):
         kwargs['problem_perm_manage'] = permissions.problem(obj=self.problem, user=self.request.user, mode='manage')
         return kwargs
 
-class ProblemDeleteView(RedirectView):
-    model = models.Problem
-    success_url = '/'
-
-    def dispatch(self, *args, **kwargs):
-        obj = get_object_or_404(models.Problem, slug=kwargs['slug'])
-        if not permissions.problem(obj=obj, user=self.request.user, mode='contribute'):
-            raise PermissionDenied
-        if len(self.request.POST) > 0:
-            messages.success(self.request, _('Problem deleted'))
-        return super(ProblemDeleteView, self).dispatch(*args, **kwargs)
-
 class ProblemView(FormView):
     template_name = 'problem.html'
     form_class = forms.IdeaForm
@@ -192,6 +176,64 @@ class ProblemView(FormView):
         kwargs = super(ProblemView, self).get_form_kwargs()
         kwargs['problem'] = self.problem
         return kwargs
+
+    def post(self, *args, **kwargs):
+        """
+        Checks for delete actions of problem, ideas and comments sent from
+        forms.DeleteForm.
+        """
+
+        yes = args[0].POST.get('yes', None)
+
+        # Delete problem
+
+        try:
+            delete_problem = int(args[0].POST.get('delete_problem', None))
+        except ValueError:
+            delete_problem = False
+        if delete_problem:
+            if yes and delete_problem == self.problem.id and \
+                permissions.problem(obj=self.problem, user=args[0].user, mode='manage'):
+                self.problem.delete()
+                messages.success(args[0], _('The problem was deleted.'))
+                return HttpResponseRedirect(reverse('home'))
+
+        # Delete idea
+
+        try:
+            delete_idea = int(args[0].POST.get('delete_idea', None))
+        except ValueError:
+            delete_idea = False
+        if delete_idea:
+            idea = get_object_or_404(models.Idea, id=delete_idea)
+            if yes and permissions.idea(obj=idea, user=args[0].user, mode='manage'):
+                idea.delete()
+                messages.success(args[0], _('The idea was deleted.'))
+                return HttpResponseRedirect(reverse('problem', kwargs={'slug':self.problem.slug}))
+
+
+        if not yes and (delete_problem or delete_idea):
+            messages.warning(args[0], _('You need to mark the checkbox to really delete.'))
+            return HttpResponseRedirect(reverse('problem', kwargs={'slug':self.problem.slug}))
+
+        # Delete comment
+
+        try:
+            delete_comment = int(args[0].POST.get('delete_comment', None))
+        except ValueError:
+            delete_comment = False
+        if delete_comment:
+            comment = get_object_or_404(models.Comment, id=delete_comment)
+            if yes and permissions.comment(obj=comment, user=args[0].user, mode='manage'):
+                comment.delete()
+                messages.success(args[0], _('The comment was deleted.'))
+                return HttpResponseRedirect(reverse('problem', kwargs={'slug':self.problem.slug}))
+
+        if not yes and (delete_problem or delete_idea or delete_comment):
+            messages.warning(args[0], _('You need to mark the checkbox to really delete.'))
+            return HttpResponseRedirect(reverse('problem', kwargs={'slug':self.problem.slug}))
+
+        return super(ProblemView, self).post(*args, **kwargs)
 
     def get_context_data(self, *args, **kwargs):
         context = super(ProblemView, self).get_context_data(**kwargs)
@@ -210,6 +252,7 @@ class ProblemView(FormView):
         context['comment_form'] = forms.CommentForm()
         context['contributor_form'] = forms.ContributorForm(problem=self.problem.id)
         context['ideas'] = models.Idea.objects.filter(problem=self.problem)
+        context['delete_form'] = forms.DeleteForm(problem=self.problem.id)
 
         # Criterias
 

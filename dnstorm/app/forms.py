@@ -164,6 +164,33 @@ class ProblemForm(forms.ModelForm):
         elif self.instance.id:
             self.fields['criteria'].initial = [c.id for c in self.instance.criteria.all()]
 
+class DeleteForm(forms.Form):
+    yes = forms.BooleanField(label=_("Yes. I know what I'm doing. Delete this!"))
+    delete_problem = forms.IntegerField(widget=forms.HiddenInput())
+    delete_idea = forms.IntegerField(widget=forms.HiddenInput())
+    delete_comment = forms.IntegerField(widget=forms.HiddenInput())
+
+    def __init__(self, *args, **kwargs):
+        try:
+            problem = kwargs.pop('problem')
+        except:
+            raise Exception(_('Wrong form kwargs.'))
+        self.helper = FormHelper()
+        self.helper.form_action = '.'
+        self.helper.form_class = 'problem-delete-form'
+        self.helper.layout = Layout(
+            'delete_problem',
+            'delete_idea',
+            'delete_comment',
+            Row(Column('yes', css_class='large-12')),
+            Row(Column(ButtonHolder(
+                HTML('<a class="button left radius secondary small close-reveal-modal-button">' + _('Cancel') + '</a>'),
+                Submit('submit', _('Delete'), css_class="right radius alert")
+            ), css_class='top-1em large-12'))
+        )
+        super(DeleteForm, self).__init__(*args, **kwargs)
+        self.fields['yes'].required = True
+
 class ContributorForm(forms.Form):
     contributor = AutoCompleteSelectMultipleField('user', required=False)
     problem = forms.CharField(widget=forms.HiddenInput())

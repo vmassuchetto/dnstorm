@@ -48,5 +48,5 @@ def comment(**kwargs):
     if user and user.is_superuser:
         return True
     if mode == 'manage':
-        return obj.author == user
+        return obj.author == user or obj.idea.problem.author == user
     return False

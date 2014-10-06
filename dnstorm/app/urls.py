@@ -26,7 +26,6 @@ urlpatterns = patterns('',
     (r'^problem/new/$', problem.ProblemCreateView.as_view(), {}, 'problem_new'),
     (r'^problem/(?P<slug>[^/]+)/$', problem.ProblemView.as_view(), {}, 'problem'),
     (r'^problem/(?P<slug>[^/]+)/edit/$', problem.ProblemUpdateView.as_view(), {}, 'problem_edit'),
-    (r'^problem/(?P<slug>[^/]+)/delete/$', problem.ProblemDeleteView.as_view(), {}, 'problem_delete'),
     (r'^problem/(?P<slug>[^/]+)/#ideas$', problem.ProblemUpdateView.as_view(), {}, 'problem_ideas'),
 
     # Ideas
