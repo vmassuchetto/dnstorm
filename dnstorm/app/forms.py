@@ -93,7 +93,7 @@ class UserForm(forms.ModelForm):
                 'user_id',
                 ButtonHolder(
                     Submit('submit', _('Save'), css_class='right radius left-1em'),
-                    HTML('<a class="button secondary radius right" href="">%s</a>' % _('Change user password')),
+                    HTML('<a class="button secondary radius right" href="%s">%s</a>' % (reverse('user_edit_password', kwargs={'username': self.instance.username}), _('Change user password'))),
                 ),
             )
         )
@@ -103,20 +103,25 @@ class UserForm(forms.ModelForm):
         for f in ['username', 'password', 'last_login', 'date_joined']:
             self.fields[f].required = False
 
-class UserPasswordForm(PasswordChangeForm):
+class UserPasswordForm(forms.ModelForm):
+
+    class Meta:
+        model = User
 
     def __init__(self, *args, **kwargs):
-        super(UserForm, self).__init__(*args, **kwargs)
+        user_obj = kwargs.pop('instance')
+        super(UserPasswordForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.layout = Layout(
-            Fieldset('<i class="fi-torso"></i>&nbsp;' + _('Change \'%s\' password' % self.instance.username),
+            Fieldset('<i class="fi-torso"></i>&nbsp;' + _('Change \'%s\' password' % user_obj.username),
+                'password',
                 'password1',
-                'password2',
                 ButtonHolder(
                     Submit('submit', _('Save'), css_class='right radius'),
                 ),
             )
         )
+
 class ProblemForm(forms.ModelForm):
     criteria = AutoCompleteSelectMultipleField('criteria', required=True)
 

@@ -48,7 +48,7 @@ urlpatterns = patterns('',
     (r'^users/$', user.UsersView.as_view(), {}, 'users'),
     (r'^users/(?P<username>[^/]+)/$', user.UserView.as_view(), {}, 'user'),
     (r'^users/(?P<username>[^/]+)/edit/$', user.UserUpdateView.as_view(), {}, 'user_edit'),
-    (r'^users/(?P<username>[^/]+)/edit/password/$', user.UserUpdatePasswordView.as_view(), {}, 'user_edit_password'),
+    (r'^users/(?P<username>[^/]+)/edit/password/$', user.UserPasswordUpdateView.as_view(), {}, 'user_edit_password'),
     #(r'^admin/users/(?P<user_id>[^/]+)/activate/$', user.AdminUserActivateView.as_view(), {}, 'admin_user_activate'),
     #(r'^admin/users/(?P<user_id>[^/]+)/deactivate/$', user.AdminUserDeactivateView.as_view(), {}, 'admin_user_deactivate'),
 

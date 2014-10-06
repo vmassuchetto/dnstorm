@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.models import User
 from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
@@ -10,7 +11,7 @@ from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext as _
 from django.views.generic import RedirectView
 from django.views.generic.base import TemplateView
-from django.views.generic.edit import UpdateView
+from django.views.generic.edit import FormView, UpdateView
 
 from actstream.models import actor_stream
 
@@ -102,22 +103,21 @@ class UserUpdateView(UpdateView):
         messages.success(self.request, _('User information saved'))
         return HttpResponseRedirect(reverse('user', kwargs={'username': user_obj.username}))
 
-class UserUpdatePasswordView(UpdateView):
-    form_class = UserPasswordForm
-    model = User
+class UserPasswordUpdateView(FormView):
+    form_class = PasswordChangeForm
 
     def dispatch(self, *args, **kwargs):
         obj = get_object_or_404(User, username=kwargs['username'])
         if not self.request.user.is_superuser and self.request.user != obj:
             raise PermissionDenied
         self.object = obj
-        return super(UserUpdatePasswordView, self).dispatch(*args, **kwargs)
+        return super(UserPasswordUpdateView, self).dispatch(*args, **kwargs)
 
     def get_object(self, *args, **kwargs):
         return self.object
 
     def get_context_data(self, *args, **kwargs):
-        context = super(UserUpdatePasswordView, self).get_context_data(**kwargs)
+        context = super(UserPasswordUpdateView, self).get_context_data(**kwargs)
         context['site_title'] = '%s | %s' % (self.object.username, _('Update user password'))
         context['breadcrumbs'] = self.get_breadcrumbs()
         return context
