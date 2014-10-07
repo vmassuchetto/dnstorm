@@ -438,18 +438,17 @@ $('.criteria-button:not(.expanded)').hover(function() {
 
 $(document).on('mouseenter', '.idea-like', function(){
     $(this).addClass('highlighted');
-    counter = $(this).find('.idea-like-counter');
-    if ($(this).hasClass('voted'))
-        counter.html(parseInt($(this).data('counter')) - 1);
-    else
-        counter.html(parseInt($(this).data('counter')) + 1);
 });
 $(document).on('mouseleave', '.idea-like', function(){
     $(this).removeClass('highlighted');
-    counter.html(parseInt($(this).data('counter')));
 });
 $(document).on('click', '.idea-like', function(){
     var vote = $(this);
+    var counter = $(this).find('.idea-like-counter');
+    if (vote.hasClass('voted'))
+        counter.text(parseInt(counter.text()) - 1);
+    else
+        counter.text(parseInt(counter.text()) + 1);
     $.ajax({
         url: '/ajax/',
         type: 'GET',
@@ -461,7 +460,7 @@ $(document).on('click', '.idea-like', function(){
                     vote.removeClass('voted');
                 else
                     vote.addClass('voted');
-                vote.data('counter', response.counter);
+                counter.text(response.counter);
             }
         }
     });
