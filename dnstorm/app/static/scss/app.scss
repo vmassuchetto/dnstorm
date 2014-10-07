@@ -294,7 +294,7 @@ form {
         text-align: center;
         text-transform: uppercase;
     }
-    .close {
+    a.close {
         position: absolute;
         font-size: 2rem;
         line-height: 1;
@@ -310,16 +310,25 @@ form {
 .message-bar.success {
     background-color: #C1FFBE;
     color: $green;
+    a.close {
+        color: $green;
+    }
 }
 
 .message-bar.info {
     background-color: #FFF7B2;
     color: #675D00;
+    a.close {
+        color: #675D00;
+    }
 }
 
 .message-bar.warning {
     background-color: #FFDEDE;
     color: $red;
+    a.close {
+        color: $red;
+    }
 }
 
 // Header

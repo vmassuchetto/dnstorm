@@ -103,24 +103,29 @@ class UserForm(forms.ModelForm):
         for f in ['username', 'password', 'last_login', 'date_joined']:
             self.fields[f].required = False
 
-class UserPasswordForm(forms.ModelForm):
-
-    class Meta:
-        model = User
+class UserPasswordForm(forms.Form):
+    password = forms.CharField(label=_('Type your current password'), widget=forms.PasswordInput)
+    password1 = forms.CharField(label=_('Type your new password'), widget=forms.PasswordInput)
+    password2 = forms.CharField(label=_('Type your new password again.'), widget=forms.PasswordInput)
 
     def __init__(self, *args, **kwargs):
-        user_obj = kwargs.pop('instance')
         super(UserPasswordForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.layout = Layout(
-            Fieldset('<i class="fi-torso"></i>&nbsp;' + _('Change \'%s\' password' % user_obj.username),
+            Fieldset('<i class="fi-torso"></i>&nbsp;' + _('Change password'),
                 'password',
                 'password1',
+                'password2',
                 ButtonHolder(
                     Submit('submit', _('Save'), css_class='right radius'),
                 ),
             )
         )
+
+    def clean(self):
+        if not 'password1' or not 'password2' in self.cleaned_data or \
+            self.cleaned_data['password1'] != self.cleaned_data['password2']:
+            raise forms.ValidationError(_('Passwords don\'t match.'))
 
 class ProblemForm(forms.ModelForm):
     criteria = AutoCompleteSelectMultipleField('criteria', required=True)

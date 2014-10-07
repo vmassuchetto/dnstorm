@@ -1,15 +1,14 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.models import User
 from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
 from django.core.urlresolvers import reverse
+from django.forms.util import ErrorList
 from django.http import HttpResponseRedirect
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext as _
-from django.views.generic import RedirectView
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView, UpdateView
 
@@ -104,7 +103,8 @@ class UserUpdateView(UpdateView):
         return HttpResponseRedirect(reverse('user', kwargs={'username': user_obj.username}))
 
 class UserPasswordUpdateView(FormView):
-    form_class = PasswordChangeForm
+    form_class = UserPasswordForm
+    template_name = 'user_password.html'
 
     def dispatch(self, *args, **kwargs):
         obj = get_object_or_404(User, username=kwargs['username'])
@@ -125,69 +125,18 @@ class UserPasswordUpdateView(FormView):
     def get_breadcrumbs(self, **kwargs):
         return [{ 'title': _('Users'), 'classes': 'current' }]
 
-'''class AdminUserUpdateView(UpdateView):
-    template_name = 'admin_user_edit.html'
-    model = User
-    form_class = AdminUserForm
+    def form_valid(self, form):
+        """
+        Updates the user password according to current password and two inputs
+        of the new password.
+        """
 
-    def get_object(self, queryset=None):
-        return get_object_or_404(User, id=self.kwargs['user_id'])
+        if not self.object.check_password(self.request.POST['password']):
+            form._errors.setdefault('password', ErrorList())
+            form._errors['password'].append(_('Wrong password.'))
+            return render(self.request, 'user_password.html', {'form': form})
 
-    def get_success_url(self):
-        if self.request.user.is_superuser:
-            return reverse('admin_user')
-        return reverse('admin_user', {'user_id': self.request.user.id})
-
-    @method_decorator(login_required)
-    def dispatch(self, *args, **kwargs):
-        if self.request.user.is_superuser or self.request.user == self.object:
-            return super(AdminUserUpdateView, self).dispatch(*args, **kwargs)
-        raise PermissionDenied
-
-    def get_context_data(self, *args, **kwargs):
-        context = super(AdminUserUpdateView, self).get_context_data(**kwargs)
-        context['admin_user'] = get_object_or_404(User, id=self.kwargs['user_id'])
-        _user = Option().get('_user_backup_' + str(context['admin_user'].id))
-        context['bkp_admin_user'] = pickle.loads(str(_user)) if _user else None
-        context['breadcrumbs'] = self.get_breadcrumbs(username=context['admin_user'].username, user_id=self.kwargs['user_id'])
-        return context
-
-    def get_breadcrumbs(self, **kwargs):
-        return [
-            { 'title': _('Admin'), 'classes': 'unavailable' },
-            { 'title': _('Users'), 'url': reverse('admin_user') },
-            { 'title': kwargs['username'], 'url': reverse('admin_user_edit', kwargs={'user_id': kwargs['user_id']}) } ]
-
-class AdminUserActivateView(RedirectView):
-    permanent = False
-
-    def get_redirect_url(self, *args, **kwargs):
-        if not self.request.user.is_superuser:
-            raise PermissionDenied
-        user = get_object_or_404(User, id=self.kwargs['user_id'])
-        userdata = Option().get('_user_backup_' + str(user.id))
-        if userdata:
-            _user = pickle.loads(str(userdata))
-            user = _user
-            _user.delete()
-        user.is_active = True
-        user.save()
-        return reverse('admin_user_edit', kwargs={'user_id': user.id})
-
-class AdminUserDeactivateView(RedirectView):
-    permanent = False
-
-    def get_redirect_url(self, *args, **kwargs):
-        if not self.request.user.is_superuser:
-            raise PermissionDenied
-        user = get_object_or_404(User, id=self.kwargs['user_id'])
-        if self.request.user.is_superuser and self.request.user == user:
-            raise PermissionDenied
-        Option().get_or_create(name='_user_backup_' + str(user.id), value=pickle.dumps(user)).save()
-        user.is_active = False
-        user.email = 'user%d@dnstorm' % user.id
-        user.username = 'user%d' % user.id
-        user.first_name = ''
-        user.last_name = ''
-        user.save()
-        return reverse('admin_user_edit', kwargs={'user_id': user.id})'''
+        self.object.set_password(self.request.POST['password1'])
+        self.object.save()
+        messages.success(self.request, _('User password updated'))
+        return HttpResponseRedirect(reverse('user', kwargs={'username': self.object.username}))
