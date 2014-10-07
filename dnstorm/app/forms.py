@@ -91,10 +91,12 @@ class UserForm(forms.ModelForm):
                 'first_name',
                 'is_superuser' if request.user.is_superuser else '',
                 'user_id',
-                ButtonHolder(
-                    Submit('submit', _('Save'), css_class='right radius left-1em'),
-                    HTML('<a class="button secondary radius right" href="%s">%s</a>' % (reverse('user_edit_password', kwargs={'username': self.instance.username}), _('Change user password'))),
-                ),
+                Row(Column(
+                    ButtonHolder(
+                        Submit('submit', _('Save'), css_class='right radius left-1em'),
+                        HTML('<a class="button secondary radius right" href="%s"><i class="fi-key"></i>&nbsp;%s</a>' % (reverse('user_edit_password', kwargs={'username': self.instance.username}), _('Change password'))),
+                    ),
+                ), css_class='large-12 top-1em'),
             )
         )
         self.fields['email'].required = True
