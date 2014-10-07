@@ -230,7 +230,7 @@ class Idea(models.Model):
         return reverse('idea', kwargs={'slug': self.problem.slug, 'pk': self.id})
 
     def vote_count(self):
-        w = Vote.objects.filter(idea=self).aggregate(models.Sum('weight'))['weight__sum']
+        w = Vote.objects.filter(idea=self).count()
         return w if w else 0
 
     def fill_data(self, user=False):
@@ -241,12 +241,12 @@ class Idea(models.Model):
         self.perm_manage = permissions.idea(obj=self, user=user, mode='manage')
         self.comments = Comment.objects.filter(idea=self).order_by('created')
 
-        # Idea coauthor
+        # Coauthor
 
         coauthor = self.coauthor.count()
         self.coauthor_ = self.coauthor.all()[coauthor-1] if coauthor > 0 else None
 
-        # Idea criterias
+        # Criterias
 
         self.criterias = list()
         for criteria in self.problem.criteria.all():
@@ -258,10 +258,14 @@ class Idea(models.Model):
             criteria.stars_number = ic.stars
             self.criterias.append(criteria)
 
-        # Idea comments
+        # Comments
 
         for comment in self.comments:
             comment.perm_manage = permissions.comment(obj=self.problem, user=user, mode='manage')
+
+        # Votes
+
+        self.voted = Vote.objects.filter(idea=self, author=user).exists()
 
 class IdeaCriteria(models.Model):
     """
@@ -338,19 +342,14 @@ class Alternative(models.Model):
 
 class Vote(models.Model):
     """
-    A vote for idea or for an alternative.
-
-    Attributes:
-        * ``weight`` Vote weight. Negative only for ideas.
+    Votes for ideas, comments or alternatives.
     """
 
     idea = models.ForeignKey(Idea, blank=True, null=True, related_name='vote_idea')
     comment = models.ForeignKey(Alternative, blank=True, null=True, related_name='vote_comment')
     alternative = models.ForeignKey(Alternative, blank=True, null=True, related_name='vote_alternative')
     author = models.ForeignKey(User)
-    weight = models.SmallIntegerField(editable=False, default=0)
     created = models.DateTimeField(auto_now_add=True, editable=False, default='2001-01-01')
-    updated = models.DateTimeField(auto_now=True, editable=False, default='2000-01-01')
 
     class Meta:
         db_table = settings.DNSTORM['table_prefix'] + '_vote'

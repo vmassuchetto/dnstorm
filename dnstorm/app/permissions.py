@@ -2,6 +2,10 @@ from django.db.models import Q
 from django.contrib.auth.models import AnonymousUser
 
 def problem(**kwargs):
+    """
+    Regulate permissions for problem objects.
+    """
+
     obj = kwargs.get('obj')
     user = kwargs.get('user')
     mode = kwargs.get('mode', 'contribute')
@@ -20,6 +24,10 @@ def problem(**kwargs):
     return False
 
 def idea(**kwargs):
+    """
+    Regulate permissions for idea objects.
+    """
+
     obj = kwargs.get('obj')
     user = kwargs.get('user')
     mode = kwargs.get('mode', 'manage')
@@ -27,19 +35,29 @@ def idea(**kwargs):
         return False
     elif user and user.is_superuser:
         return True
+    elif mode == 'contribute':
+        return problem(obj=obj.problem, user=user, mode='contribute')
     elif mode == 'manage':
-        return obj.author == user or obj.problem.author == user
+        return obj.author == user or problem(obj=obj.problem, user=user, mode='manage')
     elif mode == 'edit':
-        return user.is_authenticated() and ((obj.problem.public and obj.problem.open) or (obj.problem.open and user in obj.problem.contributor.all()) or (obj.problem.author == user))
+        return problem(obj=obj.problem, user=user, mode='edit')
     return False
 
 def idea_queryset(**kwargs):
+    """
+    Returns querysets for ideas based on user permissions.
+    """
+
     user = kwargs.get('user', None)
     if user and user.is_superuser:
         return Q()
     return Q(author=user.id)
 
 def comment(**kwargs):
+    """
+    Regulate permissions for comment objects.
+    """
+
     obj = kwargs.get('obj')
     user = kwargs.get('user')
     mode = kwargs.get('mode', 'manage')

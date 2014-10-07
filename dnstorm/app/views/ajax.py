@@ -82,6 +82,9 @@ class AjaxView(View):
         elif self.request.GET.get('criteria_form', None):
             return self.criteria_form()
 
+        elif self.request.GET.get('idea_like', None):
+            return self.idea_like()
+
         # Failure
 
         return HttpResponseForbidden()
@@ -208,7 +211,7 @@ class AjaxView(View):
         c = Context({
             'idea': idea,
             'problem': idea.problem,
-            'idea_actions': True,
+            'actions': True,
             'problem_perm_contribute': True,
             'problem_perm_edit': True,
             'problem_perm_manage': True
@@ -323,26 +326,6 @@ class AjaxView(View):
         c = Context({'comment': comment})
         return HttpResponse(json.dumps({'target': target, 'html': re.sub("\n", '', t.render(c))}), content_type='application/json')
 
-    def delete_comment(self):
-        """
-        Delete a comment. This is actually a delete toggle. It will delete over
-        undeleted, and undelete over deleted items.
-        """
-        comment = get_object_or_none(models.Comment, id=int(self.request.GET['delete_comment']))
-        if not comment:
-            raise Http404
-        mode = 'undelete' if comment.deleted_by else 'delete'
-        if not comment or not permissions.comment(obj=comment, user=self.request.user, mode=mode):
-            return HttpResponse(0)
-        if comment.deleted_by:
-            comment.deleted_by = None
-            response_mode = 'delete'
-        else:
-            comment.deleted_by = self.request.user
-            response_mode = 'undelete'
-        comment.save()
-        return HttpResponse(response_mode)
-
     def delete_alternative(self):
         """
         Delete alternative.
@@ -415,24 +398,6 @@ class AjaxView(View):
             'problem_perm_manage': True})}
         return HttpResponse(json.dumps(response), content_type='application/json')
 
-    def delete_idea(self):
-        """
-        Delete an idea. This is actually a delete toggle. It will delete over
-        undeleted, and undelete over deleted items.
-        """
-
-        # Validation
-
-        idea = get_object_or_404(Idea, id=int(self.request.GET['delete_idea']))
-        mode = 'undelete' if idea.deleted_by else 'delete'
-        if not permissions.idea(obj=idea, user=self.request.user, mode='manage'):
-            return HttpResponseForbidden()
-
-        # Response
-
-        idea.save()
-        return HttpResponse()
-
     def resend_invitation(self):
         """
         Resend an invitation.
@@ -463,3 +428,19 @@ class AjaxView(View):
         invitation.delete()
         return HttpResponse()
 
+    def idea_like(self):
+        """
+        Performs a 'like' and 'unlike' action on an idea.
+        """
+
+        idea = get_object_or_404(models.Idea, id=self.request.GET.get('idea_like', None))
+        if not permissions.idea(obj=idea, user=self.request.user, mode='contribute'):
+            return HttpResponseForbidden()
+
+        if models.Vote.objects.filter(idea=idea, author=self.request.user).exists():
+            models.Vote.objects.filter(idea=idea, author=self.request.user).delete()
+        else:
+            models.Vote.objects.create(idea=idea, author=self.request.user)
+
+        response = {'counter': idea.vote_count()}
+        return HttpResponse(json.dumps(response), content_type='application/json')

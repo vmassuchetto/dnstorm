@@ -835,15 +835,35 @@ ul.ui-autocomplete .invitation,
 
 .problem-idea {
     position: relative;
-
-    .idea-content {
-        margin: 0 0 1em 0;
+    .idea-like {
+        text-align: center;
+        a.idea-like-bulb,
+        span.idea-like-counter {
+            @include single-transition(all, 300ms, ease-out);
+        }
+        a.idea-like-bulb {
+            color: $light-grey;
+            font-size: emCalc(48px);
+        }
+        span.idea-like-counter {
+            color: $light-grey;
+            font-size: emCalc(32px);
+            display: block;
+            padding-top: emCalc(8px);
+        }
     }
-
-    .idea-quantifiers {
-        margin: 0 0 6px 0;
+    .idea-like.voted {
+        a.idea-like-bulb,
+        span.idea-like-counter {
+            color: $cyan;
+        }
     }
-
+    .idea-like.highlighted {
+        a.idea-like-bulb,
+        span.idea-like-counter {
+            color: $dark-cyan;
+        }
+    }
     .idea-actions {
         margin: 28px 0 10px 0;
         a {

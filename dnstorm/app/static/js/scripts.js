@@ -432,6 +432,41 @@ $('.criteria-button:not(.expanded)').hover(function() {
     }
 });
 
+/**
+ * Idea: Likes
+ */
+
+$(document).on('mouseenter', '.idea-like', function(){
+    $(this).addClass('highlighted');
+    counter = $(this).find('.idea-like-counter');
+    if ($(this).hasClass('voted'))
+        counter.html(parseInt($(this).data('counter')) - 1);
+    else
+        counter.html(parseInt($(this).data('counter')) + 1);
+});
+$(document).on('mouseleave', '.idea-like', function(){
+    $(this).removeClass('highlighted');
+    counter.html(parseInt($(this).data('counter')));
+});
+$(document).on('click', '.idea-like', function(){
+    var vote = $(this);
+    $.ajax({
+        url: '/ajax/',
+        type: 'GET',
+        data: 'idea_like=' + $(this).data('idea'),
+        complete: function(xhr, data) {
+            if (data == 'success') {
+                response = $.parseJSON(xhr.responseText);
+                if (response.counter < vote.data('counter'))
+                    vote.removeClass('voted');
+                else
+                    vote.addClass('voted');
+                vote.data('counter', response.counter);
+            }
+        }
+    });
+});
+
 // Show comment on click
 
 $(document).on('click', '.action-comment', function(e){

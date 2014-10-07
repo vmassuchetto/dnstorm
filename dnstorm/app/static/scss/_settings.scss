@@ -31,8 +31,8 @@ $dark-orange: darken($orange, 20%);
 $blue: #008CBA;
 $light-blue: lighten($blue, 20%);
 
-$dark-yellow: darken(#FFC200, 20%);
-$yellow: #FFC200;
+$yellow: #FFE303;
+$dark-yellow: darken($yellow, 20%);
 
 // The default font-size is set to 100% of the browser style sheet (usually 16px)
 // for compatibility with browser-based text zoom or user-set defaults.
