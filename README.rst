@@ -1,18 +1,18 @@
 About
 -----
 
-`DNStorm <http://vmassuhetto.github.io/dnstorm>_` is an experiment in
+`DNStorm <http://vmassuhetto.github.io/dnstorm>`_ is an experiment in
 decision-making theory made by `Vinicius Massuchetto
-<http://buscatextual.cnpq.br/buscatextual/visualizacv.do?metodo=apresentar&id=K4453533E8>_`
+<http://buscatextual.cnpq.br/buscatextual/visualizacv.do?metodo=apresentar&id=K4453533E8>`_
 and `Willy Hoppe de Sousa
-<http://buscatextual.cnpq.br/buscatextual/visualizacv.do?metodo=apresentar&id=K4751001U6>_`
+<http://buscatextual.cnpq.br/buscatextual/visualizacv.do?metodo=apresentar&id=K4751001U6>`_
 for the Master Program in Nuclear Technology Applications of the `Institute of
-Energy and Nuclear Research <http://ipen.br>_` and `University of São Paulo
-<http://usp.br>_` in Brazil.
+Energy and Nuclear Research <http://ipen.br>`_ and `University of São Paulo
+<http://usp.br>`_ in Brazil.
 
 This is a simple collaborative platform that allows managers to state problems
 and ask for contributions of quantified ideas from a web `brainstorming
-<http://en.wikipedia.org/wiki/Brainstorming>_` processes that will build the
+<http://en.wikipedia.org/wiki/Brainstorming>`_ processes that will build the
 problem and solution presentation in the format of a `strategy table
 <http://www.structureddecisionmaking.org/tools/toolsstrategytables>`_.
 
