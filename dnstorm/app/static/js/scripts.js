@@ -550,6 +550,7 @@ function adjust_table_overflow() {
     if (table_wrap.lenght <= 0 || !table)
         return;
     if (table.width() > $('.problem-table-wrap').width()) {
+        table_wrap.height(table.height() + 50);
         table_wrap.jScrollPane();
     }
 }
@@ -587,9 +588,9 @@ $(document).on('click', '.new-alternative', function(){
                 table.find('tbody').append(response.html);
                 table.find('#alternative-' + response.id).highlight('green');
             }
+            adjust_table_overflow();
         }
     });
-    adjust_table_overflow();
 });
 
 /**
@@ -623,8 +624,8 @@ $(document).on('click', '.delete-alternative-confirm', function(){
                     i++;
                     $(this).html(i);
                 });
-                adjust_table_overflow();
             }
+            adjust_table_overflow();
         }
     });
 });
