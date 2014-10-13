@@ -1,13 +1,20 @@
 About
 -----
 
-DNStorm is an experiment in decision-making theory made by Vinicius Massuchetto
-and Willy Hoppe de Sousa for the Master Program in Nuclear Technology
-Applications of the Institute of Energy and Nuclear Research and University of
-São Paulo in Brazil. The collaborative platform allows managers to state
-problems and ask help of users that can contribute with quantified ideas to
-build a `strategy table
-<http://www.structureddecisionmaking.org/tools/toolsstrategytables/>`_.
+`DNStorm <http://vmassuhetto.github.io/dnstorm>_` is an experiment in
+decision-making theory made by `Vinicius Massuchetto
+<http://buscatextual.cnpq.br/buscatextual/visualizacv.do?metodo=apresentar&id=K4453533E8>_`
+and `Willy Hoppe de Sousa
+<http://buscatextual.cnpq.br/buscatextual/visualizacv.do?metodo=apresentar&id=K4751001U6>_`
+for the Master Program in Nuclear Technology Applications of the `Institute of
+Energy and Nuclear Research <http://ipen.br>_` and `University of São Paulo
+<http://usp.br>_` in Brazil.
+
+This is a simple collaborative platform that allows managers to state problems
+and ask for contributions of quantified ideas from a web `brainstorming
+<http://en.wikipedia.org/wiki/Brainstorming>_` processes that will build the
+problem and solution presentation in the format of a `strategy table
+<http://www.structureddecisionmaking.org/tools/toolsstrategytables>`_.
 
 The `project's fancy page <http://vmassuchetto.github.io/dnstorm>`_ presents
 the software in a non-technical language. Sphinx documentation can be found at
@@ -20,7 +27,7 @@ Status
 ------
 
 The development status is in its alpha stages. Feel free to help by reporting
-bugs and suggesting modifications on the `Github issues
+bugs and development suggestions on `Github issues
 <https://github.com/vmassuchetto/dnstorm/issues>`_.
 
 
@@ -73,24 +80,6 @@ in `sites framework
     s = Site.objects.get(id=1)
     s.domain = '<your domain>'
     s.save()
-
-
-Graphviz
---------
-
-You'll need Graphviz if you want to generate the system's UML model
-representation:
-
-::
-
-    apt-get install graphviz graphviz-dev pkg-config
-    pip install -r requirements.txt
-
-And to generate the thing:
-
-::
-
-    python manage.py graph_models -a -g -o project.png
 
 
 CSS
@@ -152,3 +141,22 @@ To generate the `Sphinx <http://sphinx-doc.org/>`_ documentation files:
     make <documentation format>
 
 Usually you might want to replace ``<documentation format>`` with ``html``.
+
+
+Graphviz
+--------
+
+You'll need Graphviz if you want to generate the system's UML model
+representation:
+
+::
+
+    apt-get install graphviz graphviz-dev pkg-config
+    pip install -r requirements.txt
+
+And to generate the thing:
+
+::
+
+    python manage.py graph_models -a -g -o project.png
+
