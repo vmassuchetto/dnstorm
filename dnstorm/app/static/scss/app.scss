@@ -834,7 +834,8 @@ ul.ui-autocomplete .invitation,
 
 .problem-idea {
     position: relative;
-    .idea-like {
+    .idea-like,
+    .idea-like-disabled {
         text-align: center;
         a.idea-like-bulb,
         span.idea-like-counter {
@@ -851,6 +852,11 @@ ul.ui-autocomplete .invitation,
             padding-top: emCalc(8px);
         }
     }
+     .idea-like-disabled {
+        a.idea-like-bulb {
+            cursor: auto;
+        }
+     }
     .idea-like.voted {
         a.idea-like-bulb,
         span.idea-like-counter {
