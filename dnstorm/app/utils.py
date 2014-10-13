@@ -1,7 +1,9 @@
+from django.contrib.auth.models import User
+
 from actstream.models import followers
 
 from dnstorm.app import DNSTORM_URL
-from dnstorm.app.models import Option
+from dnstorm.app.models import Option, Problem, Idea, Comment
 
 def get_object_or_none(klass, *args, **kwargs):
     """
@@ -15,17 +17,29 @@ def get_object_or_none(klass, *args, **kwargs):
 
 def get_option(name):
     """
-    Wrapper for ``get_option`` method. Tribute to WordPress.
+    Wrapper for ``get`` method of Option class. A tribute to WordPress.
     """
 
     return Option().get(name)
 
 def update_option(name, value):
     """
-    Wrapper for ``update_option`` method. Tribute to WordPress.
+    Wrapper for ``update`` method of Option class. A tribute to WordPress.
     """
 
     return Option().update(name, value)
+
+def get_user(username):
+    """
+    Return user information.
+    """
+    user = get_object_or_none(User, username=username, is_active=True)
+    if not user:
+        return None
+    user.problem_count = Problem.objects.filter(author=user).count()
+    user.idea_count = Idea.objects.filter(author=user).count()
+    user.comment_count = Comment.objects.filter(author=user).count()
+    return user
 
 def activity_reset_counter(user):
     """

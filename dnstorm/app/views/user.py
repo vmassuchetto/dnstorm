@@ -5,7 +5,7 @@ from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
 from django.core.urlresolvers import reverse
 from django.forms.util import ErrorList
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import get_object_or_404, render
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext as _
@@ -16,17 +16,16 @@ from actstream.models import actor_stream
 
 from dnstorm.app.forms import UserForm, UserPasswordForm
 from dnstorm.app.models import Problem, Idea, Comment, Option
-from dnstorm.app.utils import get_option, get_object_or_none
+from dnstorm.app.utils import get_option, get_object_or_none, get_user
 
 class UserView(TemplateView):
     template_name = 'activity.html'
 
     def get_context_data(self, *args, **kwargs):
         context = super(UserView, self).get_context_data(**kwargs)
-        user = get_object_or_404(User, username=kwargs['username'], is_active=True)
-        user.problem_count = Problem.objects.filter(author=user).count()
-        user.idea_count = Idea.objects.filter(author=user).count()
-        user.comment_count = Comment.objects.filter(author=user).count()
+        user = get_user(kwargs['username'])
+        if not user:
+            raise Http404
         context['site_title'] = '%s | %s' % (user.username, _('User profile'))
         context['profile'] = user
         context['breadcrumbs'] = self.get_breadcrumbs(username=context['username'])

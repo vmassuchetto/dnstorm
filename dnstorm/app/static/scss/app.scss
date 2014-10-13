@@ -535,6 +535,7 @@ h6.subheader {
 .user-box {
     @include panel(lighten($black, 70%), 5px);
     @include border-radius($global-radius);
+    margin-bottom: emCalc(15px);
     max-width: 240px;
     .avatar {
         @include thumb(1px, $light-black);
@@ -810,14 +811,12 @@ ul.ui-autocomplete .invitation,
     display: none;
 }
 
-.add-icon {
-    color: $green;
-    font-size: emCalc(20px);
-}
-
+.add-icon,
 .delete-icon {
-    color: $light-red;
-    font-size: emCalc(20px);
+    margin: emCalc(3px) 0 0 0;
+    i {
+        margin-right: 0;
+    }
 }
 
 // Idea form
@@ -865,7 +864,7 @@ ul.ui-autocomplete .invitation,
         }
     }
     .idea-actions {
-        margin: 28px 0 10px 0;
+        margin: emCalc(15px) 0;
         a {
             margin: 0;
             padding: 2px 4px;
@@ -998,6 +997,7 @@ a.problem-action {
     .problem-ideas-modal {
         height: 25em;
         overflow-y: scroll;
+        border-bottom: 1px dotted $light-grey;
         .problem-idea-modal {
             padding: 0.6em 0;
             transition: background-color 300ms ease-out 0s;
@@ -1040,33 +1040,37 @@ a.problem-action {
         font-family: 'Open Sans';
     }
     .alternative-vote {
+        @include single-transition(all, 300ms, ease-out);
+        font-size: 32px;
+        color: $light-grey;
         i {
             font-size: 40px;
         }
-        font-size: 32px;
-        color: $light-grey;
+        .cell-wrap {
+            width: 85px;
+        }
     }
     .alternative-vote:hover {
+        color: $dark-cyan;
         cursor: pointer;
     }
-    .alternative-vote.voted,
-    .alternative-vote.hover {
-        color: $yellow;
+    .alternative-vote.voted {
+        color: $cyan;
     }
     .alternative-ideas {
-        span.label {
+        a.button {
             margin-bottom: emCalc(5px);
         }
     }
     .alternative-stars {
         .cell-wrap {
-            width: 140px;
             .yellow {
                 margin-top: 3px;
             }
             .stars-wrap {
                 position: relative;
                 width: 100px;
+                height: 20px;
                 > div {
                     position: absolute;
                     left: 0;

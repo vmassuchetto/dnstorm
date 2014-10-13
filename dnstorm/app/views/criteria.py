@@ -12,56 +12,43 @@ from django.utils.safestring import mark_safe
 
 from dnstorm.app import models
 from dnstorm.app import forms
+from dnstorm.app.utils import get_option
 
-class CriteriaListView(TemplateView):
-    template_name = 'criteria_list.html'
-    model = models.Criteria
+
+class CriteriasView(TemplateView):
+    template_name = 'criteria.html'
 
     def get_context_data(self, *args, **kwargs):
-        context = super(CriteriaListView, self).get_context_data(**kwargs)
+        context = super(CriteriasView, self).get_context_data(**kwargs)
+        criterias = Paginator(models.Criteria.objects.filter(author=self.request.user).order_by('name'), 21)
+        context['site_title'] = '%s | %s' % (_('Criterias'), get_option('site_title'))
         context['breadcrumbs'] = self.get_breadcrumbs()
-        context['sidebar'] = True
-        criterias = Paginator(models.Criteria.objects.all().order_by('name'), 25)
-        page = self.request.GET['page'] if 'page' in self.request.GET else 1
-        context['criterias'] = criterias.page(page)
+        context['criterias'] = criterias.page(self.request.GET.get('page', 1))
         return context
 
     def get_breadcrumbs(self):
         return [
-            { 'title': _('Criterias'), 'classes': 'current' } ]
+            { 'title': _('Criterias'), 'classes': 'current' }
+        ]
 
 class CriteriaView(TemplateView):
-    template_name = 'criteria.html'
-    model = models.Criteria
-
-    def dispatch(self, request, *args, **kwargs):
-        self.criteria = get_object_or_404(models.Criteria, slug=kwargs['slug'])
-        return super(CriteriaView, self).dispatch(request, *args, **kwargs)
+    template_name = 'home.html'
 
     def get_context_data(self, *args, **kwargs):
         context = super(CriteriaView, self).get_context_data(**kwargs)
-
-        star = '<i class="fi-star"></i>'
-        self.criteria.stars = list()
-        for i in range(1,6):
-            self.criteria.stars.append({
-                'icons': mark_safe(star * i),
-                'help': getattr(self.criteria, 'help_star%d' % i)
-            })
-
+        self.criteria = get_object_or_404(models.Criteria, slug=kwargs['slug'])
+        problems = Paginator(Problem.objects.filter(criteria=self.criteria).distinct().order_by('-last_activity'), 25)
+        context['site_title'] = '%s | %s' % (self.criteria.name, _('Criteria problems'))
         context['breadcrumbs'] = self.get_breadcrumbs()
-        context['sidebar'] = True
-        context['title'] = self.criteria.name
+        context['problems'] = problems.page(self.request.GET.get('page', 1))
         context['criteria'] = self.criteria
-        problems = Paginator(models.Problem.objects.filter(criteria=self.criteria).order_by('-created'), 25)
-        page = self.request.GET['page'] if 'page' in self.request.GET else 1
-        context['problems'] = problems.page(page)
         return context
 
     def get_breadcrumbs(self):
         return [
-            { 'title': _('Criterias'), 'url': reverse('criteria_list') },
-            { 'title': self.criteria.name, 'url': self.criteria.get_absolute_url(), 'classes': 'current' } ]
+            { 'title': _('Criterias'), 'url': reverse('criterias') },
+            { 'title': self.criteria.name, 'classes': 'current' }
+        ]
 
 class CriteriaCreateView(CreateView):
     template_name = 'criteria_edit.html'

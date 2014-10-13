@@ -214,7 +214,10 @@ class AjaxView(View):
             'actions': True,
             'problem_perm_contribute': True,
             'problem_perm_edit': True,
-            'problem_perm_manage': True
+            'problem_perm_manage': True,
+            'show_likes': True,
+            'show_actions': True,
+            'show_comments': True
         })
         return HttpResponse(json.dumps({
             'id': idea.id,
@@ -229,6 +232,7 @@ class AjaxView(View):
             raise Http404
         instance = get_object_or_none(models.Criteria, id=self.request.POST.get('id')) if self.request.POST.get('id') else None
         criteria = CriteriaForm(self.request.POST, instance=instance)
+        criteria.author = self.request.user
         if not criteria.is_valid():
             return HttpResponse(json.dumps({'errors':dict(criteria.errors)}), content_type='application/json')
         criteria.save()
@@ -439,8 +443,10 @@ class AjaxView(View):
 
         if models.Vote.objects.filter(idea=idea, author=self.request.user).exists():
             models.Vote.objects.filter(idea=idea, author=self.request.user).delete()
+            voted = False
         else:
             models.Vote.objects.create(idea=idea, author=self.request.user)
+            voted = True
 
-        response = {'counter': idea.vote_count()}
+        response = {'counter': idea.vote_count(), 'voted': voted}
         return HttpResponse(json.dumps(response), content_type='application/json')

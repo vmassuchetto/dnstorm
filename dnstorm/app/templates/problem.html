@@ -42,7 +42,7 @@
                         <i class="fi-check idea-status"></i>
                     </div>
                     <div class="columns large-11">
-                        {% include "idea.html" %}
+                        {% include "idea.html" with show_likes=False show_actions=False show_comments=False %}
                     </div>
                 </div>
             {% endfor %}
@@ -200,7 +200,7 @@
         <div class="problem-ideas">
             {% for idea in ideas %}
                 <hr/>
-                {% include "idea.html" with actions=True likes=True %}
+                {% include "idea.html" with show_likes=True show_actions=True show_comments=True %}
             {% endfor %}
         </div>
 

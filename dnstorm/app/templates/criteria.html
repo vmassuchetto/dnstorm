@@ -11,24 +11,42 @@
 
 {% block content %} 
 
-    {% for criteria in criterias %}
+    {% if criterias %}
 
-        {% if forloop.counter|divisibleby:3 or forloop.first %}
-            <div class="row">
-        {% endif %}
-
-        <div class="criteria columns large-4">{% include "criteria_button.html" with expanded=True %}</div>
-
-        {% if forloop.counter|divisibleby:3 or forloop.last %}
+        <div class="row">
+            <div class="columns large-12">
+                <h3>{% trans "Criterias created by you" %}</h3>
             </div>
-        {% endif %}
-
-    {% endfor %}
-
-    <div class="row">
-        <div class="columns large-12">
-            {% include "pagination.html" with items=criterias %}
         </div>
-    </div>
+
+        {% for criteria in criterias %}
+
+            {% if forloop.counter|divisibleby:3 or forloop.first %}
+                <div class="row">
+            {% endif %}
+
+            <div class="criteria columns large-4">{% include "criteria_button.html" with expanded=True %}</div>
+
+            {% if forloop.counter|divisibleby:3 or forloop.last %}
+                </div>
+            {% endif %}
+
+        {% endfor %}
+
+        <div class="row">
+            <div class="columns large-12">
+                {% include "pagination.html" with items=criterias %}
+            </div>
+        </div>
+
+    {% else %}
+
+        <div class="row">
+            <div class="columns large-12">
+                <div class="panel secondary">{% trans "You haven't created any criterias yet." %}</div>
+            </div>
+        </div>
+
+    {% endif %}
 
 {% endblock %}

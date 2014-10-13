@@ -14,9 +14,9 @@ def problem(**kwargs):
     elif user and user.is_superuser:
         return True
     elif mode == 'view':
-        return obj.public or (obj.author == user or user in obj.contributor.all())
+        return obj.public or obj.author == user or user in obj.contributor.all()
     elif mode == 'contribute':
-        return user.is_authenticated() and (obj.public or (obj.author == user or user in obj.contributor.all()))
+        return user.is_authenticated() and (obj.public or obj.author == user or user in obj.contributor.all())
     elif mode == 'edit':
         return user.is_authenticated() and ((obj.public and obj.open) or (obj.open and user in obj.contributor.all()) or (obj.author == user))
     elif mode == 'manage':
@@ -65,6 +65,8 @@ def comment(**kwargs):
         return False
     if user and user.is_superuser:
         return True
-    if mode == 'manage':
+    if mode == 'manage' and hasattr(obj, 'problem'):
+        return obj.author == user or obj.problem.author == user
+    elif mode == 'manage' and hasattr(obj, 'idea'):
         return obj.author == user or obj.idea.problem.author == user
     return False

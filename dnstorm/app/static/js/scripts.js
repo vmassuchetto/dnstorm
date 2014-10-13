@@ -456,10 +456,10 @@ $(document).on('click', '.idea-like', function(){
         complete: function(xhr, data) {
             if (data == 'success') {
                 response = $.parseJSON(xhr.responseText);
-                if (response.counter < vote.data('counter'))
-                    vote.removeClass('voted');
-                else
+                if (response.voted)
                     vote.addClass('voted');
+                else
+                    vote.removeClass('voted');
                 counter.text(response.counter);
             }
         }
@@ -688,7 +688,7 @@ $(document).on('click', '.select-ideas', function(){
     m.find('i.idea-status').each(function(){
         $(this).removeClass('checked');
     });
-    $(this).parents('tr').find('.alternative-ideas span').each(function(){
+    $(this).parents('tr').find('.alternative-ideas a.button').each(function(){
         var i = $(this).data('idea');
         m.find('#idea-' + i + '-modal-item i.idea-status').addClass('checked');
         m.data('idea')[i] = i;

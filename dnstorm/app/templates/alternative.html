@@ -14,14 +14,10 @@
         </div>
     </td>
 
-    {% if problem_perm_manage %}
-        <td><div class="cell-wrap"><a class="select-ideas add-icon" data-alternative="{{ alternative.id }}" title="{% trans "Select ideas for this alternative" %}"><i class="fi-plus"></i></a></div></td>
-    {% endif %}
-
     <td class="alternative-ideas">
         <div class="cell-wrap">
             {% for idea in alternative.idea.all %}
-                <span class="label secondary radius" data-idea="{{ idea.id }}">{{ idea.title }}</span>
+                <a class="button tiny secondary radius" data-idea="{{ idea.id }}" href="{% url "idea" idea.problem.slug idea.id %}">{{ idea.title }}</a>
             {% endfor %}
         </div>
     </td>
@@ -37,21 +33,25 @@
                         <i class="fi-star seledted"></i>
                         <i class="fi-star seledted"></i>
                     </div>
-                    <div class="stars-bg">
-                        <i class="fi-star seledted"></i>
-                        <i class="fi-star seledted"></i>
-                        <i class="fi-star seledted"></i>
-                        <i class="fi-star seledted"></i>
-                        <i class="fi-star seledted"></i>
-                    </div>
                 </div>
-                <div class="star-ratio button tiny text-bold yellow right no-margin-bottom">{{ criteria.star_ratio }}%</div>
+            </div>
+        </td>
+        <td class="alternative-stars-ratio">
+            <div class="cell-wrap">
+                <span class="star-ratio label tiny radius secondary no-margin-bottom">{{ criteria.star_ratio }}%</span>
             </div>
         </td>
     {% endfor %}
 
+    <td class="text-center"><a class="total-ratio text-bold button small radius no-margin-bottom">{{ alternative.total_ratio }}%</a></td>
+
     {% if problem_perm_manage %}
-        <td><div class="cell-wrap"><a class="delete-icon delete-alternative" data-alternative="{{ alternative.id }}" title="{% trans "Delete alternative" %}"><i class="fi-x"></i></a></div></td>
+        <td>
+            <div class="cell-wrap">
+                <a class="select-ideas add-icon button success tiny radius left" data-alternative="{{ alternative.id }}" title="{% trans "Select ideas for this alternative" %}"><i class="fi-pencil"></i></a>
+                <a class="delete-icon delete-alternative button alert tiny radius left" data-alternative="{{ alternative.id }}" title="{% trans "Delete alternative" %}"><i class="fi-x"></i></a>
+            </div>
+        </td>
     {% endif %}
 
 </tr>

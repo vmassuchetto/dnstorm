@@ -115,6 +115,7 @@ class Criteria(models.Model):
     help_star3 = models.CharField(verbose_name=_('Description for 3 stars'), max_length=255, blank=False)
     help_star4 = models.CharField(verbose_name=_('Description for 4 stars'), max_length=255, blank=False)
     help_star5 = models.CharField(verbose_name=_('Description for 5 stars'), max_length=255, blank=False)
+    author = models.ForeignKey(User, editable=False)
     created = models.DateTimeField(auto_now_add=True, editable=False, default='2001-01-01')
     updated = models.DateTimeField(auto_now=True, editable=False, default='2001-01-01')
 
@@ -265,7 +266,8 @@ class Idea(models.Model):
 
         # Votes
 
-        self.voted = Vote.objects.filter(idea=self, author=user).exists()
+        self.votes = self.vote_count()
+        self.voted = Vote.objects.filter(idea=self, author=user).exists() if user.is_authenticated() else False
 
 class IdeaCriteria(models.Model):
     """
@@ -326,19 +328,27 @@ class Alternative(models.Model):
     def type(self):
         return _('alternative')
 
+    def vote_count(self):
+        w = Vote.objects.filter(alternative=self).count()
+        return w if w else 0
+
     def fill_data(self, user=False):
         """
         Fill the alternative with problem and user-specific data.
         """
+
         self.total_ideas = self.idea.all().count()
-        self.vote_count = Vote.objects.filter(alternative=self).count()
+        self.votes = self.vote_count()
         self.voted = Vote.objects.filter(alternative=self, author=user).exists() if isinstance(user, User) else False
+        self.total_ratio = 0
         self.criteria = list()
         for c in self.problem.criteria.all():
             c.total_stars = IdeaCriteria.objects.filter(idea__in=self.idea.all(), criteria=c).aggregate(stars=Sum('stars'))['stars']
             c.total_stars = c.total_stars if c.total_stars else 0
             c.star_ratio = c.total_stars * 100 / self.total_ideas / 5 if c.total_stars > 0 and self.total_ideas > 0 else 0
+            self.total_ratio += c.star_ratio
             self.criteria.append(c)
+        self.total_ratio = self.total_ratio / len(self.criteria) if self.criteria else 0
 
 class Vote(models.Model):
     """

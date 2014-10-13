@@ -336,8 +336,9 @@ class IdeaForm(forms.ModelForm):
         self.helper.layout = Layout(*layout_args)
 
     def clean(self):
-
-        # All criteria quantifications are required
+        """
+        Will make sure all criteria quantifications are required.
+        """
 
         for c in self.problem.criteria.all():
             f = 'criteria_%d' % c.id

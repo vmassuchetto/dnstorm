@@ -166,41 +166,6 @@ class CommentView(RedirectView):
         problem = comment.problem if comment.problem else comment.idea.problem
         return reverse('problem', kwargs={'slug':problem.slug}) + '#comment-' + str(comment.id)
 
-class CriteriasView(TemplateView):
-    template_name = 'criteria.html'
-
-    def get_context_data(self, *args, **kwargs):
-        context = super(CriteriasView, self).get_context_data(**kwargs)
-        criterias = Paginator(Criteria.objects.all().order_by('name'), 21)
-        context['site_title'] = '%s | %s' % (_('Criterias'), get_option('site_title'))
-        context['breadcrumbs'] = self.get_breadcrumbs()
-        context['criterias'] = criterias.page(self.request.GET.get('page', 1))
-        return context
-
-    def get_breadcrumbs(self):
-        return [
-            { 'title': _('Criterias'), 'classes': 'current' }
-        ]
-
-class CriteriaView(TemplateView):
-    template_name = 'home.html'
-
-    def get_context_data(self, *args, **kwargs):
-        context = super(CriteriaView, self).get_context_data(**kwargs)
-        self.criteria = get_object_or_404(Criteria, slug=kwargs['slug'])
-        problems = Paginator(Problem.objects.filter(criteria=self.criteria).distinct().order_by('-last_activity'), 25)
-        context['site_title'] = '%s | %s' % (self.criteria.name, _('Criteria problems'))
-        context['breadcrumbs'] = self.get_breadcrumbs()
-        context['problems'] = problems.page(self.request.GET.get('page', 1))
-        context['criteria'] = self.criteria
-        return context
-
-    def get_breadcrumbs(self):
-        return [
-            { 'title': _('Criterias'), 'url': reverse('criterias') },
-            { 'title': self.criteria.name, 'classes': 'current' }
-        ]
-
 class ActivityView(TemplateView):
     template_name = 'activity.html'
 

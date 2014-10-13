@@ -39,8 +39,8 @@ urlpatterns = patterns('',
 
     # Criteria
 
-    (r'^criterias/$', base.CriteriasView.as_view(), {}, 'criterias'),
-    (r'^criterias/(?P<slug>[^/]+)$', base.CriteriaView.as_view(), {}, 'criteria'),
+    (r'^criterias/$', criteria.CriteriasView.as_view(), {}, 'criterias'),
+    (r'^criterias/(?P<slug>[^/]+)$', criteria.CriteriaView.as_view(), {}, 'criteria'),
 
     # Users
 

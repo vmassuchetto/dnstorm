@@ -272,6 +272,7 @@ class ProblemView(FormView):
 
         for idea in context['ideas']:
             idea.fill_data(user=self.request.user)
+        context['ideas'] = sorted(context['ideas'], key=lambda x: (x.votes, x.updated, x.created), reverse=True)
 
         for comment in context['comments']:
             comment.perm_manage = permissions.comment(obj=comment, user=self.request.user, mode='manage')
