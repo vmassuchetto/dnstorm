@@ -267,7 +267,7 @@ class Idea(models.Model):
         # Votes
 
         self.votes = self.vote_count()
-        self.voted = Vote.objects.filter(idea=self, author=user).exists() if user.is_authenticated() else False
+        self.voted = Vote.objects.filter(idea=self, author=user).exists() if user and user.is_authenticated() else False
 
 class IdeaCriteria(models.Model):
     """
