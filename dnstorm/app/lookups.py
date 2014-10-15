@@ -18,9 +18,7 @@ class CriteriaLookup(LookupChannel):
         """
         Will display only the criterias created by the current user.
         """
-        qs = Q(name__icontains=q) \
-            | Q(description__icontains=q) \
-            | Q(author=request.user)
+        qs = (Q(name__icontains=q) | Q(description__icontains=q)) & Q(author=request.user)
         return Criteria.objects.filter(qs).order_by('name')[:10]
 
     def get_objects(self, ids):
