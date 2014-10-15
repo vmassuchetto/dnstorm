@@ -94,7 +94,7 @@ class UserForm(forms.ModelForm):
                 Row(Column(
                     ButtonHolder(
                         Submit('submit', _('Save'), css_class='right radius left-1em'),
-                        HTML('<a class="button secondary radius right" href="%s"><i class="fi-key"></i>&nbsp;%s</a>' % (reverse('user_edit_password', kwargs={'username': self.instance.username}), _('Change password'))),
+                        HTML('<a class="button secondary radius right" href="%s"><i class="fi-key"></i>&nbsp;%s</a>' % (reverse('user_password_update', kwargs={'username': self.instance.username}), _('Change password'))),
                     ),
                 ), css_class='large-12 top-1em'),
             )
@@ -270,8 +270,9 @@ class IdeaForm(forms.ModelForm):
         model = models.Idea
 
     def __init__(self, *args, **kwargs):
-
-        # There must always be a problem associated to an idea
+        """
+        Ensures that there's always a problem associated to the idea.
+        """
 
         self.problem = None
         if len(args) > 0 and isinstance(args[0], QueryDict):

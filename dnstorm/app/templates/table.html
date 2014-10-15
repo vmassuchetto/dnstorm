@@ -43,8 +43,8 @@
                 <li>{% blocktrans %}To start building the table click on "Add alternative"{% endblocktrans %}</li>
                 <li>{% blocktrans with icon="<i class='fi-pencil'></i>" %}To put ideas into alternatives click on the {{ icon }} icon{% endblocktrans %}</li>
                 <li>{% blocktrans with icon="<i class='fi-x'></i>" %}To delete alternatives click on the {{ icon }} icon{% endblocktrans %}</li>
-                {% url "problem_edit" problem.slug as problem_url %}
-                <li>{% blocktrans with url=problem_url %}<a href="{{ url }}">Edit the problem</a> to create more criterias{% endblocktrans %}</li>
+                {% url "problem_update" problem.slug as problem_update_url %}
+                <li>{% blocktrans with url=problem_update_url %}<a href="{{ url }}">Edit the problem</a> to create more criterias{% endblocktrans %}</li>
             </ul>
         </div>
     </div>

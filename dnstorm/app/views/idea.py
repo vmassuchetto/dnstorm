@@ -96,7 +96,7 @@ class IdeaView(RedirectView):
         return reverse('idea', kwargs={'slug':idea.problem.slug, 'pk': idea.id})
 
 class IdeaUpdateView(UpdateView):
-    template_name = 'idea_edit.html'
+    template_name = 'idea_update.html'
     form_class = IdeaForm
     model = models.Idea
 
@@ -124,4 +124,4 @@ class IdeaUpdateView(UpdateView):
             { 'title': _('Problems'), 'url': reverse('home') },
             { 'title': self.object.problem.title, 'url': self.object.problem.get_absolute_url() },
             { 'title': '%s #%d' % (_('Idea'), self.object.id), 'url': reverse('idea', kwargs={ 'slug': self.object.problem.slug, 'pk': self.object.id }) },
-            { 'title': _('Update'), 'url': reverse('idea_edit', kwargs={ 'slug':self.object.problem.slug, 'pk': self.object.id }), 'classes': 'current' } ]
+            { 'title': _('Update'), 'url': reverse('idea_update', kwargs={ 'slug':self.object.problem.slug, 'pk': self.object.id }), 'classes': 'current' } ]

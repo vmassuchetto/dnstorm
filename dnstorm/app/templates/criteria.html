@@ -9,7 +9,10 @@
     {% endif %}
 {% endblock %}
 
-{% block content %} 
+{% block content %}
+
+    <div class="row">
+    <div class="columns large-12">
 
     {% if criterias %}
 
@@ -21,15 +24,15 @@
 
         {% for criteria in criterias %}
 
-            {% if forloop.counter|divisibleby:3 or forloop.first %}
-                <div class="row">
-            {% endif %}
-
-            <div class="criteria columns large-4">{% include "criteria_button.html" with expanded=True %}</div>
-
-            {% if forloop.counter|divisibleby:3 or forloop.last %}
+            <div class="row list-item criteria-list-item">
+                <div class="columns large-3">
+                    {% include "criteria_button.html" %}
                 </div>
-            {% endif %}
+                <div class="columns large-7 criteria-description">
+                    {{ criteria.description }}
+                </div>
+                <div class="columns large-2"><a href="{% url "criteria_update" criteria.slug %}" class="button secondary tiny radius right"><i class="fi-pencil"></i>&nbsp;{% trans "Edit" %}</a></div>
+            </div>
 
         {% endfor %}
 
@@ -48,5 +51,8 @@
         </div>
 
     {% endif %}
+
+    </div>
+    </div>
 
 {% endblock %}

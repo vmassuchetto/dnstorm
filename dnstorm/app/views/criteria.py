@@ -12,6 +12,7 @@ from django.utils.safestring import mark_safe
 
 from dnstorm.app import models
 from dnstorm.app import forms
+from dnstorm.app import permissions
 from dnstorm.app.utils import get_option
 
 
@@ -20,7 +21,7 @@ class CriteriasView(TemplateView):
 
     def get_context_data(self, *args, **kwargs):
         context = super(CriteriasView, self).get_context_data(**kwargs)
-        criterias = Paginator(models.Criteria.objects.filter(author=self.request.user).order_by('name'), 21)
+        criterias = Paginator(models.Criteria.objects.filter(author=self.request.user).order_by('name'), 20)
         context['site_title'] = '%s | %s' % (_('Criterias'), get_option('site_title'))
         context['breadcrumbs'] = self.get_breadcrumbs()
         context['criterias'] = criterias.page(self.request.GET.get('page', 1))
@@ -31,27 +32,8 @@ class CriteriasView(TemplateView):
             { 'title': _('Criterias'), 'classes': 'current' }
         ]
 
-class CriteriaView(TemplateView):
-    template_name = 'home.html'
-
-    def get_context_data(self, *args, **kwargs):
-        context = super(CriteriaView, self).get_context_data(**kwargs)
-        self.criteria = get_object_or_404(models.Criteria, slug=kwargs['slug'])
-        problems = Paginator(Problem.objects.filter(criteria=self.criteria).distinct().order_by('-last_activity'), 25)
-        context['site_title'] = '%s | %s' % (self.criteria.name, _('Criteria problems'))
-        context['breadcrumbs'] = self.get_breadcrumbs()
-        context['problems'] = problems.page(self.request.GET.get('page', 1))
-        context['criteria'] = self.criteria
-        return context
-
-    def get_breadcrumbs(self):
-        return [
-            { 'title': _('Criterias'), 'url': reverse('criterias') },
-            { 'title': self.criteria.name, 'classes': 'current' }
-        ]
-
 class CriteriaCreateView(CreateView):
-    template_name = 'criteria_edit.html'
+    template_name = 'criteria_update.html'
     form_class = forms.CriteriaForm
     model = models.Criteria
 
@@ -66,7 +48,7 @@ class CriteriaCreateView(CreateView):
 
     def get_breadcrumbs(self):
         return [
-            { 'title': _('Criterias'), 'url': reverse('criteria_list') },
+            { 'title': _('Criterias'), 'url': reverse('criteria') },
             { 'title': _('Create'), 'classes': 'current' } ]
 
     def form_valid(self, form):
@@ -75,12 +57,15 @@ class CriteriaCreateView(CreateView):
         return HttpResponseRedirect(reverse('criteria', kwargs={'slug': self.object.slug}))
 
 class CriteriaUpdateView(UpdateView):
-    template_name = 'criteria_edit.html'
+    template_name = 'criteria_update.html'
     form_class = forms.CriteriaForm
     model = models.Criteria
 
     @method_decorator(csrf_protect)
     def dispatch(self, request, *args, **kwargs):
+        self.object = get_object_or_404(models.Criteria, slug=kwargs['slug'])
+        if not permissions.criteria(obj=self.object, user=self.request.user, mode='manage'):
+            raise PermissionDenied
         return super(CriteriaUpdateView, self).dispatch(request, *args, **kwargs)
 
     def get_context_data(self, *args, **kwargs):
@@ -91,11 +76,11 @@ class CriteriaUpdateView(UpdateView):
 
     def get_breadcrumbs(self):
         return [
-            { 'title': _('Criterias'), 'url': reverse('criteria_list') },
+            { 'title': _('Criterias'), 'url': reverse('criterias') },
             { 'title': self.object.name, 'url': self.object.get_absolute_url() },
             { 'title': _('Edit'), 'classes': 'current' } ]
 
     def form_valid(self, form):
         self.object.save()
         messages.success(self.request, _('Criteria saved.'))
-        return HttpResponseRedirect(reverse('criteria', kwargs={'slug': self.object.slug}))
+        return HttpResponseRedirect(reverse('criterias'))

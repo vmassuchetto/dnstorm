@@ -199,6 +199,10 @@ hr {
 
 .criteria-vote {
     border-top: 1px dotted $light-grey;
+}
+
+.criteria-vote,
+.criteria-list-item {
     padding: emCalc(15px) 0;
     .stars {
         font-size: 1.6em;
@@ -515,7 +519,7 @@ h6.subheader {
     .counter {
         width: 44.333%;
     }
-    .problem-alternative-counter {
+    .alternative-counter {
         margin-right: 1em;
     }
     h6 {

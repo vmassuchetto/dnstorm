@@ -18,7 +18,7 @@
         {% endfor %}
         <div class="row collapse bottom">
             <div class="columns large-12">
-                <a href="{% url "criteria" criteria.slug %}">{% blocktrans with problem_count=criteria.problem_count %}used in {{ problem_count }} problems{% endblocktrans %}</a>
+                {% blocktrans with problem_count=criteria.problem_count %}used in {{ problem_count }} problems{% endblocktrans %}
             </div>
         </div>
     </div>

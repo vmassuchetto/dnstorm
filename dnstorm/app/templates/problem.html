@@ -155,7 +155,7 @@
                     <a class="problem-action action-comment" data-problem="{{ problem.id }}" href="javascript:void(0);"><i class="fi-comments"></i>&nbsp;{% trans "Comment" context "verb" %}</a>
                 {% endif %}
                 {% if problem_perm_edit %}
-                    <a class="problem-action" href="{% url "problem_edit" problem.slug %}"><i class="fi-pencil"></i>&nbsp;{% trans "Edit" %}</a>
+                    <a class="problem-action" href="{% url "problem_update" problem.slug %}"><i class="fi-pencil"></i>&nbsp;{% trans "Edit" %}</a>
                 {% endif %}
                 {% if problem_perm_manage %}
                     <a class="problem-action problem-delete" href="javascript:void(0);" data-problem="{{ problem.id }}"><i class="fi-x"></i>&nbsp;{% trans "Remove" %}</a>

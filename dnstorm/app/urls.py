@@ -23,15 +23,15 @@ urlpatterns = patterns('',
 
     # Problems
 
-    (r'^problem/new/$', problem.ProblemCreateView.as_view(), {}, 'problem_new'),
+    (r'^problem/create/$', problem.ProblemCreateView.as_view(), {}, 'problem_create'),
     (r'^problem/(?P<slug>[^/]+)/$', problem.ProblemView.as_view(), {}, 'problem'),
-    (r'^problem/(?P<slug>[^/]+)/edit/$', problem.ProblemUpdateView.as_view(), {}, 'problem_edit'),
+    (r'^problem/(?P<slug>[^/]+)/update/$', problem.ProblemUpdateView.as_view(), {}, 'problem_update'),
     (r'^problem/(?P<slug>[^/]+)/#ideas$', problem.ProblemUpdateView.as_view(), {}, 'problem_ideas'),
 
     # Ideas
 
     (r'^problem/(?P<slug>[^/]+)/#idea-(?P<pk>[^/]+)$', idea.IdeaView.as_view(), {}, 'idea'),
-    (r'^problem/(?P<slug>[^/]+)/idea/(?P<pk>[^/]+)/edit/$', idea.IdeaUpdateView.as_view(), {}, 'idea_edit'),
+    (r'^problem/(?P<slug>[^/]+)/idea/(?P<pk>[^/]+)/update/$', idea.IdeaUpdateView.as_view(), {}, 'idea_update'),
 
     # Comments
 
@@ -40,16 +40,14 @@ urlpatterns = patterns('',
     # Criteria
 
     (r'^criterias/$', criteria.CriteriasView.as_view(), {}, 'criterias'),
-    (r'^criterias/(?P<slug>[^/]+)$', criteria.CriteriaView.as_view(), {}, 'criteria'),
+    (r'^criterias/(?P<slug>[^/]+)/update/$', criteria.CriteriaUpdateView.as_view(), {}, 'criteria_update'),
 
     # Users
 
     (r'^users/$', user.UsersView.as_view(), {}, 'users'),
     (r'^users/(?P<username>[^/]+)/$', user.UserView.as_view(), {}, 'user'),
-    (r'^users/(?P<username>[^/]+)/edit/$', user.UserUpdateView.as_view(), {}, 'user_edit'),
-    (r'^users/(?P<username>[^/]+)/edit/password/$', user.UserPasswordUpdateView.as_view(), {}, 'user_edit_password'),
-    #(r'^admin/users/(?P<user_id>[^/]+)/activate/$', user.AdminUserActivateView.as_view(), {}, 'admin_user_activate'),
-    #(r'^admin/users/(?P<user_id>[^/]+)/deactivate/$', user.AdminUserDeactivateView.as_view(), {}, 'admin_user_deactivate'),
+    (r'^users/(?P<username>[^/]+)/update/$', user.UserUpdateView.as_view(), {}, 'user_update'),
+    (r'^users/(?P<username>[^/]+)/update/password/$', user.UserPasswordUpdateView.as_view(), {}, 'user_password_update'),
 
     # Activity
 

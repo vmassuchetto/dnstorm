@@ -70,3 +70,19 @@ def comment(**kwargs):
     elif mode == 'manage' and hasattr(obj, 'idea'):
         return obj.author == user or obj.idea.problem.author == user
     return False
+
+def criteria(**kwargs):
+    """
+    Regulate permissions for criteria objects.
+    """
+
+    obj = kwargs.get('obj')
+    user = kwargs.get('user')
+    mode = kwargs.get('mode', 'manage')
+    if not obj:
+        return False
+    if user and user.is_superuser:
+        return True
+    elif mode == 'manage':
+        return obj.author == user
+    return False

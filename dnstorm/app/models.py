@@ -138,7 +138,7 @@ class Criteria(models.Model):
         return _('criteria')
 
     def get_absolute_url(self, *args, **kwargs):
-        return reverse('criteria', kwargs={'slug': self.slug })
+        return reverse('criteria_update', kwargs={'slug': self.slug })
 
     def problem_count(self):
         return Problem.objects.filter(criteria=self).count()

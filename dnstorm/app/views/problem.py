@@ -94,7 +94,7 @@ def problem_save(obj, form):
     return HttpResponseRedirect(reverse('problem', kwargs={'slug':obj.object.slug}))
 
 class ProblemCreateView(CreateView):
-    template_name = 'problem_edit.html'
+    template_name = 'problem_update.html'
     form_class = forms.ProblemForm
     model = models.Problem
 
@@ -113,13 +113,13 @@ class ProblemCreateView(CreateView):
 
     def get_breadcrumbs(self):
         return [
-            { 'title': _('Create new problem'), 'url': reverse('problem_new'), 'classes': 'current' } ]
+            { 'title': _('Create new problem'), 'url': reverse('problem_create'), 'classes': 'current' } ]
 
     def form_valid(self, form):
         return problem_save(self, form)
 
 class ProblemUpdateView(UpdateView):
-    template_name = 'problem_edit.html'
+    template_name = 'problem_update.html'
     form_class = forms.ProblemForm
     model = models.Problem
 
@@ -143,7 +143,7 @@ class ProblemUpdateView(UpdateView):
     def get_breadcrumbs(self):
         return [
             { 'title': self.object.title, 'url': self.object.get_absolute_url() },
-            { 'title': _('Update'), 'url': reverse('problem_edit', kwargs={'slug':self.object.slug}), 'classes': 'current' } ]
+            { 'title': _('Update'), 'url': reverse('problem_update', kwargs={'slug':self.object.slug}), 'classes': 'current' } ]
 
     def form_valid(self, form):
         return problem_save(self, form)

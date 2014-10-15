@@ -13,7 +13,33 @@
             <h3>{% trans "Problems" %}{% if criteria %} &mdash; {% trans "criteria" %} {{ criteria.name }}{% endif %}</h3>
 
             {% for problem in problems %}
-                {% include "problem_row.html" %}
+                <div class="row list-item problem-list-item"{% if forloop.counter == 1 %} id="problem-first"{% endif %}>
+                    <div class="columns large-3 medium-3 show-for-medium-up">
+                        <div class="counter idea-counter left">
+                            <span class="number">{{ problem.idea_count }}</span>
+                            <span class="description">{% if problem.idea_count > 1 or problem.idea_count = 0 %}{% trans "ideas" %}{% else %}{% trans "idea" %}{% endif %}</span>
+                        </div>
+                        <div class="counter alternative-counter left">
+                            <span class="number">{{ problem.alternative_count }}</span>
+                            <span class="description">{% if problem.alternative_count > 1 or problem.alternative_count = 0 %}{% trans "alternatives" %}{% else %}{% trans "alternative" %}{% endif %}</span>
+                        </div>
+                    </div>
+                    <div class="problem-info columns large-9 medium-9 small-12">
+                        <div class="row collapse">
+                            <div class="columns large-12">
+                                <h4 class="left"><a href="{% url "problem" problem.slug %}">{{ problem.title }}</a></h4>
+                            </div>
+                        </div>
+                        <div class="row collapse">
+                            <div class="columns large-12">
+                                {% for criteria in problem.criteria.all %}
+                                    {% include "criteria_button.html" with size="tiny" %}
+                                {% endfor %}
+                                <h6 class="subheader right">{% blocktrans with time=problem.last_activity|naturaltime %}last modified {{ time }}{% endblocktrans %}</h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             {% endfor %}
 
             {% include "pagination.html" with items=problems %}
@@ -23,11 +49,11 @@
             <div class="panel radius">
                 <p>
                 {% if user.is_authenticated %}
-                    {% url "problem_new" as url_problem_new %}
-                    {% blocktrans %}No problem here. You can start by <a href="{{ url_problem_new }}">creating a new one</a>.{% endblocktrans %}
+                    {% url "problem_create" as problem_create_url %}
+                    {% blocktrans %}No problem here. You can start by <a href="{{ problem_create_url }}">creating a new one</a>.{% endblocktrans %}
                 {% else %}
-                    {% url "auth_login" as url_login %}
-                    {% blocktrans %}Hi! There's no problem around for you. Try <a href="{{ url_login }}">loggin in</a> and creating a new one.{% endblocktrans %}
+                    {% url "auth_login" as login_url %}
+                    {% blocktrans %}Hi! There's no problem around for you. Try <a href="{{ login_url }}">loggin in</a> and creating a new one.{% endblocktrans %}
                 {% endif %}
                 </p>
             </div>

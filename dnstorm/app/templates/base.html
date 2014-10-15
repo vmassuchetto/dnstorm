@@ -162,7 +162,7 @@
     </div>
     <div class="columns top-buttons large-8 medium-8">
         {% if user.is_authenticated %}
-            <a class="button radius small right" href="{% url 'problem_new' %}"><i class="fi-page-add"></i>&nbsp;{% trans 'Create new problem' %}</a>
+            <a class="button radius small right" href="{% url 'problem_create' %}"><i class="fi-page-add"></i>&nbsp;{% trans 'Create new problem' %}</a>
         {% endif %}
         {% block topbutton %}{% endblock %}
     </div>

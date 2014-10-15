@@ -43,7 +43,7 @@
                                             <a class="problem-action action-comment" data-idea="{{ idea.id }}" href="javascript:void(0);"><i class="fi-comments"></i>&nbsp;{% trans "Comment" context "verb" %}</a>
                                         {% endif %}
                                         {% if problem_perm_manage or problem_perm_edit %}
-                                            <a class="problem-action problem-idea-edit" href="{% url "idea_edit" problem.slug idea.id %}"><i class="fi-pencil"></i>&nbsp;{% trans "Edit" %}</a>
+                                            <a class="problem-action problem-idea-edit" href="{% url "idea_update" problem.slug idea.id %}"><i class="fi-pencil"></i>&nbsp;{% trans "Edit" %}</a>
                                         {% endif %}
                                         {% if problem_perm_manage %}
                                             <a class="problem-action problem-idea-delete-toggle idea-delete" href="javascript:void(0);" data-idea="{{ idea.id }}"><i class="fi-x"></i>&nbsp;{% trans "Delete" %}</a>
