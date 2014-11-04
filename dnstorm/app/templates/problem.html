@@ -100,7 +100,9 @@
 {% endblock %}
 
 {% block topbutton %}
-    <a href="{% url "problem_activity" problem.slug %}" class="button secondary radius right small"><i class="fi-clock"></i>&nbsp;{% trans "Problem activity" %}</a>
+    {% if problem_perm_contribute %}
+        <a href="{% url "problem_activity" problem.slug %}" class="button secondary radius right small"><i class="fi-clock"></i>&nbsp;{% trans "Problem activity" %}</a>
+    {% endif %}
 {% endblock %}
 
 {% block content %}
