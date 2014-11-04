@@ -191,8 +191,21 @@
         <div class="comments" id="comments-problem-{{ problem.id }}">
             {% if comments %}
                 {% for comment in comments %}
-                    {% include "comment.html" %}
+                    {% if forloop.counter > 3 %}
+                        {% include "comment.html" with hidden=True %}
+                    {% else %}
+                        {% include "comment.html" %}
+                    {% endif %}
                 {% endfor %}
+                {% if comments.count > 3 %}
+                    <div class="row collapse comment display-more">
+                        <div class="columns large-12">
+                            <div class="comment-content">
+                                <a href="javascript:void(0)"><i class="fi-arrow-down"></i>&nbsp;{% blocktrans with count=comments.count|add:"-3" %}Display the other <b>{{ count }}</b> comments.{% endblocktrans %}</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
             {% endif %}
         </div>
 
