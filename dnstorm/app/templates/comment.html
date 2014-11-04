@@ -1,6 +1,6 @@
  {% load humanize i18n display_name %}
 
- <div class="row collapse comment{% if comment.deleted_by %} deleted{% endif %}" id="comment-{{ comment.id }}">
+ <div class="row collapse comment{% if comment.deleted_by %} deleted{% endif %}{% if hidden %} hidden{% endif %}" id="comment-{{ comment.id }}">
     <div class="columns large-12">
         <div class="comment-content">
             {{ comment.content }} &mdash; <a class="comment-author" href="{% url "user" comment.author %}">{% display_name comment.author %}</a> <a class="comment-date" href="#comment-{{ comment.id }}">{{ comment.created|naturaltime }}</a>{% if comment.perm_manage %} <a class="comment-delete" data-comment="{{ comment.id }}">x</a>{% endif %}

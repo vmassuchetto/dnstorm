@@ -510,6 +510,11 @@ $(document).on('submit', '.comment-form form', function(e){
     });
 });
 
+$(document).on('click', '.comment.display-more a', function(e){
+    $(this).parents('.comment').slideUp(300);
+    $(this).parents('.comments').find('.hidden').slideDown(300);
+});
+
 /**
  * Format DeleteForm for delete actions
  */

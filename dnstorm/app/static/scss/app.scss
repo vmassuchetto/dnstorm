@@ -921,35 +921,52 @@ ul.ui-autocomplete .invitation,
     }
 }
 
-.comment-content {
-    padding: 0.7em 0.5em;
-    border-top: 1px dotted $dark-white;
-    font-size: 0.85em;
-    color: $light-black;
-    line-height: 1.5;
-    .comment-author {
-        background: lighten($black, 70%);
-        padding: 2px 5px;
-    }
-    a.comment-date {
-        color: lighten($black, 40%);
-    }
-    a.comment-delete-toggle {
-        font-size:0.85em;
-        padding: 2px 5px;
-    }
-    a.comment-delete {
-        color: $light-red;
+.comment.hidden {
+    display: none;
+}
+
+.comment.display-more {
+    a {
+        padding: 3px 6px;
+        color: $base-font-color;
         &:hover {
-            background-color: $light-red;
             color: $white;
+            background-color: $base-font-color;
         }
     }
-    a.comment-undelete {
-        color: $light-blue;
-        &:hover {
-            background-color: $light-blue;
-            color: $white;
+}
+
+.comment {
+    .comment-content {
+        padding: 0.7em 0.5em;
+        border-top: 1px dotted $dark-white;
+        font-size: 0.85em;
+        color: $light-black;
+        line-height: 1.5;
+        .comment-author {
+            background: lighten($black, 70%);
+            padding: 2px 5px;
+        }
+        a.comment-date {
+            color: lighten($black, 40%);
+        }
+        a.comment-delete-toggle {
+            font-size:0.85em;
+            padding: 2px 5px;
+        }
+        a.comment-delete {
+            color: $light-red;
+            &:hover {
+                background-color: $light-red;
+                color: $white;
+            }
+        }
+        a.comment-undelete {
+            color: $light-blue;
+            &:hover {
+                background-color: $light-blue;
+                color: $white;
+            }
         }
     }
 }
