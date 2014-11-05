@@ -568,7 +568,7 @@ h6.subheader {
         font-size: emCalc(22px);
         font-weight: bold;
         padding: emCalc(6px) emCalc(8px);
-        line-height: emCalc(28px);
+        line-height: 1em;
         border: 1px solid $light-grey;
         i {
             font-size: emCalc(28px);
@@ -955,6 +955,7 @@ ul.ui-autocomplete .invitation,
             padding: 2px 5px;
         }
         a.comment-delete {
+            padding: 3px 6px;
             color: $light-red;
             &:hover {
                 background-color: $light-red;
@@ -1120,6 +1121,9 @@ a.problem-action {
                 }
             }
         }
+    }
+    .select-ideas {
+        margin-right: emCalc(3px);
     }
 }
 

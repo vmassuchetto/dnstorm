@@ -17,7 +17,7 @@
                 <div class="button disabled radius secondary user-label"><i class="fi-puzzle"></i>&nbsp;{{ profile.problem_count }}<br/><span class="caption">{% trans "problems" %}</span></div>
             </div>
             <div class="columns large-4 user-date text-right">
-                <h6 class="subheader">{% blocktrans with time=user.date_joined|date:"d b Y" %}member since {{ time }}{% endblocktrans %}</h6>
+                <h6 class="subheader">{% blocktrans with time=profile.date_joined|date:"d/m/Y" %}member since {{ time }}{% endblocktrans %}</h6>
                 {% if user.is_superuser or user == profile %}
                     <br/>
                     <p><a class="button secondary radius small" href="{% url "user_update" profile.username %}"><i class="fi-pencil"></i>&nbsp;{% trans "Update user info" %}</a></p>
