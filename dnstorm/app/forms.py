@@ -138,7 +138,6 @@ class ProblemForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         problem_perm_edit = kwargs.pop('problem_perm_edit') if 'problem_perm_edit' in kwargs else False
         problem_perm_manage = kwargs.pop('problem_perm_manage') if 'problem_perm_manage' in kwargs else False
-        criteria_required = kwargs.pop('criteria_required') if 'criteria_required' in kwargs else True
         self.instance = kwargs['instance'] if 'instance' in kwargs else False
         self.helper = FormHelper()
         self.helper.form_action = '.'
@@ -163,13 +162,9 @@ class ProblemForm(forms.ModelForm):
                 Submit('submit', _('Save'), css_class='right radius'),
             ),)
         self.helper.layout = Layout(*layout_args)
-
         super(ProblemForm, self).__init__(*args, **kwargs)
 
-        if criteria_required == False:
-            self.fields['criteria'].required = False
-        elif self.instance.id:
-            self.fields['criteria'].initial = [c.id for c in self.instance.criteria.all()]
+        self.fields['criteria'].required = False
 
 class DeleteForm(forms.Form):
     yes = forms.BooleanField(label=_("Yes. I know what I'm doing. Delete this!"))

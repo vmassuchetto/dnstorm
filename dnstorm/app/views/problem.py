@@ -150,13 +150,6 @@ class ProblemUpdateView(UpdateView):
 
     def get_form_kwargs(self):
         kwargs = super(ProblemUpdateView, self).get_form_kwargs()
-        if self.request.POST.get('title', None) \
-            and self.request.POST.get('description', None) \
-            and 'criteria' not in self.request.POST \
-            and permissions.problem(obj=self.problem, user=self.request.user, mode='edit'):
-            kwargs['criteria_required'] = False
-        else:
-            kwargs['criteria_required'] = True
         kwargs['problem_perm_edit'] = permissions.problem(obj=self.problem, user=self.request.user, mode='edit')
         kwargs['problem_perm_manage'] = permissions.problem(obj=self.problem, user=self.request.user, mode='manage')
         return kwargs
