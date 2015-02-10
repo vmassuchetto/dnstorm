@@ -18,6 +18,9 @@ node_modules
 /static
 dnstorm/app/static/components
 
+# Map files
+*.map
+
 # DNStorm
 *.sqlite3
 media
