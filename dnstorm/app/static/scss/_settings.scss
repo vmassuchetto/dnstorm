@@ -2,7 +2,7 @@
 // Foundation Variables
 //
 
-@import "foundation/functions";
+@import "foundation/scss/foundation/functions";
 
 $include-open-sans: false;
 
@@ -14,6 +14,7 @@ $white: #FFF;
 $dark-white: darken($white, 20%);
 
 $grey: #B7B7B7;
+$dark-grey: #868686;
 $light-grey: #DDDDDD;
 
 $red: #FF0000;
@@ -37,7 +38,7 @@ $dark-yellow: darken($yellow, 20%);
 // The default font-size is set to 100% of the browser style sheet (usually 16px)
 // for compatibility with browser-based text zoom or user-set defaults.
 $base-font-size: 95% !default;
-$base-font-color: #777;
+$base-font-color: #888;
 
 // $base-line-height is 24px while $base-font-size is 16px
 // $base-line-height: 150%;
@@ -140,7 +141,8 @@ $em-base: 16 !default;
 // Grid Variables
 //
 
-$row-width: emCalc(900);
+//$row-width: emCalc(1000px);
+$row-width: 95%;
 // $column-gutter: emCalc(30);
 // $total-columns: 12;
 
@@ -163,10 +165,10 @@ $row-width: emCalc(900);
 
 // Control header font styles
 
-$header-font-family: "Open Sans", "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif;
-// $header-font-weight: bold;
+$header-font-family: "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif;
+$header-font-weight: bold;
 // $header-font-style: normal;
-// $header-font-color: #222;
+$header-font-color: #555;
 // $header-line-height: 1.4;
 // $header-top-margin: .2em;
 // $header-bottom-margin: .5em;
@@ -882,8 +884,8 @@ $button-sml: emCalc(7);
 // We use these to control the background and border styles
 
 // $panel-bg: darken(#fff, 5%);
-// $panel-border-style: solid;
-// $panel-border-size: 1px;
+$panel-border-style: solid;
+$panel-border-size: 1px;
 
 // We use this % to control how much we darken things on hover
 
@@ -893,11 +895,11 @@ $button-sml: emCalc(7);
 // We use these to set default inner padding and bottom margin
 
 // $panel-margin-bottom: emCalc(20);
-// $panel-padding: emCalc(20);
+$panel-padding: emCalc(10px) emCalc(20px);
 
 // We use these to set default font colors
 
-// $panel-font-color: #333;
+$panel-font-color: $dark-grey;
 // $panel-font-color-alt: #fff;
 
 // $panel-header-adjust: true;
@@ -1230,6 +1232,7 @@ $button-sml: emCalc(7);
 // $tooltip-font-size-sml: emCalc(14);
 // $tooltip-radius: $global-radius;
 // $tooltip-pip-size: 5px;
+$tooltip-max-size: 300px;
 
 //
 // Top Bar Variables

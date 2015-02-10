@@ -1,66 +1,67 @@
 {% extends "base.html" %}
-{% load humanize i18n %}
+{% load humanize i18n captureas %}
 
 {% block bodyclass %}home{% endblock %}
 
+{% block topbutton %}
+    {% if user.is_authenticated %}
+        <a class="button radius small right" href="{% url 'problem_create' %}"><i class="fi-page-add"></i>&nbsp;{% trans 'Create new problem' %}</a>
+    {% endif %}
+{% endblock %}
+
 {% block content %}
+    <h3>{% trans "Problems" %}{% if criteria %} &mdash; {% trans "criteria" %} {{ criteria.name }}{% endif %}</h3>
 
-    <div class="row">
-    <div class="large-12 columns content">
+    {% if problems %}
 
-        {% if problems %}
-
-            <h3>{% trans "Problems" %}{% if criteria %} &mdash; {% trans "criteria" %} {{ criteria.name }}{% endif %}</h3>
-
-            {% for problem in problems %}
-                <div class="row list-item problem-list-item"{% if forloop.counter == 1 %} id="problem-first"{% endif %}>
-                    <div class="columns large-3 medium-3 show-for-medium-up">
-                        <div class="counter idea-counter left">
-                            <span class="number">{{ problem.idea_count }}</span>
-                            <span class="description">{% if problem.idea_count > 1 or problem.idea_count = 0 %}{% trans "ideas" %}{% else %}{% trans "idea" %}{% endif %}</span>
-                        </div>
-                        <div class="counter alternative-counter left">
-                            <span class="number">{{ problem.alternative_count }}</span>
-                            <span class="description">{% if problem.alternative_count > 1 or problem.alternative_count = 0 %}{% trans "alternatives" %}{% else %}{% trans "alternative" %}{% endif %}</span>
+        {% for problem in problems %}
+            <div class="row list-item problem-list-item"{% if forloop.counter == 1 %} id="problem-first"{% endif %}>
+                <div class="columns large-4 medium-4 show-for-medium-up">
+                    <div class="counter idea-counter left">
+                        <span class="number">{{ problem.idea_set.count }}</span>
+                        <span class="description">{% if problem.idea_count > 1 or problem.idea_count = 0 %}{% trans "ideas" %}{% else %}{% trans "idea" %}{% endif %}</span>
+                    </div>
+                    <div class="counter criteria-counter left">
+                        <span class="number">{{ problem.criteria_set.count }}</span>
+                        <span class="description">{% trans "Criteria" %}</span>
+                    </div>
+                    <div class="counter alternative-counter left">
+                        <span class="number">{{ problem.alternative_set.count }}</span>
+                        <span class="description">{% if problem.alternative_count > 1 or problem.alternative_count = 0 %}{% trans "alternatives" %}{% else %}{% trans "alternative" %}{% endif %}</span>
+                    </div>
+                </div>
+                <div class="problem-info columns large-8 medium-9 small-12">
+                    <div class="row collapse">
+                        <div class="columns large-12">
+                            <h4 class="left"><a href="{% url "problem" problem.id problem.slug %}">{{ problem.title }}</a></h4>
                         </div>
                     </div>
-                    <div class="problem-info columns large-9 medium-9 small-12">
-                        <div class="row collapse">
-                            <div class="columns large-12">
-                                <h4 class="left"><a href="{% url "problem" problem.slug %}">{{ problem.title }}</a></h4>
-                            </div>
-                        </div>
-                        <div class="row collapse">
-                            <div class="columns large-12">
-                                {% for criteria in problem.criteria.all %}
-                                    {% include "criteria_button.html" with size="tiny" %}
-                                {% endfor %}
-                                <h6 class="subheader right">{% blocktrans with time=problem.last_activity|naturaltime %}last modified {{ time }}{% endblocktrans %}</h6>
-                            </div>
+                    <div class="row collapse">
+                        <div class="columns large-12">
+                            <h6 class="subheader right">{% blocktrans with time=problem.last_activity|naturaltime %}last modified {{ time }}{% endblocktrans %}</h6>
                         </div>
                     </div>
                 </div>
-            {% endfor %}
-
-            {% include "pagination.html" with items=problems %}
-
-        {% else %}
-
-            <div class="panel radius">
-                <p>
-                {% if user.is_authenticated %}
-                    {% url "problem_create" as problem_create_url %}
-                    {% blocktrans %}No problem here. You can start by <a href="{{ problem_create_url }}">creating a new one</a>.{% endblocktrans %}
-                {% else %}
-                    {% url "auth_login" as login_url %}
-                    {% blocktrans %}Hi! There's no problem around for you. Try <a href="{{ login_url }}">loggin in</a> and creating a new one.{% endblocktrans %}
-                {% endif %}
-                </p>
             </div>
+        {% endfor %}
 
+        {% include "pagination.html" with items=problems %}
+
+    {% else %}
+
+        {% if user.is_authenticated %}
+            {% url "problem_create" as item_url %}
+            {% captureas message %}
+                {% blocktrans %}No problem here. You can start by <a href="{{ item_url }}">creating a new one</a>.{% endblocktrans %}
+            {% endcaptureas %}
+        {% else %}
+            {% url "auth_login" as item_url %}
+            {% captureas message %}
+                {% blocktrans %}Hi! There's no problem around for you. Try <a href="{{ item_url }}">loggin in</a> and creating a new one.{% endblocktrans %}
+            {% endcaptureas %}
         {% endif %}
+        {% include "panel.html" with message=message icon="prohibited" %}
 
-    </div>
-    </div>
+    {% endif %}
 
 {% endblock %}

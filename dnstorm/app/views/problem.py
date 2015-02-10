@@ -3,6 +3,8 @@ from lxml.html.diff import htmldiff
 import bleach
 import re
 import time
+import string
+import random
 
 from django.contrib import messages
 from django.contrib.auth import get_user
@@ -34,89 +36,21 @@ from dnstorm.app import forms
 from dnstorm.app import models
 from dnstorm.app import permissions
 from dnstorm.app.utils import get_object_or_none, activity_count, get_option
-from dnstorm.app.views.idea import idea_save
 
-def problem_save(obj, form):
-    """
-    Save the object, clear the criterias and add the submited ones in
-    ``request.POST``. This method will be the same for ProblemCreateView and
-    ProblemUpdateView.
-    """
+class ProblemCreateView(RedirectView):
+    permanent = False
 
-    obj.object = form.save(commit=False)
-
-    # Remember if new
-
-    new = False if hasattr(obj.object, 'id') and isinstance(obj.object.id, int) else True
-    if not new:
-        old = get_object_or_404(models.Problem, id=obj.object.id)
-        old_diffhtml = render_to_string('problem_diffbase.html', {'problem': old}) if not new else None
-
-    # Save problem
-
-    obj.object.author = obj.request.user if new else old.author
-    obj.object.description = bleach.clean(obj.object.description,
-        tags=settings.SANITIZER_ALLOWED_TAGS,
-        attributes=settings.SANITIZER_ALLOWED_ATTRIBUTES,
-        styles=settings.SANITIZER_ALLOWED_STYLES,
-        strip=True, strip_comments=True)
-    obj.object.save()
-
-    if permissions.problem(obj=obj.object, user=obj.request.user, mode='manage'):
-        obj.object.criteria.clear()
-        criterias = [i for i in obj.request.POST.get('criteria', '').split('|') if i.isdigit()]
-        for c in models.Criteria.objects.filter(id__in=criterias):
-            obj.object.criteria.add(c)
-
-    if obj.object.author.id != obj.request.user.id:
-        obj.object.coauthor.add(obj.request.user)
-
-    obj.object.save()
-
-    # Get a content diff
-
-    new_diffhtml = render_to_string('problem_diffbase.html', {'problem': obj.object})
-    if not new:
-        problemdiff = htmldiff(old_diffhtml, new_diffhtml)
-    else:
-        problemdiff = new_diffhtml
-
-    # Follow and send an action for the problem
-
-    follow(obj.request.user, obj.object, actor_only=False) if not is_following(obj.request.user, obj.object) else None
-    a = action.send(obj.request.user, verb='created' if new else 'edited', action_object=obj.object)
-    if problemdiff:
-        a[0][1].data = {'diff': problemdiff}
-        a[0][1].save()
-    activity_count(obj.object)
-
-    messages.success(obj.request, _('Problem saved'))
-    return HttpResponseRedirect(reverse('problem', kwargs={'slug':obj.object.slug}))
-
-class ProblemCreateView(CreateView):
-    template_name = 'problem_update.html'
-    form_class = forms.ProblemForm
-    model = models.Problem
-
-    @method_decorator(login_required)
-    @method_decorator(csrf_protect)
-    def dispatch(self, *args, **kwargs):
-        return super(ProblemCreateView, self).dispatch(*args, **kwargs)
-
-    def get_context_data(self, *args, **kwargs):
-        context = super(ProblemCreateView, self).get_context_data(**kwargs)
-        context['site_title'] = '%s | %s' % (_('Create problem'), get_option('site_title'))
-        context['breadcrumbs'] = self.get_breadcrumbs()
-        context['title'] = _('Create new problem')
-        context['criteria_form'] = forms.CriteriaForm()
-        return context
-
-    def get_breadcrumbs(self):
-        return [
-            { 'title': _('Create new problem'), 'url': reverse('problem_create'), 'classes': 'current' } ]
-
-    def form_valid(self, form):
-        return problem_save(self, form)
+    def get_redirect_url(self, *args, **kwargs):
+        """
+        Creates a draft problem for the user to start edition.
+        """
+        if self.request.user.is_authenticated():
+            p = models.Problem.objects.create(
+                published=False,
+                slug=''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(100)),
+                author=self.request.user)
+            return reverse('problem_update', kwargs={'pk': p.id})
+        return Http404()
 
 class ProblemUpdateView(UpdateView):
     template_name = 'problem_update.html'
@@ -126,69 +60,20 @@ class ProblemUpdateView(UpdateView):
     @method_decorator(login_required)
     @method_decorator(csrf_protect)
     def dispatch(self, *args, **kwargs):
-        obj = get_object_or_404(models.Problem, slug=kwargs['slug'])
+        obj = get_object_or_404(models.Problem, id=kwargs['pk'])
         if not permissions.problem(obj=obj, user=self.request.user, mode='edit'):
             raise PermissionDenied
         self.problem = obj
         return super(ProblemUpdateView, self).dispatch(*args, **kwargs)
 
-    def get_context_data(self, *args, **kwargs):
-        context = super(ProblemUpdateView, self).get_context_data(**kwargs)
-        context['site_title'] = '%s | %s' % (self.object.title, _('Edit'))
-        context['breadcrumbs'] = self.get_breadcrumbs()
-        context['title'] = _('Edit problem')
-        context['criteria_form'] = forms.CriteriaForm()
-        return context
-
-    def get_breadcrumbs(self):
-        return [
-            { 'title': self.object.title, 'url': self.object.get_absolute_url() },
-            { 'title': _('Update'), 'url': reverse('problem_update', kwargs={'slug':self.object.slug}), 'classes': 'current' } ]
-
-    def form_valid(self, form):
-        return problem_save(self, form)
-
-    def get_form_kwargs(self):
-        kwargs = super(ProblemUpdateView, self).get_form_kwargs()
-        if self.request.POST.get('title', None) \
-            and self.request.POST.get('description', None) \
-            and 'criteria' not in self.request.POST \
-            and permissions.problem(obj=self.problem, user=self.request.user, mode='edit'):
-            kwargs['criteria_required'] = False
-        else:
-            kwargs['criteria_required'] = True
-        kwargs['problem_perm_edit'] = permissions.problem(obj=self.problem, user=self.request.user, mode='edit')
-        kwargs['problem_perm_manage'] = permissions.problem(obj=self.problem, user=self.request.user, mode='manage')
-        return kwargs
-
-class ProblemView(FormView):
-    template_name = 'problem.html'
-    form_class = forms.IdeaForm
-
-    @method_decorator(csrf_protect)
-    def dispatch(self, request, *args, **kwargs):
-        self.problem = get_object_or_404(models.Problem, slug=self.kwargs['slug'])
-        if not permissions.problem(obj=self.problem, user=self.request.user, mode='view'):
-            raise PermissionDenied
-        return super(ProblemView, self).dispatch(request, *args, **kwargs)
-
-    def get_form_kwargs(self):
-        kwargs = super(ProblemView, self).get_form_kwargs()
-        kwargs['problem'] = self.problem
-        return kwargs
-
     def post(self, *args, **kwargs):
         """
-        Checks for delete actions of problem, ideas and comments sent from
-        forms.DeleteForm.
+        Checks for a delete action from forms.DeleteForm.
         """
 
         yes = args[0].POST.get('yes', None)
-
-        # Delete problem
-
         try:
-            delete_problem = int(args[0].POST.get('delete_problem', None))
+            delete_problem = int(args[0].POST.get('delete_problem', ''))
         except ValueError:
             delete_problem = False
         if delete_problem:
@@ -197,74 +82,137 @@ class ProblemView(FormView):
                 self.problem.delete()
                 messages.success(args[0], _('The problem was deleted.'))
                 return HttpResponseRedirect(reverse('home'))
+            elif not yes:
+                messages.warning(args[0], _('You need to mark the confirmation checkbox if you want to delete the form.'))
 
-        # Delete idea
+        return super(ProblemUpdateView, self).post(*args, **kwargs)
 
-        try:
-            delete_idea = int(args[0].POST.get('delete_idea', None))
-        except ValueError:
-            delete_idea = False
-        if delete_idea:
-            idea = get_object_or_404(models.Idea, id=delete_idea)
-            if yes and permissions.idea(obj=idea, user=args[0].user, mode='manage'):
-                idea.delete()
-                messages.success(args[0], _('The idea was deleted.'))
-                return HttpResponseRedirect(reverse('problem', kwargs={'slug':self.problem.slug}))
+    def get_context_data(self, *args, **kwargs):
+        context = super(ProblemUpdateView, self).get_context_data(**kwargs)
+        context['site_title'] = '%s | %s' % (self.object.title, _('Edit'))
+        context['breadcrumbs'] = self.get_breadcrumbs()
+        context['delete_form'] = forms.DeleteForm()
+        context['criteria_form'] = forms.CriteriaForm()
+        context['title'] = _('Edit problem')
+        return context
 
+    def get_breadcrumbs(self):
+        return [
+            { 'title': _('Update'), 'url': reverse('problem_update', kwargs={'pk':self.object.id}), 'classes': 'current' } ]
 
-        if not yes and (delete_problem or delete_idea):
-            messages.warning(args[0], _('You need to mark the checkbox to really delete.'))
-            return HttpResponseRedirect(reverse('problem', kwargs={'slug':self.problem.slug}))
+    def get_form_kwargs(self):
+        kwargs = super(ProblemUpdateView, self).get_form_kwargs()
+        kwargs['problem_perm_edit'] = permissions.problem(obj=self.problem, user=self.request.user, mode='edit')
+        kwargs['problem_perm_manage'] = permissions.problem(obj=self.problem, user=self.request.user, mode='manage')
+        return kwargs
 
-        # Delete comment
+    def form_valid(self, form):
+        """
+        Save the object, clear the criteria and add the submitted ones in
+        ``request.POST``.
+        """
 
-        try:
-            delete_comment = int(args[0].POST.get('delete_comment', None))
-        except ValueError:
-            delete_comment = False
-        if delete_comment:
-            comment = get_object_or_404(models.Comment, id=delete_comment)
-            if yes and permissions.comment(obj=comment, user=args[0].user, mode='manage'):
-                comment.delete()
-                messages.success(args[0], _('The comment was deleted.'))
-                return HttpResponseRedirect(reverse('problem', kwargs={'slug':self.problem.slug}))
+        self.object = form.save(commit=False)
 
-        if not yes and (delete_problem or delete_idea or delete_comment):
-            messages.warning(args[0], _('You need to mark the checkbox to really delete.'))
-            return HttpResponseRedirect(reverse('problem', kwargs={'slug':self.problem.slug}))
+        # Remember if new
 
-        return super(ProblemView, self).post(*args, **kwargs)
+        old = get_object_or_404(models.Problem, id=self.object.id)
+        old_diffhtml = render_to_string('problem_diffbase.html', {'problem': old})
+
+        # Problem save
+
+        self.object.author = self.request.user if not self.object.author else self.object.author
+        self.object.description = bleach.clean(self.object.description,
+            tags=settings.SANITIZER_ALLOWED_TAGS,
+            attributes=settings.SANITIZER_ALLOWED_ATTRIBUTES,
+            styles=settings.SANITIZER_ALLOWED_STYLES,
+            strip=True, strip_comments=True)
+        self.object.published = True if self.request.POST.get('publish', None) else False
+        self.object.save()
+
+        if self.object.author.id != self.request.user.id and self.object.open:
+            self.object.coauthor.add(obj.request.user)
+        elif self.object.author.id != self.request.user.id and not self.object.open:
+            raise HttpResponseForbidden
+
+        self.object.save()
+
+        # Get a content diff
+
+        new_diffhtml = render_to_string('problem_diffbase.html', {'problem': self.object})
+        problemdiff = htmldiff(old_diffhtml, new_diffhtml)
+
+        # Follow and send an action for the problem
+
+        follow(self.request.user, self.object, actor_only=False) if not is_following(self.request.user, self.object) else None
+        if self.object.published:
+            a = action.send(self.request.user, verb='edited', action_object=self.object)
+            if problemdiff:
+                a[0][1].data = {'diff': problemdiff}
+                a[0][1].save()
+            activity_count(self.object)
+        if not self.object.published:
+            view = 'problem_update'
+            kwargs = { 'pk': self.object.id }
+            messages.success(self.request, _('The problem was successfully saved.'))
+        else:
+            view = 'problem'
+            kwargs = { 'pk': self.object.id, 'slug': self.object.slug }
+            messages.success(self.request, _('The problem is now published.'))
+        return HttpResponseRedirect(reverse(view, kwargs=kwargs))
+
+class ProblemView(TemplateView):
+    template_name = 'problem.html'
+
+    @method_decorator(csrf_protect)
+    def dispatch(self, request, *args, **kwargs):
+        """
+        Redirects to the full ``problems/<id>/<slug>`` URL format of a problem.
+        """
+        self.object = get_object_or_404(models.Problem, id=kwargs['pk'])
+        if 'slug' not in kwargs or kwargs['slug'] != self.object.slug:
+            return HttpResponseRedirect(reverse('problem', kwargs={'pk': self.object.id, 'slug': self.object.slug}))
+        if not permissions.problem(obj=self.object, user=self.request.user, mode='view'):
+            raise PermissionDenied
+        return super(ProblemView, self).dispatch(request, *args, **kwargs)
+
+    def get_form_kwargs(self):
+        kwargs = super(ProblemView, self).get_form_kwargs()
+        kwargs['problem'] = self.object
+        return kwargs
 
     def get_context_data(self, *args, **kwargs):
         context = super(ProblemView, self).get_context_data(**kwargs)
         user = get_user(self.request)
-        coauthor = self.problem.coauthor.count()
-        context['site_title'] = '%s | %s' % (self.problem.title, get_option('site_title'))
+        coauthor = self.object.coauthor.count()
+        context['site_title'] = '%s | %s' % (self.object.title, get_option('site_title'))
         context['breadcrumbs'] = self.get_breadcrumbs()
-        context['title'] = self.problem.title
+        context['title'] = self.object.title
         context['sidebar'] = True
-        context['problem'] = self.problem
-        context['problem_perm_manage'] = permissions.problem(obj=self.problem, user=user, mode='manage')
-        context['problem_perm_edit'] = permissions.problem(obj=self.problem, user=user, mode='edit')
-        context['problem_perm_contribute'] = permissions.problem(obj=self.problem, user=user, mode='contribute')
-        context['coauthor'] = self.problem.coauthor.all()[coauthor-1] if coauthor > 0 else None
-        context['comments'] = models.Comment.objects.filter(problem=self.problem)
+        context['problem'] = self.object
+        context['problem_perm_manage'] = permissions.problem(obj=self.object, user=user, mode='manage')
+        context['problem_perm_edit'] = permissions.problem(obj=self.object, user=user, mode='edit')
+        context['problem_perm_contribute'] = permissions.problem(obj=self.object, user=user, mode='contribute')
+        context['comments'] = models.Comment.objects.filter(problem=self.object)
         context['comment_form'] = forms.CommentForm()
-        context['contributor_form'] = forms.ContributorForm(problem=self.problem.id)
-        context['ideas'] = models.Idea.objects.filter(problem=self.problem)
-        context['delete_form'] = forms.DeleteForm(problem=self.problem.id)
+        context['comment_form_problem'] = forms.CommentForm(initial={'problem': self.object.id})
+        context['contributor_form'] = forms.ContributorForm(problem=self.object.id)
+        context['ideas'] = models.Idea.objects.filter(problem=self.object.id, published=True)
+        for i in context['ideas']: i.fill_data(self.request.user);
+        context['delete_form'] = forms.DeleteForm()
 
         # Criterias
 
-        context['criterias'] = list()
-        for c in models.Criteria.objects.filter(problem=self.problem):
+        context['criteria'] = list()
+        for c in models.Criteria.objects.filter(problem=self.object):
             c.problem_count = models.Problem.objects.filter(criteria=c).count()
-            context['criterias'].append(c)
+            c.fill_data()
+            context['criteria'].append(c)
 
         # Alternatives
 
         context['alternatives'] = list()
-        for a in models.Alternative.objects.filter(problem=self.problem):
+        for a in models.Alternative.objects.filter(problem=self.object):
             a.fill_data(self.request.user)
             context['alternatives'].append(a)
 
@@ -281,16 +229,13 @@ class ProblemView(FormView):
 
     def get_breadcrumbs(self):
         return [
-            { 'title': self.problem.title, 'url': self.problem.get_absolute_url(), 'classes': 'current' } ]
-
-    def form_valid(self, form):
-        return idea_save(self, form)
+            { 'title': self.object.title, 'url': self.object.get_absolute_url(), 'classes': 'current' } ]
 
 class ProblemActivityView(TemplateView):
     template_name = 'activity.html'
 
     def dispatch(self, request, *args, **kwargs):
-        self.problem = get_object_or_404(models.Problem, slug=self.kwargs['slug'])
+        self.problem = get_object_or_404(models.Problem, slug=self.kwargs.get('pk', None))
         if not permissions.problem(obj=self.problem, user=self.request.user, mode='contribute'):
             raise PermissionDenied
         return super(ProblemActivityView, self).dispatch(request, *args, **kwargs)

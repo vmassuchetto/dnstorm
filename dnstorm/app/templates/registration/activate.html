@@ -2,15 +2,7 @@
 {% load i18n %}
 
 {% block content %}
-    <div class="row">
-        <div class="large-4 large-offset-4 columns content">
-            <h3>{% trans "Account activation" %}</h3>
-            {% if account %}
-                <div class="panel"><p>{% trans "Account successfully activated" %}</p></div>
-                <p><a class="button expand success" href="{% url "auth_login" %}">{% trans "Log in" %}</a></p>
-            {% else %}
-                <div class="panel"><p>{% trans "Account activation failed" %}</p></div>
-            {% endif %}
-        </div>
-    </div>
+    <h3>{% trans "Account activation" %}</h3>
+    {% trans "Account successfully activated." as message %}
+    {% include "panel.html" with message=message icon="check" %}
 {% endblock %}

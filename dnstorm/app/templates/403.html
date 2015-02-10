@@ -4,10 +4,7 @@
 {% block bodyclass %}error403{% endblock %}
 
 {% block content %}
-    <div class="row">
-        <div class="large-12 columns content">
-            <h3>{% trans "Permission denied" %}</h3>
-            <div class="panel error"><p>{% blocktrans %}You don't have permission to access this page.{% endblocktrans %}</p></div>
-        </div>
-    </div>
+    <h4>{% trans "Permission denied" %}</h4>
+    {% trans "You don't have permission to access this page." as message %}
+    {% include "panel.html" with message=message icon="no-dogs" %}
 {% endblock %}

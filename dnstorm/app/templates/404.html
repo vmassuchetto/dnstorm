@@ -4,10 +4,6 @@
 {% block bodyclass %}error404{% endblock %}
 
 {% block content %}
-    <div class="row">
-        <div class="large-12 columns content">
-            <h3>{% trans "Page not found" %}</h3>
-            <div class="panel error"><p>{% blocktrans %}The page you are trying to access does not exist.{% endblocktrans %}</p></div>
-        </div>
-    </div>
+    {% trans "The page you are trying to access does not exist." as message %}</p></div>
+    {% include "panel.html" with message=message icon="x" %}
 {% endblock %}

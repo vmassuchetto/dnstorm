@@ -29,30 +29,27 @@ from dnstorm.app.models import Option, Problem, Idea, Comment, Criteria, Invitat
 
 class HomeView(TemplateView):
     """
-    Default landing page.
+    Front landing page.
     """
     template_name = 'home.html'
 
     def get_context_data(self, *args, **kwargs):
         context = super(HomeView, self).get_context_data(**kwargs)
-        if self.request.user.is_superuser:
-            q_problems = Q()
-        elif self.request.user.is_authenticated():
-            q_problems = Q(public=True) | Q(author=self.request.user.id) | Q(contributor=self.request.user.id)
+        if self.request.user.is_authenticated():
+            q_problems = (Q(published=True) & Q(public=True)) \
+                & (Q(author=self.request.user.id) | Q(contributor=self.request.user.id))
         else:
-            q_problems = Q(public=True)
+            q_problems = Q(published=True) & Q(public=True)
         first_time = get_option('firsttime_homeview')
         if not first_time:
             context['first_time'] = True
-            #update_option('firsttime_homeview', True)
         context['breadcrumbs'] = self.get_breadcrumbs()
         problems = Paginator(Problem.objects.filter(q_problems).distinct().order_by('-last_activity'), 25)
         context['problems'] = problems.page(self.request.GET.get('page', 1))
         return context
 
     def get_breadcrumbs(self):
-        return [
-            { 'title': _('Problems'), 'classes': 'current' } ]
+        return [{ 'title': _('Problems'), 'classes': 'current' }]
 
 class RegistrationView(BaseRegistrationView):
     form_class = RegistrationForm
@@ -103,7 +100,7 @@ class RegistrationView(BaseRegistrationView):
         if invitation:
             for i in Invitation.objects.filter(email=invitation.email):
                 i.problem.contributor.add(new_user)
-                follow(new_user, i.problem, actor_only=False)
+                follow(new_user, i.problem, actor_only=False) if not is_following(new_user, i.problem) else None
                 activity_count(i.problem)
                 i.delete()
             invitation.delete()
@@ -190,10 +187,12 @@ class ActivityView(TemplateView):
 
 class LoginView(View):
     """
-    Redirects valid users to the home page instead of showing the login form.
+    Redirects valid users to the 'home' or 'next' page instead of showing the
+    login form.
     """
 
     def get(self, *args, **kwargs):
+        print self.request.user.is_authenticated
         if self.request.user.is_authenticated():
             next = self.request.GET.get('next', None)
             next = next if next else reverse('home')

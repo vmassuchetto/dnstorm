@@ -1,15 +1,8 @@
-from django.contrib.auth.models import User
-
-from actstream.models import followers
-
-from dnstorm.app import DNSTORM_URL
-from dnstorm.app.models import Option, Problem, Idea, Comment
 
 def get_object_or_none(klass, *args, **kwargs):
     """
     Get an object and return None if not found.
     """
-
     try:
         return klass._default_manager.get(*args, **kwargs)
     except klass.DoesNotExist:
@@ -19,20 +12,23 @@ def get_option(name):
     """
     Wrapper for ``get`` method of Option class. A tribute to WordPress.
     """
-
+    from dnstorm.app.models import Option
     return Option().get(name)
 
 def update_option(name, value):
     """
     Wrapper for ``update`` method of Option class. A tribute to WordPress.
     """
-
+    from dnstorm.app.models import Option
     return Option().update(name, value)
 
 def get_user(username):
     """
     Return user information.
     """
+    from django.contrib.auth.models import User
+    from dnstorm.app.models import Problem, Idea, Comment
+
     user = get_object_or_none(User, username=username, is_active=True)
     if not user:
         return None
@@ -45,7 +41,6 @@ def activity_reset_counter(user):
     """
     Resets the activity stream counter for a user.
     """
-
     return update_option('user_%d_activity_counter' % user.id, 0)
 
 def activity_count(obj):
@@ -53,6 +48,7 @@ def activity_count(obj):
     Increments the activity stream counter of the followers of the given object
     to make a Facebook look and feel on the top bar.
     """
+    from actstream.models import followers
 
     for user in followers(obj):
         name = 'user_%d_activity_counter' % user.id
@@ -68,6 +64,7 @@ def email_context(more_context=dict()):
     Puts ``more_context`` with the standard context variables required for
     sending e-mails.
     """
+    from dnstorm.app import DNSTORM_URL
 
     return dict(dict({
         'dnstorm_url': DNSTORM_URL,

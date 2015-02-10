@@ -1,0 +1,9 @@
+{% load i18n %}
+
+<div class="user-search-selected row collapse">
+    {% for user in users %}
+        <div class="columns large-4 contributor-delete">
+            {% include "user_box.html" with user=user %}
+        </div>
+    {% endfor %}
+</div>

@@ -1,6 +1,9 @@
 .. image:: https://travis-ci.org/vmassuchetto/dnstorm.svg?branch=master
     :target: https://travis-ci.org/vmassuchetto/dnstorm
 
+.. image:: https://readthedocs.org/projects/dnstorm/badge/?version=latest
+    :target: https://readthedocs.org/projects/pip/badge/?version=latest
+
 About
 -----
 
@@ -45,7 +48,9 @@ Clone the repository and go the project's root to build the environment:
     cd dnstorm
 
 Start a virtual environment, load it and install the required packages from the
-``requirements.txt`` file:
+``requirements.txt`` file. After this, make sure all the command line used from
+here is executed in this virtual environment (has the ``(env)`` on the command
+prompt).
 
 ::
 
@@ -95,17 +100,25 @@ install it:
 
 ::
 
-    gem install compass
-    python manage.py bower install
+    nmp install bower
+    python manage.py bower_install
+
+If you have problems with the ``nodejs`` binary, try creating a symlink.
+
+::
+
+    sudo ln -s /usr/bin/nodejs /usr/bin/node
 
 And then, to generate the static files:
 
 ::
 
+    gem install compass
     cd dnstorm/app/static/scss
     compass compile
 
-If you're developing, you might want to use ``compass watch`` instead.
+If you're editing the ``.scss`` file, you might want to use ``compass watch``
+instead.
 
 
 E-mails

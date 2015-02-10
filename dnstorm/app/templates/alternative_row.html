@@ -1,0 +1,85 @@
+{% load i18n %}
+
+<div class="alternative-row alternative-{{ alternative.id }}" data-id="{{ alternative.id }}">
+
+    <div class="row">
+
+        <div class="columns large-1 medium-2 small-3 alternative-like like-bulb{% if not user.is_authenticated %} like-bulb-disabled{% endif %}{% if alternative.voted %} voted{% endif %}" data-alternative="{{ alternative.id }}" data-counter="{{ alternative.vote_count }}">
+            <a class="like-bulb-bulb alternative-like-bulb"><i class="fi-lightbulb"></i></a>
+            <span class="like-bulb-counter alternative-like-counter">{{ alternative.vote_count }}</span>
+        </div>
+
+        <div class="columns large-11 medium-10 small-9">
+
+            <div class="row">
+
+                <div class="columns large-4 alternative-ideas">
+                    {% for idea in alternative.idea.all %}
+                        <a class="button tiny secondary radius disabled" data-idea="{{ idea.id }}" href="javascript:void(0);">{{ idea.title }}</a>
+                    {% endfor %}
+                </div>
+
+                <div class="columns large-8 alternative-results">
+                    {% for r in alternative.results.values %}
+                        <div class="row ideacriteria-row">
+                            <div class="columns large-6">
+                                <i class="fi-{{ r.criteria.icon }}"></i>
+                                <h5 class="criteria-name">{{ r.criteria.name }}</h5>
+                            </div>
+                            <div class="columns large-6 criteria-value">
+                                <a class="button radius secondary expand">{% if r.criteria.fmt == "currency" %}${% endif %}{{ r.value }}</a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+            </div>
+
+            {# Action mini bar #}
+
+            {% if problem_perm_manage %}
+                <div class="row top-1em bottom-1em">
+                <div class="columns large-12">
+                    <a class="action-button select-ideas" data-alternative="{{ alternative.id }}"><i class="fi-pencil"></i>&nbsp;{% trans "Select ideas for this alternative" %}</a>
+                    <a class="action-button delete-alternative" data-alternative="{{ alternative.id }}"><i class="fi-x"></i>&nbsp;{% trans "Delete alternative" %}</a>
+                </div>
+                </div>
+            {% endif %}
+
+            <div class="comments" id="comments-alternative-{{ alternative.id }}">
+                {% if alternative.comments %}
+                    {% for comment in alternative.comments %}
+                        {% if forloop.counter > 3 %}
+                            {% include "comment.html" with hidden=True %}
+                        {% else %}
+                            {% include "comment.html" %}
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if alternative.comments|length > 3 %}
+                        <div class="row collapse comment">
+                            <div class="columns large-12">
+                                <div class="comment-content">
+                                    <a class="action-button display-more" href="javascript:void(0)"><i class="fi-arrow-down"></i>&nbsp;{% blocktrans with count=alternative.comments|length|add:"-3" %}Display the other <b>{{ count }}</b> comments.{% endblocktrans %}</a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endif %}
+            </div>
+
+            <div class="row">
+                <div class="columns large-12">
+                    <div class="comment-form hide" id="comment-form-alternative-{{ alternative.id }}"></div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="columns large-12 top-1em">
+                    <a href="javascript:void(0)" class="action-button comment-button" data-alternative="{{ alternative.id }}"><i class="fi-comments"></i>&nbsp;{% trans "comment this alternative" %}</a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <hr/>
+</div>

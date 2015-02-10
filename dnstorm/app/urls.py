@@ -3,8 +3,6 @@ from django.contrib.auth import views as auth_views
 from django.utils.functional import curry
 from django.views.defaults import *
 
-from ajax_select import urls as ajax_select_urls
-
 from dnstorm import settings
 from dnstorm.app.forms import RegistrationForm
 from dnstorm.app.views import *
@@ -23,24 +21,31 @@ urlpatterns = patterns('',
 
     # Problems
 
-    (r'^problem/create/$', problem.ProblemCreateView.as_view(), {}, 'problem_create'),
-    (r'^problem/(?P<slug>[^/]+)/$', problem.ProblemView.as_view(), {}, 'problem'),
-    (r'^problem/(?P<slug>[^/]+)/update/$', problem.ProblemUpdateView.as_view(), {}, 'problem_update'),
-    (r'^problem/(?P<slug>[^/]+)/#ideas$', problem.ProblemUpdateView.as_view(), {}, 'problem_ideas'),
+    (r'^problems/create/$', problem.ProblemCreateView.as_view(), {}, 'problem_create'),
+    (r'^problems/(?P<pk>\d+)/update/$', problem.ProblemUpdateView.as_view(), {}, 'problem_update'),
+    (r'^problems/(?P<pk>\d+)/#ideas$', problem.ProblemUpdateView.as_view(), {}, 'problem_ideas'),
+    (r'^problems/(?P<pk>\d+)/$', problem.ProblemView.as_view(), {}, 'problem'),
+    (r'^problems/(?P<pk>\d+)/(?P<slug>[^/]+)/$', problem.ProblemView.as_view(), {}, 'problem'),
+    (r'^problems/(?P<pk>\d+)/(?P<slug>[^/]+)/#description$', problem.ProblemUpdateView.as_view(), {}, 'problem_tab_description'),
+    (r'^problems/(?P<pk>\d+)/(?P<slug>[^/]+)/#criteria$', problem.ProblemUpdateView.as_view(), {}, 'problem_tab_criteria'),
+    (r'^problems/(?P<pk>\d+)/(?P<slug>[^/]+)/#ideas$', problem.ProblemUpdateView.as_view(), {}, 'problem_tab_ideas'),
+    (r'^problems/(?P<pk>\d+)/(?P<slug>[^/]+)/#alternatives$', problem.ProblemUpdateView.as_view(), {}, 'problem_tab_alternatives'),
+    (r'^problems/(?P<pk>\d+)/(?P<slug>[^/]+)/#idea-(?P<idea>\d+)$', problem.ProblemUpdateView.as_view(), {}, 'problem_idea'),
 
     # Ideas
 
-    (r'^problem/(?P<slug>[^/]+)/#idea-(?P<pk>[^/]+)$', idea.IdeaView.as_view(), {}, 'idea'),
-    (r'^problem/(?P<slug>[^/]+)/idea/(?P<pk>[^/]+)/update/$', idea.IdeaUpdateView.as_view(), {}, 'idea_update'),
+    (r'^ideas/create/(?P<pk>\d+)/$', idea.IdeaCreateView.as_view(), {}, 'idea_create'),
+    (r'^ideas/(?P<pk>\d+)/update/$', idea.IdeaUpdateView.as_view(), {}, 'idea_update'),
+    (r'^ideas/(?P<pk>\d+)/$', idea.IdeaView.as_view(), {}, 'idea'),
 
     # Comments
 
-    (r'^problem/(?P<slug>[^/]+)/#comment-(?P<pk>[^/]+)$', base.CommentView.as_view(), {}, 'comment'),
+    (r'^comments/(?P<pk>\d+)/$', base.CommentView.as_view(), {}, 'comment'),
 
     # Criteria
 
-    (r'^criterias/$', criteria.CriteriasView.as_view(), {}, 'criterias'),
-    (r'^criterias/(?P<slug>[^/]+)/update/$', criteria.CriteriaUpdateView.as_view(), {}, 'criteria_update'),
+    (r'^criteria/$', criteria.CriteriaView.as_view(), {}, 'criteria'),
+    (r'^criteria/(?P<pk>\d+)/update/$', criteria.CriteriaUpdateView.as_view(), {}, 'criteria_update'),
 
     # Users
 
@@ -52,7 +57,7 @@ urlpatterns = patterns('',
     # Activity
 
     (r'^activity/$', base.ActivityView.as_view(), {}, 'activity'),
-    (r'^problem/(?P<slug>[^/]+)/activity/$', problem.ProblemActivityView.as_view(), {}, 'problem_activity'),
+    (r'^problem/(?P<pk>\d+)/activity/$', problem.ProblemActivityView.as_view(), {}, 'problem_activity'),
 
     # DNStorm options
 
@@ -61,12 +66,11 @@ urlpatterns = patterns('',
     # Other apps
 
     (r'^avatar/', include('avatar.urls')),
-    (r'^accounts/login/$', base.LoginView.as_view(), {}, 'login_redirect'),
+    #(r'^accounts/login/$', base.LoginView.as_view(), {}, 'login_redirect'),
     (r'^accounts/register/$', base.RegistrationView.as_view(), {}, 'registration_register'),
-    url(r'^accounts/password/reset/confirm/(?P<uidb36>[0-9A-Za-z]+)-(?P<token>.+)/$', auth_views.password_reset_confirm, name='auth_password_reset_confirm'),
+    #url(r'^accounts/password/reset/confirm/(?P<uidb36>[0-9A-Za-z]+)-(?P<token>.+)/$', auth_views.password_reset_confirm, name='auth_password_reset_confirm'),
     (r'^accounts/', include('django.contrib.auth.urls')),
     (r'^accounts/', include('registration.backends.default.urls')),
-    (r'^lookups/', include(ajax_select_urls)),
     (r'^jsi18n/$', 'django.views.i18n.javascript_catalog', js_info_dict, 'jsi18n'),
     (r'^ckeditor/', include('ckeditor.urls')),
 

@@ -1,0 +1,123 @@
+{% load i18n crispy_forms_tags paragraphs %}
+
+<div class="criteria-row criteria-{% if not criteria.id %}new"{% else %}{{ criteria.id }}" data-id="{{ criteria.id }}"{% endif %}>
+
+    <div class="row frontend">
+        <div class="columns large-{% if not show_actions %}12{% else %}10{% endif %} criteria-info">
+
+            <i class="criteria-format fi-{{ criteria.icon }}"></i>
+            <h5 class="criteria-name">{{ criteria.name }}</h5>
+
+            {% if show_parameters %}
+
+            <div class="criteria-description">
+            {% if show_description %}
+                {{ criteria.description|paragraphs|safe }}
+            {% endif %}
+
+            <p>
+
+            {% if criteria.min and criteria.max %}
+                {% if show_icons %}<span><i class="fi-filter"></i>{% endif %}
+                {% blocktrans with min=criteria.min max=criteria.max %}Values from {{ min }} to {{ max }}.{% endblocktrans %}
+                {% if show_icons %}</span>{% endif %}
+            {% endif %}
+            {% if criteria.min and not criteria.max %}
+                {% if show_icons %}<span><i class="fi-filter"></i>{% endif %}
+                {% blocktrans with min=criteria.min max=criteria.max %}Values lower than {{ min }}.{% endblocktrans %}
+                {% if show_icons %}</span>{% endif %}
+            {% endif %}
+            {% if not criteria.min and criteria.max %}
+                {% if show_icons %}<span><i class="fi-filter"></i>{% endif %}
+                {% blocktrans with min=criteria.min max=criteria.max %}Values greater than {{ max }}.{% endblocktrans %}
+                {% if show_icons %}</span>{% endif %}
+            {% endif %}
+
+            {% if criteria.order == "asc" %}
+                {% if show_icons %}<span><i class="fi-arrow-up"></i>{% endif %}
+                {% blocktrans with order=criteria.order %}Ascending order is best.{% endblocktrans %}
+                {% if show_icons %}</span>{% endif %}
+            {% else %}
+                {% if show_icons %}<span><i class="fi-arrow-down"></i>{% endif %}
+                {% blocktrans with order=criteria.order %}Descending order is best.{% endblocktrans %}
+                {% if show_icons %}</span>{% endif %}
+            {% endif %}
+
+            {% if criteria.weight %}
+                {% if show_icons %}<span><i class="fi-download"></i>{% endif %}
+                {% blocktrans with weight=criteria.weight %}Weight {{ weight }}.{% endblocktrans %}
+                {% if show_icons %}</span>{% endif %}
+            {% endif %}
+
+            {% if criteria.result == "sum" %}
+                {% if show_icons %}<span><i class="fi-plus"></i>{% endif %}
+                {% trans "Results the sum of values." %}
+                {% if show_icons %}</span>{% endif %}
+            {% else %} {% if criteria.result == "average" %}
+                {% if show_icons %}<span><i class="fi-list"></i>{% endif %}
+                {% trans "Results the average value of ideas." %}
+                {% if show_icons %}</span>{% endif %}
+            {% else %} {% if criteria.result == "absolute" %}
+                {% if show_icons %}<span><i class="fi-target"></i>{% endif %}
+                {% trans "Results the absolute value of ideas." %}
+                {% if show_icons %}</span>{% endif %}
+            {% endif %} {% endif %} {% endif %}
+
+            </p>
+            </div>
+
+            {% endif %}
+
+        </div>
+
+        {% if show_actions %}
+            <div class="columns large-2 text-right">
+                <a class="button success tiny radius action-icon criteria-edit"><i class="fi-pencil"></i></a>
+                <a class="button alert tiny radius action-icon criteria-delete"><i class="fi-x"></i></a>
+            </div>
+        {% endif %}
+
+    </div>
+
+    {% if show_comments %}
+        <div class="row">
+            <div class="columns large-12">
+                <div class="comments comments-criteria" id="comments-criteria-{{ criteria.id }}">
+                    {% for comment in criteria.comments %}
+                        {% if forloop.counter > 3 %}
+                            {% include "comment.html" with hidden=True %}
+                        {% else %}
+                            {% include "comment.html" %}
+                        {% endif %}
+                    {% endfor %}
+                    {% if criteria.comments.count > 3 %}
+                        <div class="row collapse comment">
+                            <div class="columns large-12">
+                                <div class="comment-content top-1em">
+                                    <a href="javascript:void(0)" class="display-more action-button"><i class="fi-arrow-down"></i>&nbsp;{% blocktrans with count=criteria.comments.count|add:"-3" %}Display the other <b>{{ count }}</b> comments.{% endblocktrans %}</a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="columns large-12">
+                <div class="comment-form hide" id="comment-form-criteria-{{ criteria.id }}"></div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="columns large-12 top-1em">
+                <a href="javascript:void(0)" class="action-button comment-button" data-criteria="{{ criteria.id }}"><i class="fi-comments"></i>&nbsp;{% trans "comment this criteria" %}</a>
+            </div>
+        </div>
+    {% endif %}
+
+    {% if criteria_form %}
+        <div class="row backend hidden">
+            <div class="columns large-12">{% crispy criteria_form %}</div>
+        </div>
+    {% endif %}
+
+</div>

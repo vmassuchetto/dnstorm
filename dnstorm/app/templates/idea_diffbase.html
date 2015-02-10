@@ -1,9 +1,4 @@
 {% load i18n %}
 
 <h3>{{ idea.title }}</h3>
-
-{{ idea.description|safe }}
-
-<p class="info">
-{% for criteria in idea.criterias %}<span class="criteria">{% for star in criteria.stars %}<i class="fi-star">-</i>{% endfor %}&nbsp;{{ criteria.name }}</span>{% endfor %}
-</p>
+{% for criteria in idea.criterias %}<span class="criteria">{{ criteria.name }}</span><p class="description">{{ criteria.description|safe }}</p>{% endfor %}

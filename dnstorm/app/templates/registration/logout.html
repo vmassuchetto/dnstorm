@@ -4,10 +4,7 @@
 {% block bodyclass %}logout{% endblock %}
 
 {% block content %}
-    <div class="row">
-    <div class="columns large-4 large-offset-4 content">
-        <h3>{% trans "Bye!" %}</h3>
-        <p>{% trans "You are not logged in anymore." %}</p>
-    </div>
-    </div>
+    <h3>{% trans "Bye bye!" %}</h3>
+    {% trans "You are not logged in anymore." as message %}
+    {% include "panel.html" with icon="prohibited" message=message %}
 {% endblock %}

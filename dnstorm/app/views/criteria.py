@@ -16,20 +16,20 @@ from dnstorm.app import permissions
 from dnstorm.app.utils import get_option
 
 
-class CriteriasView(TemplateView):
+class CriteriaView(TemplateView):
     template_name = 'criteria.html'
 
     def get_context_data(self, *args, **kwargs):
-        context = super(CriteriasView, self).get_context_data(**kwargs)
-        criterias = Paginator(models.Criteria.objects.filter(author=self.request.user).order_by('name'), 20)
-        context['site_title'] = '%s | %s' % (_('Criterias'), get_option('site_title'))
+        context = super(CriteriaView, self).get_context_data(**kwargs)
+        criteria = Paginator(models.Criteria.objects.filter(author=self.request.user).order_by('name'), 20)
+        context['site_title'] = '%s | %s' % (_('Criteria'), get_option('site_title'))
         context['breadcrumbs'] = self.get_breadcrumbs()
-        context['criterias'] = criterias.page(self.request.GET.get('page', 1))
+        context['criteria'] = criteria.page(self.request.GET.get('page', 1))
         return context
 
     def get_breadcrumbs(self):
         return [
-            { 'title': _('Criterias'), 'classes': 'current' }
+            { 'title': _('Criteria'), 'classes': 'current' }
         ]
 
 class CriteriaCreateView(CreateView):
@@ -48,7 +48,7 @@ class CriteriaCreateView(CreateView):
 
     def get_breadcrumbs(self):
         return [
-            { 'title': _('Criterias'), 'url': reverse('criteria') },
+            { 'title': _('Criteria'), 'url': reverse('criteria') },
             { 'title': _('Create'), 'classes': 'current' } ]
 
     def form_valid(self, form):
@@ -76,11 +76,11 @@ class CriteriaUpdateView(UpdateView):
 
     def get_breadcrumbs(self):
         return [
-            { 'title': _('Criterias'), 'url': reverse('criterias') },
+            { 'title': _('Criteria'), 'url': reverse('criteria') },
             { 'title': self.object.name, 'url': self.object.get_absolute_url() },
             { 'title': _('Edit'), 'classes': 'current' } ]
 
     def form_valid(self, form):
         self.object.save()
         messages.success(self.request, _('Criteria saved.'))
-        return HttpResponseRedirect(reverse('criterias'))
+        return HttpResponseRedirect(reverse('criteria'))

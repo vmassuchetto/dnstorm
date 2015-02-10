@@ -1,12 +1,11 @@
 {% extends "base.html" %}
-{% load i18n %}
+{% load i18n captureas %}
 
 {% block content %}
-    {% url "home" as home_url %}
-    <div class="row">
-        <div class="large-12 columns content">
-            <h3>{% trans "Your account is activated" %}</h3>
-            <div class="panel"><p>{% blocktrans %}Welcome to DNStorm! You can now <a href="{{ home_url }}">start contributing to the problems</a>.{% endblocktrans %}</p></div>
-        </div>
-    </div>
+    <h3>{% trans "Account activated" %}</h3>
+    {% url "home" as item_url %}
+    {% captureas message %}
+        {% blocktrans %}Welcome to DNStorm! You can now <a href="{{ home_url }}">start contributing</a>.{% endblocktrans %}
+    {% endcaptureas %}
+    {% include "panel.html" with icon="lightbulb" message=message %}
 {% endblock %}

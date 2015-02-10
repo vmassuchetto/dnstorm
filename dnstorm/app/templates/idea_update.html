@@ -5,10 +5,15 @@
 
 {% block head %}{{ form.media }}{% endblock %}
 
+{% block modals %}
+    {% include "modal_delete.html" %}
+{% endblock %}
+
 {% block content %}
-    <div class="row">
-    <div class="columns large-12">
+    <h3>{{ problem.title }}</h3>
+    {{ problem.description|safe }}
+    <fieldset>
+        <legend><i class="fi-lightbulb"></i> {% trans "Your idea" %}</legend>
         {% crispy form %}
-    </div>
-    </div>
+    </fieldset>
 {% endblock %}

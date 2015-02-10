@@ -20,6 +20,11 @@ MEDIA_URL = ''
 STATIC_ROOT = 'static'
 STATIC_URL = '/static/'
 
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+)
+
 TEMPLATE_CONTEXT_PROCESSORS = global_settings.TEMPLATE_CONTEXT_PROCESSORS + (
     'django.core.context_processors.request',
     'dnstorm.app.context_processors.base',
@@ -50,7 +55,6 @@ INSTALLED_APPS = (
     'actstream',
     'avatar',
     'autoslug',
-    'ajax_select',
     'ckeditor',
     'crispy_forms',
     'crispy_forms_foundation',
@@ -59,24 +63,6 @@ INSTALLED_APPS = (
     'south'
 
 )
-
-# Bower
-
-BOWER_INSTALLED_APPS = (
-    'jquery',
-    'foundation',
-    'foundation-icons'
-)
-
-BOWER_COMPONENTS_ROOT = SITE_ROOT + '/components/'
-
-# Ajax lookups
-
-AJAX_SELECT_BOOTSTRAP = False
-AJAX_LOOKUP_CHANNELS = {
-    'criteria': ('dnstorm.app.lookups', 'CriteriaLookup'),
-    'user': ('dnstorm.app.lookups', 'UserLookup')
-}
 
 # Logging
 

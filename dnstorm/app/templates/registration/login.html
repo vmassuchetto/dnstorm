@@ -4,57 +4,42 @@
 {% block bodyclass %}login{% endblock %}
 
 {% block content %}
-    <div class="row">
 
     {% if user.is_authenticated %}
+        <h3>{% trans "Nothing to do here" %}</h3>
+        {% trans "You are already logged in." as message %}</p>
+        {% include "panel.html" with icon="prohibited" message=message %}
+    {% else %}
 
-        <div class="large-12 columns content">
-            <div class="panel radius">
-                <p>{% blocktrans %}You are already logged in.{% endblocktrans %}</p>
+        <div class="row">
+            <div class="large-8 large-offset-2 columns content">
+
+                <h3>{% trans "Login" %}</h3>
+
+                <form class="auth-form" method="post" action="{% url "auth_login" %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}">
+
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{% if request.GET.next %}{{ request.GET.next }}{% else %}{{ request.get_full_path }}{% endif %}" />
+
+                    {{ form }}
+
+                    <input type="submit" class="button radius success expand" value="{% trans 'Login' %}" />
+
+                    <hr/>
+
+                    <div class="row">
+                        <div class="columns large-6">
+                            <a class="button radius expand" href="{% url 'registration_register' %}">{% trans "Register" %}</a>
+                        </div>
+
+                        <div class="columns large-6">
+                            <a class="button radius alert expand" href="{% url 'auth_password_reset' %}">{% trans "Reset password" %}</a>
+                        </div>
+                    </div>
+
+                </form>
             </div>
         </div>
 
-    {% else %}
-
-        <div class="large-4 large-offset-4 columns content">
-
-            <h4>{% trans "Login" %}</h4>
-
-            <form method="post" action="{% url "auth_login" %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}">
-
-                {% csrf_token %}
-                <input type="hidden" name="next" value="{% if request.GET.next %}{{ request.GET.next }}{% else %}{{ request.get_full_path }}{% endif %}" />
-
-                <div class="row">
-                    <div class="columns large-12">
-                        {{ form }}
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="columns large-12">
-                        <input type="submit" class="button radius success expand" value="{% trans 'Login' %}" />
-                    </div>
-                </div>
-
-                <hr/>
-
-                <div class="row">
-                    <div class="columns large-12">
-                        <a class="button radius expand" href="{% url 'registration_register' %}">{% trans "Register" %}</a>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="columns large-12">
-                        <a class="button radius alert expand" href="{% url 'auth_password_reset' %}">{% trans "Reset password" %}</a>
-                    </div>
-                </div>
-
-            </form>
-
-        </div>
-
     {% endif %}
-
-    </div>
 {% endblock %}

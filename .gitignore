@@ -1,21 +1,22 @@
 # Vim
 *~
-*.swl
-*.swm
-*.swn
-*.swo
-*.swp
+*.sw*
 
 # Sass
 .sass-cache/
 
 # Python
 *.pyc
+
+# Virtualenv
 env
+
+# NodeJS modules
+node_modules
 
 # Static files and components
 /static
-dnstorm/components
+dnstorm/app/static/components
 
 # DNStorm
 *.sqlite3

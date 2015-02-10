@@ -8,5 +8,7 @@ DNSTORM_URL = 'http://vmassuchetto.github.io/dnstorm'
 
 registry.register(User)
 registry.register(models.Problem)
+registry.register(models.Criteria)
 registry.register(models.Idea)
+registry.register(models.Alternative)
 registry.register(models.Comment)

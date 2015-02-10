@@ -3,19 +3,25 @@
 
 {% block bodyclass %}problem-edit{% endblock %}
 
-{% block head %}{{ form.media }}{% endblock %}
+{% block head %}
+    {{ form.media }}
+    <script type="text/javascript">
+        var problem_id = {{ problem.id }};
+    </script>
+{% endblock %}
 
 {% block modals %}
-    <div id="criteria-form" class="reveal-modal medium" data-reveal>
-        <a class="close-reveal-modal">&#215;</a>
-        {% include "criteria_form.html" with form=criteria_form %}
-    </div>
+    {% include "modal_delete.html" %}
 {% endblock %}
 
 {% block content %}
+    <div class="hidden" id="criteria-form">{% include "criteria_row.html" %}</div></div>
     <div class="row">
     <div class="columns large-12">
-        {% if title %}<h4>{{ title }}</h4>{% endif %}
+        <h3>{{ title }}</h3>
+        {% if problem.published %}
+            <p><a class="action-button" href="{% url "problem" problem.id problem.slug %}"><i class="fi-page"></i>&nbsp;{% trans "View published problem" %}</a></p>
+        {% endif %}
         {% crispy form %}
     </div>
     </div>

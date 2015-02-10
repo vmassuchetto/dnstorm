@@ -1,11 +1,13 @@
 {% extends "base.html" %}
-{% load crispy_forms_tags i18n %}
+{% load crispy_forms_tags i18n captureas %}
 
 {% block bodyclass %}problem{% endblock %}
 
 {% block head %}
     {{ form.media }}
-    {{ contributor_form.media }}
+    <script type="text/javascript">
+        var problem_id = {{ problem.id }};
+    </script>
 {% endblock %}
 
 {% block modals %}
@@ -42,12 +44,11 @@
                         <i class="fi-check idea-status"></i>
                     </div>
                     <div class="columns large-11">
-                        {% include "idea.html" with show_likes=False show_actions=False show_comments=False %}
+                        {% include "idea_row.html" with show_likes=False show_actions=False show_comments=False %}
                     </div>
                 </div>
             {% endfor %}
             </div>
-            <hr/>
             <div class="row problem-ideas-modal-buttons">
                 <div class="large-12 text-right">
                     <a class="button success radius problem-idea-modal-save">{% trans "Done" %}</a>
@@ -55,41 +56,10 @@
             </div>
         </div>
 
-        {# Delete modal #}
-
-        <div id="delete-modal" class="reveal-modal small" data-reveal>
-            <div class="row">
-            <div class="columns large-12">
-                <h4>{% trans "Really delete?" %}</h4>
-                <hr/>
-                <p>{% trans "The information will be lost! You won't be able to undo this!" %}</p>
-            </div>
-            </div>
-            <div class="row">
-            <div class="columns large-12">
-                {% crispy delete_form %}
-            </div>
-            </div>
-        </div>
-
-        {# Contributors management #}
-
-        <div id="contributors-modal" class="reveal-modal large" data-reveal>
-            <a class="close-reveal-modal">&#215;</a>
-            <h3>{% trans "Select contributors" %}</h3>
-            <hr/>
-            {% if problem.public %}
-                <div class="panel"><p>{% trans "The problem is public and anyone can contribute to it, but you can still use this form to invite non-registered users or prepare to switch the problem to private mode." %}</p></div>
-            {% endif %}
-            <form id="contributor-form">
-                {% crispy contributor_form %}
-            </form>
-        </div>
-
     {% endif %}
 
     {% if problem_perm_contribute %}
-        <div class="hide" data-problem="{{ problem.id }}" id="comment-form">{% crispy comment_form %}</div>
+        <div class="hide" id="comment-form">{% crispy comment_form %}</div>
     {% endif %}
 
 {% endblock %}
@@ -97,12 +67,6 @@
 {% block topicon %}
     <li class="has-icon"><a href="javascript:void(0);"><i class="fi-megaphone"></i></a></li>
     <li class="divider"></li>
-{% endblock %}
-
-{% block topbutton %}
-    {% if problem_perm_contribute %}
-        <a href="{% url "problem_activity" problem.slug %}" class="button secondary radius right small"><i class="fi-clock"></i>&nbsp;{% trans "Problem activity" %}</a>
-    {% endif %}
 {% endblock %}
 
 {% block content %}
@@ -115,107 +79,161 @@
         </div>
     </div>
 
-    {# Table #}
-
-    <div class="row table-button-row">
-        <div class="columns large-10 large-offset-1">
-            <a class="button expand table-button dropdown">{% trans "Strategy table" %}</a>
+    <div class="row bottom-1em">
+        <div class="columns large-12">
+            {% if problem_perm_contribute %}
+                <a class="action-button" href="{% url "problem_update" problem.id %}"><i class="fi-pencil"></i>&nbsp;{% trans "edit problem" %}</a>
+            {% endif %}
+            <a class="action-button" href="{% url "problem_activity" problem.id %}"><i class="fi-list"></i>&nbsp;{% trans "view activity log" %}</a>
+            {% if not problem.public %}
+                <a class="action-button show-problem-contributors" href="javascript:void(0);"><i class="fi-torso"></i>&nbsp;{% trans "contributors" %}</a>
+            {% endif %}
         </div>
     </div>
 
-    {% include "table.html" %}
+    <div class="row row-line problem-tabs">
+        <div class="columns large-3 medium-3 text-center problem-tab-selector" data-tab="description">
+            <div class="problem-tab-wrapper">
+                <i class="fi-target-two"></i>
+                <p>{% trans "Problem" %}</p>
+            </div>
+        </div>
+        <div class="columns large-3 medium-3 text-center problem-tab-selector" data-tab="criteria">
+            <div class="problem-tab-wrapper">
+                <i class="fi-cloud"></i>
+                <p>{% trans "Criteria" %}</p>
+            </div>
+        </div>
+        <div class="columns large-3 medium-3 text-center problem-tab-selector" data-tab="ideas">
+            <div class="problem-tab-wrapper">
+                <i class="fi-lightbulb"></i>
+                <p>{% trans "Ideas" %}</p>
+            </div>
+        </div>
+        <div class="columns large-3 medium-3 text-center problem-tab-selector" data-tab="alternatives">
+            <div class="problem-tab-wrapper">
+                <i class="fi-list-thumbnails"></i>
+                <p>{% trans "Alternatives" %}</p>
+            </div>
+        </div>
+    </div>
 
-    <div class="row">
+<!--<div class="row">   
+        <div class="small-12 medium-2 medium-offset-1  columns">   
+          <img src="http://placehold.it/480x600&text=[img 1]"/>
+        </div>     
+        <div class="small-12 medium-2 columns">
+           <img src="http://placehold.it/480x600&text=[img 2]"/>         
+        </div>
+        <div class="small-12 medium-2 columns">  
+           <img src="http://placehold.it/480x600&text=[img 3]"/>    
+        </div>
+        <div class="small-12 medium-2 columns">    
+           <img src="http://placehold.it/480x600&text=[img 4]"/>
+        </div>
+        <div class="small-12 medium-2 medium-pull-1 columns">    
+           <img src="http://placehold.it/480x600&text=[img 5]"/> 
+        </div>   
+</div>-->
+
+    <div class="row top-1em">
     <div class="columns large-12 problem-detail">
 
         {# Description #}
 
-        <div class="description">
-            {{ problem.description|safe }}
-        </div>
+        <div class="problem-tab problem-description">
 
-        {# Criterias #}
-
-        {% if problem.criteria.all %}
             <div class="row">
-            <div class="columns large-12 problem-criterias">
-            {% for criteria in problem.criteria.all %}
-                {% include "criteria_button.html" with show_description=1 %}
-            {% endfor %}
+            <div class="columns large-12 description">
+                {{ problem.description|safe }}
             </div>
             </div>
-        {% endif %}
 
-        {# Actions #}
+            {% if problem_perm_contribute %}
 
-        <div class="row">
-            <div class="columns medium-6 large-6">
+                {# Comments #}
 
-                <div class="row bottom-1em">
-                <div class="columns large-12">
+                <div class="row">
+                <div class="columns large-12 comments" id="comments-problem-{{ problem.id }}">
+                    {% if comments %}
+                        <h5 class="top-1em">{% trans "Comments" %}</h5>
+                        {% for comment in comments %}
+                            {% include "comment.html" %}
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                </div>
+
+                {# Comment form for the problem description #}
+
                 {% if problem_perm_contribute %}
-                    <a class="problem-action action-comment" data-problem="{{ problem.id }}" href="javascript:void(0);"><i class="fi-comments"></i>&nbsp;{% trans "Comment" context "verb" %}</a>
+                    <div class="row">
+                    <div class="columns large-12 comment-form hide" id="comment-form-problem-{{ problem.id }}" data-problem="{{ problem.id }}"></div>
+                    </div>
                 {% endif %}
-                {% if problem_perm_edit %}
-                    <a class="problem-action" href="{% url "problem_update" problem.slug %}"><i class="fi-pencil"></i>&nbsp;{% trans "Edit" %}</a>
-                {% endif %}
-                {% if problem_perm_manage %}
-                    <a class="problem-action problem-delete" href="javascript:void(0);" data-problem="{{ problem.id }}"><i class="fi-x"></i>&nbsp;{% trans "Remove" %}</a>
-                    <a class="problem-action problem-manage-contributors" data-reveal-id="contributors-modal" href="javascript:void(0);"><i class="fi-torso"></i>&nbsp;{% trans "Manage contributors" %}</a>
-                {% endif %}
-                </div>
+
+                {# Comment button #}
+
+                <div class="row top-1em">
+                    <div class="columns large-12">
+                        <a class="action-button comment-button" data-problem="{{ problem.id }}" href="javascript:void(0);"><i class="fi-comments"></i>&nbsp;{% trans "Comment" context "verb" %}</a>
+                    </div>
                 </div>
 
-            </div>
-
-            {% if coauthor %}
-                <div class="columns medium-3 large-3">
-                    <small>{% trans "edited" %}</small>
-                    {% include "user_box.html" with clean=True user=coauthor date=problem.updated link=problem.get_absolute_url %}
-                </div>
             {% endif %}
-            <div class="columns medium-3 large-3">
-                {% if coauthor %}<small>{% trans "created" %}</small>{% endif %}
-                {% include "user_box.html" with user=problem.author date=problem.created link=problem.get_absolute_url %}
-            </div>
+
         </div>
 
-        {# Comment form #}
+        {# Criteria #}
 
-        {% if problem_perm_contribute %}
-            <div class="comment-form hide" id="comment-form-problem" data-problem="{{ problem.id }}"></div>
-        {% endif %}
-
-        {# Comments #}
-
-        <div class="comments" id="comments-problem-{{ problem.id }}">
-            {% if comments %}
-                {% for comment in comments %}
-                    {% include "comment.html" %}
+        <div class="problem-tab problem-criteria">
+            {% if criteria %}
+                {% for c in criteria %}
+                    {% include "criteria_row.html" with criteria=c show_actions=False show_parameters=True show_icons=True show_description=True show_comments=True %}
                 {% endfor %}
+            {% else %}
+                {% trans "There's no criteria defined for this problem yet." as message %}
+                {% include "panel.html" with icon="prohibited" message=message %}
             {% endif %}
         </div>
 
         {# Ideas list #}
 
-        <a name="ideas"></a>
-        <div class="problem-ideas">
-            {% for idea in ideas %}
-                <hr/>
-                {% include "idea.html" with show_likes=True show_actions=True show_comments=True %}
-            {% endfor %}
+        <div class="problem-tab problem-ideas">
+            {% if ideas %}
+                {% for idea in ideas %}
+                    {% include "idea_row.html" with show_likes=True show_actions=True show_comments=True %}
+                {% endfor %}
+            {% else %}
+                {% url "idea_create" problem.id as item_url %}
+                {% captureas message %}
+                    {% blocktrans %}There's no idea submitted to this problem yet. You can <a href="{{ item_url }}">give the first one</a>.{% endblocktrans %}
+                {% endcaptureas %}
+                {% include "panel.html" with icon="prohibited" message=message %}
+            {% endif %}
+            <p><a class="button radius expand secondary" href="{% url "idea_create" problem.id %}">{% trans "Add new idea" %}</a></p>
         </div>
 
-        {# Idea form and button #}
+        {# Alternatives #}
 
-        {% if problem_perm_contribute %}
-            <hr/>
-            <div class="problem-idea-form-wrap">
-                <div class="problem-idea-form" id="problem-idea-form">{% crispy form %}</div>
-            </div>
-        {% endif %}
+        <div class="problem-tab problem-alternatives">
+            {% if alternatives %}
+                {% for alternative in alternatives %}
+                    {% include "alternative_row.html" %}
+                {% endfor %}
+            {% else %}
+                {% captureas message %}
+                    {% blocktrans %}There's no alternative created yet.{% endblocktrans %}
+                {% endcaptureas %}
+                {% include "panel.html" with icon="prohibited" message=message %}
+            {% endif %}
+            {% if problem_perm_contribute %}
+                <p><a class="button radius expand secondary new-alternative" href="javascript:void(0)">{% trans "Add new alternative" %}</a></p>
+            {% endif %}
+        </div>
 
     </div>
     </div>
+
 
 {% endblock %}

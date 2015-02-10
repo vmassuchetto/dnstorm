@@ -1,24 +1,21 @@
-{% load crispy_forms_tags i18n %}
+{% load crispy_forms_tags i18n captureas %}
 
 <div class="row" id="problem-table-row">
 
 <div class="columns large-12 problem-table-wrap">
-<table class="problem-table" data-problem="{{ problem.id }}">
+<table id="problem-table" data-problem="{{ problem.id }}">
 
     <thead>
     <tr>
         <th class="text-center">{% trans "Alternative" %}</th>
         <th class="text-center">{% trans "Vote" %}</th>
         <th class="text-center">{% trans "Ideas" %}</th>
-        {% for criteria in criterias %}
-            <th colspan="2" class="criteria text-center" data-criteria="{{ criteria.id }}">
-                <div class="title-inner title-admin">
-                    {% include "criteria_button.html" %}
-                </div>
-                </div>
+        {% for c in criteria %}
+            <th class="criteria-header text-center" data-criteria="{{ c.id }}">
+                <a class="button tiny secondary radius no-margin-bottom" disabled="disabled"><i class="fi-{{ c.icon }}"></i>&nbsp;{{ c.name }}</a>
             </th>
         {% endfor %}
-        <th class="text-center">{% trans "Alternative quality" %}</th>
+        <th class="text-center">{% trans "Results" %}</th>
         {% if problem_perm_manage %}<th class="text-center">{% trans "Manage" %}</th>{% endif %}
     </tr>
     </thead>
@@ -31,22 +28,22 @@
 
     </tbody>
 </table>
-<br/>
 </div>
 
 {% if problem_perm_manage %}
     <div class="columns large-12 table-action-buttons">
         <a class="button radius new-alternative tiny"><i class="fi-plus"></i>&nbsp;{% trans "Add a new alternative" %}</a>
         <a class="button radius secondary tiny table-help-show"><i class="fi-info"></i>&nbsp;{% trans "Need some help?" %}</a>
-        <div class="table-help panel radius secondary">
+        {% captureas message %}
             <ul>
                 <li>{% blocktrans %}To start building the table click on "Add alternative"{% endblocktrans %}</li>
                 <li>{% blocktrans with icon="<i class='fi-pencil'></i>" %}To put ideas into alternatives click on the {{ icon }} icon{% endblocktrans %}</li>
                 <li>{% blocktrans with icon="<i class='fi-x'></i>" %}To delete alternatives click on the {{ icon }} icon{% endblocktrans %}</li>
-                {% url "problem_update" problem.slug as problem_update_url %}
+                {% url "problem_update" problem.id as problem_update_url %}
                 <li>{% blocktrans with url=problem_update_url %}<a href="{{ url }}">Edit the problem</a> to create more criterias{% endblocktrans %}</li>
             </ul>
-        </div>
+        {% endcaptureas %}
+        {% include "panel.html" with icon="alert" message=message class="table-help" %}
     </div>
 {% endif %}
 <hr/>

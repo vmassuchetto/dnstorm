@@ -1,4 +1,4 @@
-{% load staticfiles i18n activity_tags avatar_tags display_name %}<!DOCTYPE html>
+{% load staticfiles i18n activity_tags avatar_tags display_name captureas %}<!DOCTYPE html>
 <!--[if IE 8]><html class="no-js lt-ie9" lang="en"><![endif]-->
 <!--[if gt IE 8]><!--><html class="no-js" lang="en"><!--<![endif]-->
 
@@ -8,12 +8,11 @@
     <title>{{ site_title }}</title>
     <link rel="icon" href="{% static "img/favicon.ico" %}" />
     <link type="text/css" rel="stylesheet" href="{% static 'css/app.css' %}" media="screen, projection" />
-    <link type="text/css" rel="stylesheet" href="{% static "css/foundation-icons.css" %}" />
-    <link type="text/css" rel="stylesheet" href="{% static "css/jquery.jscrollpane.css" %}" />
-    <script type="text/javascript" src="{% static "js/modernizr.js" %}"></script>
-    <script type="text/javascript" src="{% static "js/jquery.js" %}"></script>
-    <script type="text/javascript" src="{% static "js/jquery.ui.custom.js" %}"></script>
-    <script type="text/javascript" src="{% static "js/jquery.jscrollpane.min.js" %}"></script>
+    <link type="text/css" rel="stylesheet" href="{% static "components/foundation-icon-fonts/foundation-icons.css" %}" />
+    <link type="text/css" rel="stylesheet" href="{% static "components/jscrollpane/style/jquery.jscrollpane.css" %}" />
+    <script type="text/javascript" src="{% static "components/modernizr/modernizr.js" %}"></script>
+    <script type="text/javascript" src="{% static "components/foundation/js/vendor/jquery.js" %}"></script>
+    <script type="text/javascript" src="{% static "components/jscrollpane/script/jquery.jscrollpane.min.js" %}"></script>
     <script type="text/javascript" src="{% url "jsi18n" %}"></script>
     {% block head %}{% endblock %}
 </head>
@@ -42,27 +41,31 @@
         <a class="left-off-canvas-toggle menu-icon"><span></span></a>
     </section>
     <section class="middle tab-bar-section hide-for-medium-up">
-        <h1><a id="logo" href="{% url "home" %}">DNStorm</a></h1>
     </section>
 
     {# Medium and large devices section #}
 
-    <section class="top-bar-section hide-for-small">
+    <section class="top-bar-section">
         <ul class="left">
             <li class="divider"></li>
-            <li><a href="{% url "home" %}">{% trans "Home" %}</a></li>
-            <li class="divider"></li>
-            <li><a href="{% url "criterias" %}">{% trans "Criterias" %}</a></li>
-            <li class="divider"></li>
-            <li><a href="{% url "users" %}">{% trans "Users" %}</a></li>
+            <li><h1><a id="logo" href="{% url "home" %}">DNStorm</a></h1></li>
             <li class="divider"></li>
             {% if user.is_authenticated %}
+                <li><a href="{% url "users" %}">{% trans "Users" %}</a></li>
+                <li class="divider"></li>
                 <li><a href="{% url "activity" %}">{% trans "Activity" %}</a></li>
                 <li class="divider"></li>
+                <li class="active">
+                    <a href="{% url "problem_create" %}"><i class="fi-plus"></i> {% trans "Post problem" %}</a>
+                </li>
             {% endif %}
         </ul>
         <ul class="right">
             {% if user.is_authenticated %}
+                {% if problem_drafts or idea_drafts %}
+                    <li class="divider"></li>
+                    <li class="has-icon drafts drafts-icon"><a href="javascript:void(0);"><i class="fi-page-edit"></i><span class="counter">{{ drafts_count }}</span></a></li>
+                {% endif %}
                 <li class="divider"></li>
                 <li class="has-icon notification notification-icon{% if user_activity_counter > "0" %} alert{% endif %}"><a href="javascript:void(0);"><i class="fi-lightbulb"></i><span class="counter">{{ user_activity_counter }}</span></a></li>
                 <li class="divider"></li>
@@ -107,68 +110,81 @@
 {% endblock %}
 
 {% block messages %}
-{% if messages %}
-{% for message in messages %}
-    <div class="upper-bar-wrap message-bar{% if message.tags %} {{ message.tags }}{% endif %}">
-        <div class="row">
+    {% if messages %}
+        {% for message in messages %}
+            {% include "message.html" %}
+        {% endfor %}
+    {% endif %}
+    {% if form.errors %}
+        {% captureas message %}{% blocktrans %}Something went wrong with the submission. Please review the warnings on the form.{% endblocktrans %}{% endcaptureas %}
+        {% include "message.html" with message=message message_tags="warning" %}
+    {% endif %}
+{% endblock %}
+
+{# Drafts #}
+
+{% if problem_drafts or idea_drafts %}
+<div id="drafts" class="scroll-box">
+    <div id="drafts-box" class="scroll-box-inner">
+        {% if problem_drafts %}<h5>{% trans "Problems" %}</h5>{% endif %}
+        {% for draft in problem_drafts %}
+            <div class="row collapse">
+                <div class="columns large-12 drafts-item scroll-box-item">
+                    <div class="info"><a href="{% url "problem_update" draft.id %}">{% if draft.title %}{{ draft.title }}{% else %}{% trans "No title" %}{% endif %}</a><span class="label secondary tiny right">{{ draft.updated|date:"d/m/Y H:i" }}</span></div>
+                </div>
+            </div>
+        {% endfor %}
+        {% if idea_drafts %}<h5>{% trans "Ideas" %}</h5>{% endif %}
+        {% for draft in idea_drafts %}
+            <div class="row collapse">
+                <div class="columns large-12 drafts-item scroll-box-item">
+                    <div class="info"><a href="{% url "idea_update" draft.id %}">{% if draft.title %}{{ draft.title }}{% else %}{% trans "No title" %}{% endif %}</a><span class="label secondary tiny right">{{ draft.updated|date:"d/m/Y H:i" }}</span></div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+{# Activity stream #}
+
+{% if user.is_authenticated %}
+<div id="activity" class="scroll-box">
+    <div id="activity-box" class="scroll-box-inner">
+    {% if user_activity %}
+        {% for action in user_activity %}
+            <div class="row collapse">
+                <div class="columns large-12 activity-item scroll-box-item">
+                    <div class="left avatar">{% avatar action.actor 32 %}</div>
+                    <div class="info">{% display_action action %}</div>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="row collapse">
             <div class="columns large-12">
-                <p>{{ message }}</p>
-                <a class="close">&#215;</a>
+                <p class="button expand secondary" disabled="disabled">{% trans "No activity so far." %}</p>
             </div>
         </div>
+    {% endif %}
     </div>
-{% endfor %}
+    {% if user_activity %}
+        <div class="row collapse">
+            <div class="columns large-12">
+                <a class="button small radius expand no-margin-bottom" href="{% url "activity" %}">{% trans "View all activities" %}</a>
+            </div>
+        </div>
+    {% endif %}
+</div>
 {% endif %}
-{% endblock %}
 
 <div class="bottom-1em"></div>
 
-<div class="row show-for-medium-up" id="header-wrap">
-
-    {# Activity stream #}
-
-    {% if user.is_authenticated %}
-    <div id="activity" class="hide">
-        <div id="activity-box">
-        {% if user_activity %}
-            {% for action in user_activity %}
-                <div class="row collapse">
-                    <div class="columns large-12 activity-item">
-                        <div class="left avatar">{% avatar action.actor 32 %}</div>
-                        <div class="info">{% display_action action %}</div>
-                    </div>
-                </div>
-            {% endfor %}
-        {% else %}
-            <div class="row collapse">
-                <div class="columns large-12">
-                    <p class="button expand secondary" disabled="disabled">{% trans "No activity so far." %}</p>
-                </div>
-            </div>
-        {% endif %}
-        </div>
-        {% if user_activity %}
-            <div class="row">
-                <div class="columns large-12">
-                    <a class="button small radius expand no-margin-bottom" href="{% url "activity" %}">{% trans "View all activities" %}</a>
-                </div>
-            </div>
-        {% endif %}
-    </div>
-    {% endif %}
-
-    <div class="columns large-4 medium-4 text-left">
-        <h1><a id="logo" href="{% url "home" %}">DNStorm</a></h1>
-    </div>
-    <div class="columns top-buttons large-8 medium-8">
-        {% if user.is_authenticated %}
-            <a class="button radius small right" href="{% url 'problem_create' %}"><i class="fi-page-add"></i>&nbsp;{% trans 'Create new problem' %}</a>
-        {% endif %}
-        {% block topbutton %}{% endblock %}
+<div class="row">
+    <div class="columns large-12">
+        {% block content %}{% endblock %}
     </div>
 </div>
-
-{% block content %}{% endblock %}
 
 <footer>
 <div class="row">
@@ -180,7 +196,7 @@
     </div>
 </footer>
 
-<script type="text/javascript" src="{% static "js/foundation.min.js" %}"></script>
+<script type="text/javascript" src="{% static "components/foundation/js/foundation.min.js" %}"></script>
 <script type="text/javascript" src="{% static "js/scripts.js" %}"></script>
 
 </body>

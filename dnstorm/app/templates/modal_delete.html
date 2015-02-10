@@ -1,0 +1,16 @@
+{% load i18n crispy_forms_tags %}
+
+<div id="delete-modal" class="reveal-modal small" data-reveal>
+    <div class="row">
+    <div class="columns large-12">
+        <h4>{% trans "Really delete?" %}</h4>
+        <hr/>
+        <p>{% trans "The information will be lost! You won't be able to undo this!" %}</p>
+    </div>
+    </div>
+    <div class="row">
+    <div class="columns large-12">
+        {% crispy delete_form %}
+    </div>
+    </div>
+</div>
