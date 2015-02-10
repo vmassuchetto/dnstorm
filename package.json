@@ -1,5 +1,6 @@
 {
   "name": "DNStorm",
+  "version": "1.0.0",
   "main": "Gruntfile.js",
   "directories": {
     "doc": "docs"
