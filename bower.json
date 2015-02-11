@@ -1,6 +1,24 @@
 {
-    "name": "DNStorm",
-    "version": "0.1.0",
-    "dependencies": {
-    }
-} 
+  "name": "DNStorm",
+  "version": "0.1.0",
+  "dependencies": {
+    "foundation-icon-fonts": "*",
+    "foundation": "~5.5.1",
+    "jscrollpane": "~2.0.20",
+    "modernizr": "~2.8.3"
+  },
+  "homepage": "https://github.com/vmassuchetto/dnstorm",
+  "authors": [
+    "Vinicius Massuchetto <vmassuchetto@gmail.com>"
+  ],
+  "description": "A proposal about decision-making and collaborativity",
+  "license": "GPLv2",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "dnstorm/app/static/components/",
+    "test",
+    "tests"
+  ]
+}
