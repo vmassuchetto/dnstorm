@@ -284,6 +284,7 @@ class AjaxView(View):
 
         self.request.POST = self.request.POST.copy()
         self.request.POST['author'] = self.request.user.id
+        self.request.POST['description'] = self.request.POST['criteria_description']
         criteria = CriteriaForm(self.request.POST)
 
         criteria.instance = obj if obj else criteria.instance

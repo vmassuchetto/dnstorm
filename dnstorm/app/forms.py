@@ -133,7 +133,7 @@ class UserPasswordForm(forms.Form):
 
 class CriteriaForm(forms.ModelForm):
     id = forms.IntegerField(widget=forms.HiddenInput, initial=0)
-    description = forms.CharField(widget=forms.Textarea(attrs={'id': 'criteria_description'}))
+    criteria_description = forms.CharField(widget=forms.Textarea(attrs={'id': 'criteria_description'}))
 
     class Meta:
         model = models.Criteria
@@ -147,7 +147,7 @@ class CriteriaForm(forms.ModelForm):
         layout_args = (
             'id',
             'name',
-            'description',
+            'criteria_description',
             'fmt',
             Row(
                 Column('min', css_class='large-6'),
