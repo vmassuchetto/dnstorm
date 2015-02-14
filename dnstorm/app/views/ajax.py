@@ -294,7 +294,7 @@ class AjaxView(View):
         criteria.save()
 
         criteria.instance.fill_data()
-        result = loader.render_to_string('criteria_row.html', {'criteria': criteria.instance, 'criteria_form': criteria})
+        result = loader.render_to_string('criteria_row.html', {'criteria': criteria.instance, 'show_actions': True, 'criteria_form': criteria})
         return HttpResponse(json.dumps({'result': result}), content_type='application/json')
 
     def new_alternative(self):
