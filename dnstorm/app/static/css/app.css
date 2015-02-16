@@ -6221,9 +6221,9 @@ form.auth-form a.button, form.auth-form input[type='button'], form.auth-form inp
   position: relative; }
   .panel i {
     position: absolute;
-    top: -0.3125rem;
-    left: 0.9375rem;
-    font-size: 3rem; }
+    top: 0.4375rem;
+    left: 1.375rem;
+    font-size: 2rem; }
   .panel p {
     font-size: 1rem;
     padding: 0.625rem 0; }
