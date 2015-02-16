@@ -15,14 +15,26 @@
 {% endblock %}
 
 {% block content %}
+
     <div class="hidden" id="criteria-form">{% include "criteria_row.html" %}</div></div>
+
     <div class="row">
-    <div class="columns large-12">
-        <h3>{{ title }}</h3>
-        {% if problem.published %}
-            <p><a class="action-button" href="{% url "problem" problem.id problem.slug %}"><i class="fi-page"></i>&nbsp;{% trans "View published problem" %}</a></p>
-        {% endif %}
-        {% crispy form %}
+        <div class="columns large-12">
+            <h3>{{ title }}</h3>
+        </div>
     </div>
+
+    <div class="row bottom-1em">
+        <div class="columns large-12">
+            <a class="action-button" href="{% url "problem" problem.id problem.slug %}"><i class="fi-page"></i>&nbsp;{% if problem.published %}{% trans "View published problem" %}{% else %}{% trans "Preview this problem" %}{% endif %}</a>
+            <a class="action-button" href="{% url "problem_activity" problem.id %}"><i class="fi-list"></i>&nbsp;ver log de atividades</a>
+        </div>
     </div>
+
+    <div class="row">
+        <div class="columns large-12">
+            {% crispy form %}
+        </div>
+    </div>
+
 {% endblock %}

@@ -154,11 +154,11 @@ class ProblemUpdateView(UpdateView):
         if not self.object.published:
             view = 'problem_update'
             kwargs = { 'pk': self.object.id }
-            messages.success(self.request, _('The problem was successfully saved.'))
+            messages.success(self.request, _('The problem was successfully saved. Note that it is not published yet.'))
         else:
             view = 'problem'
             kwargs = { 'pk': self.object.id, 'slug': self.object.slug }
-            messages.success(self.request, _('The problem is now published.'))
+            messages.success(self.request, _('The problem is now published. Users can start contributing to it.'))
         return HttpResponseRedirect(reverse(view, kwargs=kwargs))
 
 class ProblemView(TemplateView):
@@ -167,7 +167,8 @@ class ProblemView(TemplateView):
     @method_decorator(csrf_protect)
     def dispatch(self, request, *args, **kwargs):
         """
-        Redirects to the full ``problems/<id>/<slug>`` URL format of a problem.
+        Redirects to the full ``problems/<id>/<slug>`` URL format of a problem,
+        and make the usual permission check if it's the valid URL.
         """
         self.object = get_object_or_404(models.Problem, id=kwargs['pk'])
         if 'slug' not in kwargs or kwargs['slug'] != self.object.slug:

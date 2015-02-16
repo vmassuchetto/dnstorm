@@ -71,6 +71,13 @@
 
 {% block content %}
 
+    {# Draft mode #}
+
+    {% if not problem.published %}
+        {% trans "This is a preview mode from a unpublished draft. The problem is not available for user contribution until it is published." as message %}
+        {% include "panel.html" with icon="page-edit" message=message %}
+    {% endif %}
+
     {# Title #}
 
     <div class="row">
@@ -78,6 +85,8 @@
             <h3>{{ problem.title }}</h3>
         </div>
     </div>
+
+    {# Action butons #}
 
     <div class="row bottom-1em">
         <div class="columns large-12">
@@ -90,6 +99,8 @@
             {% endif %}
         </div>
     </div>
+
+    {# Tabs #}
 
     <div class="row row-line problem-tabs">
         <div class="columns large-3 medium-3 text-center problem-tab-selector" data-tab="description">

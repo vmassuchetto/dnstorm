@@ -1561,7 +1561,7 @@ button, .button {
   font-family: "Helvetica Neue", Helvetica, Roboto, Arial, sans-serif;
   font-weight: normal;
   line-height: normal;
-  margin: 0 0 1.25rem;
+  margin: 0 0 0;
   position: relative;
   text-decoration: none;
   text-align: center;
@@ -6134,6 +6134,13 @@ hr {
   position: fixed !important;
   top: 0 !important; }
 
+/* }}} Forms {{{ */
+fieldset {
+  margin: 0 0 1.25rem 0; }
+
+input[type="text"], input[type="password"], input[type="date"], input[type="datetime"], input[type="datetime-local"], input[type="month"], input[type="week"], input[type="email"], input[type="number"], input[type="search"], input[type="tel"], input[type="time"], input[type="url"], input[type="color"], textarea {
+  margin: 0; }
+
 .cke_ltr {
   width: 100% !important; }
 
@@ -6367,30 +6374,43 @@ h6.subheader {
   margin: 0.375rem;
   border-bottom: 1px solid #eaeaea; }
   .list-item h4 {
-    margin: 4px 0 8px 0;
+    margin: 0.3125rem 0 0.1875rem 0;
     color: #444;
     line-height: 1; }
   .list-item .counter {
-    text-align: center;
-    background: #eaeaea;
-    padding: 14px 5px;
-    border-left: 2px solid #FFF;
-    border-right: 2px solid #FFF; }
-    .list-item .counter span {
-      display: block; }
-    .list-item .counter .number {
-      color: #444;
-      font-size: 1.875rem;
-      letter-spacing: -0.0625rem;
+    border-left: 2px solid white;
+    border-right: 2px solid white; }
+  .list-item a.button {
+    padding: 0.9375rem 0 0.625rem 0;
+    background-color: #DDDDDD;
+    border: 1px solid #B7B7B7;
+    font-weight: bold;
+    color: #777777; }
+    .list-item a.button:hover em {
+      color: black; }
+    .list-item a.button.draft {
+      padding: 0.625rem 0 0.625rem 0; }
+    .list-item a.button i {
+      font-size: 1.5rem; }
+    .list-item a.button em {
+      font-style: normal;
+      font-weight: bold;
       line-height: 1; }
-    .list-item .counter .description {
-      color: #777777;
-      font-size: 0.75rem; }
-
-.problem-list-item .counter {
-  width: 32.888%; }
-.problem-list-item .problem-info {
-  padding: 0.3125rem 0 0 0; }
+    .list-item a.button em.draft {
+      font-size: 1.125rem; }
+    .list-item a.button em.number {
+      font-size: 1rem;
+      display: block;
+      clear: both;
+      font-size: 2rem;
+      line-height: 0.7; }
+    .list-item a.button em.description {
+      font-size: 0.75rem;
+      line-height: 0.7; }
+  .list-item .problem-info {
+    padding: 0.3125rem 0 0 0; }
+  .list-item.draft {
+    background-color: #F7F7F7; }
 
 .problem-tabs .problem-tab-selector {
   cursor: pointer; }
@@ -6698,6 +6718,8 @@ h6.subheader {
     .criteria-row .frontend .criteria-info p i {
       font-size: 1rem;
       margin-right: 0.3125rem; }
+  .criteria-row .frontend .criteria-actions {
+    padding-top: 0.625rem; }
   .criteria-row .frontend h5.criteria-name {
     margin: 0.5rem 0 0 2.8125rem;
     line-height: 1.875rem; }
@@ -6817,9 +6839,6 @@ h6.subheader {
   font-size: 0.8125rem;
   margin-bottom: 0.3125rem; }
 
-.table-action-buttons {
-  margin-top: 0.9375rem; }
-
 .row-line {
   border-top: 1px solid #DDDDDD;
   border-bottom: 1px solid #DDDDDD;
@@ -6832,7 +6851,7 @@ h6.subheader {
   font-family: "Helvetica Neue", Helvetica, Roboto, Arial, sans-serif;
   font-weight: normal;
   line-height: normal;
-  margin: 0 0 1.25rem;
+  margin: 0 0 0;
   position: relative;
   text-decoration: none;
   text-align: center;

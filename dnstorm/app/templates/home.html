@@ -15,33 +15,69 @@
     {% if problems %}
 
         {% for problem in problems %}
-            <div class="row list-item problem-list-item"{% if forloop.counter == 1 %} id="problem-first"{% endif %}>
+            <div class="row list-item">
+
+                {# Button indicators #}
+
                 <div class="columns large-4 medium-4 show-for-medium-up">
-                    <div class="counter idea-counter left">
-                        <span class="number">{{ problem.idea_set.count }}</span>
-                        <span class="description">{% if problem.idea_count > 1 or problem.idea_count = 0 %}{% trans "ideas" %}{% else %}{% trans "idea" %}{% endif %}</span>
-                    </div>
-                    <div class="counter criteria-counter left">
-                        <span class="number">{{ problem.criteria_set.count }}</span>
-                        <span class="description">{% trans "Criteria" %}</span>
-                    </div>
-                    <div class="counter alternative-counter left">
-                        <span class="number">{{ problem.alternative_set.count }}</span>
-                        <span class="description">{% if problem.alternative_count > 1 or problem.alternative_count = 0 %}{% trans "alternatives" %}{% else %}{% trans "alternative" %}{% endif %}</span>
+                    <div class="row collapse">
+                        {% if problem.published %}
+                            <div class="columns large-4 counter idea-counter">
+                                <a class="button secondary expand" href="{% url "problem" problem.id problem.slug %}">
+                                    <em class="number">{{ problem.idea_set.count }}</em>
+                                    <em class="description">{% if problem.idea_count > 1 or problem.idea_count = 0 %}{% trans "ideas" %}{% else %}{% trans "idea" %}{% endif %}</em>
+                                </a>
+                            </div>
+                            <div class="columns large-4 counter criteria-counter left">
+                                <a class="button secondary expand" href="{% url "problem" problem.id problem.slug %}">
+                                    <em class="number">{{ problem.criteria_set.count }}</em>
+                                    <em class="description">{% trans "Criteria" %}</em>
+                                </a>
+                            </div>
+                            <div class="columns large-4 counter alternative-counter left">
+                                <a class="button secondary expand" href="{% url "problem" problem.id problem.slug %}">
+                                    <em class="number">{{ problem.alternative_set.count }}</em>
+                                    <em class="description">{% if problem.alternative_count > 1 or problem.alternative_count = 0 %}{% trans "alternatives" %}{% else %}{% trans "alternative" %}{% endif %}</em>
+                                </a>
+                            </div>
+                        {% else %}
+                            <div class="columns large-4 counter">
+                                <a class="button secondary expand draft" href="{% url "problem" problem.id %}">
+                                    <em class="number"><i class="fi-page-filled"></i></em>
+                                    <em class="description">{% trans "Preview" %}</em>
+                                </a>
+                            </div>
+                            <div class="columns large-8 counter">
+                                <a class="button secondary expand draft" href="{% url "problem_update" problem.id %}">
+                                    <em class="number"><i class="fi-page-edit"></i></em>
+                                    <em class="description">{% trans "Edit draft" %}</em>
+                                </a>
+                            </div>
+                        {% endif %}
                     </div>
                 </div>
+
+                {# Title and date #}
+
                 <div class="problem-info columns large-8 medium-9 small-12">
                     <div class="row collapse">
                         <div class="columns large-12">
-                            <h4 class="left"><a href="{% url "problem" problem.id problem.slug %}">{{ problem.title }}</a></h4>
+                            <h4>
+                                {% if problem.published %}
+                                    <a href="{% url "problem" problem.id problem.slug %}">{{ problem.title }}</a>
+                                {% else %}
+                                    <a href="{% url "problem_update" problem.id %}">{% if problem.title %}{{ problem.title }}{% else %}{% trans "No title" %}{% endif %}</a>
+                                {% endif %}
+                            </h4>
                         </div>
                     </div>
                     <div class="row collapse">
                         <div class="columns large-12">
-                            <h6 class="subheader right">{% blocktrans with time=problem.last_activity|naturaltime %}last modified {{ time }}{% endblocktrans %}</h6>
+                            <h6 class="subheader">{% blocktrans with time=problem.last_activity|naturaltime %}last modified {{ time }}{% endblocktrans %}</h6>
                         </div>
                     </div>
                 </div>
+
             </div>
         {% endfor %}
 

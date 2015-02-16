@@ -36,15 +36,21 @@ class HomeView(TemplateView):
     def get_context_data(self, *args, **kwargs):
         context = super(HomeView, self).get_context_data(**kwargs)
         if self.request.user.is_authenticated():
-            q_problems = (Q(published=True) & Q(public=True)) \
-                & (Q(author=self.request.user.id) | Q(contributor=self.request.user.id))
+            q_problems = ((
+                    (Q(published=True) & Q(public=True))
+                    | (Q(published=False) & Q(author=self.request.user.id))
+                ) | (
+                    (Q(published=True))
+                    & (Q(author=self.request.user.id) | Q(contributor=self.request.user.id))
+                )
+            )
         else:
             q_problems = Q(published=True) & Q(public=True)
         first_time = get_option('firsttime_homeview')
         if not first_time:
             context['first_time'] = True
         context['breadcrumbs'] = self.get_breadcrumbs()
-        problems = Paginator(Problem.objects.filter(q_problems).distinct().order_by('-last_activity'), 25)
+        problems = Paginator(Problem.objects.filter(q_problems).distinct().order_by('published', '-last_activity'), 25)
         context['problems'] = problems.page(self.request.GET.get('page', 1))
         return context
 

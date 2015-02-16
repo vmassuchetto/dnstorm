@@ -14,13 +14,37 @@ def problem(**kwargs):
     elif user and user.is_superuser:
         return True
     elif mode == 'view':
-        return obj.public or obj.author == user or user in obj.contributor.all()
+        return (
+            (not obj.published and obj.author == user)
+            or (
+                (obj.published and obj.public)
+                or obj.author == user
+                or user in obj.contributor.all()
+            )
+        )
     elif mode == 'contribute':
-        return user.is_authenticated() and (obj.public or obj.author == user or user in obj.contributor.all())
+        return (
+            (obj.published and user.is_authenticated())
+            and (
+                obj.public
+                or obj.author == user
+                or user in obj.contributor.all()
+            )
+        )
     elif mode == 'edit':
-        return user.is_authenticated() and ((obj.public and obj.open) or (obj.open and user in obj.contributor.all()) or (obj.author == user))
+        return (
+            (user.is_authenticated())
+            and (
+                (obj.public and obj.open)
+                or (obj.open and user in obj.contributor.all())
+                or obj.author == user
+            )
+        )
     elif mode == 'manage':
-        return obj.author == user
+        return (
+            (user.is_authenticated())
+            and obj.author == user
+        )
     return False
 
 def idea(**kwargs):

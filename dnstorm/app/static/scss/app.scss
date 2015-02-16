@@ -86,6 +86,30 @@ hr {
     top: 0 !important;
 }
 
+/* }}} Forms {{{ */
+
+fieldset {
+    margin: 0 0 emCalc(20px) 0;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="date"],
+input[type="datetime"],
+input[type="datetime-local"],
+input[type="month"],
+input[type="week"],
+input[type="email"],
+input[type="number"],
+input[type="search"],
+input[type="tel"],
+input[type="time"],
+input[type="url"],
+input[type="color"],
+textarea {
+    margin:0;
+}
+
 // }}}
 
 // CKEditor {{{
@@ -403,42 +427,56 @@ h6.subheader {
     margin: emCalc(6x);
     border-bottom: 1px solid lighten($black, 65%);
     h4 {
-        margin: 4px 0 8px 0;
+        margin: emCalc(5px) 0 emCalc(3px) 0;
         color: $black;
         line-height: 1;
     }
     .counter {
-        text-align: center;
-        background: lighten($black, 65%);
-        padding: 14px 5px;
-        border-left: 2px solid $white;
-        border-right: 2px solid $white;
-        //@include text-shadow(
-            //lighten($black, 50%) 1px 1px 0,
-            //lighten($black, 70%) 2px 2px 0
-        //);
-        span {
-            display: block;
+        border-left: 2px solid white;
+        border-right: 2px solid white;
+    }
+    a.button {
+        padding: emCalc(15px) 0 emCalc(10px) 0;
+        background-color: $light-grey;
+        border: 1px solid $grey;
+        font-weight: bold;
+        color: $light-black;
+        &:hover {
+            em {
+                color: black;
+            }
         }
-        .number {
-            color: $black;
-            font-size: emCalc(30px);
-            letter-spacing: emCalc(-1px);
+        &.draft {
+            padding: emCalc(10px) 0 emCalc(10px) 0;
+        }
+        i {
+            font-size: emCalc(24px);
+        }
+        em {
+            font-style: normal;
+            font-weight: bold;
             line-height: 1;
         }
-        .description {
-            color: $light-black;
-            font-size: emCalc(12px);
+        em.draft {
+            font-size: emCalc(18px);
         }
-    }
-}
-
-.problem-list-item {
-    .counter {
-        width: 32.888%;
+        em.number {
+            font-size: emCalc(16px);
+            display: block;
+            clear: both;
+            font-size: emCalc(32px);
+            line-height: 0.7;
+        }
+        em.description {
+            font-size: emCalc(12px);
+            line-height: 0.7;
+        }
     }
     .problem-info {
         padding: emCalc(5px) 0 0 0;
+    }
+    &.draft {
+        background-color: #F7F7F7;
     }
 }
 
@@ -856,6 +894,9 @@ h6.subheader {
                 }
             }
         }
+        .criteria-actions {
+            padding-top: emCalc(10px);
+        }
         h5.criteria-name {
             margin: emCalc(8px) 0 0 emCalc(45px);
             line-height: emCalc(30px);
@@ -1035,10 +1076,6 @@ h6.subheader {
         font-size: emCalc(13px);
         margin-bottom: emCalc(5px);
     }
-}
-
-.table-action-buttons {
-    margin-top: emCalc(15px);
 }
 
 .row-line {
