@@ -168,6 +168,8 @@ class CriteriaForm(forms.ModelForm):
         )
         self.helper.layout = Layout(*layout_args)
         super(CriteriaForm, self).__init__(*args, **kwargs)
+        if self.instance:
+            self.fields['criteria_description'].initial = self.instance.description
 
     def clean(self):
         """
@@ -210,17 +212,7 @@ class ProblemForm(forms.ModelForm):
         criteria_html = ''
         if self.instance:
             for c in self.instance.criteria_set.all().order_by('name'):
-                criteria_form = CriteriaForm(initial={
-                    'id': c.id,
-                    'name': c.name,
-                    'description': c.description,
-                    'fmt': c.fmt,
-                    'min': c.min,
-                    'max': c.max,
-                    'order': c.order,
-                    'weight': c.weight,
-                    'result': c.result
-                })
+                criteria_form = CriteriaForm(instance=c)
                 c.fill_data()
                 criteria_html += render_to_string('criteria_row.html', {'criteria': c, 'show_actions': True, 'criteria_form': criteria_form})
         criteria_html = '<div class="criteria">%s</div>' % criteria_html
