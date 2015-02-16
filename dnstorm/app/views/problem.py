@@ -21,6 +21,7 @@ from django.shortcuts import get_object_or_404
 from django.template.loader import render_to_string
 from django.utils.decorators import method_decorator
 from django.utils.html import strip_tags
+from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
 from django.views.decorators.csrf import csrf_protect
 from django.views.generic import DetailView
@@ -151,10 +152,11 @@ class ProblemUpdateView(UpdateView):
                 a[0][1].data = {'diff': problemdiff}
                 a[0][1].save()
             activity_count(self.object)
+
         if not self.object.published:
             view = 'problem_update'
             kwargs = { 'pk': self.object.id }
-            messages.success(self.request, _('The problem was successfully saved. Note that it is not published yet.'))
+            messages.success(self.request, mark_safe(_('The problem was successfully saved as a draft. <a class="left-1em button success tiny radius" target="_blank" href="%s">Preview</a>' % reverse('problem', kwargs={'pk': self.object.id, 'slug': self.object.slug}))))
         else:
             view = 'problem'
             kwargs = { 'pk': self.object.id, 'slug': self.object.slug }
