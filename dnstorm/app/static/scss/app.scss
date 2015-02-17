@@ -1079,24 +1079,6 @@ h6.subheader {
     margin-bottom: emCalc(15px);
 }
 
-.table-button {
-    @include button(rem-calc(6), #F4F4F4, false, true, false, false);
-    border-radius: 0 0 3px 3px;
-    border-left: 1px solid #DCDCDC;
-    border-right: 1px solid #DCDCDC;
-    border-bottom: 1px solid #DCDCDC;
-    text-transform: uppercase;
-    font-size: rem-calc(10);
-}
-
-.table-help {
-    display: none;
-}
-
-#header-wrap {
-    position: relative;
-}
-
 // Notifications
 
 .draft-icon,
@@ -1152,18 +1134,14 @@ h6.subheader {
     z-index: 200;
     width: 35%;
     background: white;
-    padding: 0 emCalc(10px) emCalc(10px) emCalc(10px);
+    padding: emCalc(10px) emCalc(5px);
     border: 1px solid $grey;
-    border-radius: 3px;
     .scroll-box-inner {
         overflow: hidden;
         height: 250px;
-        font-size: emCalc(12px);
+        font-size: emCalc(13px);
         line-height: 1.1;
-        margin: 0.5em 0;
-        hr {
-            margin: 0.5em 0;
-        }
+        margin: 0 0 emCalc(10px) 0;
         .avatar {
             margin-right: 5px;
         }
@@ -1173,7 +1151,10 @@ h6.subheader {
         }
     }
     .scroll-box-item {
-        border-bottom: 1px dotted $grey;
+        &:first-child {
+            border-top: 0;
+        }
+        border-top: 1px solid #EAEAEA;
         margin: 0;
         padding: emCalc(5px) 0;
     }
@@ -1181,6 +1162,13 @@ h6.subheader {
 
 #activity {
     right: 150px;
+}
+
+.activity-sidebar-avatar img {
+    border: 10px solid #EAEAEA;
+}
+.activity-avatar {
+    border: 2px solid #EAEAEA;
 }
 
 #drafts {

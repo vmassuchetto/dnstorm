@@ -5,7 +5,6 @@ def problem(**kwargs):
     """
     Regulate permissions for problem objects.
     """
-
     obj = kwargs.get('obj')
     user = kwargs.get('user')
     mode = kwargs.get('mode', 'contribute')
@@ -51,7 +50,6 @@ def idea(**kwargs):
     """
     Regulate permissions for idea objects.
     """
-
     obj = kwargs.get('obj')
     user = kwargs.get('user')
     mode = kwargs.get('mode', 'manage')
@@ -67,21 +65,10 @@ def idea(**kwargs):
         return problem(obj=obj.problem, user=user, mode='edit')
     return False
 
-def idea_queryset(**kwargs):
-    """
-    Returns querysets for ideas based on user permissions.
-    """
-
-    user = kwargs.get('user', None)
-    if user and user.is_superuser:
-        return Q()
-    return Q(author=user.id)
-
 def comment(**kwargs):
     """
     Regulate permissions for comment objects.
     """
-
     obj = kwargs.get('obj')
     user = kwargs.get('user')
     mode = kwargs.get('mode', 'manage')
@@ -99,7 +86,6 @@ def criteria(**kwargs):
     """
     Regulate permissions for criteria objects.
     """
-
     obj = kwargs.get('obj')
     user = kwargs.get('user')
     mode = kwargs.get('mode', 'manage')
@@ -110,3 +96,14 @@ def criteria(**kwargs):
     elif mode == 'manage':
         return obj.author == user
     return False
+
+def user(**kwargs):
+    """
+    Regulate permissions for user objects.
+    """
+    obj = kwargs.get('obj')
+    user = kwargs.get('user')
+    mode = kwargs.get('mode', 'manage')
+    if not obj or not user or not mode:
+        return False
+    return (user and user.is_superuser) or (user.id == obj.id)

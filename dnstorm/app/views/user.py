@@ -14,6 +14,7 @@ from django.views.generic.edit import FormView, UpdateView
 
 from actstream.models import actor_stream
 
+from dnstorm.app import permissions
 from dnstorm.app.forms import UserForm, UserPasswordForm
 from dnstorm.app.models import Problem, Idea, Comment, Option
 from dnstorm.app.utils import get_option, get_object_or_none, get_user
@@ -29,8 +30,9 @@ class UserView(TemplateView):
         context['site_title'] = '%s | %s' % (user.username, _('User profile'))
         context['profile'] = user
         context['breadcrumbs'] = self.get_breadcrumbs(username=context['username'])
-        activities = Paginator(actor_stream(context['profile']), 20)
+        activities = Paginator(actor_stream(context['profile']), 25)
         context['activities'] = activities.page(self.request.GET.get('page', 1))
+        context['user_perm_manage'] = permissions.user(obj=user, user=self.request.user, mode='manage')
         return context
 
     def get_breadcrumbs(self, **kwargs):
@@ -98,7 +100,7 @@ class UserUpdateView(UpdateView):
         user_obj.first_name = form_obj.first_name
         user_obj.is_superuser = form_obj.is_superuser
         user_obj.save()
-        messages.success(self.request, _('User information saved'))
+        messages.success(self.request, _('User information was updated.'))
         return HttpResponseRedirect(reverse('user', kwargs={'username': user_obj.username}))
 
 class UserPasswordUpdateView(FormView):
@@ -137,5 +139,5 @@ class UserPasswordUpdateView(FormView):
 
         self.object.set_password(self.request.POST['password1'])
         self.object.save()
-        messages.success(self.request, _('User password updated'))
+        messages.success(self.request, _('User password was updated.'))
         return HttpResponseRedirect(reverse('user', kwargs={'username': self.object.username}))

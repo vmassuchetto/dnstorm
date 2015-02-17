@@ -6844,51 +6844,6 @@ h6.subheader {
   border-bottom: 1px solid #DDDDDD;
   margin-bottom: 0.9375rem; }
 
-.table-button {
-  border-style: solid;
-  border-width: 0;
-  cursor: pointer;
-  font-family: "Helvetica Neue", Helvetica, Roboto, Arial, sans-serif;
-  font-weight: normal;
-  line-height: normal;
-  margin: 0 0 0;
-  position: relative;
-  text-decoration: none;
-  text-align: center;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  border-radius: 0;
-  display: inline-block;
-  padding-top: 0.375rem;
-  padding-right: 0.75rem;
-  padding-bottom: 0.4375rem;
-  padding-left: 0.75rem;
-  padding-top: 0.375rem;
-  padding-bottom: 0.4375rem;
-  padding-right: 0;
-  padding-left: 0;
-  width: 100%;
-  background-color: #F4F4F4;
-  border-color: #c3c3c3;
-  color: #333333;
-  transition: background-color 300ms ease-out;
-  border-radius: 0 0 3px 3px;
-  border-left: 1px solid #DCDCDC;
-  border-right: 1px solid #DCDCDC;
-  border-bottom: 1px solid #DCDCDC;
-  text-transform: uppercase;
-  font-size: 0.625rem; }
-  .table-button:hover, .table-button:focus {
-    background-color: #c3c3c3; }
-  .table-button:hover, .table-button:focus {
-    color: #333333; }
-
-.table-help {
-  display: none; }
-
-#header-wrap {
-  position: relative; }
-
 .draft-icon a, .notification-icon a {
   position: relative;
   line-height: 1; }
@@ -6924,29 +6879,34 @@ h6.subheader {
   z-index: 200;
   width: 35%;
   background: white;
-  padding: 0 0.625rem 0.625rem 0.625rem;
-  border: 1px solid #B7B7B7;
-  border-radius: 3px; }
+  padding: 0.625rem 0.3125rem;
+  border: 1px solid #B7B7B7; }
   .scroll-box .scroll-box-inner {
     overflow: hidden;
     height: 250px;
-    font-size: 0.75rem;
+    font-size: 0.8125rem;
     line-height: 1.1;
-    margin: 0.5em 0; }
-    .scroll-box .scroll-box-inner hr {
-      margin: 0.5em 0; }
+    margin: 0 0 0.625rem 0; }
     .scroll-box .scroll-box-inner .avatar {
       margin-right: 5px; }
     .scroll-box .scroll-box-inner .info {
       display: block;
       overflow: hidden; }
   .scroll-box .scroll-box-item {
-    border-bottom: 1px dotted #B7B7B7;
+    border-top: 1px solid #EAEAEA;
     margin: 0;
     padding: 0.3125rem 0; }
+    .scroll-box .scroll-box-item:first-child {
+      border-top: 0; }
 
 #activity {
   right: 150px; }
+
+.activity-sidebar-avatar img {
+  border: 10px solid #EAEAEA; }
+
+.activity-avatar {
+  border: 2px solid #EAEAEA; }
 
 #drafts {
   right: 250px; }

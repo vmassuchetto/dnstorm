@@ -1,15 +1,37 @@
 {% extends "base.html" %}
-{% load avatar_tags humanize i18n %}
+{% load avatar_tags humanize i18n display_name captureas %}
 
 {% block bodyclass %}activity{% endblock %}
 
 {% block content %}
 
-    {% if problem %}<h3>{% trans "Problem activity" %}</h3>{% endif %}
+    {% captureas page_number %}
+        {% blocktrans with activities.number as number %}Page {{ number }}{% endblocktrans %}
+    {% endcaptureas %}
+
+    {% if problem %}
+        <h3>{% trans "Problem activity" %}: {{ page_number }}</h3>
+    {% else %} {% if profile %}
+        <h3>{% trans "User activity" %}: {{ page_number }}</h3>
+        {% if user_perm_manage %}
+            <div class="row bottom-1em">
+                <div class="columns large-12">
+                    <a class="action-button" href="{% url "user_update" profile.username %}"><i class="fi-pencil"></i>&nbsp;{% trans "edit profile" %}</a>
+                    <a class="action-button" href="{% url "user_password_update" profile.username %}"><i class="fi-key"></i>&nbsp;{% trans "change password" %}</a>
+                </div>
+            </div>
+        {% endif %}
+    {% else %}
+        <h3>{% trans "Sitewide activity" %}</h3>
+    {% endif %} {% endif %}
 
     <div class="row">
         <div class="columns large-3 activity-info">
+
             {% if problem %}
+
+            {# Problem #}
+
                 <h4><a href="{% url "problem" problem.id problem.slug %}">{{ problem.title }}</a></h4>
                 {% include "problem_counter.html" %}
                 <h6 class="subheader top-1em bottom-1em">{% blocktrans with created=problem.created %}Created at {{ created }}{% endblocktrans %}</h6>
@@ -20,14 +42,73 @@
                 {% else %}
                     <p>{% trans "No criteria defined." %}</p>
                 {% endif %}
-            {% endif %}
+
+            {# User profile #}
+
+            {% else %} {% if profile %}
+
+                <div class="row collapse activity-sidebar-avatar">
+                    <div class="columns large-12 text-center">{% avatar profile 256 %}</div>
+                </div>
+                <h4><a href="{% url "user" profile.username %}">{% display_name profile %}</a></h4>
+                <div class="row collapse problem-counter">
+                    <div class="columns large-4 counter">
+                        <a class="button secondary expand disabled">
+                            <em class="number">{{ profile.problem_count }}</em>
+                            <em class="description">{% if profile.problem_count > 1 or profile.problem_count = 0 %}{% trans "problems" %}{% else %}{% trans "problem" %}{% endif %}</em>
+                        </a>
+                    </div>
+                    <div class="columns large-4 counter">
+                        <a class="button secondary expand disabled">
+                            <em class="number">{{ profile.idea_count }}</em>
+                            <em class="description">{% if profile.idea_count > 1 or profile.idea_count = 0 %}{% trans "ideas" %}{% else %}{% trans "idea" %}{% endif %}</em>
+                        </a>
+                    </div>
+                    <div class="columns large-4 counter">
+                        <a class="button secondary expand disabled">
+                            <em class="number">{{ profile.comment_count }}</em>
+                            <em class="description">{% if profile.comment_count > 1 or profile.comment_count = 0 %}{% trans "comments" %}{% else %}{% trans "comment" %}{% endif %}</em>
+                        </a>
+                    </div>
+                </div>
+                <h6 class="subheader top-1em bottom-1em">{% blocktrans with date_joined=profile.date_joined %}Joined in {{ date_joined }}{% endblocktrans %}</h6>
+
+            {# Sitewide #}
+
+            {% else %}
+
+                <div class="row collapse problem-counter">
+                    <div class="columns large-4 counter">
+                        <a class="button secondary expand disabled">
+                            <em class="number">{{ problem_count }}</em>
+                            <em class="description">{% if problem_count > 1 or problem_count = 0 %}{% trans "problems" %}{% else %}{% trans "problem" %}{% endif %}</em>
+                        </a>
+                    </div>
+                    <div class="columns large-4 counter">
+                        <a class="button secondary expand disabled">
+                            <em class="number">{{ idea_count }}</em>
+                            <em class="description">{% if idea_count > 1 or idea_count = 0 %}{% trans "ideas" %}{% else %}{% trans "idea" %}{% endif %}</em>
+                        </a>
+                    </div>
+                    <div class="columns large-4 counter">
+                        <a class="button secondary expand disabled">
+                            <em class="number">{{ comment_count }}</em>
+                            <em class="description">{% if comment_count > 1 or comment_count = 0 %}{% trans "comments" %}{% else %}{% trans "comment" %}{% endif %}</em>
+                        </a>
+                    </div>
+                </div>
+
+            {% endif %} {% endif %}
+
         </div>
         <div class="columns large-9 activity-list">
             {% for action in activities %}
                 {% include "activity_row.html" %}
             {% endfor %}
-            {% include "pagination.html" with items=activities %}
         </div>
+    </div>
+    <div class="row collapse">
+       <div class="columns large-12">{% include "pagination.html" with items=activities %}</div>
     </div>
 
 {% endblock %}

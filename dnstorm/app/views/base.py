@@ -25,7 +25,7 @@ from registration import signals as registration_signals
 from dnstorm.app import permissions
 from dnstorm.app.forms import OptionsForm, RegistrationForm
 from dnstorm.app.utils import get_object_or_none, activity_count, get_option, update_option
-from dnstorm.app.models import Option, Problem, Idea, Comment, Criteria, Invitation
+from dnstorm.app.models import Option, Problem, Idea, Comment, Criteria, Alternative, Invitation
 
 class HomeView(TemplateView):
     """
@@ -180,10 +180,15 @@ class ActivityView(TemplateView):
 
     def get_context_data(self, *args, **kwargs):
         context = super(ActivityView, self).get_context_data(**kwargs)
-        activities = Paginator(user_stream(self.request.user), 20)
+        activities = Paginator(user_stream(self.request.user), 25)
         context['site_title'] = '%s | %s' % (_('Activity'), get_option('site_title'))
         context['breadcrumbs'] = self.get_breadcrumbs()
         context['activities'] = activities.page(self.request.GET.get('page', 1))
+        context['problem_count'] = Problem.objects.filter(published=True).count()
+        context['criteria_count'] = Criteria.objects.all().count()
+        context['idea_count'] = Idea.objects.filter(published=True).count()
+        context['alternative_count'] = Alternative.objects.all().count()
+        context['comment_count'] = Comment.objects.all().count()
         return context
 
     def get_breadcrumbs(self):
