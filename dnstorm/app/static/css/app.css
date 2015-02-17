@@ -6895,9 +6895,9 @@ h6.subheader {
   .scroll-box .scroll-box-item {
     border-top: 1px solid #EAEAEA;
     margin: 0;
-    padding: 0.3125rem 0; }
-    .scroll-box .scroll-box-item:first-child {
-      border-top: 0; }
+    padding: 0.5rem 0.375rem; }
+    .scroll-box .scroll-box-item .subheader {
+      font-size: 0.75rem; }
 
 #activity {
   right: 150px; }

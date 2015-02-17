@@ -1151,12 +1151,12 @@ h6.subheader {
         }
     }
     .scroll-box-item {
-        &:first-child {
-            border-top: 0;
-        }
         border-top: 1px solid #EAEAEA;
         margin: 0;
-        padding: emCalc(5px) 0;
+        padding: emCalc(8px) emCalc(6px);
+        .subheader {
+            font-size: emCalc(12px);
+        }
     }
 }
 

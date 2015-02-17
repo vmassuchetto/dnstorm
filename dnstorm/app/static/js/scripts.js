@@ -181,7 +181,7 @@ $(document).on('click', '.drafts-icon', function(e){
     */
     drafts = $('#drafts');
     drafts_box = $('#drafts-box');
-    $('.scroll-box').not('#drafts').slideUp(200);
+    $('.scroll-box').not('#drafts').hide();
     if (drafts.is(':visible')) {
         $(this).removeClass('highlighted');
         drafts.hide();
@@ -200,7 +200,7 @@ $(document).on('click', '.notification-icon', function(e){
     activity = $('#activity');
     activity_button = $('#activity .button');
     activity_box = $('#activity-box');
-    $('.scroll-box').not('#activity').slideUp(200);
+    $('.scroll-box').not('#activity').hide();
     if (activity.is(':visible')) {
         $(this).removeClass('highlighted');
         activity.hide();

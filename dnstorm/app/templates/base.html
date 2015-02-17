@@ -1,4 +1,4 @@
-{% load staticfiles i18n activity_tags avatar_tags display_name captureas %}<!DOCTYPE html>
+{% load staticfiles i18n activity_tags avatar_tags display_name captureas humanize %}<!DOCTYPE html>
 <!--[if IE 8]><html class="no-js lt-ie9" lang="en"><![endif]-->
 <!--[if gt IE 8]><!--><html class="no-js" lang="en"><!--<![endif]-->
 
@@ -159,7 +159,7 @@
                     <div class="row collapse">
                         <div class="columns large-12 activity-item scroll-box-item">
                             <div class="left avatar">{% avatar action.actor 32 %}</div>
-                            <div class="info">{% display_action action %}</div>
+                            <div class="info">{% display_action action %}<span class="subheader"> &diams; {{ action.timestamp|naturaltime }}</span></div>
                         </div>
                     </div>
                 {% endfor %}
