@@ -6369,6 +6369,36 @@ h6.subheader {
   margin: 0;
   font-size: 0.8125rem; }
 
+.problem-counter .counter {
+  border-left: 2px solid white;
+  border-right: 2px solid white; }
+.problem-counter a.button {
+  padding: 0.9375rem 0 0.625rem 0;
+  background-color: #F7F7F7;
+  font-weight: bold;
+  color: #777777; }
+  .problem-counter a.button:hover em {
+    color: black; }
+  .problem-counter a.button.draft {
+    padding: 0.625rem 0 0.625rem 0; }
+  .problem-counter a.button i {
+    font-size: 1.5rem; }
+  .problem-counter a.button em {
+    font-style: normal;
+    font-weight: bold;
+    line-height: 1; }
+  .problem-counter a.button em.draft {
+    font-size: 1.125rem; }
+  .problem-counter a.button em.number {
+    font-size: 1rem;
+    display: block;
+    clear: both;
+    font-size: 2rem;
+    line-height: 0.7; }
+  .problem-counter a.button em.description {
+    font-size: 0.75rem;
+    line-height: 0.7; }
+
 .list-item {
   padding: 0.375rem;
   margin: 0.375rem;
@@ -6377,36 +6407,6 @@ h6.subheader {
     margin: 0.3125rem 0 0.1875rem 0;
     color: #444;
     line-height: 1; }
-  .list-item .counter {
-    border-left: 2px solid white;
-    border-right: 2px solid white; }
-  .list-item a.button {
-    padding: 0.9375rem 0 0.625rem 0;
-    background-color: #DDDDDD;
-    border: 1px solid #B7B7B7;
-    font-weight: bold;
-    color: #777777; }
-    .list-item a.button:hover em {
-      color: black; }
-    .list-item a.button.draft {
-      padding: 0.625rem 0 0.625rem 0; }
-    .list-item a.button i {
-      font-size: 1.5rem; }
-    .list-item a.button em {
-      font-style: normal;
-      font-weight: bold;
-      line-height: 1; }
-    .list-item a.button em.draft {
-      font-size: 1.125rem; }
-    .list-item a.button em.number {
-      font-size: 1rem;
-      display: block;
-      clear: both;
-      font-size: 2rem;
-      line-height: 0.7; }
-    .list-item a.button em.description {
-      font-size: 0.75rem;
-      line-height: 0.7; }
   .list-item .problem-info {
     padding: 0.3125rem 0 0 0; }
   .list-item.draft {
@@ -6540,55 +6540,51 @@ h6.subheader {
   .user-search-result span.label {
     margin-left: 0.625rem; }
 
-.activity-item {
-  border-bottom: 1px dotted #ccc;
-  padding: 0.9375rem 0; }
-  .activity-item .th {
-    margin: 0 0.5rem 0 0; }
-  .activity-item .action-info {
-    padding-left: 3.75rem; }
-    .activity-item .action-info .action-description {
-      min-height: 2rem;
-      margin: 0 0 0.5rem 0;
-      padding: 0; }
-      .activity-item .action-info .action-description .action-label {
-        float: left;
-        margin: 0 0.5rem 0 0; }
-        .activity-item .action-info .action-description .action-label i {
-          color: #DDDDDD;
-          font-size: 2rem; }
-      .activity-item .action-info .action-description .action-text {
-        padding-top: 0.3125rem; }
-        .activity-item .action-info .action-description .action-text .action-date {
-          font-size: 0.75rem; }
-    .activity-item .action-info .action-diff {
-      padding: 0.375rem 0.625rem;
-      margin: 0.625rem 0 0 0;
-      border-left: 3px dotted #DDDDDD; }
-      .activity-item .action-info .action-diff ins {
+.activity-row {
+  border-top: 1px solid #F1F1F1;
+  padding: 0.625rem 0;
+  min-height: 7.5rem; }
+  .activity-row:first-child {
+    border: 0; }
+  .activity-row h4 {
+    font-size: 1.0625rem; }
+  .activity-row h5 {
+    font-size: 0.9375rem;
+    margin: 0;
+    padding: 0 0 0.1875rem 0; }
+  .activity-row .activity-icon {
+    font-size: 3rem;
+    color: #868686; }
+  .activity-row .activity-content {
+    color: #777777;
+    padding-top: 0.3125rem; }
+    .activity-row .activity-content .activity-description {
+      position: relative;
+      padding: 0 0 0 2.8125rem;
+      font-size: 0.875rem; }
+      .activity-row .activity-content .activity-description .activity-avatar {
+        position: absolute;
+        top: 0;
+        left: 0; }
+      .activity-row .activity-content .activity-description ins {
         color: #004800;
         background-color: #DFD;
         text-decoration: none; }
-      .activity-item .action-info .action-diff del {
+      .activity-row .activity-content .activity-description del {
         color: #480007;
         background-color: #FDD;
         text-decoration: line-through; }
-      .activity-item .action-info .action-diff h3 {
-        font-size: 0.875rem; }
-      .activity-item .action-info .action-diff p.info {
-        padding: 0.375rem 0.25rem 0 0; }
-        .activity-item .action-info .action-diff p.info i.fi-target-two, .activity-item .action-info .action-diff p.info i.fi-lock, .activity-item .action-info .action-diff p.info i.fi-unlock, .activity-item .action-info .action-diff p.info .criteria {
-          padding: 0 0.25rem 0 0.5rem; }
-      .activity-item .action-info .action-diff p {
+      .activity-row .activity-content .activity-description del {
+        color: #480007;
+        background-color: #FDD;
+        text-decoration: line-through; }
+      .activity-row .activity-content .activity-description p {
         margin: 0;
-        padding: 0 0 0.375rem 0;
-        font-size: 0.75rem;
-        line-height: 1.1; }
-
-.add-icon, .delete-icon {
-  margin: 0.1875rem 0 0 0; }
-  .add-icon i, .delete-icon i {
-    margin-right: 0; }
+        padding: 0.1875rem 0;
+        font-size: 0.875rem;
+        line-height: 1.2; }
+      .activity-row .activity-content .activity-description i {
+        padding-right: 0.3125rem; }
 
 .like-bulb, .like-bulb-disabled {
   text-align: center; }
@@ -6684,13 +6680,13 @@ h6.subheader {
 .criteria-new .criteria-delete {
   display: none; }
 
-.problem .criteria-row {
-  border: 0; }
+.problem-edit .criteria-row:hover {
+  background-color: #EAEAEA; }
 
 .criteria-row {
-  border: 1px solid #DDDDDD;
-  padding: 0.625rem 0.9375rem;
+  padding: 0.625rem;
   margin: 0.625rem 0;
+  border: 1px solid #EAEAEA;
   position: relative; }
   .criteria-row .frontend .criteria-info h5.criteria-name {
     margin: 0;
@@ -6731,14 +6727,18 @@ h6.subheader {
       font-size: 1rem;
       margin: 0;
       padding: 0; }
-  .criteria-row .backend .minmax {
-    display: none; }
-  .criteria-row .backend label, .criteria-row .backend input[type='text'], .criteria-row .backend textarea, .criteria-row .backend select {
-    font-size: 0.8125rem; }
-  .criteria-row .backend label {
-    padding: 0; }
-  .criteria-row .backend textarea {
-    height: 3.125rem; }
+  .criteria-row .backend {
+    margin: 0.625rem;
+    padding: 0.625rem 0;
+    background-color: white; }
+    .criteria-row .backend .minmax {
+      display: none; }
+    .criteria-row .backend label, .criteria-row .backend input[type='text'], .criteria-row .backend textarea, .criteria-row .backend select {
+      font-size: 0.8125rem; }
+    .criteria-row .backend label {
+      padding: 0; }
+    .criteria-row .backend textarea {
+      height: 3.125rem; }
 
 .criteria-add {
   margin: 0.625rem 0; }

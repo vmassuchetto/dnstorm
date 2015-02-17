@@ -59,6 +59,59 @@ def activity_count(obj):
             count = 0
         update_option(name, count+1)
 
+def activity_register(_user, _action_object):
+    """
+    Registers and activity when an object is saved.
+    """
+    from lxml.html.diff import htmldiff
+    from actstream import action
+    from actstream.actions import follow, is_following
+    from actstream.models import action_object_stream
+    from django.db.models.loading import get_model
+    from django.forms import ValidationError
+    from django.forms.models import model_to_dict
+    from django.template.loader import render_to_string
+
+    klass = _action_object.__class__.__name__.lower()
+    if klass not in ['problem', 'criteria', 'idea', 'alternative', 'comment']:
+        raise forms.ValidationError(_('Wrong object type'))
+
+    # Last activity
+    last = (action_object_stream(_action_object)[:1] or [None])[0]
+    content_old = last.data['content'] if hasattr(last, 'data') and 'content' in last.data else ''
+    _content = render_to_string(klass + '_diffbase.html', {klass: _action_object})
+    _emsg = _action_object.edit_message if hasattr(_action_object, 'edit_message') else ''
+    _diff = htmldiff(content_old, _content)
+    _verb = 'edited'
+
+    _obj = None
+    if klass == 'comment':
+        _verb = 'commented'
+        _obj = _action_object
+        if _action_object.problem:
+            _action_object = _action_object.problem
+            _target = _action_object
+        elif _action_object.criteria:
+            _action_object = _action_object.criteria
+        elif _action_object.idea:
+            _action_object = _action_object.idea
+        elif _action_object.alternative:
+            _action_object = _action_object.alternative
+    elif not content_old:
+        _verb = 'created'
+    _target = _action_object.problem if hasattr(_action_object, 'problem') else _action_object
+
+    a = action.send(_user, verb=_verb, action_object=_action_object, target=_target)
+    a[0][1].data = {
+        'diff': _diff,
+        'content': _content,
+        'edit_message': _emsg,
+        'object': model_to_dict(_obj) if _obj else ''
+    }
+    a[0][1].save()
+    activity_count(_target)
+    follow(_user, _target, actor_only=False) if not is_following(_user, _target) else None
+
 def email_context(more_context=dict()):
     """
     Puts ``more_context`` with the standard context variables required for

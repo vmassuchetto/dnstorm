@@ -28,15 +28,13 @@ from django.views.generic import DetailView
 from django.views.generic.base import TemplateView, RedirectView
 from django.views.generic.edit import FormView, CreateView, UpdateView, DeleteView
 
-from actstream import action
-from actstream.actions import follow, is_following
 from actstream.models import any_stream
 
 from dnstorm import settings
 from dnstorm.app import forms
 from dnstorm.app import models
 from dnstorm.app import permissions
-from dnstorm.app.utils import get_object_or_none, activity_count, get_option
+from dnstorm.app.utils import get_object_or_none, activity_count, get_option, activity_register
 
 class ProblemCreateView(RedirectView):
     permanent = False
@@ -115,11 +113,6 @@ class ProblemUpdateView(UpdateView):
 
         self.object = form.save(commit=False)
 
-        # Remember if new
-
-        old = get_object_or_404(models.Problem, id=self.object.id)
-        old_diffhtml = render_to_string('problem_diffbase.html', {'problem': old})
-
         # Problem save
 
         self.object.author = self.request.user if not self.object.author else self.object.author
@@ -138,21 +131,7 @@ class ProblemUpdateView(UpdateView):
 
         self.object.save()
 
-        # Get a content diff
-
-        new_diffhtml = render_to_string('problem_diffbase.html', {'problem': self.object})
-        problemdiff = htmldiff(old_diffhtml, new_diffhtml)
-
-        # Follow and send an action for the problem
-
-        follow(self.request.user, self.object, actor_only=False) if not is_following(self.request.user, self.object) else None
-        if self.object.published:
-            a = action.send(self.request.user, verb='edited', action_object=self.object)
-            if problemdiff:
-                a[0][1].data = {'diff': problemdiff}
-                a[0][1].save()
-            activity_count(self.object)
-
+        # Response
         if not self.object.published:
             view = 'problem_update'
             kwargs = { 'pk': self.object.id }
@@ -161,6 +140,7 @@ class ProblemUpdateView(UpdateView):
             view = 'problem'
             kwargs = { 'pk': self.object.id, 'slug': self.object.slug }
             messages.success(self.request, _('The problem is now published. Users can start contributing to it.'))
+            activity_register(self.request.user, self.object)
         return HttpResponseRedirect(reverse(view, kwargs=kwargs))
 
 class ProblemView(TemplateView):
@@ -238,8 +218,8 @@ class ProblemActivityView(TemplateView):
     template_name = 'activity.html'
 
     def dispatch(self, request, *args, **kwargs):
-        self.problem = get_object_or_404(models.Problem, slug=self.kwargs.get('pk', None))
-        if not permissions.problem(obj=self.problem, user=self.request.user, mode='contribute'):
+        self.problem = get_object_or_404(models.Problem, id=self.kwargs.get('pk', None))
+        if not permissions.problem(obj=self.problem, user=self.request.user, mode='view'):
             raise PermissionDenied
         return super(ProblemActivityView, self).dispatch(request, *args, **kwargs)
 
@@ -255,4 +235,4 @@ class ProblemActivityView(TemplateView):
     def get_breadcrumbs(self):
         return [
             { 'title': self.problem.title, 'url': self.problem.get_absolute_url() },
-            { 'title': _('Activity'), 'url': reverse('problem_activity', kwargs={'slug':self.problem.slug}), 'classes': 'current' } ]
+            { 'title': _('Activity'), 'url': reverse('problem_activity', kwargs={'pk': self.problem.id, 'slug':self.problem.slug}), 'classes': 'current' } ]

@@ -42,7 +42,7 @@ def problem(**kwargs):
         )
     elif mode == 'manage':
         return (
-            (user.is_authenticated())
+            (user and user.is_authenticated())
             and obj.author == user
         )
     return False
@@ -62,7 +62,7 @@ def idea(**kwargs):
     elif mode == 'contribute':
         return problem(obj=obj.problem, user=user, mode='contribute')
     elif mode == 'manage':
-        return obj.author == user or problem(obj=obj.problem, user=user, mode='manage')
+        return (user and obj.author == user) or problem(obj=obj.problem, user=user, mode='manage')
     elif mode == 'edit':
         return problem(obj=obj.problem, user=user, mode='edit')
     return False

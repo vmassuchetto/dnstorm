@@ -1,0 +1,8 @@
+{% load i18n captureas paragraphs %}<h5>{{ criteria.name }}</h5>
+
+{{ criteria.description }}
+
+{% captureas description %}
+{% include "criteria_parameters.html" with show_icons=True show_paragraphs=True %}
+{% endcaptureas %}
+<p>{{ description|safe }}</p>

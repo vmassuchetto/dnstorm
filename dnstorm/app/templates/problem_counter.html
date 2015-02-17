@@ -1,0 +1,38 @@
+{% load i18n %}
+
+<div class="row collapse problem-counter">
+    {% if problem.published %}
+        <div class="columns large-4 counter idea-counter">
+            <a class="button secondary expand" href="{% url "problem" problem.id problem.slug %}">
+                <em class="number">{{ problem.idea_set.count }}</em>
+                <em class="description">{% if problem.idea_count > 1 or problem.idea_count = 0 %}{% trans "ideas" %}{% else %}{% trans "idea" %}{% endif %}</em>
+            </a>
+        </div>
+        <div class="columns large-4 counter criteria-counter left">
+            <a class="button secondary expand" href="{% url "problem" problem.id problem.slug %}">
+                <em class="number">{{ problem.criteria_set.count }}</em>
+                <em class="description">{% trans "Criteria" %}</em>
+            </a>
+        </div>
+        <div class="columns large-4 counter alternative-counter left">
+            <a class="button secondary expand" href="{% url "problem" problem.id problem.slug %}">
+                <em class="number">{{ problem.alternative_set.count }}</em>
+                <em class="description">{% if problem.alternative_count > 1 or problem.alternative_count = 0 %}{% trans "alternatives" %}{% else %}{% trans "alternative" %}{% endif %}</em>
+            </a>
+        </div>
+    {% else %}
+        <div class="columns large-4 counter">
+            <a class="button secondary expand draft" href="{% url "problem" problem.id %}">
+                <em class="number"><i class="fi-page-filled"></i></em>
+                <em class="description">{% trans "Preview" %}</em>
+            </a>
+        </div>
+        <div class="columns large-8 counter">
+            <a class="button secondary expand draft" href="{% url "problem_update" problem.id %}">
+                <em class="number"><i class="fi-page-edit"></i></em>
+                <em class="description">{% trans "Edit draft" %}</em>
+            </a>
+        </div>
+    {% endif %}
+</div>
+

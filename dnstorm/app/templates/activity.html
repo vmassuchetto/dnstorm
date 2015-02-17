@@ -3,38 +3,31 @@
 
 {% block bodyclass %}activity{% endblock %}
 
-{% block topbutton %}
-    {% if problem %}
-        <a class="button secondary small radius right" href="{% url "problem" problem.slug %}"><i class="fi-arrow-left"></i>&nbsp;{% trans "Go back to problem" %}</a>
-    {% endif %}
-{% endblock %}
+{% block content %}
 
-{% block content %} 
+    {% if problem %}<h3>{% trans "Problem activity" %}</h3>{% endif %}
 
     <div class="row">
-        <div class="columns large-12">
-
-            {% if profile %}
-                {% include "profile.html" %}
-            {% else %} {% if problem %}
-                <h3><i class="fi-clock"></i>&nbsp;{{ problem.title }}</h3>
-                <hr/>
-            {% else %}
-                <h3>{% trans "General activity" %}</h3>
-            {% endif %} {% endif %}
-
+        <div class="columns large-3 activity-info">
+            {% if problem %}
+                <h4><a href="{% url "problem" problem.id problem.slug %}">{{ problem.title }}</a></h4>
+                {% include "problem_counter.html" %}
+                <h6 class="subheader top-1em bottom-1em">{% blocktrans with created=problem.created %}Created at {{ created }}{% endblocktrans %}</h6>
+                {% if problem.criteria_set.all|length > 0 %}
+                    {% for c in problem.criteria_set.all %}
+                        {% include "criteria_row.html" with criteria=c show_actions=False show_parameters=True show_icons=True show_description=True show_comments=False %}
+                    {% endfor %}
+                {% else %}
+                    <p>{% trans "No criteria defined." %}</p>
+                {% endif %}
+            {% endif %}
         </div>
-    </div>
-
-    <div class="row">
-        <div class="columns large-12">
-
+        <div class="columns large-9 activity-list">
             {% for action in activities %}
                 {% include "activity_row.html" %}
             {% endfor %}
-
             {% include "pagination.html" with items=activities %}
-
         </div>
     </div>
+
 {% endblock %}

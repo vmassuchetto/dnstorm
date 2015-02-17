@@ -1,6 +1,7 @@
-from django.template import Library, Node
-from django.template.defaultfilters import stringfilter
 import re
+
+from django.template import Library
+from django.template.defaultfilters import stringfilter
 
 register = Library()
 
@@ -12,6 +13,6 @@ def paragraphs(value):
     paras = re.split(r'[\r\n]+', value)
     paras = ['<p>%s</p>' % p.strip() for p in paras]
     return '\n'.join(paras)
-paragraphs = stringfilter(paragraphs)
 
+paragraphs = stringfilter(paragraphs)
 register.filter(paragraphs)

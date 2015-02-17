@@ -1,4 +1,7 @@
-{% load i18n %}
+{% load i18n %}<h5>{{ idea.title }}</h5>
 
-<h3>{{ idea.title }}</h3>
-{% for criteria in idea.criterias %}<span class="criteria">{{ criteria.name }}</span><p class="description">{{ criteria.description|safe }}</p>{% endfor %}
+{% captureas description %}
+<p>{% for criteria in idea.criterias %}<span class="criteria">{{ criteria.name }}</span>{{ criteria.description|safe }}{% endfor %}</p>
+{% endcaptureas %}
+
+{{ description|safe }}

@@ -27,7 +27,7 @@
     <div class="row bottom-1em">
         <div class="columns large-12">
             <a class="action-button" href="{% url "problem" problem.id problem.slug %}"><i class="fi-page"></i>&nbsp;{% if problem.published %}{% trans "View published problem" %}{% else %}{% trans "Preview this problem" %}{% endif %}</a>
-            <a class="action-button" href="{% url "problem_activity" problem.id %}"><i class="fi-list"></i>&nbsp;ver log de atividades</a>
+            <a class="action-button" href="{% url "problem_activity" problem.id problem.slug %}"><i class="fi-list"></i>&nbsp;ver log de atividades</a>
         </div>
     </div>
 

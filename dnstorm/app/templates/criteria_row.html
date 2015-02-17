@@ -9,63 +9,12 @@
             <h5 class="criteria-name">{{ criteria.name }}</h5>
 
             {% if show_parameters %}
-
-            <div class="criteria-description">
-            {% if show_description %}
-                {{ criteria.description|paragraphs|safe }}
-            {% endif %}
-
-            <p>
-
-            {% if criteria.min and criteria.max %}
-                {% if show_icons %}<span><i class="fi-filter"></i>{% endif %}
-                {% blocktrans with min=criteria.min max=criteria.max %}Values from {{ min }} to {{ max }}.{% endblocktrans %}
-                {% if show_icons %}</span>{% endif %}
-            {% endif %}
-            {% if criteria.min and not criteria.max %}
-                {% if show_icons %}<span><i class="fi-filter"></i>{% endif %}
-                {% blocktrans with min=criteria.min max=criteria.max %}Values lower than {{ min }}.{% endblocktrans %}
-                {% if show_icons %}</span>{% endif %}
-            {% endif %}
-            {% if not criteria.min and criteria.max %}
-                {% if show_icons %}<span><i class="fi-filter"></i>{% endif %}
-                {% blocktrans with min=criteria.min max=criteria.max %}Values greater than {{ max }}.{% endblocktrans %}
-                {% if show_icons %}</span>{% endif %}
-            {% endif %}
-
-            {% if criteria.order == "asc" %}
-                {% if show_icons %}<span><i class="fi-arrow-up"></i>{% endif %}
-                {% blocktrans with order=criteria.order %}Ascending order is best.{% endblocktrans %}
-                {% if show_icons %}</span>{% endif %}
-            {% else %}
-                {% if show_icons %}<span><i class="fi-arrow-down"></i>{% endif %}
-                {% blocktrans with order=criteria.order %}Descending order is best.{% endblocktrans %}
-                {% if show_icons %}</span>{% endif %}
-            {% endif %}
-
-            {% if criteria.weight %}
-                {% if show_icons %}<span><i class="fi-download"></i>{% endif %}
-                {% blocktrans with weight=criteria.weight %}Weight {{ weight }}.{% endblocktrans %}
-                {% if show_icons %}</span>{% endif %}
-            {% endif %}
-
-            {% if criteria.result == "sum" %}
-                {% if show_icons %}<span><i class="fi-plus"></i>{% endif %}
-                {% trans "Results the sum of values." %}
-                {% if show_icons %}</span>{% endif %}
-            {% else %} {% if criteria.result == "average" %}
-                {% if show_icons %}<span><i class="fi-list"></i>{% endif %}
-                {% trans "Results the average value of ideas." %}
-                {% if show_icons %}</span>{% endif %}
-            {% else %} {% if criteria.result == "absolute" %}
-                {% if show_icons %}<span><i class="fi-target"></i>{% endif %}
-                {% trans "Results the absolute value of ideas." %}
-                {% if show_icons %}</span>{% endif %}
-            {% endif %} {% endif %} {% endif %}
-
-            </p>
-            </div>
-
+                <div class="criteria-description">
+                    {% if show_description %}
+                        {{ criteria.description|paragraphs|safe }}
+                    {% endif %}
+                    <p>{% include "criteria_parameters.html" %}</p>
+                </div>
             {% endif %}
 
         </div>

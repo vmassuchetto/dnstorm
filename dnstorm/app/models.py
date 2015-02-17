@@ -187,7 +187,7 @@ class Criteria(models.Model):
     def problem_count(self):
         return Problem.objects.filter(criteria=self).count()
 
-    def fill_data(self, user=False):
+    def icon(self):
         icons = {
             'number': 'target',
             'currency': 'dollar',
@@ -195,7 +195,9 @@ class Criteria(models.Model):
             'time': 'clock',
             'boolean': 'checkbox'
         }
-        self.icon = icons[self.fmt]
+        return icons[self.fmt]
+
+    def fill_data(self, user=False):
         self.comments = Comment.objects.filter(criteria=self)
 
 class Idea(models.Model):

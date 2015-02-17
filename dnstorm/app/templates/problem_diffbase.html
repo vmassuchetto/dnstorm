@@ -1,13 +1,10 @@
-{% load i18n %}
+{% load i18n remove_tags paragraphs %}<h5>{{ problem.title }}</h5>
 
-<h3>{{ problem.title }}</h3>
+{{ problem.description|remove_tags|paragraphs|safe }}
 
-{{ problem.description|safe }}
-
-<p class="info">
-{% for criteria in problem.criteria.all %}
-<i class="fi-target-two"></i>&nbsp;{{ criteria.name }}
+{% for criteria in problem.criteria_set.all %}
+<p><i class="fi-target-two"></i>&nbsp;{{ criteria.name }}</p>
 {% endfor %}
-{% if problem.public %}<i class="fi-unlock"></i>&nbsp;{% trans "Public" %}{% else %}<i class="fi-lock"></i>&nbsp;{% trans "Private" %}{% endif %}
-<i class="fi-edit"></i>&nbsp;{% if problem.open %}{% trans "Open" %}{% else %}{% trans "Closed" %}{% endif %}
-</p>
+
+<p>{% if problem.public %}<i class="fi-unlock"></i>&nbsp;{% trans "Public" %}{% else %}<i class="fi-lock"></i>&nbsp;{% trans "Private" %}{% endif %}</p>
+<p><i class="fi-pencil"></i>&nbsp;{% if problem.open %}{% trans "Open for edition" %}{% else %}{% trans "Closed for edition" %}{% endif %}</p>

@@ -20,15 +20,12 @@ from django.views.decorators.csrf import csrf_protect
 from django.views.generic import DetailView, RedirectView
 from django.views.generic.edit import CreateView, UpdateView
 
-from actstream import action
-from actstream.actions import follow, is_following
-
 from dnstorm import settings
 from dnstorm.app import models
 from dnstorm.app import forms
 from dnstorm.app import permissions
 from dnstorm.app.forms import IdeaForm
-from dnstorm.app.utils import get_object_or_none, activity_count, get_option
+from dnstorm.app.utils import get_object_or_none, activity_count, get_option, activity_register
 
 class IdeaView(RedirectView):
     permanent = True
@@ -134,12 +131,6 @@ class IdeaUpdateView(UpdateView):
             return_url = reverse('idea_update', kwargs={'pk': self.object.id})
         self.object.save()
 
-        '''old_idea = get_object_or_404(models.Idea, id=self.object.id)
-        old_idea.fill_data()
-        old_diffhtml = render_to_string('idea_diffbase.html', {'idea': old_idea})'''
-
-        # Remember values for each criteria
-
         criteria = dict()
         r = re.compile('^([0-9]+)__(.+)$')
         for f in form.fields:
@@ -190,20 +181,8 @@ class IdeaUpdateView(UpdateView):
             .exclude(id__in=[ic.id for ic in updated]) \
             .filter(idea=self.object).delete()
 
-        # Diff
-
-        '''self.object.fill_data()
-        new_diffhtml = render_to_string('idea_diffbase.html', {'idea': self.object})
-        ideadiff = htmldiff(old_diffhtml, new_diffhtml)'''
-
-        # Send and action and follow the problem
-
-        follow(self.object.author, self.object.problem, actor_only=False) if not is_following(self.object.author, self.object.problem) else None
-        a = action.send(self.object.author, verb=verb, action_object=self.object, target=self.object)
-        '''if ideadiff:
-            a[0][1].data = {'diff': ideadiff}
-            a[0][1].save()'''
-        activity_count(self.object.problem)
-
+        # Response
+        if self.object.published == True:
+            activity_register(self.request.user, self.object)
         messages.success(self.request, _('Your idea was successfully saved.'))
         return HttpResponseRedirect(return_url)

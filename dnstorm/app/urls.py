@@ -14,23 +14,27 @@ handler403 = curry(permission_denied, template_name='403.html')
 
 urlpatterns = patterns('',
 
-    # DNStorm
+    # Home
 
     (r'^$', base.HomeView.as_view(), {}, 'home'),
+
+    # Ajax
+
     (r'^ajax/$', ajax.AjaxView.as_view(), {}, 'ajax'),
 
-    # Problems
+    # Problem
 
     (r'^problems/create/$', problem.ProblemCreateView.as_view(), {}, 'problem_create'),
     (r'^problems/(?P<pk>\d+)/update/$', problem.ProblemUpdateView.as_view(), {}, 'problem_update'),
     (r'^problems/(?P<pk>\d+)/#ideas$', problem.ProblemUpdateView.as_view(), {}, 'problem_ideas'),
     (r'^problems/(?P<pk>\d+)/$', problem.ProblemView.as_view(), {}, 'problem'),
     (r'^problems/(?P<pk>\d+)/(?P<slug>[^/]+)/$', problem.ProblemView.as_view(), {}, 'problem'),
-    (r'^problems/(?P<pk>\d+)/(?P<slug>[^/]+)/#description$', problem.ProblemUpdateView.as_view(), {}, 'problem_tab_description'),
-    (r'^problems/(?P<pk>\d+)/(?P<slug>[^/]+)/#criteria$', problem.ProblemUpdateView.as_view(), {}, 'problem_tab_criteria'),
-    (r'^problems/(?P<pk>\d+)/(?P<slug>[^/]+)/#ideas$', problem.ProblemUpdateView.as_view(), {}, 'problem_tab_ideas'),
-    (r'^problems/(?P<pk>\d+)/(?P<slug>[^/]+)/#alternatives$', problem.ProblemUpdateView.as_view(), {}, 'problem_tab_alternatives'),
-    (r'^problems/(?P<pk>\d+)/(?P<slug>[^/]+)/#idea-(?P<idea>\d+)$', problem.ProblemUpdateView.as_view(), {}, 'problem_idea'),
+    (r'^problems/(?P<pk>\d+)/(?P<slug>[^/]+)/#description$', problem.ProblemView.as_view(), {}, 'problem_tab_description'),
+    (r'^problems/(?P<pk>\d+)/(?P<slug>[^/]+)/#criteria$', problem.ProblemView.as_view(), {}, 'problem_tab_criteria'),
+    (r'^problems/(?P<pk>\d+)/(?P<slug>[^/]+)/#ideas$', problem.ProblemView.as_view(), {}, 'problem_tab_ideas'),
+    (r'^problems/(?P<pk>\d+)/(?P<slug>[^/]+)/#alternatives$', problem.ProblemView.as_view(), {}, 'problem_tab_alternatives'),
+    (r'^problems/(?P<pk>\d+)/(?P<slug>[^/]+)/#idea-(?P<idea>\d+)$', problem.ProblemView.as_view(), {}, 'problem_idea'),
+    (r'^problems/(?P<pk>\d+)/(?P<slug>[^/]+)/activity/$', problem.ProblemActivityView.as_view(), {}, 'problem_activity'),
 
     # Ideas
 
@@ -42,11 +46,6 @@ urlpatterns = patterns('',
 
     (r'^comments/(?P<pk>\d+)/$', base.CommentView.as_view(), {}, 'comment'),
 
-    # Criteria
-
-    (r'^criteria/$', criteria.CriteriaView.as_view(), {}, 'criteria'),
-    (r'^criteria/(?P<pk>\d+)/update/$', criteria.CriteriaUpdateView.as_view(), {}, 'criteria_update'),
-
     # Users
 
     (r'^users/$', user.UsersView.as_view(), {}, 'users'),
@@ -57,9 +56,8 @@ urlpatterns = patterns('',
     # Activity
 
     (r'^activity/$', base.ActivityView.as_view(), {}, 'activity'),
-    (r'^problem/(?P<pk>\d+)/activity/$', problem.ProblemActivityView.as_view(), {}, 'problem_activity'),
 
-    # DNStorm options
+    # Options
 
     (r'^options/$', base.OptionsView.as_view(), {}, 'options'),
 

@@ -422,23 +422,14 @@ h6.subheader {
     font-size: emCalc(13px);
 }
 
-.list-item {
-    padding: emCalc(6px);
-    margin: emCalc(6x);
-    border-bottom: 1px solid lighten($black, 65%);
-    h4 {
-        margin: emCalc(5px) 0 emCalc(3px) 0;
-        color: $black;
-        line-height: 1;
-    }
+.problem-counter {
     .counter {
         border-left: 2px solid white;
         border-right: 2px solid white;
     }
     a.button {
         padding: emCalc(15px) 0 emCalc(10px) 0;
-        background-color: $light-grey;
-        border: 1px solid $grey;
+        background-color: #F7F7F7;
         font-weight: bold;
         color: $light-black;
         &:hover {
@@ -471,6 +462,17 @@ h6.subheader {
             font-size: emCalc(12px);
             line-height: 0.7;
         }
+    }
+}
+
+.list-item {
+    padding: emCalc(6px);
+    margin: emCalc(6x);
+    border-bottom: 1px solid lighten($black, 65%);
+    h4 {
+        margin: emCalc(5px) 0 emCalc(3px) 0;
+        color: $black;
+        line-height: 1;
     }
     .problem-info {
         padding: emCalc(5px) 0 0 0;
@@ -631,37 +633,37 @@ h6.subheader {
 
 // Activity {{{
 
-.activity-item {
-    border-bottom: 1px dotted #ccc;
-    padding: emCalc(15px) 0;
-    .th {
-        margin: 0 emCalc(8px) 0 0;
+.activity-row {
+    border-top: 1px solid #F1F1F1;
+    padding: emCalc(10px) 0;
+    min-height: emCalc(120px);
+    &:first-child {
+        border: 0;
     }
-    .action-info {
-        padding-left: emCalc(60px);
-        .action-description {
-            min-height: emCalc(32px);
-            margin: 0 0 emCalc(8px) 0;
-            padding: 0;
-            .action-label {
-                float: left;
-                margin: 0 emCalc(8px) 0 0;
-                i {
-                    color: $light-grey;
-                    font-size: emCalc(32px);
-                }
+    h4 {
+        font-size: emCalc(17px);
+    }
+    h5 {
+        font-size: emCalc(15px);
+        margin: 0;
+        padding: 0 0 emCalc(3px) 0;
+    }
+    .activity-icon {
+        font-size: emCalc(48px);
+        color: $dark-grey;
+    }
+    .activity-content {
+        color: $light-black;
+        padding-top: emCalc(5px);
+        .activity-description {
+            position: relative;
+            padding: 0 0 0 emCalc(45px);
+            font-size: emCalc(14px);
+            .activity-avatar {
+                position: absolute;
+                top: 0;
+                left: 0;
             }
-            .action-text {
-                padding-top: emCalc(5px);
-                .action-date {
-                    font-size: emCalc(12px);
-                }
-            }
-        }
-        .action-diff {
-            padding: emCalc(6px) emCalc(10px);
-            margin: emCalc(10px) 0 0 0;
-            border-left: 3px dotted $light-grey;
             ins {
                 color: #004800;
                 background-color: #DFD;
@@ -672,33 +674,21 @@ h6.subheader {
                 background-color: #FDD;
                 text-decoration: line-through;
             }
-            h3 {
-                font-size: emCalc(14px);
-            }
-            p.info {
-                padding: emCalc(6px) emCalc(4px) 0 0;
-                i.fi-target-two,
-                i.fi-lock,
-                i.fi-unlock,
-                .criteria {
-                    padding: 0 emCalc(4px) 0 emCalc(8px);
-                }
+            del {
+                color: #480007;
+                background-color: #FDD;
+                text-decoration: line-through;
             }
             p {
                 margin: 0;
-                padding: 0 0 emCalc(6px) 0;
-                font-size: emCalc(12px);
-                line-height: 1.1;
+                padding: emCalc(3px) 0;
+                font-size: emCalc(14px);
+                line-height: 1.2;
+            }
+            i {
+                padding-right: emCalc(5px);
             }
         }
-    }
-}
-
-.add-icon,
-.delete-icon {
-    margin: emCalc(3px) 0 0 0;
-    i {
-        margin-right: 0;
     }
 }
 
@@ -849,14 +839,16 @@ h6.subheader {
     }
 }
 
-.problem .criteria-row {
-    border: 0;
+.problem-edit .criteria-row {
+    &:hover {
+        background-color: #EAEAEA;
+    }
 }
 
 .criteria-row {
-    border: 1px solid $light-grey;
-    padding: emCalc(10px) emCalc(15px);
+    padding: emCalc(10px);
     margin: emCalc(10px) 0;
+    border: 1px solid #EAEAEA;
     position: relative;
     .frontend {
         .criteria-info {
@@ -913,6 +905,9 @@ h6.subheader {
         }
     }
     .backend {
+        margin: emCalc(10px);
+        padding: emCalc(10px) 0;
+        background-color: white;
         .minmax {
             display: none;
         }

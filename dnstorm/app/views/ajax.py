@@ -21,7 +21,7 @@ from notification import models as notification
 from dnstorm.app import models
 from dnstorm.app import permissions
 from dnstorm.app.forms import ProblemForm, IdeaForm, CriteriaForm, CommentForm, ContributorForm
-from dnstorm.app.utils import get_object_or_none, email_context, activity_count, activity_reset_counter as _activity_reset_counter
+from dnstorm.app.utils import get_object_or_none, email_context, activity_count, activity_register, activity_reset_counter as _activity_reset_counter
 
 import json
 
@@ -271,29 +271,34 @@ class AjaxView(View):
 
     def criteria_submit(self):
         """
-        Submit a criteria for a problem.
+        Submit a criteria for a problem on ProblemUpdateView.
         """
 
+        # Permissions
         problem = get_object_or_404(models.Problem, id=self.request.POST.get('problem_id'))
         if not permissions.problem(obj=problem, user=self.request.user, mode='manage'):
             raise PermissionDenied
 
+        # Set data
         obj = get_object_or_none(models.Criteria, id=self.request.POST.get('id', None))
-        if obj and not permissions.problem(obj=obj.problem, user=self.request.user, mode='manage'):
-            raise PermissionDenied
-
         self.request.POST = self.request.POST.copy()
         self.request.POST['author'] = self.request.user.id
         self.request.POST['description'] = self.request.POST['criteria_description']
         criteria = CriteriaForm(self.request.POST)
-
         criteria.instance = obj if obj else criteria.instance
         criteria.instance.problem = problem
+
+        # Save
         if not criteria.is_valid():
             return HttpResponse(json.dumps({'errors':dict(criteria.errors)}), content_type='application/json')
         criteria.save()
 
+        # Reload with updated data
+        criteria = CriteriaForm(instance=criteria.instance)
         criteria.instance.fill_data()
+
+        # Response
+        activity_register(self.request.user, criteria.instance)
         result = loader.render_to_string('criteria_row.html', {'criteria': criteria.instance, 'show_actions': True, 'criteria_form': criteria})
         return HttpResponse(json.dumps({'result': result}), content_type='application/json')
 
@@ -302,15 +307,21 @@ class AjaxView(View):
         Create a new alternative.
         """
 
+        # Permissions
         problem = get_object_or_404(models.Problem, id=self.request.GET['problem'])
         if not problem or not self.request.user.is_authenticated():
             raise Http404
         if not permissions.problem(obj=problem, user=self.request.user, mode='manage'):
             raise PermissionDenied
+
+        # Save
         order = models.Alternative.objects.filter(problem=problem).count() + 1
         a = models.Alternative(problem=problem, order=order)
         a.save()
         a.fill_data()
+
+        # Response
+        activity_register(self.request.user, a)
         response = {
             'id': a.id,
             'html': loader.render_to_string('alternative_row.html', {
@@ -322,18 +333,16 @@ class AjaxView(View):
 
     def comment_new(self):
         """
-        Create a new comment on a problem or idea.
+        Comment on a problem, criteria, idea or alternative.
         """
 
         # Start object
-
         content = self.request.POST.get('content', None)
         if not content:
             raise Http404
         comment = models.Comment(content=content, author=self.request.user)
 
         # Validation
-
         problem = self.request.POST.get('problem', None)
         if problem:
             _obj = get_object_or_none(models.Problem, id=problem)
@@ -361,26 +370,16 @@ class AjaxView(View):
         if not problem and not idea and not criteria and not alternative:
             raise Http404
 
-        # Check permissions
-
+        # Permissions
         if not permissions.problem(obj=_problem, user=self.request.user, mode='contribute'):
             raise PermissionDenied
 
-        # Save comment
-
+        # Save
         comment.save()
         comment.perm_edit = permissions.problem(obj=_problem, user=self.request.user, mode='manage')
 
-        # Action
-
-        follow(self.request.user, _problem, actor_only=False) if not is_following(self.request.user, _problem) else None
-        a = action.send(self.request.user, verb='commented', action_object=_obj, target=_problem)
-        a[0][1].data = {'diff': content}
-        a[0][1].save()
-        activity_count(_problem)
-
         # Response
-
+        activity_register(self.request.user, comment)
         t = loader.get_template('comment.html')
         c = Context({'comment': comment})
         return HttpResponse(json.dumps({'target': target, 'html': re.sub("\n", '', t.render(c))}), content_type='application/json')

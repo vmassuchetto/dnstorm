@@ -93,7 +93,7 @@
             {% if problem_perm_contribute %}
                 <a class="action-button" href="{% url "problem_update" problem.id %}"><i class="fi-pencil"></i>&nbsp;{% trans "edit problem" %}</a>
             {% endif %}
-            <a class="action-button" href="{% url "problem_activity" problem.id %}"><i class="fi-list"></i>&nbsp;{% trans "view activity log" %}</a>
+            <a class="action-button" href="{% url "problem_activity" problem.id problem.slug %}"><i class="fi-list"></i>&nbsp;{% trans "view activity log" %}</a>
             {% if not problem.public %}
                 <a class="action-button show-problem-contributors" href="javascript:void(0);"><i class="fi-torso"></i>&nbsp;{% trans "contributors" %}</a>
             {% endif %}

@@ -285,7 +285,7 @@ $('.problem-form').on('click', '.criteria-add', function(e){
 $('.problem-edit #delete-modal form').on('submit', function(e){
     /**:ProblemForm:click:.problem-edit #delete-modal
 
-    Triggers the delete modal for criteria.
+    Triggers the delete modal for a criteria object.
     */
     if ($(this).find('#id_delete_problem').val()) {
         return;
@@ -334,7 +334,6 @@ $('.problem-form').on('click', '.criteria-cancel', function(e) {
         row.remove();
     } else {
         row.find('.backend').slideUp();
-        row.find('.frontend').slideDown();
     }
 });
 
@@ -388,7 +387,6 @@ $('.problem-form').on('click', '.criteria-submit', function(e) {
                 // Created successfully
                 row.replaceWith(response.result);
                 row.find('.backend').slideUp();
-                row.find('.frontend').slideDown();
             }
         }
     });
@@ -400,12 +398,15 @@ $('.problem-form,.idea-edit').on('click', '.criteria-edit', function(e) {
     Toggle a criteria form among the problem criteria.
     */
     // Hide all other rows
-    $('.criteria .frontend').not(':visible').slideDown();
     $('.criteria .backend').filter(':visible').slideUp();
     // Show the activated one
     var f = $(e.currentTarget).closest('.frontend');
-    f.slideUp();
-    f.next().slideDown();
+    var b = f.next()
+    if (b.is(":visible")) {
+        b.slideUp();
+    } else {
+        b.slideDown();
+    }
 });
 
 $('.problem-form,.idea-edit').on('click', '.criteria-unedit', function(e) {
@@ -413,7 +414,6 @@ $('.problem-form,.idea-edit').on('click', '.criteria-unedit', function(e) {
 
     Toggle a criteria form among the problem criteria.
     */
-    $(this).closest('.frontend').slideDown();
     $(this).closest('.backend').slideUp();
 });
 
@@ -705,11 +705,12 @@ $(document).on('click', 'a.display-more', function(e){
     $(this).remove();
 });
 
-/**
- * Format DeleteForm for delete actions
- */
-
 function toggle_delete(type, id) {
+    /**:toggle_delete
+
+    Prepare the delete confirmation modal for a problem, idea, comment or
+    criteria.
+    */
     var delete_modal = $('#delete-modal');
     delete_modal.find('#id_delete_problem,#id_delete_idea,#id_delete_comment,#id_delete_criteria').each(function(){
         $(this).val('');
