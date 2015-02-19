@@ -41,9 +41,14 @@ class IdeaCreateView(RedirectView):
         """
         Creates a draft idea for the user to start edition.
         """
+        # Validation
         p = get_object_or_404(models.Problem, id=kwargs['pk'])
         if not permissions.problem(obj=p, user=self.request.user, mode='contribute'):
             raise PermissionDenied
+        if p.criteria_set.all().count() == 0:
+            raise PermissionDenied
+
+        # Commit
         i = models.Idea.objects.create(
             problem=p,
             published=False,

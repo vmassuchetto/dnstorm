@@ -229,7 +229,9 @@
                 {% endcaptureas %}
                 {% include "part_panel.html" with icon="prohibited" message=message %}
             {% endif %}
-            <p><a class="button radius expand secondary" href="{% url "idea_create" problem.id %}">{% trans "Add new idea" %}</a></p>
+            {% if problem.criteria_set.all|length > 0 %}
+                <p><a class="button radius expand secondary" href="{% url "idea_create" problem.id %}">{% trans "Add new idea" %}</a></p>
+            {% endif %}
         </div>
 
         {# Alternatives #}
