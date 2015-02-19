@@ -53,7 +53,7 @@
                 </div>
 
                 <div class="columns medium-3 large-3">
-                    {% include "user_box.html" with user=idea.author date=idea.created link=idea.get_absolute_url %}
+                    {% include "item_user.html" with user=idea.author date=idea.created link=idea.get_absolute_url %}
                 </div>
 
             </div>
@@ -66,9 +66,9 @@
                     {% if idea.comments %}
                         {% for comment in idea.comments %}
                             {% if forloop.counter > 3 %}
-                                {% include "comment.html" with hidden=True %}
+                                {% include "item_comment.html" with hidden=True %}
                             {% else %}
-                                {% include "comment.html" %}
+                                {% include "item_comment.html" %}
                             {% endif %}
                         {% endfor %}
                         {% if idea.comments|length > 3 %}

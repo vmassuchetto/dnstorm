@@ -52,7 +52,7 @@ class ProblemCreateView(RedirectView):
         return Http404()
 
 class ProblemUpdateView(UpdateView):
-    template_name = 'problem_update.html'
+    template_name = '_update_problem.html'
     form_class = forms.ProblemForm
     model = models.Problem
 
@@ -139,12 +139,12 @@ class ProblemUpdateView(UpdateView):
         else:
             view = 'problem'
             kwargs = { 'pk': self.object.id, 'slug': self.object.slug }
-            messages.success(self.request, _('The problem is now published. Users can start contributing to it.'))
+            messages.success(self.request, _('The problem was successfuly saved.'))
             activity_register(self.request.user, self.object)
         return HttpResponseRedirect(reverse(view, kwargs=kwargs))
 
 class ProblemView(TemplateView):
-    template_name = 'problem.html'
+    template_name = '_single_problem.html'
 
     @method_decorator(csrf_protect)
     def dispatch(self, request, *args, **kwargs):
@@ -178,8 +178,6 @@ class ProblemView(TemplateView):
         context['problem_perm_contribute'] = permissions.problem(obj=self.object, user=user, mode='contribute')
         context['comments'] = models.Comment.objects.filter(problem=self.object)
         context['comment_form'] = forms.CommentForm()
-        context['comment_form_problem'] = forms.CommentForm(initial={'problem': self.object.id})
-        context['contributor_form'] = forms.ContributorForm(problem=self.object.id)
         context['ideas'] = models.Idea.objects.filter(problem=self.object.id, published=True)
         for i in context['ideas']: i.fill_data(self.request.user);
         context['delete_form'] = forms.DeleteForm()
@@ -215,7 +213,7 @@ class ProblemView(TemplateView):
             { 'title': self.object.title, 'url': self.object.get_absolute_url(), 'classes': 'current' } ]
 
 class ProblemActivityView(TemplateView):
-    template_name = 'activity.html'
+    template_name = '_single_activity.html'
 
     def dispatch(self, request, *args, **kwargs):
         self.problem = get_object_or_404(models.Problem, id=self.kwargs.get('pk', None))

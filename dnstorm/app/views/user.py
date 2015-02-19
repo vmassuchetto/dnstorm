@@ -20,7 +20,7 @@ from dnstorm.app.models import Problem, Idea, Comment, Option
 from dnstorm.app.utils import get_option, get_object_or_none, get_user
 
 class UserView(TemplateView):
-    template_name = 'activity.html'
+    template_name = '_single_activity.html'
 
     def get_context_data(self, *args, **kwargs):
         context = super(UserView, self).get_context_data(**kwargs)
@@ -41,11 +41,14 @@ class UserView(TemplateView):
             { 'title': kwargs['username'], 'classes': 'current' } ]
 
 class UsersView(TemplateView):
-    template_name = 'users.html'
+    template_name = '_single_users.html'
 
     def get_context_data(self, *args, **kwargs):
         context = super(UsersView, self).get_context_data(**kwargs)
-        users = Paginator(User.objects.all().order_by('username'), 100)
+        if self.request.user.is_superuser:
+            users = Paginator(User.objects.all().order_by('username'), 48)
+        else:
+            users = Paginator(User.objects.filter(is_staff=True).order_by('username'), 48)
         page = self.request.GET['page'] if 'page' in self.request.GET else 1
         context['site_title'] = '%s | %s' % (_('Users'), get_option('site_title'))
         context['breadcrumbs'] = self.get_breadcrumbs()
@@ -105,7 +108,7 @@ class UserUpdateView(UpdateView):
 
 class UserPasswordUpdateView(FormView):
     form_class = UserPasswordForm
-    template_name = 'user_password.html'
+    template_name = '_update_userpassword.html'
 
     def dispatch(self, *args, **kwargs):
         obj = get_object_or_404(User, username=kwargs['username'])
@@ -135,7 +138,7 @@ class UserPasswordUpdateView(FormView):
         if not self.object.check_password(self.request.POST['password']):
             form._errors.setdefault('password', ErrorList())
             form._errors['password'].append(_('Wrong password.'))
-            return render(self.request, 'user_password.html', {'form': form})
+            return render(self.request, '_update_userpassword.html', {'form': form})
 
         self.object.set_password(self.request.POST['password1'])
         self.object.save()

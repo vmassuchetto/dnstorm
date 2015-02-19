@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "_base.html" %}
 {% load i18n captureas %}
 
 {% block content %}
@@ -7,5 +7,5 @@
     {% captureas message %}
         {% blocktrans %}Welcome to DNStorm! You can now <a href="{{ home_url }}">start contributing</a>.{% endblocktrans %}
     {% endcaptureas %}
-    {% include "panel.html" with icon="lightbulb" message=message %}
+    {% include "part_panel.html" with icon="lightbulb" message=message %}
 {% endblock %}

@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "_base.html" %}
 {% load crispy_forms_tags i18n captureas %}
 
 {% block bodyclass %}problem{% endblock %}
@@ -44,7 +44,7 @@
                         <i class="fi-check idea-status"></i>
                     </div>
                     <div class="columns large-11">
-                        {% include "idea_row.html" with show_likes=False show_actions=False show_comments=False %}
+                        {% include "item_idea.html" with show_likes=False show_actions=False show_comments=False %}
                     </div>
                 </div>
             {% endfor %}
@@ -69,14 +69,21 @@
     <li class="divider"></li>
 {% endblock %}
 
-{% block content %}
+{% block messages %}
 
     {# Draft mode #}
 
     {% if not problem.published %}
-        {% trans "This is a preview mode from a unpublished draft. The problem is not available for user contribution until it is published." as message %}
-        {% include "panel.html" with icon="page-edit" message=message %}
+        {% url "problem_update" problem.id problem.slug as problem_update_url %}
+        {% captureas message %}
+            {% blocktrans %}This is a preview mode from a unpublished draft. The problem is not available for user contribution until it is published. <a class="left-1em button secondary tiny radius" href="{{ problem_update_url }}">Edit problem</a>{% endblocktrans %}
+        {% endcaptureas %}
+        {% include "part_message.html" with icon="page-edit" message=message %}
     {% endif %}
+
+{% endblock %}
+
+{% block content %}
 
     {# Title #}
 
@@ -102,7 +109,7 @@
 
     {# Tabs #}
 
-    <div class="row row-line problem-tabs">
+    <div class="row row-line problem-tabs sticable">
         <div class="columns large-3 medium-3 text-center problem-tab-selector" data-tab="description">
             <div class="problem-tab-wrapper">
                 <i class="fi-target-two"></i>
@@ -169,7 +176,7 @@
                     {% if comments %}
                         <h5 class="top-1em">{% trans "Comments" %}</h5>
                         {% for comment in comments %}
-                            {% include "comment.html" %}
+                            {% include "item_comment.html" %}
                         {% endfor %}
                     {% endif %}
                 </div>
@@ -200,11 +207,11 @@
         <div class="problem-tab problem-criteria">
             {% if criteria %}
                 {% for c in criteria %}
-                    {% include "criteria_row.html" with criteria=c show_actions=False show_parameters=True show_icons=True show_description=True show_comments=True %}
+                    {% include "item_criteria.html" with criteria=c show_actions=False show_parameters=True show_icons=True show_description=True show_comments=True %}
                 {% endfor %}
             {% else %}
                 {% trans "There's no criteria defined for this problem yet." as message %}
-                {% include "panel.html" with icon="prohibited" message=message %}
+                {% include "part_panel.html" with icon="prohibited" message=message %}
             {% endif %}
         </div>
 
@@ -213,14 +220,14 @@
         <div class="problem-tab problem-ideas">
             {% if ideas %}
                 {% for idea in ideas %}
-                    {% include "idea_row.html" with show_likes=True show_actions=True show_comments=True %}
+                    {% include "item_idea.html" with show_likes=True show_actions=True show_comments=True %}
                 {% endfor %}
             {% else %}
                 {% url "idea_create" problem.id as item_url %}
                 {% captureas message %}
                     {% blocktrans %}There's no idea submitted to this problem yet. You can <a href="{{ item_url }}">give the first one</a>.{% endblocktrans %}
                 {% endcaptureas %}
-                {% include "panel.html" with icon="prohibited" message=message %}
+                {% include "part_panel.html" with icon="prohibited" message=message %}
             {% endif %}
             <p><a class="button radius expand secondary" href="{% url "idea_create" problem.id %}">{% trans "Add new idea" %}</a></p>
         </div>
@@ -230,13 +237,13 @@
         <div class="problem-tab problem-alternatives">
             {% if alternatives %}
                 {% for alternative in alternatives %}
-                    {% include "alternative_row.html" %}
+                    {% include "item_alternative.html" %}
                 {% endfor %}
             {% else %}
                 {% captureas message %}
                     {% blocktrans %}There's no alternative created yet.{% endblocktrans %}
                 {% endcaptureas %}
-                {% include "panel.html" with icon="prohibited" message=message %}
+                {% include "part_panel.html" with icon="prohibited" message=message %}
             {% endif %}
             {% if problem_perm_contribute %}
                 <p><a class="button radius expand secondary new-alternative" href="javascript:void(0)">{% trans "Add new alternative" %}</a></p>

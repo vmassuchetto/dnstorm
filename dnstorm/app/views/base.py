@@ -31,19 +31,12 @@ class HomeView(TemplateView):
     """
     Front landing page.
     """
-    template_name = 'home.html'
+    template_name = '_home.html'
 
     def get_context_data(self, *args, **kwargs):
         context = super(HomeView, self).get_context_data(**kwargs)
         if self.request.user.is_authenticated():
-            q_problems = ((
-                    (Q(published=True) & Q(public=True))
-                    | (Q(published=False) & Q(author=self.request.user.id))
-                ) | (
-                    (Q(published=True))
-                    & (Q(author=self.request.user.id) | Q(contributor=self.request.user.id))
-                )
-            )
+            q_problems = permissions.problem_queryset(user=self.request.user)
         else:
             q_problems = Q(published=True) & Q(public=True)
         first_time = get_option('firsttime_homeview')
@@ -65,7 +58,6 @@ class RegistrationView(BaseRegistrationView):
         Display all the problems the user will gain access to contribution if a
         valid hash is provided with the registration link.
         """
-
         context = super(RegistrationView, self).get_context_data()
         context['site_title'] = '%s | %s' % (_('Register'), get_option('site_title'))
 
@@ -83,44 +75,45 @@ class RegistrationView(BaseRegistrationView):
 
         if _hash:
             invitation = get_object_or_404(Invitation, hash=_hash)
-            context['problems'] = [i.problem for i in Invitation.objects.filter(email=invitation.email)]
+            context['problems'] = Problem.objects.filter(contributor__in=[invitation.user])
 
         return context
 
     def register(self, request, **cleaned_data):
         """
-        Register the user without an activation link and add it as a
-        contributor of the problems with pending invitations.
+        Register the user checking for invitations.
         """
+        # Invited user
+        _hash = cleaned_data.get('hash', None)
+        if len(_hash) > 2:
+            invitation = get_object_or_404(Invitation, hash=_hash)
+            user = invitation.user
+            user.username, user.email, user.first_name, \
+                user.is_active, user.is_staff = \
+                cleaned_data['username'], cleaned_data['email'], \
+                cleaned_data['username'], True, True
+            user.set_password(cleaned_data['password1'])
+            user.save()
+        # New registration
+        else:
+            user = User.objects.create(username=cleaned_data['username'],
+                email=cleaned_data['email'], first_name=cleaned_data['username'],
+                is_active=True, is_staff=True, date_joined=datetime.now())
+            user.set_password(cleaned_data['password1'])
+            user.save()
+            return user
 
-        # Create user
+        # Delete invitations
+        for i in Invitation.objects.filter(user=user):
+            i.delete()
 
-        username, email, password = cleaned_data['username'], cleaned_data['email'], cleaned_data['password1']
-        new_user = User.objects.create(username=username, email=email, password=password,
-            is_staff=True, date_joined=datetime.now())
-
-        # Invitations
-
-        _hash = request.POST.get('hash', None)
-        invitation = get_object_or_none(Invitation, hash=_hash) if _hash else None
-        if invitation:
-            for i in Invitation.objects.filter(email=invitation.email):
-                i.problem.contributor.add(new_user)
-                follow(new_user, i.problem, actor_only=False) if not is_following(new_user, i.problem) else None
-                activity_count(i.problem)
-                i.delete()
-            invitation.delete()
-
-        # Auto-login via signaly handler
-
-        registration_signals.user_registered.send(sender=self.__class__, user=new_user, request=request)
-        return new_user
+        return user
 
 class OptionsView(FormView):
     """
     Admin options page for superusers.
     """
-    template_name = 'options.html'
+    template_name = '_update_options.html'
     form_class = OptionsForm
 
     @method_decorator(login_required)
@@ -167,10 +160,10 @@ class CommentView(RedirectView):
     def get_redirect_url(self, *args, **kwargs):
         comment = get_object_or_404(Comment, id=kwargs['pk'])
         problem = comment.problem if comment.problem else comment.idea.problem
-        return reverse('problem', kwargs={'slug':problem.slug}) + '#comment-' + str(comment.id)
+        return reverse('problem', kwargs={'pk': problem.id, 'slug':problem.slug}) + '#comment-' + str(comment.id)
 
 class ActivityView(TemplateView):
-    template_name = 'activity.html'
+    template_name = '_single_activity.html'
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):

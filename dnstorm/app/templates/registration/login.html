@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "_base.html" %}
 {% load crispy_forms_tags i18n %}
 
 {% block bodyclass %}login{% endblock %}
@@ -8,7 +8,7 @@
     {% if user.is_authenticated %}
         <h3>{% trans "Nothing to do here" %}</h3>
         {% trans "You are already logged in." as message %}</p>
-        {% include "panel.html" with icon="prohibited" message=message %}
+        {% include "part_panel.html" with icon="prohibited" message=message %}
     {% else %}
 
         <div class="row">

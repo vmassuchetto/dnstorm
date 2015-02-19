@@ -1,0 +1,60 @@
+{% load i18n activity_tags avatar_tags display_name humanize %}
+
+{% if problem_drafts or idea_drafts %}
+<div id="drafts" class="scroll-box">
+    <div class="row collapse">
+        <div id="drafts-box" class="columns large-12 scroll-box-inner">
+            {% if problem_drafts %}<h5>{% trans "Problems" %}</h5>{% endif %}
+            {% for draft in problem_drafts %}
+                <div class="row collapse">
+                    <div class="columns large-12 drafts-item scroll-box-item">
+                        <div class="info"><a href="{% url "problem_update" draft.id %}">{% if draft.title %}{{ draft.title }}{% else %}{% trans "No title" %}{% endif %}</a><span class="label secondary tiny right">{{ draft.updated|date:"d/m/Y H:i" }}</span></div>
+                    </div>
+                </div>
+            {% endfor %}
+            {% if idea_drafts %}<h5>{% trans "Ideas" %}</h5>{% endif %}
+            {% for draft in idea_drafts %}
+                <div class="row collapse">
+                    <div class="columns large-12 drafts-item scroll-box-item">
+                        <div class="info"><a href="{% url "idea_update" draft.id %}">{% if draft.title %}{{ draft.title }}{% else %}{% trans "No title" %}{% endif %}</a><span class="label secondary tiny right">{{ draft.updated|date:"d/m/Y H:i" }}</span></div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{# Activity stream #}
+
+{% if user.is_authenticated %}
+<div id="activity" class="scroll-box">
+    <div class="row collapse">
+        <div id="activity-box" class="columns large-12 scroll-box-inner">
+            {% if user_activity %}
+                {% for action in user_activity %}
+                    <div class="row collapse">
+                        <div class="columns large-12 activity-item scroll-box-item">
+                            <div class="left avatar">{% avatar action.actor 32 %}</div>
+                            <div class="info">{% display_action action %}<span class="subheader"> &diams; {{ action.timestamp|naturaltime }}</span></div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="row collapse">
+                    <div class="columns large-12">
+                        <p class="button expand secondary" disabled="disabled">{% trans "No activity so far." %}</p>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+        {% if user_activity %}
+            <div class="row collapse">
+                <div class="columns large-12">
+                    <a class="button small radius expand no-margin-bottom" href="{% url "activity" %}">{% trans "View all activities" %}</a>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endif %}

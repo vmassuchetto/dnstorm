@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "_base.html" %}
 {% load crispy_forms_tags i18n %}
 
 {% block bodyclass %}problem-edit{% endblock %}
@@ -16,7 +16,7 @@
 
 {% block content %}
 
-    <div class="hidden" id="criteria-form">{% include "criteria_row.html" %}</div></div>
+    <div class="hidden" id="criteria-form">{% include "item_criteria.html" %}</div></div>
 
     <div class="row">
         <div class="columns large-12">

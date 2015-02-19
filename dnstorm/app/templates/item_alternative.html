@@ -50,9 +50,9 @@
                 {% if alternative.comments %}
                     {% for comment in alternative.comments %}
                         {% if forloop.counter > 3 %}
-                            {% include "comment.html" with hidden=True %}
+                            {% include "item_comment.html" with hidden=True %}
                         {% else %}
-                            {% include "comment.html" %}
+                            {% include "item_comment.html" %}
                         {% endif %}
                     {% endfor %}
 

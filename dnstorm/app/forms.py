@@ -2,11 +2,13 @@ import json
 import re
 import urlparse
 from itertools import izip
+from decimal import Decimal
 
 from django import forms
-from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserChangeForm, PasswordChangeForm
+from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
+from django.core.validators import MinValueValidator
 from django.http import Http404, QueryDict
 from django.shortcuts import get_object_or_404
 from django.template.loader import render_to_string
@@ -23,6 +25,9 @@ from dnstorm.app.utils import get_object_or_none, get_option
 from dnstorm.settings import LANGUAGES
 
 class RegistrationForm(RegistrationFormUniqueEmail):
+    """
+    Custom registration form with the ``hash`` parameter.
+    """
     hash = forms.CharField(widget=forms.HiddenInput())
 
     def __init__(self, *args, **kwargs):
@@ -43,9 +48,26 @@ class RegistrationForm(RegistrationFormUniqueEmail):
         super(RegistrationForm, self).__init__(*args, **kwargs)
         self.fields['hash'].initial = _hash if _hash else 0
 
+    def clean_email(self, *args, **kwargs):
+        """
+        Validate that the supplied email address is unique for the
+        site and compliant with the ``hash`` invitation parameter.
+        """
+        if 'hash' in self.cleaned_data:
+            invitation = get_object_or_404(models.Invitation, hash=self.cleaned_data['hash'])
+            # User was invited previously and is using the same e-mail to register
+            if invitation and invitation.user.email == self.cleaned_data['email']:
+                return self.cleaned_data['email']
+
+        # Non-invited registration
+        user = User.objects.filter(email__iexact=self.cleaned_data['email'])
+        if user:
+            raise forms.ValidationError(_('This email address is already in use. Please supply a different email address.'))
+        return self.cleaned_data['email']
+
 class OptionsForm(forms.Form):
-    site_title = forms.CharField(label=_('Site title'), help_text=_('Page title for browsers'))
-    site_description = forms.CharField(label=_('Site description'), help_text=_('Page description for browsers'))
+    site_title = forms.CharField(label=_('Site title'), help_text=_('Page title for browser windows and e-mail subjects.'))
+    site_description = forms.CharField(label=_('Site description'), help_text=_('Page description for browser windows.'))
     site_url = forms.CharField(label=_('Site URL'), help_text=_('Site domain for URL generation with http scheme. Examples: \'http://domain.com\', \'https://subdomain.domain.com\', \'http://domain:port\''))
 
     def __init__(self, *args, **kwargs):
@@ -214,7 +236,7 @@ class ProblemForm(forms.ModelForm):
             for c in self.instance.criteria_set.all().order_by('name'):
                 criteria_form = CriteriaForm(instance=c)
                 c.fill_data()
-                criteria_html += render_to_string('criteria_row.html', {'criteria': c, 'show_actions': True, 'criteria_form': criteria_form})
+                criteria_html += render_to_string('item_criteria.html', {'criteria': c, 'show_actions': True, 'criteria_form': criteria_form})
         criteria_html = '<div class="criteria">%s</div>' % criteria_html
 
         layout_args += (
@@ -231,8 +253,8 @@ class ProblemForm(forms.ModelForm):
                         Column('public', css_class='large-6'),
                         Column('open', css_class='large-6')
                     ),
-                    HTML('<div class="row contributors-section"><div class="columns large-12"><h5>%s</h5><p class="help">%s</p>' % (_('Contributors'), _('Users with permission to contribute to this problem. Click a user box to remove from the selection.'))),
-                    HTML(render_to_string('user_selected.html', {'users': self.instance.contributor.all()})),
+                    HTML('<div class="row collapse contributors-section"><div class="columns large-12"><h5>%s</h5><p class="help">%s</p>' % (_('Contributors'), _('Users with permission to contribute to this problem. Click a user box to remove from the selection.'))),
+                    HTML(render_to_string('_update_problem_users.html', {'users': self.instance.contributor.all()})),
                     Row(
                         Column('user_search', css_class='large-8'),
                         Column(Button('add_user', _('Search and add contributors'), css_class='postfix secondary', disabled=True), css_class='large-4')
@@ -252,44 +274,6 @@ class ProblemForm(forms.ModelForm):
 
         self.helper.layout = Layout(*layout_args)
         super(ProblemForm, self).__init__(*args, **kwargs)
-
-class ContributorForm(forms.Form):
-    contributor = forms.CharField()
-    problem = forms.CharField(widget=forms.HiddenInput())
-
-    def __init__(self, *args, **kwargs):
-
-        if not dict(kwargs).setdefault('problem', None):
-            raise Exception('Wrong kwargs for ContributorForm')
-        problem = get_object_or_404(models.Problem, id=kwargs['problem'])
-        kwargs.pop('problem')
-
-        # Invitations section HTML
-
-        invitations_html = list()
-        invitations = models.Invitation.objects.filter(problem=problem).order_by('email')
-
-        for i in invitations:
-            u = User(username=i.email, email=i.email)
-            u.invitation = i.id
-            invitations_html.append(render_to_string('user_lookup_display.html', {'user': u}))
-
-        invitations_html = '<div id="pending-invitations"><h6>%s</h6>%s</div>' % (_('Pending invitations'), ''.join(invitations_html)) if len(invitations) > 0 else ''
-
-        self.helper = FormHelper()
-        self.helper.form_action = '.'
-        self.helper.layout = Layout(
-            Row(Column('contributor', css_class='large-12')),
-            Row(Column(HTML(invitations_html))),
-            Row(Column(
-                'problem',
-                Submit('submit', _('Save'), css_class='right radius'), css_class='large-12 top-1em',
-            )),
-        )
-        super(ContributorForm, self).__init__(*args, **kwargs)
-        self.fields['problem'].initial = problem.id
-        self.fields['contributor'].initial = [c.id for c in problem.contributor.all()]
-
 
 class DeleteForm(forms.Form):
     yes = forms.BooleanField(label=_("Yes. I know what I'm doing. Delete this!"))
@@ -346,15 +330,15 @@ class IdeaForm(forms.ModelForm):
                 or c.fmt == 'scale' \
                 or c.fmt == 'time':
                 vk = '%d__value_%s' % (c.id, c.fmt)
-                self.fields[vk] = forms.IntegerField(required=True, initial=c.value)
+                self.fields[vk] = forms.IntegerField(required=True, initial=c.value, validators=[MinValueValidator(Decimal('0.00'))], help_text=_('Give an integer value higher than zero.'))
             elif c.fmt == 'currency':
                 vk = '%d__value_%s' % (c.id, c.fmt)
-                self.fields[vk] = forms.DecimalField(max_digits=10, decimal_places=2, required=True, initial=c.value)
+                self.fields[vk] = forms.DecimalField(max_digits=10, decimal_places=2, required=True, initial=c.value, validators=[MinValueValidator(Decimal('0.00'))], help_text=_('Give a currency value higher than 0. Use dots to separate cents. e.g.: 1.23; 12.34 123.45; 12345.12'))
             elif c.fmt == 'boolean':
                 vk = '%d__value_%s' % (c.id, c.fmt)
-                self.fields[vk] = forms.BooleanField(initial=c.value, required=False)
+                self.fields[vk] = forms.BooleanField(initial=c.value, required=False, help_text=_('Mark the checkbox to represent the \'True\' value or leave unchecked for \'False\'.'))
             dk = '%d__description' % c.id
-            self.fields[dk] = forms.CharField(widget=forms.Textarea(), required=True, initial=c.description)
+            self.fields[dk] = forms.CharField(widget=forms.Textarea(), required=True, initial=c.description, help_text=_('Describe why you gave the above value for this criteria in this idea.'))
 
             _argfields += (vk,dk)
             _kwargfields = {'css_class': 'large-6'}
@@ -362,7 +346,7 @@ class IdeaForm(forms.ModelForm):
             layout_args += (
                 HTML('<hr/>'),
                 Row(
-                    Column(HTML(render_to_string('criteria_row.html', {
+                    Column(HTML(render_to_string('item_criteria.html', {
                         'criteria': c, 'show_actions': False, 'show_parameters': True,
                         'show_description': True, 'show_icons': True})), css_class='large-6'),
                     Column(*_argfields, **_kwargfields),

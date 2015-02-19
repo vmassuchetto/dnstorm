@@ -1,0 +1,18 @@
+{% load i18n avatar_tags display_name %}
+
+<div class="user-box{% if clean %} user-box-clean{% endif %}" data-username="{{ user.username }}"{% if email_invitation %} data-email="{{ email_invitation }}"{% endif %}>
+    <div class="row collapse">
+        <div class="columns large-12">
+            <a class="avatar left" {% if show_links %}href="{% url "user" user.username %}"{% else %}href="javascript:void(0)"{% endif %}>{% if user.is_active %}{% avatar user 32 %}{% else %}<i class="fi-mail"></i>{% endif %}</a>
+            <div class="info">
+                {% if show_date %}
+                    <span class="contributed">
+                        {% if show_links %}<a href="{{ date_link }}">{% endif %}{% blocktrans with day=date|date:"d b Y" hour=date|date:"H:i" %}{{ day }} at {{ hour }}{% endblocktrans %}{% if show_links %}</a>{% endif %}
+                    </span><br/>
+                {% endif %}
+                <a class="username" {% if show_links %}href="{% url "user" user.username %}"{% else %}href="javascript:void(0)"{% endif %}>{% display_name user %}</a>{% if email_invitation %}<span class="label secondary small">{% trans "Send invitation" %}</span>{% endif %}
+                {% if not user.is_staff and not email_invitation %}<br/><span class="label secondary small pending-invitation">{% trans "Pending invitation" %}</span>{% endif %}
+            </div>
+        </div>
+    </div>
+</div>

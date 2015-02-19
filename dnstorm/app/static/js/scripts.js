@@ -110,7 +110,7 @@ function scrollTo(selector) {
 
     Scrolls the screen to the given selector.
     */
-    $('html, body').animate({ scrollTop: $(selector).offset().top }, 1000);
+    $('html, body').animate({ scrollTop: $(selector).offset().top }, 200);
 }
 
 $.fn.highlight = function (color, duration) {
@@ -131,6 +131,19 @@ $.fn.highlight = function (color, duration) {
     });
 };
 
+$(document).ready(function(){
+    var s = $('.sticable');
+    var pos = s.position();
+    $(window).scroll(function(){
+        var windowpos = $(window).scrollTop();
+        if (windowpos >= pos.top + 180){
+            s.addClass("stick");
+        } else {
+            s.removeClass("stick");
+        }
+    });
+});
+
 /* }}} */
 
 /* Modals {{{ */
@@ -140,7 +153,7 @@ $('.message-bar').on('click', '.close', function(){
 
     Hides the top message bar.
     */
-    $(this).parent().parent().parent().slideUp();
+    $(this).parent().parent().parent().slideUp(200);
 });
 
 $(document).on('click', '.close-reveal-modal-button', function(){
@@ -222,11 +235,13 @@ $('.problem-tabs').on('click', '>div', function(e){
     Tab selection on the problem frontend.
     */
     e.preventDefault();
+    window.location.hash = $(this).data('tab');
     $('.problem-tabs > div').removeClass('marked');
     $(this).addClass('marked');
-    $('.problem-tab').stop().slideUp();
-    $('.problem-' + $(this).data('tab')).stop().slideDown();
-    window.location.hash = $(this).data('tab');
+    $('.problem-tab').stop().slideUp(200);
+    $('.problem-' + $(this).data('tab')).stop().slideDown(200, function(){
+        scrollTo('.problem-tabs');
+    });
 });
 
 // }}}
@@ -240,9 +255,9 @@ function criteria_form() {
     Show or hide the contributors section.
     */
     if ($('#id_public').is(':checked')) {
-        $('.contributors-section').slideUp();
+        $('.contributors-section').hide();
     } else {
-        $('.contributors-section').slideDown();
+        $('.contributors-section').show();
     }
 }
 criteria_form();
@@ -278,8 +293,8 @@ $('.problem-form').on('click', '.criteria-add', function(e){
     e.preventDefault();
     $('.criteria').append($('#criteria-form').html());
     var c = $('.criteria .criteria-new:last');
-    c.find('.frontend').slideUp();
-    c.find('.backend').slideDown();
+    c.find('.frontend').slideUp(200);
+    c.find('.backend').slideDown(200);
 });
 
 $('.problem-edit #delete-modal form').on('submit', function(e){
@@ -330,11 +345,11 @@ $('.problem-form').on('click', '.criteria-cancel', function(e) {
     Hides the criteria form and removes it if new.
     */
     row = $(this).closest('.criteria-row');
-    if (row.hasClass('criteria-new')) {
-        row.remove();
-    } else {
-        row.find('.backend').slideUp();
-    }
+    row.find('.backend').slideUp(200, function(){
+        if (row.hasClass('criteria-new')) {
+            row.remove();
+        }
+    });
 });
 
 $('.problem-form').on('change', 'select[name="fmt"]', function(e){
@@ -343,9 +358,9 @@ $('.problem-form').on('change', 'select[name="fmt"]', function(e){
     Show format-dependent fields on the form.
     */
     if ($(this).val() == 'scale') {
-        $(this).closest('.backend').find('.minmax').slideDown();
+        $(this).closest('.backend').find('.minmax').show();
     } else {
-        $(this).closest('.backend').find('.minmax').slideUp();
+        $(this).closest('.backend').find('.minmax').hide();
         $(this).closest('.backend').find('.minmax input').each(function(){
             $(this).val('');
         });
@@ -386,7 +401,7 @@ $('.problem-form').on('click', '.criteria-submit', function(e) {
                 }
                 // Created successfully
                 row.replaceWith(response.result);
-                row.find('.backend').slideUp();
+                row.find('.backend').slideUp(200);
             }
         }
     });
@@ -398,14 +413,14 @@ $('.problem-form,.idea-edit').on('click', '.criteria-edit', function(e) {
     Toggle a criteria form among the problem criteria.
     */
     // Hide all other rows
-    $('.criteria .backend').filter(':visible').slideUp();
+    $('.criteria .backend').filter(':visible').slideUp(200);
     // Show the activated one
     var f = $(e.currentTarget).closest('.frontend');
     var b = f.next()
     if (b.is(":visible")) {
-        b.slideUp();
+        b.slideUp(200);
     } else {
-        b.slideDown();
+        b.slideDown(200);
     }
 });
 
@@ -414,7 +429,7 @@ $('.problem-form,.idea-edit').on('click', '.criteria-unedit', function(e) {
 
     Toggle a criteria form among the problem criteria.
     */
-    $(this).closest('.backend').slideUp();
+    $(this).closest('.backend').slideUp(200);
 });
 
 
@@ -524,39 +539,12 @@ $('.problem-tabs').ready(function(){
     r = /.*#idea-([0-9]+).*/;
     idea_id = parseInt(document.URL.replace(r, "$1", "$0"));
     if (idea_id) {
-        $('.problem-tab').stop().slideUp();
-        $('.problem-ideas').stop().slideDown();
         $('.problem-tab-selector').find('[data-tab="ideas"]').addClass('marked');
-        $(this).addClass('marked');
-        setTimeout(function(){
+        $('.problem-tab').stop().slideUp(200);
+        $('.problem-ideas').stop().slideDown(200, function(){
             scrollTo('#idea-' + idea_id);
-        }, 3000);
+        });
     }
-});
-
-/**
- * Problem form: resend pending invitations
- */
-
-$(document).on('click', '.resend-button', function(e) {
-    e.preventDefault();
-    if ($(this).attr('disabled') == 'disabled')
-        return false;
-    var button = $(this);
-    var invitation = button.data('invitation');
-    button.attr('disabled', true);
-    button.addClass('loading');
-    $.ajax({
-        url: '/ajax/',
-        type: 'GET',
-        data: 'resend_invitation=' + invitation,
-        complete: function(xhr, data) {
-            button.removeClass('loading');
-            if (data == 'success') {
-                button.text('OK');
-            }
-        }
-    });
 });
 
 // Vote criteria
@@ -700,8 +688,8 @@ $('.problem').on('submit', '.comment-form form', function(e){
 });
 
 $(document).on('click', 'a.display-more', function(e){
-    $(this).parents('.comment').slideUp(300);
-    $(this).parents('.comments').find('.hidden').slideDown(300);
+    $(this).parents('.comment').hide();
+    $(this).parents('.comments').find('.hidden').show();
     $(this).remove();
 });
 

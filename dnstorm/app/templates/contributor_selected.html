@@ -1,8 +1,0 @@
-{% load i18n %}
-
-<div class="user-search-selected">
-    <h5>{% trans "Contributors" %}</h5>
-    {% for user in users %}
-        {% include "user_box.html" with user=user,delete_icon=True %}
-    {% endfor %}
-</div>

@@ -106,9 +106,9 @@ class Problem(models.Model):
           ordering every time an idea or a comment is made for this problem.
     """
 
-    title = models.CharField(verbose_name=_('Title'), max_length=90)
+    title = models.CharField(verbose_name=_('Title'), max_length=90, help_text=_('Give your problem a compreensive title, this will be the main call for users.'))
     slug = AutoSlugField(populate_from='title', max_length=60, editable=False, unique=True, always_update=True)
-    description = RichTextField(verbose_name=_('Description'))
+    description = RichTextField(verbose_name=_('Description'), help_text=_('The description needs to be complete and address all the variables of the problem, giving users the correct parameters to give ideas according to the criteria specified.'))
     author = models.ForeignKey(User, related_name='author', editable=False)
     coauthor = models.ManyToManyField(User, related_name='problem_coauthor', editable=False, blank=True, null=True)
     contributor = models.ManyToManyField(User, related_name='contributor', verbose_name=_('Contributors'), blank=True, null=True)
@@ -153,26 +153,26 @@ class Criteria(models.Model):
     problem = models.ForeignKey(Problem, blank=False, null=False, editable=False)
     name = models.CharField(verbose_name=_('Name'), max_length=90, blank=False)
     slug = AutoSlugField(populate_from='name', max_length=60, editable=False, unique=True, always_update=True)
-    description = models.TextField(verbose_name=_('Description for the criteria'), blank=False)
+    description = models.TextField(verbose_name=_('Description for the criteria'), blank=False, help_text=_('This description should give users the information needed to fill the required values in ideas. Try to be specific about the needs and limits.'))
     fmt = models.CharField(verbose_name=('Format'), max_length=10, choices=(
         ('number', _('Number')),
         ('currency', _('Currency')),
         ('scale', _('Scale')),
         ('time', _('Time')),
         ('boolean', _('Yes or no'))
-    ))
-    min = models.IntegerField(verbose_name=_('Minimum scale value'), blank=True, null=True)
-    max = models.IntegerField(verbose_name=_('Maximum scale value'), blank=True, null=True)
+    ), help_text=_('What format of data will be used to quantify the ideas.'))
+    min = models.IntegerField(verbose_name=_('Minimum scale value'), blank=True, null=True, help_text=_('Minimum value for the ideas.'))
+    max = models.IntegerField(verbose_name=_('Maximum scale value'), blank=True, null=True, help_text=_('Maximum value for the ideas.'))
     order = models.CharField(verbose_name=_('Comparison order'), max_length=4, choices=(
         ('asc', _('The higher, the better.')),
         ('desc', _('The lower, the better.'))
-    ))
-    weight = models.PositiveIntegerField(verbose_name=_('Weight'), blank=True, null=True)
+    ), help_text=_('Ordering that will be respected to present the results about this criteria.'))
+    weight = models.PositiveIntegerField(verbose_name=_('Weight'), blank=True, null=True, help_text=_('How important this criteria is over the rest. This value will multiply over the results when presenting the alterantives.'))
     result = models.CharField(verbose_name=_('Result presenting mode'), max_length=10, choices=(
         ('sum', _('Sum')),
         ('average', _('Average')),
         ('absolute', _('Absolute')),
-    ))
+    ), help_text=_('How the results will be calculated across the given ideas.'))
     author = models.ForeignKey(User, blank=False, null=False)
 
     class Meta:
@@ -208,7 +208,7 @@ class Idea(models.Model):
     """
 
     problem = models.ForeignKey(Problem, editable=False)
-    title = models.CharField(verbose_name=_('title'), max_length=90)
+    title = models.CharField(verbose_name=_('title'), max_length=90, help_text=_('Describe in a general basis what is the idea you\'re given to address the problem.'))
     slug = AutoSlugField(populate_from='title', max_length=60, editable=False, unique=True, always_update=True)
     author = models.ForeignKey(User, editable=False)
     published = models.BooleanField(editable=False, blank=True, default=False)
@@ -284,12 +284,9 @@ class IdeaCriteria(models.Model):
 class Invitation(models.Model):
     """
     Invitations are used to add non-registered users as contributors of
-    problems. The user will have access granted to the problem when it
-    subscribes.
+    problems. The user will have access granted to the problem on registration.
     """
-
-    problem = models.ForeignKey(Problem)
-    email = models.EmailField()
+    user = models.ForeignKey(User)
     hash = models.CharField(max_length=128)
 
     class Meta:

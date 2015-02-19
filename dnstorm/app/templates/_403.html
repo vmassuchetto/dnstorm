@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "_base.html" %}
 {% load i18n %}
 
 {% block bodyclass %}error403{% endblock %}
@@ -6,5 +6,5 @@
 {% block content %}
     <h4>{% trans "Permission denied" %}</h4>
     {% trans "You don't have permission to access this page." as message %}
-    {% include "panel.html" with message=message icon="no-dogs" %}
+    {% include "part_panel.html" with message=message icon="no-dogs" %}
 {% endblock %}

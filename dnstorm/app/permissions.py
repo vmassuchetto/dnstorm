@@ -46,6 +46,19 @@ def problem(**kwargs):
         )
     return False
 
+def problem_queryset(**kwargs):
+    """
+    Return a queryset to get allowed problems.
+    """
+    user = kwargs.get('user')
+    return ((
+            (Q(published=True) & Q(public=True))
+            | (Q(published=False) & Q(author=user.id))
+        ) | (
+            (Q(published=True))
+            & (Q(author=user.id) | Q(contributor=user.id))
+        ))
+
 def idea(**kwargs):
     """
     Regulate permissions for idea objects.

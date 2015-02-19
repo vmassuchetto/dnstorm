@@ -70,6 +70,11 @@
     display: none;
 }
 
+.stick {
+    position: fixed;
+    top: 0;
+}
+
 hr {
     border-color: lighten($black, 45%);
 }
@@ -163,6 +168,11 @@ a.action-button {
 // Forms {{{
 
 form {
+    &.auth-form {
+        input[type="submit"] {
+            margin-top: emCalc(10px);
+        }
+    }
     label {
         display: inline-block;
         line-height: 1;
@@ -191,6 +201,9 @@ form {
         padding: 0 0 0 emCalc(4px);
         font-size: 1.2em;
         font-weight: bold;
+    }
+    .button-holder {
+        margin-top: emCalc(10px);
     }
 }
 
@@ -474,6 +487,9 @@ h6.subheader {
         color: $black;
         line-height: 1;
     }
+    h4 a.draft {
+        color: $light-black;
+    }
     .problem-info {
         padding: emCalc(5px) 0 0 0;
     }
@@ -483,6 +499,26 @@ h6.subheader {
 }
 
 .problem-tabs {
+    @include single-transition(all, 200ms, linear);
+    &.stick {
+        width: 100%;
+        left: 0;
+        z-index: 1;
+        background-color: white;
+        .problem-tab-selector  {
+            height: auto !important;
+            .problem-tab-wrapper {
+                i {
+                    display: inline-block;
+                    font-size: emCalc(28px);
+                }
+                p {
+                    margin-left: emCalc(10px);
+                    display: inline-block;
+                }
+            }
+        }
+    }
     .problem-tab-selector  {
         cursor: pointer;
         &.marked {
@@ -524,13 +560,15 @@ h6.subheader {
 
 .user-box {
     @include panel(lighten($black, 70%), 5px);
-    //@include border-radius($global-radius);
-    margin-bottom: emCalc(15px);
-    max-width: 240px;
+    margin: emCalc(5px) 0;
     line-height: 1;
     .avatar {
         @include thumb(1px, $light-black);
-        margin-right: emCalc(6px);
+        margin-right: emCalc(4px);
+    }
+    .info {
+        line-height: 24px;
+        padding-left: emCalc(45px);
     }
     .contributed {
         color: $light-black;
@@ -539,6 +577,10 @@ h6.subheader {
     a.username {
         font-weight: bold;
         margin: 5px 0 0 0;
+    }
+    i.fi-mail {
+        font-size: 32px;
+        padding: 0 4px;
     }
 }
 
@@ -577,25 +619,24 @@ h6.subheader {
 }
 
 .user-search-selected {
-    @include single-transition(all, 300ms, ease-out);
-    [class*="column"]:last-child {
-        float: left !important;
-    }
+    @include single-transition(all, 200ms, ease-out);
     margin: emCalc(15px) 0;
     border: 1px solid $light-grey;
     padding: emCalc(10px);
-    .user-box {
-        margin-bottom: emCalc(5px);
-        &:hover {
-            background-color: $light-red;
-            border-color: white;
-            cursor: pointer;
-            a {
-                color: white;
+    [class*="column"]:last-child {
+        float: left !important;
+    }
+    .contributor-delete {
+        .user-box {
+            max-width: auto;
+            &:hover {
+                background-color: $light-red;
+                border-color: white;
+                cursor: pointer;
+                a {
+                    color: white;
+                }
             }
-        }
-        .info {
-            line-height: 24px;
         }
     }
 }
@@ -603,7 +644,7 @@ h6.subheader {
 .user-search-result {
     margin-top: 0;
     .user-box {
-        @include single-transition(all, 300ms, ease-out);
+        @include single-transition(all, 200ms, ease-out);
         margin: 0;
         border: 0;
         max-width: 100%;
@@ -617,6 +658,10 @@ h6.subheader {
         }
         .info {
             line-height: 24px;
+        }
+        .pending-invitation {
+            float: none !important;
+            margin: emCalc(3px) 0;
         }
     }
     .fi-mail {
@@ -699,7 +744,7 @@ h6.subheader {
     text-align: center;
     a.like-bulb-bulb,
     span.like-bulb-counter {
-        @include single-transition(all, 300ms, ease-out);
+        @include single-transition(all, 200ms, ease-out);
     }
     a.like-bulb-bulb {
         color: $light-grey;
@@ -1039,7 +1084,7 @@ h6.subheader {
         border-bottom: 1px dotted $light-grey;
         .problem-idea-modal {
             padding: 0.6em 0;
-            transition: background-color 300ms ease-out 0s;
+            transition: background-color 200ms ease-out 0s;
             &:hover {
                 cursor: pointer;
                 background-color: $light-grey;

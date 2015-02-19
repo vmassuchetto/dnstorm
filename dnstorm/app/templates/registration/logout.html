@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "_base.html" %}
 {% load crispy_forms_tags i18n %}
 
 {% block bodyclass %}logout{% endblock %}
@@ -6,5 +6,5 @@
 {% block content %}
     <h3>{% trans "Bye bye!" %}</h3>
     {% trans "You are not logged in anymore." as message %}
-    {% include "panel.html" with icon="prohibited" message=message %}
+    {% include "part_panel.html" with icon="prohibited" message=message %}
 {% endblock %}

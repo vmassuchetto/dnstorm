@@ -1,9 +1,9 @@
-{% extends "base.html" %}
+{% extends "_base.html" %}
 {% load i18n %}
 
 {% block bodyclass %}error404{% endblock %}
 
 {% block content %}
     {% trans "The page you are trying to access does not exist." as message %}</p></div>
-    {% include "panel.html" with message=message icon="x" %}
+    {% include "part_panel.html" with message=message icon="x" %}
 {% endblock %}

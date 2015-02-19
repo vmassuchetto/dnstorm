@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "_base.html" %}
 {% load humanize i18n captureas display_name %}
 
 {% block bodyclass %}home{% endblock %}
@@ -20,7 +20,7 @@
                 {# Counters #}
 
                 <div class="columns large-4 medium-4 show-for-medium-up">
-                    {% include "problem_counter.html" %}
+                    {% include "part_counter.html" %}
                 </div>
 
                 {# Title and date #}
@@ -32,7 +32,7 @@
                                 {% if problem.published %}
                                     <a href="{% url "problem" problem.id problem.slug %}">{{ problem.title }}</a>
                                 {% else %}
-                                    <a href="{% url "problem_update" problem.id %}">{% if problem.title %}{{ problem.title }}{% else %}{% trans "No title" %}{% endif %}</a>
+                                    <a href="{% url "problem_update" problem.id %}" class="draft">{% if problem.title %}{{ problem.title }}{% else %}{% trans "No title" %}{% endif %}</a>
                                 {% endif %}
                             </h4>
                         </div>
@@ -47,7 +47,7 @@
             </div>
         {% endfor %}
 
-        {% include "pagination.html" with items=problems %}
+        {% include "part_pagination.html" with items=problems %}
 
     {% else %}
 
@@ -62,7 +62,7 @@
                 {% blocktrans %}Hi! There's no problem around for you. Try <a href="{{ item_url }}">loggin in</a> and creating a new one.{% endblocktrans %}
             {% endcaptureas %}
         {% endif %}
-        {% include "panel.html" with message=message icon="prohibited" %}
+        {% include "part_panel.html" with message=message icon="prohibited" %}
 
     {% endif %}
 

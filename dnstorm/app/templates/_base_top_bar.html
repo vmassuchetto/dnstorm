@@ -1,0 +1,61 @@
+{% load display_name i18n %}
+
+<div class="contain-to-grid">
+<nav class="top-bar">
+
+    {# Small devices section #}
+
+    <section class="hide-for-medium-up">
+        <a class="left-off-canvas-toggle menu-icon"><span></span></a>
+    </section>
+    <section class="middle tab-bar-section hide-for-medium-up">
+    </section>
+
+    {# Medium and large devices section #}
+
+    <section class="top-bar-section">
+        <ul class="left">
+            <li class="divider"></li>
+            <li><h1><a id="logo" href="{% url "home" %}">DNStorm</a></h1></li>
+            <li class="divider"></li>
+            {% if user.is_authenticated %}
+                <li><a href="{% url "users" %}">{% trans "Users" %}</a></li>
+                <li class="divider"></li>
+                <li><a href="{% url "activity" %}">{% trans "Activity" %}</a></li>
+                <li class="divider"></li>
+                <li class="active">
+                    <a href="{% url "problem_create" %}"><i class="fi-plus"></i> {% trans "Post problem" %}</a>
+                </li>
+            {% endif %}
+        </ul>
+        <ul class="right">
+            {% if user.is_authenticated %}
+                {% if problem_drafts or idea_drafts %}
+                    <li class="divider"></li>
+                    <li class="has-icon drafts drafts-icon"><a href="javascript:void(0);"><i class="fi-page-edit"></i><span class="counter">{{ drafts_count }}</span></a></li>
+                {% endif %}
+                <li class="divider"></li>
+                <li class="has-icon notification notification-icon{% if user_activity_counter > "0" %} alert{% endif %}"><a href="javascript:void(0);"><i class="fi-lightbulb"></i><span class="counter">{{ user_activity_counter }}</span></a></li>
+                <li class="divider"></li>
+                {% block topicon %}{% endblock %}
+                {% if user.is_superuser %}
+                    <li class="has-icon"><a href="{% url "options" %}"><i class="fi-widget"></i></a></li>
+                    <li class="divider"></li>
+                {% endif %}
+                <li class="divider"></li>
+                <li class="has-icon torso"><a href="{% url "user" user %}"><i class="fi-torso"></i></a></li>
+                <li><a href="{% url "user" user %}">{% display_name user %}</a></li>
+                <li class="divider"></li>
+                <li><a href="{{ logout_url }}">{% trans 'Logout' %}</a></li>
+            {% else %}
+                <li class="divider"></li>
+                <li><a href="{{ login_url }}">{% trans 'Login' %}</a></li>
+                <li class="divider"></li>
+                <li><a href="{% url "registration_register" %}">{% trans 'Register' %}</a></li>
+            {% endif %}
+            <li class="divider"></li>
+        </ul>
+    </section>
+
+</nav>
+</div>

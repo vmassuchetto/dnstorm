@@ -1,8 +1,8 @@
-{% extends "base.html" %}
+{% extends "_base.html" %}
 {% load i18n %}
 
 {% block content %}
     <h3>{% trans "Registration closed" %}</h3>
     {% trans "The registration is currently closed in this site." as message %}
-    {% include "panel.html" with icon="prohibited" message=message %}
+    {% include "part_panel.html" with icon="prohibited" message=message %}
 {% endblock %}

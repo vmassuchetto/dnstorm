@@ -1,0 +1,11 @@
+{% load i18n captureas %}
+
+{% if messages %}
+    {% for message in messages %}
+        {% include "part_message.html" %}
+    {% endfor %}
+{% endif %}
+{% if form.errors %}
+    {% captureas message %}{% blocktrans %}Something went wrong with the submission. Please review the warnings on the form.{% endblocktrans %}{% endcaptureas %}
+    {% include "part_message.html" with message=message message_tags="warning" %}
+{% endif %}

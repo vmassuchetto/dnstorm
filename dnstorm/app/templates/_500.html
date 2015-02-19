@@ -1,9 +1,9 @@
-{% extends "base.html" %}
+{% extends "_base.html" %}
 {% load i18n %}
 
 {% block bodyclass %}error500{% endblock %}
 
 {% block content %}
     {% trans "An unexpected application error occurred. Please report this problem to the system administrator." as message %}</p></div>
-    {% include "panel.html" with message=message icon="x" %}
+    {% include "part_panel.html" with message=message icon="x" %}
 {% endblock %}

@@ -13,7 +13,7 @@
                     {% if show_description %}
                         {{ criteria.description|paragraphs|safe }}
                     {% endif %}
-                    <p>{% include "criteria_parameters.html" %}</p>
+                    {% include "item_criteria_parameters.html" with show_paragraphs=True %}
                 </div>
             {% endif %}
 
@@ -34,9 +34,9 @@
                 <div class="comments comments-criteria" id="comments-criteria-{{ criteria.id }}">
                     {% for comment in criteria.comments %}
                         {% if forloop.counter > 3 %}
-                            {% include "comment.html" with hidden=True %}
+                            {% include "item_comment.html" with hidden=True %}
                         {% else %}
-                            {% include "comment.html" %}
+                            {% include "item_comment.html" %}
                         {% endif %}
                     {% endfor %}
                     {% if criteria.comments.count > 3 %}

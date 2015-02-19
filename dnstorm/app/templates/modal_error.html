@@ -1,0 +1,13 @@
+{% load i18n %}
+
+<div id="response-error-modal" class="reveal-modal small" data-reveal>
+    <div class="row">
+        <div class="columns large-12">
+            <h4>{% trans "Ooops... server error. Sorry." %}</h4>
+            <p>{% trans "There was something wrong with your request and we don't know what happened. Please contact your system administrator if this problem persists." %}</p>
+        </div>
+        <div class="columns large-12">
+            <a class="close-reveal-modal-button button secondary radius right alert no-margin-bottom">{% trans "OK" %}</a>
+        </div>
+    </div>
+</div>

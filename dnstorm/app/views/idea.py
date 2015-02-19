@@ -52,7 +52,7 @@ class IdeaCreateView(RedirectView):
         return reverse('idea_update', kwargs={'pk': i.id})
 
 class IdeaUpdateView(UpdateView):
-    template_name = 'idea_update.html'
+    template_name = '_update_idea.html'
     form_class = IdeaForm
     model = models.Idea
 

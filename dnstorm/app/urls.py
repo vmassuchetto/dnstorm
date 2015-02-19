@@ -8,9 +8,9 @@ from dnstorm.app.forms import RegistrationForm
 from dnstorm.app.views import *
 
 js_info_dict = {'packages': ('app',)}
-handler500 = curry(server_error, template_name='500.html')
-handler404 = curry(page_not_found, template_name='404.html')
-handler403 = curry(permission_denied, template_name='403.html')
+handler500 = curry(server_error, template_name='_500.html')
+handler404 = curry(page_not_found, template_name='_404.html')
+handler403 = curry(permission_denied, template_name='_403.html')
 
 urlpatterns = patterns('',
 
