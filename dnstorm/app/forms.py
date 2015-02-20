@@ -32,9 +32,11 @@ class RegistrationForm(RegistrationFormUniqueEmail):
 
     def __init__(self, *args, **kwargs):
         _hash = kwargs.pop('hash') if 'hash' in kwargs else None
+        invitation = get_object_or_none(models.Invitation, hash=_hash) if _hash else None
         self.helper = FormHelper()
-        self.helper.form_action = '.'
+        self.helper.form_action = '%s%s' % (reverse('registration_register'), '?hash=' + _hash if _hash else '')
         self.helper.form_class = 'auth-form'
+        self.helper.form_read_only = True
         self.helper.layout = Layout(
             'username',
             'email',
@@ -47,22 +49,26 @@ class RegistrationForm(RegistrationFormUniqueEmail):
         )
         super(RegistrationForm, self).__init__(*args, **kwargs)
         self.fields['hash'].initial = _hash if _hash else 0
+        if invitation:
+            self.fields['email'].initial = invitation.user.email
+            self.fields['email'].widget.attrs['readonly'] = True
 
     def clean_email(self, *args, **kwargs):
         """
         Validate that the supplied email address is unique for the
         site and compliant with the ``hash`` invitation parameter.
         """
-        if 'hash' in self.cleaned_data:
-            invitation = get_object_or_404(models.Invitation, hash=self.cleaned_data['hash'])
+        _hash = self.data['hash'] if 'hash' in self.data else None
+        if _hash:
+            invitation = get_object_or_404(models.Invitation, hash=_hash)
             # User was invited previously and is using the same e-mail to register
             if invitation and invitation.user.email == self.cleaned_data['email']:
                 return self.cleaned_data['email']
-
+            raise forms.ValidationError(_('You need to use the same e-mail the invitation was sent.'))
         # Non-invited registration
         user = User.objects.filter(email__iexact=self.cleaned_data['email'])
         if user:
-            raise forms.ValidationError(_('This email address is already in use. Please supply a different email address.'))
+            raise forms.ValidationError(_('This email address is already in use. Please enter a different email address.'))
         return self.cleaned_data['email']
 
 class OptionsForm(forms.Form):
