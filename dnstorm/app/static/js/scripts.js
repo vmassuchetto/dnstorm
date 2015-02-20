@@ -134,14 +134,16 @@ $.fn.highlight = function (color, duration) {
 $(document).ready(function(){
     var s = $('.sticable');
     var pos = s.position();
-    $(window).scroll(function(){
-        var windowpos = $(window).scrollTop();
-        if (windowpos >= pos.top + 180){
-            s.addClass("stick");
-        } else {
-            s.removeClass("stick");
-        }
-    });
+    if (s.length > 0) {
+        $(window).scroll(function(){
+            var windowpos = $(window).scrollTop();
+            if (windowpos >= pos.top + 180){
+                s.addClass("stick");
+            } else {
+                s.removeClass("stick");
+            }
+        });
+    }
 });
 
 /* }}} */
