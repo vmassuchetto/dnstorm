@@ -5,7 +5,7 @@
     <div class="row">
         <div class="columns large-12">
             <nav class="upper-bar-inner breadcrumbs">
-                <a href="{% url "home" %}">{% trans "Home" %}</a>
+                <a href="{% url "home" %}">{% trans "Problems" %}</a>
                 {% for b in breadcrumbs %}
                     <a href="{{ b.url }}" {% if b.classes %}class="{{ b.classes }}"{% endif %}>{{ b.title }}</a>
                 {% endfor %}
