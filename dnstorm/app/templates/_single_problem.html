@@ -240,37 +240,45 @@
         {# Ideas list #}
 
         <div class="problem-tab problem-ideas">
-            {% if ideas %}
-                {% for idea in ideas %}
-                    {% include "item_idea.html" with show_likes=True show_actions=True show_comments=True %}
-                {% endfor %}
-            {% else %}
-                {% url "idea_create" problem.id as item_url %}
-                {% captureas message %}
-                    {% blocktrans %}There's no idea submitted to this problem yet. You can <a href="{{ item_url }}">give the first one</a>.{% endblocktrans %}
-                {% endcaptureas %}
-                {% include "part_panel.html" with icon="prohibited" message=message %}
-            {% endif %}
             {% if problem.criteria_set.all|length > 0 %}
+                {% if ideas %}
+                    {% for idea in ideas %}
+                        {% include "item_idea.html" with show_likes=True show_actions=True show_comments=True %}
+                    {% endfor %}
+                {% else %}
+                    {% url "idea_create" problem.id as item_url %}
+                    {% captureas message %}
+                        {% blocktrans %}There's no idea submitted to this problem yet. You can <a href="{{ item_url }}">contribute with the first one</a>.{% endblocktrans %}
+                    {% endcaptureas %}
+                    {% include "part_panel.html" with icon="prohibited" message=message %}
+                {% endif %}
                 <p><a class="button radius expand secondary" href="{% url "idea_create" problem.id %}">{% trans "Add new idea" %}</a></p>
+            {% else %}
+                {% trans "Ideas submission will be available when criteria are defined." as message %}
+                {% include "part_panel.html" with icon="prohibited" message=message %}
             {% endif %}
         </div>
 
         {# Alternatives #}
 
         <div class="problem-tab problem-alternatives">
-            {% if alternatives %}
-                {% for alternative in alternatives %}
-                    {% include "item_alternative.html" %}
-                {% endfor %}
+            {% if problem.criteria_set.all|length > 0 and ideas %}
+                {% if alternatives %}
+                    {% for alternative in alternatives %}
+                        {% include "item_alternative.html" %}
+                    {% endfor %}
+                {% else %}
+                    {% captureas message %}
+                        {% blocktrans %}There's no alternative created yet.{% endblocktrans %}
+                    {% endcaptureas %}
+                    {% include "part_panel.html" with icon="prohibited" message=message %}
+                {% endif %}
+                {% if problem_perm_contribute %}
+                    <p><a class="button radius expand secondary new-alternative" href="javascript:void(0)">{% trans "Add new alternative" %}</a></p>
+                {% endif %}
             {% else %}
-                {% captureas message %}
-                    {% blocktrans %}There's no alternative created yet.{% endblocktrans %}
-                {% endcaptureas %}
+                {% trans "Alternatives will be available when there's criteria and ideas." as message %}
                 {% include "part_panel.html" with icon="prohibited" message=message %}
-            {% endif %}
-            {% if problem_perm_contribute %}
-                <p><a class="button radius expand secondary new-alternative" href="javascript:void(0)">{% trans "Add new alternative" %}</a></p>
             {% endif %}
         </div>
 
