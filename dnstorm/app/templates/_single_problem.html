@@ -247,12 +247,12 @@
                     {% endfor %}
                 {% else %}
                     {% url "idea_create" problem.id as item_url %}
-                    {% captureas message %}
-                        {% blocktrans %}There's no idea submitted to this problem yet. You can <a href="{{ item_url }}">contribute with the first one</a>.{% endblocktrans %}
-                    {% endcaptureas %}
+                    {% trans "There's no idea submitted to this problem yet." as message %}
                     {% include "part_panel.html" with icon="prohibited" message=message %}
                 {% endif %}
-                <p><a class="button radius expand secondary" href="{% url "idea_create" problem.id %}">{% trans "Add new idea" %}</a></p>
+                {% if problem_perm_contribute %}
+                    <p><a class="button radius expand secondary" href="{% url "idea_create" problem.id %}">{% trans "Add new idea" %}</a></p>
+                {% endif %}
             {% else %}
                 {% trans "Ideas submission will be available when criteria are defined." as message %}
                 {% include "part_panel.html" with icon="prohibited" message=message %}
