@@ -566,7 +566,8 @@ h6.subheader {
     border-bottom: 1px solid #EAEAEA;
 }
 
-.users-list {
+.users-list,
+.user-search-selected {
     [class*="column"]:last-child {
         float: left !important;
     }
@@ -575,7 +576,7 @@ h6.subheader {
             cursor: auto;
         }
         .pending-invitation {
-            margin-top: emCalc(6px);
+            margin: emCalc(6px) 0;
         }
     }
 }

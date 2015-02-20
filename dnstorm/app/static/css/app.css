@@ -6468,12 +6468,12 @@ h6.subheader {
   border-top: 1px solid #EAEAEA;
   border-bottom: 1px solid #EAEAEA; }
 
-.users-list [class*="column"]:last-child {
+.users-list [class*="column"]:last-child, .user-search-selected [class*="column"]:last-child {
   float: left !important; }
-.users-list .pending-user a {
+.users-list .pending-user a, .user-search-selected .pending-user a {
   cursor: auto; }
-.users-list .pending-user .pending-invitation {
-  margin-top: 0.375rem; }
+.users-list .pending-user .pending-invitation, .user-search-selected .pending-user .pending-invitation {
+  margin: 0.375rem 0; }
 
 .user-box {
   border-style: solid;
