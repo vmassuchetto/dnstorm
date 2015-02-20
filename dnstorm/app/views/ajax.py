@@ -170,7 +170,7 @@ class AjaxView(View):
         problem.contributor.remove(user)
         unfollow(user, problem)
         # delete user and invitations if there's no other invitation
-        if not models.Problem.objects.filter(contributor__in=[v]).exists():
+        if not models.Problem.objects.filter(contributor__in=[user]).exists():
             user.delete()
             models.Invitation.objects.filter(user=user).delete()
 
