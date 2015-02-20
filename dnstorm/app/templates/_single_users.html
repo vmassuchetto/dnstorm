@@ -9,19 +9,17 @@
         <div class="columns large-12"><h3>{% trans "Users" %}</h3></div>
     </div>
 
-    {% for user in users %}
+    <div class="row">
+        {% for user in users %}
+            <div class="columns large-3">{% include "item_user.html" with expanded=True show_links=True show_date=False show_badges=True %}</div>
 
-        {% if forloop.counter|divisibleby:4 or forloop.first %}
-            <div class="row">
-        {% endif %}
+            {% if forloop.counter|divisibleby:4 %}
+                </div>
+                <div class="row">
+            {% endif %}
 
-        <div class="columns large-3">{% include "item_user.html" with expanded=True show_links=True show_date=False %}</div>
-
-        {% if forloop.counter|divisibleby:4 or forloop.last %}
-            </div>
-        {% endif %}
-
-    {% endfor %}
+        {% endfor %}
+    </div>
 
     <div class="row">
         <div class="columns large-12">

@@ -167,6 +167,12 @@
             </div>
             </div>
 
+            <div class="row">
+            <div class="columns large-3 large-offset-9">
+                {% include "item_user.html" with user=problem.author date=problem.created show_links=True show_date=True show_badges=True %}
+            </div>
+            </div>
+
             {% if problem_perm_contribute %}
 
                 {# Comments #}

@@ -46,9 +46,9 @@ class UsersView(TemplateView):
     def get_context_data(self, *args, **kwargs):
         context = super(UsersView, self).get_context_data(**kwargs)
         if self.request.user.is_superuser:
-            users = Paginator(User.objects.all().order_by('username'), 48)
+            users = Paginator(User.objects.all().order_by('username'), 32)
         else:
-            users = Paginator(User.objects.filter(is_staff=True).order_by('username'), 48)
+            users = Paginator(User.objects.filter(is_staff=True).order_by('username'), 32)
         page = self.request.GET['page'] if 'page' in self.request.GET else 1
         context['site_title'] = '%s | %s' % (_('Users'), get_option('site_title'))
         context['breadcrumbs'] = self.get_breadcrumbs()
