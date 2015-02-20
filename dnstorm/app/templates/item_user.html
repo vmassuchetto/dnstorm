@@ -1,14 +1,14 @@
 {% load i18n avatar_tags display_name user_tags %}
 
-<div class="user-box{% if clean %} user-box-clean{% endif %}" data-username="{{ user.username }}"{% if email_invitation %} data-email="{{ email_invitation }}"{% endif %}>
+<div class="user-box{% if clean %} user-box-clean{% endif %}{% if not user.is_staff %} pending-user{% endif %}" data-username="{{ user.username }}"{% if email_invitation %} data-email="{{ email_invitation }}"{% endif %}>
     <div class="row collapse">
         <div class="columns large-12">
-            <a class="avatar left" {% if show_links %}href="{% url "user" user.username %}"{% else %}href="javascript:void(0)"{% endif %}>{% if user.is_active %}{% avatar user 32 %}{% else %}<i class="fi-mail"></i>{% endif %}</a>
+            <a class="avatar left" {% if show_links and user.is_staff %}href="{% url "user" user.username %}"{% else %}href="javascript:void(0)"{% endif %}>{% if user.is_active %}{% avatar user 32 %}{% else %}<i class="fi-mail"></i>{% endif %}</a>
             <div class="info">
 
                 {# Username #}
 
-                <a class="username" {% if show_links %}href="{% url "user" user.username %}"{% else %}href="javascript:void(0)"{% endif %}>{% display_name user %}</a>{% if email_invitation %}<span class="label secondary small">{% trans "Send invitation" %}</span>{% endif %}
+                <a class="username" {% if show_links and user.is_staff %}href="{% url "user" user.username %}"{% else %}href="javascript:void(0)"{% endif %}>{% display_name user %}</a>{% if email_invitation %}<span class="label secondary small">{% trans "Send invitation" %}</span>{% endif %}
 
                 {# Date #}
 

@@ -6470,6 +6470,10 @@ h6.subheader {
 
 .users-list [class*="column"]:last-child {
   float: left !important; }
+.users-list .pending-user a {
+  cursor: auto; }
+.users-list .pending-user .pending-invitation {
+  margin-top: 0.375rem; }
 
 .user-box {
   border-style: solid;
@@ -6492,6 +6496,8 @@ h6.subheader {
     margin-bottom: 0.625rem; }
     .user-box h1.subheader, .user-box h2.subheader, .user-box h3.subheader, .user-box h4.subheader, .user-box h5.subheader, .user-box h6.subheader {
       line-height: 1.4; }
+  .user-box.pending-user .info a {
+    color: #777777; }
   .user-box .avatar {
     line-height: 0;
     display: inline-block;
@@ -6580,7 +6586,7 @@ h6.subheader {
       line-height: 24px; }
     .user-search-result .user-box .pending-invitation {
       float: none !important;
-      margin: 0.1875rem 0; }
+      margin: 0.3125rem 0; }
   .user-search-result .fi-mail {
     font-size: 1.5rem;
     border: 0;
