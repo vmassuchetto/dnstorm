@@ -6492,17 +6492,24 @@ h6.subheader {
     .user-box .avatar:hover, .user-box .avatar:focus {
       box-shadow: 0 0 6px 1px rgba(0, 140, 186, 0.5); }
   .user-box .info {
-    line-height: 24px;
+    line-height: 1.125rem;
     padding-left: 2.8125rem; }
-  .user-box .contributed {
+  .user-box .contributed a {
     color: #777777;
     font-size: 0.75rem; }
   .user-box a.username {
+    display: block;
     font-weight: bold;
     margin: 5px 0 0 0; }
   .user-box i.fi-mail {
     font-size: 32px;
     padding: 0 4px; }
+  .user-box .badges span {
+    margin: 0 0.1875rem;
+    font-size: 0.75rem; }
+    .user-box .badges span i {
+      color: #777777;
+      font-size: 0.9375rem; }
 
 .user-box-clean {
   background: none;

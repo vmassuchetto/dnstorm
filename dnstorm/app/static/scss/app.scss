@@ -567,20 +567,31 @@ h6.subheader {
         margin-right: emCalc(4px);
     }
     .info {
-        line-height: 24px;
+        line-height: emCalc(18px);
         padding-left: emCalc(45px);
     }
-    .contributed {
+    .contributed a {
         color: $light-black;
         font-size: emCalc(12px);
     }
     a.username {
+        display: block;
         font-weight: bold;
         margin: 5px 0 0 0;
     }
     i.fi-mail {
         font-size: 32px;
         padding: 0 4px;
+    }
+    .badges {
+        span {
+            margin: 0 emCalc(3px);
+            font-size: emCalc(12px);
+            i {
+                color: $light-black;
+                font-size: emCalc(15px);
+            }
+        }
     }
 }
 

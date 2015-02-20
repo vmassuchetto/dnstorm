@@ -1,17 +1,41 @@
-{% load i18n avatar_tags display_name %}
+{% load i18n avatar_tags display_name user_tags %}
 
 <div class="user-box{% if clean %} user-box-clean{% endif %}" data-username="{{ user.username }}"{% if email_invitation %} data-email="{{ email_invitation }}"{% endif %}>
     <div class="row collapse">
         <div class="columns large-12">
             <a class="avatar left" {% if show_links %}href="{% url "user" user.username %}"{% else %}href="javascript:void(0)"{% endif %}>{% if user.is_active %}{% avatar user 32 %}{% else %}<i class="fi-mail"></i>{% endif %}</a>
             <div class="info">
+
+                {# Username #}
+
+                <a class="username" {% if show_links %}href="{% url "user" user.username %}"{% else %}href="javascript:void(0)"{% endif %}>{% display_name user %}</a>{% if email_invitation %}<span class="label secondary small">{% trans "Send invitation" %}</span>{% endif %}
+
+                {# Date #}
+
                 {% if show_date %}
                     <span class="contributed">
                         {% if show_links %}<a href="{{ date_link }}">{% endif %}{% blocktrans with day=date|date:"d b Y" hour=date|date:"H:i" %}{{ day }} at {{ hour }}{% endblocktrans %}{% if show_links %}</a>{% endif %}
-                    </span><br/>
+                    </span>
                 {% endif %}
-                <a class="username" {% if show_links %}href="{% url "user" user.username %}"{% else %}href="javascript:void(0)"{% endif %}>{% display_name user %}</a>{% if email_invitation %}<span class="label secondary small">{% trans "Send invitation" %}</span>{% endif %}
-                {% if not user.is_staff and not email_invitation %}<br/><span class="label secondary small pending-invitation">{% trans "Pending invitation" %}</span>{% endif %}
+
+                {# Invitation label #}
+
+                {% if not user.is_staff and not email_invitation %}<span class="label secondary small pending-invitation">{% trans "Pending invitation" %}</span>{% endif %}
+
+                {# Badges #}
+
+                {% if show_badges and user.is_staff %}
+                    {% with pc=user|user_problem_count ic=user|user_idea_count cc=user|user_comment_count %}
+                        {% if pc or ic or cc %}
+                            <div class="badges">
+                                {% if pc %}<span><i class="fi-target-two"></i>&nbsp;{{ pc }}</span>{% endif %}
+                                {% if ic %}<span><i class="fi-lightbulb"></i>&nbsp;{{ ic }}</span>{% endif %}
+                                {% if cc %}<span><i class="fi-comments"></i>&nbsp;{{ cc }}</span>{% endif %}
+                            </div>
+                        {% endif %}
+                    {% endwith %}
+                {% endif %}
+
             </div>
         </div>
     </div>
