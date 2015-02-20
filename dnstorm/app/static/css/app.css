@@ -6461,6 +6461,9 @@ h6.subheader {
 .problem-criteria, .problem-ideas, .problem-alternatives {
   display: none; }
 
+.users .users-list [class*="column"]:last-child {
+  float: left !important; }
+
 .user-box {
   border-style: solid;
   border-width: 1px;

@@ -558,6 +558,14 @@ h6.subheader {
 
 // User {{{
 
+.users {
+    .users-list {
+        [class*="column"]:last-child {
+            float: left !important;
+        }
+    }
+}
+
 .user-box {
     @include panel(lighten($black, 70%), 5px);
     margin: emCalc(5px) 0;

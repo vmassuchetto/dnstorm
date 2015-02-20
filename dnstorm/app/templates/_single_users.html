@@ -9,13 +9,13 @@
         <div class="columns large-12"><h3>{% trans "Users" %}</h3></div>
     </div>
 
-    <div class="row">
+    <div class="row users-list">
         {% for user in users %}
             <div class="columns large-3">{% include "item_user.html" with expanded=True show_links=True show_date=False show_badges=True %}</div>
 
             {% if forloop.counter|divisibleby:4 %}
                 </div>
-                <div class="row">
+                <div class="row users-list">
             {% endif %}
 
         {% endfor %}
