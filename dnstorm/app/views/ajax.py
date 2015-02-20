@@ -169,6 +169,10 @@ class AjaxView(View):
         # Commit
         problem.contributor.remove(user)
         unfollow(user, problem)
+        # delete user and invitations if there's no other invitation
+        if not models.Problem.objects.filter(contributor__in=[v]).exists():
+            user.delete()
+            models.Invitation.objects.filter(user=user).delete()
 
         # Response
         result = loader.render_to_string('_update_problem_users.html', {'users': problem.contributor.order_by('first_name')})
