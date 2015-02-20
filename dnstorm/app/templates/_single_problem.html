@@ -107,6 +107,22 @@
         </div>
     </div>
 
+    {# Contributors #}
+
+    {% if not problem.public %}
+        <div class="contributors">
+            <div class="row users-list">
+                {% for user in contributors %}
+                    <div class="columns large-3">{% include "item_user.html" with expanded=True show_links=True show_date=False show_badges=True %}</div>
+                    {% if forloop.counter|divisibleby:4 %}
+                        </div>
+                        <div class="row users-list">
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+
     {# Tabs #}
 
     <div class="row row-line problem-tabs sticable">

@@ -6461,7 +6461,14 @@ h6.subheader {
 .problem-criteria, .problem-ideas, .problem-alternatives {
   display: none; }
 
-.users .users-list [class*="column"]:last-child {
+.contributors {
+  display: none;
+  margin: 0.9375rem 0;
+  padding: 0.625rem 0;
+  border-top: 1px solid #EAEAEA;
+  border-bottom: 1px solid #EAEAEA; }
+
+.users-list [class*="column"]:last-child {
   float: left !important; }
 
 .user-box {

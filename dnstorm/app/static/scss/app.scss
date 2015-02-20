@@ -558,11 +558,17 @@ h6.subheader {
 
 // User {{{
 
-.users {
-    .users-list {
-        [class*="column"]:last-child {
-            float: left !important;
-        }
+.contributors {
+    display: none;
+    margin: emCalc(15px) 0;
+    padding: emCalc(10px) 0;
+    border-top: 1px solid #EAEAEA;
+    border-bottom: 1px solid #EAEAEA;
+}
+
+.users-list {
+    [class*="column"]:last-child {
+        float: left !important;
     }
 }
 

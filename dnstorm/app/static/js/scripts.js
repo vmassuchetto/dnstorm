@@ -687,6 +687,15 @@ $('.problem').on('submit', '.comment-form form', function(e){
     });
 });
 
+$('.problem').on('click', 'a.show-problem-contributors', function(e){
+    c = $('.contributors');
+    if (c.is(':visible')) {
+        $('.contributors').stop().slideUp(200);
+    } else {
+        $('.contributors').stop().slideDown(200);
+    }
+})
+
 $(document).on('click', 'a.display-more', function(e){
     $(this).parents('.comment').hide();
     $(this).parents('.comments').find('.hidden').show();

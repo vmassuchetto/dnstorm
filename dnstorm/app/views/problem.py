@@ -176,6 +176,7 @@ class ProblemView(TemplateView):
         context['problem_perm_manage'] = permissions.problem(obj=self.object, user=user, mode='manage')
         context['problem_perm_edit'] = permissions.problem(obj=self.object, user=user, mode='edit')
         context['problem_perm_contribute'] = permissions.problem(obj=self.object, user=user, mode='contribute')
+        context['contributors'] = self.object.contributor.filter(is_active=True)
         context['comments'] = models.Comment.objects.filter(problem=self.object)
         context['comment_form'] = forms.CommentForm()
         context['ideas'] = models.Idea.objects.filter(problem=self.object.id, published=True)

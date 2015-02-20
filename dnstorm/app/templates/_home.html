@@ -39,7 +39,7 @@
                     </div>
                     <div class="row collapse">
                         <div class="columns large-12">
-                            <h6 class="subheader">{% blocktrans with time=problem.last_activity|naturaltime %}last modified {{ time }}{% endblocktrans %} &diams; <a href="{% url "user" problem.author %}">{% display_name problem.author %}</a></h6>
+                            <h6 class="subheader">{% if not problem.public %}<i class="fi-lock"></i>&nbsp;{% endif %}{% blocktrans with time=problem.last_activity|naturaltime %}last modified {{ time }}{% endblocktrans %} &diams; <a href="{% url "user" problem.author %}">{% display_name problem.author %}</a></h6>
                         </div>
                     </div>
                 </div>
