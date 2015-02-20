@@ -262,28 +262,6 @@ function criteria_form() {
 }
 criteria_form();
 
-/*$('.delete-button').on('click', function(e) {
-    e.preventDefault();
-    if ($(this).attr('disabled') == 'disabled')
-        return false;
-    var button = $(this);
-    var invitation = button.data('invitation');
-    button.attr('disabled', true);
-    button.addClass('loading');
-    $.ajax({
-        url: '/ajax/',
-        type: 'GET',
-        data: 'delete_invitation=' + invitation,
-        complete: function(xhr, data) {
-            button.attr('disabled', false);
-            button.removeClass('loading');
-            if (data == 'success') {
-                $('#invitation-' + invitation).fadeOut(200).delay(200).remove();
-            }
-        }
-    });
-}); */
-
 $('.problem-form').on('click', '.criteria-add', function(e){
     /**:ProblemForm:Criteria:click:.criteria-add
 

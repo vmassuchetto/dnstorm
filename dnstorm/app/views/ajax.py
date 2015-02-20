@@ -427,21 +427,6 @@ class AjaxView(View):
             'problem_perm_manage': True})}
         return HttpResponse(json.dumps(response), content_type='application/json')
 
-    def delete_invitation(self):
-        """
-        Deletes an invitation.
-        """
-        # Validation
-        invitation = get_object_or_404(models.Invitation, id=self.request.GET.get('delete_invitation', None))
-        if not permissions.problem(obj=invitation.problem, user=self.request.user, mode='manage'):
-            return HttpResponseForbidden()
-
-        # Commit
-        invitation.delete()
-
-        # Response
-        return HttpResponse()
-
     def idea_like(self):
         """
         Performs a 'like' and 'unlike' action on an idea.
