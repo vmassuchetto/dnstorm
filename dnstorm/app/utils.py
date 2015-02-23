@@ -84,6 +84,7 @@ def activity_register(_user, _action_object):
     _diff = htmldiff(content_old, _content)
     _verb = 'edited'
 
+    # Set target problem
     _obj = None
     if klass == 'comment':
         _verb = 'commented'
@@ -101,6 +102,10 @@ def activity_register(_user, _action_object):
         _verb = 'created'
     _target = _action_object.problem if hasattr(_action_object, 'problem') else _action_object
 
+    # Add user as contributor
+    _target.contributor.add(_user)
+
+    # Action
     a = action.send(_user, verb=_verb, action_object=_action_object, target=_target)
     a[0][1].data = {
         'diff': _diff,
