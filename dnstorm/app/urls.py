@@ -18,9 +18,11 @@ urlpatterns = patterns('',
 
     (r'^$', base.HomeView.as_view(), {}, 'home'),
 
-    # Ajax
+    # Problems
 
-    (r'^ajax/$', ajax.AjaxView.as_view(), {}, 'ajax'),
+    (r'^problems/my/$', base.HomeView.as_view(), {}, 'problems_my'),
+    (r'^problems/contributed/$', base.HomeView.as_view(), {}, 'problems_contributed'),
+    (r'^problems/drafts/$', base.HomeView.as_view(), {}, 'problems_drafts'),
 
     # Problem
 
@@ -61,12 +63,14 @@ urlpatterns = patterns('',
 
     (r'^options/$', base.OptionsView.as_view(), {}, 'options'),
 
+    # Ajax
+
+    (r'^ajax/$', ajax.AjaxView.as_view(), {}, 'ajax'),
+
     # Other apps
 
     (r'^avatar/', include('avatar.urls')),
-    #(r'^accounts/login/$', base.LoginView.as_view(), {}, 'login_redirect'),
     (r'^accounts/register/$', base.RegistrationView.as_view(), {}, 'registration_register'),
-    #url(r'^accounts/password/reset/confirm/(?P<uidb36>[0-9A-Za-z]+)-(?P<token>.+)/$', auth_views.password_reset_confirm, name='auth_password_reset_confirm'),
     (r'^accounts/', include('django.contrib.auth.urls')),
     (r'^accounts/', include('registration.backends.default.urls')),
     (r'^jsi18n/$', 'django.views.i18n.javascript_catalog', js_info_dict, 'jsi18n'),

@@ -1,6 +1,7 @@
 from datetime import datetime
 import urlparse
 
+from django.core.urlresolvers import resolve
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.auth.views import login
@@ -35,15 +36,25 @@ class HomeView(TemplateView):
 
     def get_context_data(self, *args, **kwargs):
         context = super(HomeView, self).get_context_data(**kwargs)
-        if self.request.user.is_authenticated():
-            q_problems = permissions.problem_queryset(user=self.request.user)
+        mode = resolve(self.request.path_info).url_name
+        authenticated = self.request.user.is_authenticated()
+
+        # problems
+        if authenticated and mode == 'problems_my':
+            q_problems = (Q(published=True) & Q(author=self.request.user))
+        elif authenticated and mode == 'problems_drafts':
+            q_problems = (Q(published=False) & Q(author=self.request.user))
+        elif authenticated and mode == 'problems_contributed':
+            q_problems = (Q(published=True) & Q(contributor__in=[self.request.user]))
+        elif authenticated:
+            q_problems = (Q(published=True)) & (Q(public=True) | Q(contributor__in=[self.request.user]))
         else:
-            q_problems = Q(published=True) & Q(public=True)
-        first_time = get_option('firsttime_homeview')
-        if not first_time:
-            context['first_time'] = True
+             q_problems = (Q(published=True) & Q(public=True))
+
+        context['mode'] = mode
         context['breadcrumbs'] = self.get_breadcrumbs()
-        problems = Paginator(Problem.objects.filter(q_problems).distinct().order_by('published', '-last_activity'), 25)
+
+        problems = Paginator(Problem.objects.filter(q_problems).distinct().order_by('-last_activity'), 25)
         context['problems'] = problems.page(self.request.GET.get('page', 1))
         return context
 

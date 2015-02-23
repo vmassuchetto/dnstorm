@@ -93,18 +93,27 @@
         </div>
     </div>
 
-    {# Action butons #}
 
     <div class="row bottom-1em">
-        <div class="columns large-12">
+
+        {# Action butons #}
+
+        <div class="columns large-6">
             {% if problem_perm_contribute %}
                 <a class="action-button" href="{% url "problem_update" problem.id %}"><i class="fi-pencil"></i>&nbsp;{% trans "edit problem" %}</a>
             {% endif %}
             <a class="action-button" href="{% url "problem_activity" problem.id problem.slug %}"><i class="fi-list"></i>&nbsp;{% trans "view activity log" %}</a>
-            {% if not problem.public %}
-                <a class="action-button show-problem-contributors" href="javascript:void(0);"><i class="fi-torso"></i>&nbsp;{% trans "contributors" %}</a>
+            {% if problem.contributors_set.count > 1 %}
+                <a class="action-button show-problem-contributors" href="javascript:void(0);"><i class="fi-torso"></i>&nbsp;{{ problem.contributors_set.count }}&nbsp;{% trans "contributors" %}</a>
             {% endif %}
         </div>
+
+        {# Status label #}
+
+        <div class="columns large-6 text-right problem-status">
+            <span class="public text-left">{% if problem.public %}<i class="fi-megaphone"></i>&nbsp;<b>{% trans "Public problem" %}</b><br/>{% trans "Anyone can view and collaborate" %}{% else %}<i class="fi-lock"></i>&nbsp;<b>{% trans "Private problem" %}</b><br/>{% trans "Only invited contributors can view and collaborate" %}</b>{% endif %}</span>
+        </div>
+
     </div>
 
     {# Contributors #}
@@ -170,12 +179,17 @@
         </div>   
 </div>-->
 
-    <div class="row top-1em">
+    <div class="row collapse top-1em">
     <div class="columns large-12 problem-detail">
 
         {# Description #}
 
         <div class="problem-tab problem-description">
+
+            {% if problem.open %}
+                {% trans "This problem is in open edition mode. Anyone can edit and improve the problem description." as message %}
+                {% include "part_panel.html" with icon="pencil" message=message %}
+            {% endif %}
 
             <div class="row">
             <div class="columns large-12 description">
@@ -183,8 +197,9 @@
             </div>
             </div>
 
-            <div class="row">
+            <div class="row users">
             <div class="columns large-3 large-offset-9">
+                <h6 class="subheader">{% trans "Problem author" %}<h6>
                 {% include "item_user.html" with user=problem.author date=problem.created show_links=True show_date=True show_badges=True %}
             </div>
             </div>

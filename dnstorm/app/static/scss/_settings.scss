@@ -883,14 +883,14 @@ $button-margin-bottom: 0;
 
 // We use these to control the background and border styles
 
-// $panel-bg: darken(#fff, 5%);
+$panel-bg: white;
 $panel-border-style: solid;
 $panel-border-size: 1px;
 
 // We use this % to control how much we darken things on hover
 
 // $panel-function-factor: 10%;
-// $panel-border-color: darken($panel-bg, $panel-function-factor);
+$panel-border-color: $grey;
 
 // We use these to set default inner padding and bottom margin
 
@@ -899,8 +899,8 @@ $panel-padding: emCalc(10px) emCalc(20px);
 
 // We use these to set default font colors
 
-// $panel-font-color: $black;
-// $panel-font-color-alt: #fff;
+$panel-font-color: $light-black;
+$panel-font-color-alt: $black;
 
 // $panel-header-adjust: true;
 

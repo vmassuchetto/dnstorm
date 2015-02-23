@@ -10,12 +10,28 @@
 {% endblock %}
 
 {% block content %}
+
+    {# Title #}
+
     <h3>{% trans "Problems" %}{% if criteria %} &mdash; {% trans "criteria" %} {{ criteria.name }}{% endif %}</h3>
+
+    {# Listing links #}
+
+    {% if user.is_authenticated %}
+        <div class="row bottom-1em">
+            <div class="columns large-12">
+                <a class="action-button all-problems{% if mode == "home" %} marked{% endif %}" href="{% url "home" %}"><i class="fi-asterisk"></i>&nbsp;{% trans "all problems" %}</a>
+                <a class="action-button my-problems{% if mode == "problems_my" %} marked{% endif %}" href="{% url "problems_my" %}"><i class="fi-target-two"></i>&nbsp;{% trans "managed by me" %}</a>
+                <a class="action-button draft-problems{% if mode == "problems_drafts" %} marked{% endif %}" href="{% url "problems_drafts" %}"><i class="fi-page-edit"></i>&nbsp;{% trans "draft problems" %}</a>
+                <a class="action-button contributed-problems{% if mode == "problems_contributed" %} marked{% endif %}" href="{% url "problems_contributed" %}"><i class="fi-lightbulb"></i>&nbsp;{% trans "contributed to" %}</a>
+            </div>
+        </div>
+    {% endif %}
 
     {% if problems %}
 
         {% for problem in problems %}
-            <div class="row list-item">
+            <div class="row problem-row">
 
                 {# Counters #}
 
@@ -39,7 +55,7 @@
                     </div>
                     <div class="row collapse">
                         <div class="columns large-12">
-                            <h6 class="subheader">{% if not problem.public %}<i class="fi-lock"></i>&nbsp;{% endif %}{% blocktrans with time=problem.last_activity|naturaltime %}last modified {{ time }}{% endblocktrans %} &diams; <a href="{% url "user" problem.author %}">{% display_name problem.author %}</a></h6>
+                            <h6 class="subheader"><i class="public {% if problem.public %}fi-web{% else %}fi-lock{% endif %}"></i>&nbsp;{% blocktrans with time=problem.last_activity|naturaltime %}last modified {{ time }}{% endblocktrans %} &diams; <a href="{% url "user" problem.author %}">{% display_name problem.author %}</a></h6>
                         </div>
                     </div>
                 </div>
