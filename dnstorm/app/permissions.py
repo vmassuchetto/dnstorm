@@ -14,12 +14,9 @@ def problem(**kwargs):
         return True
     elif mode == 'view':
         return (
-            (not obj.published and obj.author == user)
-            or (
-                (obj.published and obj.public)
-                or obj.author == user
-                or user in obj.contributor.all()
-            )
+            (obj.published and obj.public)
+            or (obj.published and user in obj.contributor.all())
+            or obj.author == user
         )
     elif mode == 'contribute':
         return (
@@ -45,19 +42,6 @@ def problem(**kwargs):
             and obj.author == user
         )
     return False
-
-def problem_queryset(**kwargs):
-    """
-    Return a queryset to get allowed problems.
-    """
-    user = kwargs.get('user')
-    return ((
-            (Q(published=True) & Q(public=True))
-            | (Q(published=False) & Q(author=user.id))
-        ) | (
-            (Q(published=True))
-            & (Q(author=user.id) | Q(contributor=user.id))
-        ))
 
 def idea(**kwargs):
     """

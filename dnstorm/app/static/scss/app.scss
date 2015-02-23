@@ -370,11 +370,20 @@ form.auth-form {
             }
         }
     }
-    ul.right li.torso a {
-        padding-right: 0;
-    }
-    .has-icon i {
-        font-size: emCalc(24px);
+    ul.right {
+        li.torso a {
+            padding-right: 0;
+        }
+        li.user a {
+            padding-right: emCalc(5px);
+        }
+        li.superuser span {
+            margin: emCalc(13px) emCalc(10px) 0 emCalc(3px);
+            text-transform: uppercase;
+        }
+        .has-icon i {
+            font-size: emCalc(24px);
+        }
     }
 }
 
