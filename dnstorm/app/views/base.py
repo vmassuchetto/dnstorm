@@ -128,8 +128,10 @@ class RegistrationView(BaseRegistrationView):
             msg += _('You are already a contributor of a problem:&nbsp;')
             for p in pcs:
                 msg += '<a class="label success radius" href="%s">%s</a>&nbsp;' % (reverse('problem', kwargs={'pk': p.id, 'slug': p.slug}), p.title)
+            _return = reverse('problems_contribute')
         else:
             msg += _('You can start by creating a new problem or contrubuting to existing ones.')
+            _return = reverse('home')
         messages.success(self.request, mark_safe(msg))
 
         # Log in
@@ -137,7 +139,7 @@ class RegistrationView(BaseRegistrationView):
         login(self.request, _user)
 
         # Response
-        return HttpResponseRedirect(reverse('home'))
+        return HttpResponseRedirect(_return)
 
 class OptionsView(FormView):
     """
