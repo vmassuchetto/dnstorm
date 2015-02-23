@@ -127,7 +127,7 @@ class ProblemUpdateView(UpdateView):
         if self.object.author.id != self.request.user.id and self.object.open:
             self.object.coauthor.add(obj.request.user)
         elif self.object.author.id != self.request.user.id and not self.object.open:
-            raise HttpResponseForbidden
+            raise PermissionDenied
 
         self.object.save()
 
