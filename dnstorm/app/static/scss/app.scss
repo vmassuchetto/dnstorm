@@ -712,7 +712,6 @@ h6.subheader {
 }
 
 .user-search-result {
-    margin-top: 0;
     .user-box {
         @include single-transition(all, 200ms, ease-out);
         margin: 0;
@@ -722,16 +721,16 @@ h6.subheader {
             background-color: $grey;
             cursor: pointer;
         }
-        .avatar img {
-            width: 24px;
-            height: 24px;
-        }
-        .info {
-            line-height: 24px;
+        .avatar {
+            margin: 0;
+            background-color: white;
         }
         .pending-invitation {
             float: none !important;
             margin: emCalc(5px) 0;
+        }
+        a.username {
+            display: inline;
         }
     }
     .fi-mail {

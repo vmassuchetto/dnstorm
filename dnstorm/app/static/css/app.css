@@ -6589,30 +6589,28 @@ h6.subheader {
       .user-search-selected .contributor-delete .user-box:hover a {
         color: white; }
 
-.user-search-result {
-  margin-top: 0; }
-  .user-search-result .user-box {
-    transition: all 200ms ease-out;
+.user-search-result .user-box {
+  transition: all 200ms ease-out;
+  margin: 0;
+  border: 0;
+  max-width: 100%; }
+  .user-search-result .user-box:hover {
+    background-color: #B7B7B7;
+    cursor: pointer; }
+  .user-search-result .user-box .avatar {
     margin: 0;
-    border: 0;
-    max-width: 100%; }
-    .user-search-result .user-box:hover {
-      background-color: #B7B7B7;
-      cursor: pointer; }
-    .user-search-result .user-box .avatar img {
-      width: 24px;
-      height: 24px; }
-    .user-search-result .user-box .info {
-      line-height: 24px; }
-    .user-search-result .user-box .pending-invitation {
-      float: none !important;
-      margin: 0.3125rem 0; }
-  .user-search-result .fi-mail {
-    font-size: 1.5rem;
-    border: 0;
-    background: transparent; }
-  .user-search-result span.label {
-    margin-left: 0.625rem; }
+    background-color: white; }
+  .user-search-result .user-box .pending-invitation {
+    float: none !important;
+    margin: 0.3125rem 0; }
+  .user-search-result .user-box a.username {
+    display: inline; }
+.user-search-result .fi-mail {
+  font-size: 1.5rem;
+  border: 0;
+  background: transparent; }
+.user-search-result span.label {
+  margin-left: 0.625rem; }
 
 .activity-info {
   margin-top: 0.9375rem; }
