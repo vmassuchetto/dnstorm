@@ -25,7 +25,10 @@ module.exports = function(grunt) {
                 tasks: ['jshint']
             },
             sass: {
-                files: ['dnstorm/app/static/scss/app.scss'],
+                files: [
+                    'dnstorm/app/static/scss/app.scss',
+                    'dnstorm/app/static/scss/_settings.scss'
+                ],
                 tasks: ['sass']
             }
         }
