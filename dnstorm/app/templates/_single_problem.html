@@ -103,8 +103,8 @@
                 <a class="action-button" href="{% url "problem_update" problem.id %}"><i class="fi-pencil"></i>&nbsp;{% trans "edit problem" %}</a>
             {% endif %}
             <a class="action-button" href="{% url "problem_activity" problem.id problem.slug %}"><i class="fi-list"></i>&nbsp;{% trans "view activity log" %}</a>
-            {% if problem.contributors_set.count > 1 %}
-                <a class="action-button show-problem-contributors" href="javascript:void(0);"><i class="fi-torso"></i>&nbsp;{{ problem.contributors_set.count }}&nbsp;{% trans "contributors" %}</a>
+            {% if contributors|length > 1 %}
+                <a class="action-button show-problem-contributors" href="javascript:void(0);"><i class="fi-torso"></i>&nbsp;{{ contributors|length }}&nbsp;{% trans "contributors" %}</a>
             {% endif %}
         </div>
 
@@ -118,19 +118,17 @@
 
     {# Contributors #}
 
-    {% if not problem.public %}
-        <div class="contributors">
-            <div class="row users-list">
-                {% for user in contributors %}
-                    <div class="columns large-3">{% include "item_user.html" with expanded=True show_links=True show_date=False show_badges=True %}</div>
-                    {% if forloop.counter|divisibleby:4 %}
-                        </div>
-                        <div class="row users-list">
-                    {% endif %}
-                {% endfor %}
-            </div>
+    <div class="contributors">
+        <div class="row users-list">
+            {% for user in contributors %}
+                <div class="columns large-3">{% include "item_user.html" with expanded=True show_links=True show_date=False show_badges=True %}</div>
+                {% if forloop.counter|divisibleby:4 %}
+                    </div>
+                    <div class="row users-list">
+                {% endif %}
+            {% endfor %}
         </div>
-    {% endif %}
+    </div>
 
     {# Tabs #}
 
