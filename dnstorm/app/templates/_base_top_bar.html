@@ -30,10 +30,6 @@
         </ul>
         <ul class="right">
             {% if user.is_authenticated %}
-                {% if problem_drafts or idea_drafts %}
-                    <li class="divider"></li>
-                    <li class="has-icon drafts drafts-icon"><a href="javascript:void(0);"><i class="fi-page-edit"></i><span class="counter">{{ drafts_count }}</span></a></li>
-                {% endif %}
                 <li class="divider"></li>
                 <li class="has-icon notification notification-icon{% if user_activity_counter > "0" %} alert{% endif %}"><a href="javascript:void(0);"><i class="fi-lightbulb"></i><span class="counter">{{ user_activity_counter }}</span></a></li>
                 <li class="divider"></li>
