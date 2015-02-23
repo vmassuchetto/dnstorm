@@ -6966,11 +6966,6 @@ h6.subheader {
 .activity-avatar {
   border: 2px solid #EAEAEA; }
 
-#drafts {
-  right: 250px; }
-  #drafts .scroll-box-inner {
-    height: 160px; }
-
 footer {
   border-style: solid;
   border-width: 1px;

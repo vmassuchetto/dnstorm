@@ -1287,13 +1287,6 @@ h6.subheader {
     border: 2px solid #EAEAEA;
 }
 
-#drafts {
-    right: 250px;
-    .scroll-box-inner {
-        height: 160px;
-    }
-}
-
 footer {
     @include panel($light-grey, 1em);
     width: 100%;
