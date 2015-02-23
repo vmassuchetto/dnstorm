@@ -87,14 +87,14 @@
 
     {# Title #}
 
-    <div class="row">
+    <div class="row collapse">
         <div class="columns large-12 problem-title">
             <h3>{{ problem.title }}</h3>
         </div>
     </div>
 
 
-    <div class="row bottom-1em">
+    <div class="row collapse bottom-1em">
 
         {# Action butons #}
 
@@ -185,8 +185,11 @@
         <div class="problem-tab problem-description">
 
             {% if problem.open %}
-                {% trans "This problem is in open edition mode. Anyone can edit and improve the problem description." as message %}
+                {% trans "The description is editable by anyone. Click on 'edit problem' if you want to improve it." as message %}
                 {% include "part_panel.html" with icon="pencil" message=message %}
+            {% else %}
+                {% trans "The description is editable only by managers. Leave a comment with your improvement suggestions." as message %}
+                {% include "part_panel.html" with icon="lock" message=message %}
             {% endif %}
 
             <div class="row">
@@ -240,6 +243,15 @@
         {# Criteria #}
 
         <div class="problem-tab problem-criteria">
+
+            {% if problem.open %}
+                {% trans "The criteria of this problem is editable by anyone. Click on 'edit problem' if you want to improve them." as message %}
+                {% include "part_panel.html" with icon="pencil" message=message %}
+            {% else %}
+                {% trans "The criteria of this problem is editable only by managers. Leave a comment in the criteria with your improvement suggestions." as message %}
+                {% include "part_panel.html" with icon="lock" message=message %}
+            {% endif %}
+
             {% if criteria %}
                 {% for c in criteria %}
                     {% include "item_criteria.html" with criteria=c show_actions=False show_parameters=True show_icons=True show_description=True show_comments=True %}

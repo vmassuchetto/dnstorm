@@ -123,14 +123,14 @@ class AjaxView(View):
         result = ''
         if is_email(q):
             if User.objects.filter(email=q).exists():
-                result = loader.render_to_string('item_user.html', {'user': User.objects.filter(email=q)[0]})
+                result = loader.render_to_string('item_user.html', {'user': User.objects.filter(email=q)[0], 'enclosed': True})
             else:
                 u = User(username=q, email=q)
-                result = loader.render_to_string('item_user.html', {'user': u, 'email_invitation': q})
+                result = loader.render_to_string('item_user.html', {'user': u, 'email_invitation': q, 'enclosed': True})
             return HttpResponse(json.dumps({'result': result}), content_type='application/json')
 
         for u in User.objects.filter(Q(username__icontains=q) | Q(email__icontains=q))[:10]:
-            result += loader.render_to_string('item_user.html', {'user': u})
+            result += loader.render_to_string('item_user.html', {'user': u, 'enclosed': True})
 
         return HttpResponse(json.dumps({'result': result}), content_type='application/json')
 

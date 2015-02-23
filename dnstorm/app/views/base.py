@@ -1,18 +1,21 @@
 from datetime import datetime
 import urlparse
 
-from django.core.urlresolvers import resolve
+from django.contrib import messages
+from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.contrib.auth.views import login
+from django.contrib.auth.views import login as login_view
 from django.contrib.sites.models import Site
 from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
+from django.core.urlresolvers import resolve
 from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.http import Http404, HttpResponseRedirect, QueryDict
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
+from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
 from django.views.generic import DetailView, RedirectView
 from django.views.generic.base import TemplateView, View
@@ -44,8 +47,8 @@ class HomeView(TemplateView):
             q_problems = (Q(published=True) & Q(author=self.request.user))
         elif authenticated and mode == 'problems_drafts':
             q_problems = (Q(published=False) & Q(author=self.request.user))
-        elif authenticated and mode == 'problems_contributed':
-            q_problems = (Q(published=True) & Q(contributor__in=[self.request.user]))
+        elif authenticated and mode == 'problems_contribute':
+            q_problems = (Q(published=True) & Q(contributor__in=[self.request.user]) & ~Q(author=self.request.user))
         elif authenticated:
             q_problems = (Q(published=True)) & (Q(public=True) | Q(contributor__in=[self.request.user]))
         else:
@@ -118,7 +121,23 @@ class RegistrationView(BaseRegistrationView):
         for i in Invitation.objects.filter(user=user):
             i.delete()
 
-        return user
+        # Welcome message
+        pcs = Problem.objects.filter(contributor__in=[user])
+        msg = _('Welcome to DNStorm. ')
+        if pcs:
+            msg += _('You are already a contributor of a problem:&nbsp;')
+            for p in pcs:
+                msg += '<a class="label success radius" href="%s">%s</a>&nbsp;' % (reverse('problem', kwargs={'pk': p.id, 'slug': p.slug}), p.title)
+        else:
+            msg += _('You can start by creating a new problem or contrubuting to existing ones.')
+        messages.success(self.request, mark_safe(msg))
+
+        # Log in
+        _user = authenticate(username=cleaned_data['username'], password=cleaned_data['password1'])
+        login(self.request, _user)
+
+        # Response
+        return HttpResponseRedirect(reverse('home'))
 
 class OptionsView(FormView):
     """
@@ -213,7 +232,7 @@ class LoginView(View):
             next = next if next else reverse('home')
             return HttpResponseRedirect(next)
         else:
-            return login(self.request)
+            return login_view(self.request)
 
     def post(self, *args, **kwargs):
         return self.get(*args, **kwargs)

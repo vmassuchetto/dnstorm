@@ -620,6 +620,9 @@ h6.subheader {
 .user-box {
     margin: emCalc(5px) 0;
     line-height: 1;
+    &.enclosed {
+        @include panel(lighten($black, 70%), 5px);
+    }
     &.pending-user .info a {
         color: $light-black;
     }

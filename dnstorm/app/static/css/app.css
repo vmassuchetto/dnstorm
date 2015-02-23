@@ -6501,6 +6501,25 @@ h6.subheader {
 .user-box {
   margin: 0.3125rem 0;
   line-height: 1; }
+  .user-box.enclosed {
+    border-style: solid;
+    border-width: 1px;
+    border-color: #dbdbdb;
+    margin-bottom: 1.25rem;
+    padding: 5px;
+    background: #f7f7f7;
+    color: #777777; }
+    .user-box.enclosed > :first-child {
+      margin-top: 0; }
+    .user-box.enclosed > :last-child {
+      margin-bottom: 0; }
+    .user-box.enclosed h1, .user-box.enclosed h2, .user-box.enclosed h3, .user-box.enclosed h4, .user-box.enclosed h5, .user-box.enclosed h6, .user-box.enclosed p, .user-box.enclosed li, .user-box.enclosed dl {
+      color: #777777; }
+    .user-box.enclosed h1, .user-box.enclosed h2, .user-box.enclosed h3, .user-box.enclosed h4, .user-box.enclosed h5, .user-box.enclosed h6 {
+      line-height: 1;
+      margin-bottom: 0.625rem; }
+      .user-box.enclosed h1.subheader, .user-box.enclosed h2.subheader, .user-box.enclosed h3.subheader, .user-box.enclosed h4.subheader, .user-box.enclosed h5.subheader, .user-box.enclosed h6.subheader {
+        line-height: 1.4; }
   .user-box.pending-user .info a {
     color: #777777; }
   .user-box .avatar {

@@ -13,11 +13,20 @@
         <h3>{% trans "Problem activity" %}: <a href="{% url "problem" problem.id problem.slug %}">{{ problem.title }}</a></h3>
     {% else %} {% if profile %}
         <h3>{% trans "User activity" %}</h3>
+        {% if user_perm_manage %}
+            <div class="row collapse bottom-1em">
+                {# Action butons #}
+                <div class="columns large-12">
+                    <a class="action-button edit-user"><i class="fi-pencil"></i>&nbsp;{% trans "Edit user info" %}</a>
+                    <a class="action-button delete-user"><i class="fi-x"></i>&nbsp;{% trans "Delete user" %}</a>
+                </div>
+            </div>
+        {% endif %}
     {% else %}
         <h3>{% trans "Sitewide activity" %}</h3>
     {% endif %} {% endif %}
 
-    <div class="row">
+    <div class="row collapse">
         <div class="columns large-3 activity-info">
 
             {% if problem %}

@@ -1,11 +1,1 @@
-{% extends "_base.html" %}
-{% load i18n captureas %}
-
-{% block content %}
-    <h3>{% trans "Account activated" %}</h3>
-    {% url "home" as item_url %}
-    {% captureas message %}
-        {% blocktrans %}Welcome to DNStorm! You can now <a href="{{ home_url }}">start contributing</a>.{% endblocktrans %}
-    {% endcaptureas %}
-    {% include "part_panel.html" with icon="lightbulb" message=message %}
-{% endblock %}
+{% extends "_home.html" %}

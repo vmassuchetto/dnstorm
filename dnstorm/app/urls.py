@@ -21,7 +21,7 @@ urlpatterns = patterns('',
     # Problems
 
     (r'^problems/my/$', base.HomeView.as_view(), {}, 'problems_my'),
-    (r'^problems/contributed/$', base.HomeView.as_view(), {}, 'problems_contributed'),
+    (r'^problems/contribute/$', base.HomeView.as_view(), {}, 'problems_contribute'),
     (r'^problems/drafts/$', base.HomeView.as_view(), {}, 'problems_drafts'),
 
     # Problem
