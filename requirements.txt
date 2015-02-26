@@ -29,6 +29,5 @@ mock==1.0.1
 nodeenv==0.12.3
 psycopg2==2.6
 six==1.8.0
-sphinxcontrib-autojs==0.1.dev20150125
 static3==0.5.1
 wsgiref==0.1.2

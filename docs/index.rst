@@ -33,11 +33,6 @@ Signals
 .. automodule:: dnstorm.app.signals
    :members:
 
-JavaScript
-----------
-
-.. autojs:: ../dnstorm/app/static/js/scripts.js
-
 Indices and tables
 ==================
 
