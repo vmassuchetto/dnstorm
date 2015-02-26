@@ -95,7 +95,19 @@ class RegistrationView(BaseRegistrationView):
 
     def register(self, request, **cleaned_data):
         """
-        Register the user checking for invitations.
+        Register the user checking for invitations. Django default user fields
+        are filled as follow:
+
+        * username
+          - active user: displayed username
+          - invitation: e-mail
+          - inactive user: u<user_id>
+        * first_name
+          - active user: displayed real name set by user
+          - invitation: e-mail
+          - inactive user: u<user_id>
+        * last_name
+          - always a backup of first_name
         """
         # Invited user
         _hash = cleaned_data.get('hash', None)
