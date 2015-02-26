@@ -1,6 +1,8 @@
 from setuptools import setup, find_packages
+from pip.req import parse_requirements
 
-install_required = [l.strip() for l in open("requirements.txt", "r")]
+install_reqs = parse_requirements(<requirements_path>)
+reqs = [str(ir.req) for ir in install_reqs]
 
 metadata = {
     'name': 'DNStorm',
@@ -11,7 +13,7 @@ metadata = {
     'author_email': 'vmassuchetto@gmail.com',
     'platforms': ['linux'],
     'packages': find_packages(),
-    'install_required': install_required,
+    'install_required': reqs,
 }
 
 if __name__ == '__main__':
