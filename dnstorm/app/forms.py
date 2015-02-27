@@ -58,8 +58,8 @@ class RegistrationForm(RegistrationFormUniqueEmail):
         Validate that the supplied email address is unique for the
         site and compliant with the ``hash`` invitation parameter.
         """
-        _hash = self.data['hash'] if 'hash' in self.data else None
-        if _hash:
+        _hash = self.data['hash'] if 'hash' in self.data else ''
+        if len(_hash) > 2:
             invitation = get_object_or_404(models.Invitation, hash=_hash)
             # User was invited previously and is using the same e-mail to register
             if invitation and invitation.user.email == self.cleaned_data['email']:
