@@ -9,8 +9,7 @@ from django.contrib.auth.views import login as login_view
 from django.contrib.sites.models import Site
 from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
-from django.core.urlresolvers import resolve
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse, resolve
 from django.db.models import Q
 from django.http import Http404, HttpResponseRedirect, QueryDict
 from django.shortcuts import get_object_or_404
@@ -115,19 +114,24 @@ class RegistrationView(BaseRegistrationView):
             invitation = get_object_or_404(Invitation, hash=_hash)
             user = invitation.user
             user.username, user.email, user.first_name, \
-                user.is_active, user.is_staff = \
+                user.last_name, user.is_active, user.is_staff = \
                 cleaned_data['username'], cleaned_data['email'], \
-                cleaned_data['username'], True, True
+                cleaned_data['username'], cleaned_data['username'], \
+                True, True
             user.set_password(cleaned_data['password1'])
             user.save()
         # New registration
         else:
-            user = User.objects.create(username=cleaned_data['username'],
-                email=cleaned_data['email'], first_name=cleaned_data['username'],
+            user = User.objects.create(
+                username=cleaned_data['username'], email=cleaned_data['email'],
+                first_name=cleaned_data['username'], last_name=cleaned_data['username'],
                 is_active=True, is_staff=True, date_joined=datetime.now())
             user.set_password(cleaned_data['password1'])
             user.save()
-            return user
+            # Log in
+            _user = authenticate(username=cleaned_data['username'], password=cleaned_data['password1'])
+            login(self.request, _user)
+            return _user
 
         # Delete invitations
         for i in Invitation.objects.filter(user=user):
@@ -152,6 +156,23 @@ class RegistrationView(BaseRegistrationView):
 
         # Response
         return HttpResponseRedirect(_return)
+
+class LoginView(View):
+    """
+    Redirects valid users to the 'home' or 'next' page instead of showing the
+    login form.
+    """
+
+    def get(self, *args, **kwargs):
+        if self.request.user.is_authenticated():
+            next = self.request.GET.get('next', None)
+            next = next if next else reverse('home')
+            return HttpResponseRedirect(next)
+        else:
+            return login_view(self.request)
+
+    def post(self, *args, **kwargs):
+        return self.get(*args, **kwargs)
 
 class OptionsView(FormView):
     """
@@ -232,21 +253,3 @@ class ActivityView(TemplateView):
         return [
             { 'title': _('Activity'), 'classes': 'current' }
         ]
-
-class LoginView(View):
-    """
-    Redirects valid users to the 'home' or 'next' page instead of showing the
-    login form.
-    """
-
-    def get(self, *args, **kwargs):
-        print self.request.user.is_authenticated
-        if self.request.user.is_authenticated():
-            next = self.request.GET.get('next', None)
-            next = next if next else reverse('home')
-            return HttpResponseRedirect(next)
-        else:
-            return login_view(self.request)
-
-    def post(self, *args, **kwargs):
-        return self.get(*args, **kwargs)
