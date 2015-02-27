@@ -3,13 +3,13 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse, resolve
 from django.forms.util import ErrorList
 from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import get_object_or_404, render
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext as _
-from django.views.generic.base import TemplateView
+from django.views.generic.base import TemplateView, RedirectView
 from django.views.generic.edit import FormView, UpdateView
 
 from actstream.models import actor_stream
@@ -27,6 +27,7 @@ class UserView(TemplateView):
         user = get_user(kwargs['username'])
         if not user:
             raise Http404
+
         context['site_title'] = '%s | %s' % (user.username, _('User profile'))
         context['profile'] = user
         context['breadcrumbs'] = self.get_breadcrumbs(username=context['username'])
@@ -45,11 +46,18 @@ class UsersView(TemplateView):
 
     def get_context_data(self, *args, **kwargs):
         context = super(UsersView, self).get_context_data(**kwargs)
-        if self.request.user.is_superuser:
-            users = Paginator(User.objects.all().order_by('username'), 32)
+        mode = resolve(self.request.path_info).url_name
+
+        if self.request.user.is_superuser and mode == 'users_invitations':
+            users = Paginator(User.objects.filter(is_staff=False, is_active=True).order_by('username'), 32)
+        elif self.request.user.is_superuser and mode == 'users_inactive':
+            users = Paginator(User.objects.filter(is_active=False).order_by('username'), 32)
         else:
             users = Paginator(User.objects.filter(is_staff=True).order_by('username'), 32)
         page = self.request.GET['page'] if 'page' in self.request.GET else 1
+
+        context['show_actions'] = True if self.request.user.is_superuser else False
+        context['mode'] = mode
         context['site_title'] = '%s | %s' % (_('Users'), get_option('site_title'))
         context['breadcrumbs'] = self.get_breadcrumbs()
         context['users'] = users.page(page)
@@ -95,14 +103,15 @@ class UserUpdateView(UpdateView):
         Not nice, perhaps, some permissions handling are required here.
         """
 
-        user_obj = get_object_or_404(User, id=form.cleaned_data['user_id'])
-        form_obj = form.save(commit=False)
-        if not self.request.user.is_superuser and (self.request.user != user_obj or form_obj.is_superuser):
+        user = get_object_or_404(User, id=form.cleaned_data['user_id'])
+        _form = form.save(commit=False)
+        if not self.request.user.is_superuser and (self.request.user != user or _form.is_superuser):
             raise PermissionDenied
-        user_obj.email = form_obj.email
-        user_obj.first_name = form_obj.first_name
-        user_obj.is_superuser = form_obj.is_superuser
-        user_obj.save()
+        user.email = _form.email
+        user.first_name = _form.first_name
+        user.last_name = _form.username
+        user.is_superuser = _form.is_superuser
+        user.save()
         messages.success(self.request, _('User information was updated.'))
         return HttpResponseRedirect(reverse('user', kwargs={'username': user_obj.username}))
 
@@ -144,3 +153,48 @@ class UserPasswordUpdateView(FormView):
         self.object.save()
         messages.success(self.request, _('User password was updated.'))
         return HttpResponseRedirect(reverse('user', kwargs={'username': self.object.username}))
+
+class UserInactivateView(RedirectView):
+    """
+    Marks a user as inactive.
+    """
+    permanent = False
+
+    def get_redirect_url(self, *args, **kwargs):
+        """
+        Inactivates a user.
+        """
+        if not self.request.user.is_superuser:
+            raise PermissionDenied
+
+        user = get_object_or_404(User, username=kwargs['username'])
+        user.first_name = 'u%d' % user.id
+        user.is_active = False
+        user.is_staff = False
+        user.save()
+
+        messages.warning(self.request, _('The user was inactivated.'))
+        return reverse('users')
+
+class UserActivateView(RedirectView):
+    """
+    Marks a user as active.
+    """
+    permanent = False
+
+    def get_redirect_url(self, *args, **kwargs):
+        """
+        Activates a user.
+        """
+        if not self.request.user.is_superuser:
+            raise PermissionDenied
+
+        user = get_object_or_404(User, username=kwargs['username'])
+        user.username = user.last_name
+        user.first_name = user.last_name
+        user.is_active = True
+        user.is_staff = True
+        user.save()
+
+        messages.success(self.request, _('The user was activated.'))
+        return reverse('users')

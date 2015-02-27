@@ -6500,7 +6500,8 @@ h6.subheader {
 
 .user-box {
   margin: 0.3125rem 0;
-  line-height: 1; }
+  line-height: 1;
+  position: relative; }
   .user-box.enclosed {
     border-style: solid;
     border-width: 1px;
@@ -6520,8 +6521,22 @@ h6.subheader {
       margin-bottom: 0.625rem; }
       .user-box.enclosed h1.subheader, .user-box.enclosed h2.subheader, .user-box.enclosed h3.subheader, .user-box.enclosed h4.subheader, .user-box.enclosed h5.subheader, .user-box.enclosed h6.subheader {
         line-height: 1.4; }
-  .user-box.pending-user .info a {
+  .user-box.pending-user i.fi-mail, .user-box.pending-user i.fi-prohibited, .user-box.inactive-user i.fi-mail, .user-box.inactive-user i.fi-prohibited {
+    color: #868686; }
+  .user-box.pending-user a.username, .user-box.inactive-user a.username {
     color: #777777; }
+  .user-box:hover a.inactivate, .user-box:hover a.activate {
+    display: inline; }
+  .user-box a.action {
+    cursor: pointer;
+    display: none;
+    color: white;
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 0 6px; }
+  .user-box a.inactivate {
+    margin-top: 0.1875rem; }
   .user-box .avatar {
     line-height: 0;
     display: inline-block;
@@ -6531,6 +6546,9 @@ h6.subheader {
     margin-right: 0.25rem; }
     .user-box .avatar:hover, .user-box .avatar:focus {
       box-shadow: 0 0 6px 1px rgba(0, 140, 186, 0.5); }
+    .user-box .avatar i {
+      font-size: 32px;
+      padding: 0 4px; }
   .user-box .info {
     line-height: 1.125rem;
     padding-left: 2.8125rem; }
@@ -6541,9 +6559,6 @@ h6.subheader {
     display: block;
     font-weight: bold;
     margin: 5px 0 0 0; }
-  .user-box i.fi-mail {
-    font-size: 32px;
-    padding: 0 4px; }
   .user-box .badges span {
     margin: 0 0.1875rem;
     font-size: 0.75rem; }

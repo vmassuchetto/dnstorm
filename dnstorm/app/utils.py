@@ -117,12 +117,14 @@ def activity_register(_user, _action_object):
     activity_count(_target)
     follow(_user, _target, actor_only=False) if not is_following(_user, _target) else None
 
+email_regex = '[^@]+@[^@]+\.[^@]+'
+
 def is_email(_string):
     """
     Checks if a string is an e-mail.
     """
     import re
-    e = re.compile('[^@]+@[^@]+\.[^@]+')
+    e = re.compile(email_regex)
     return e.match(_string)
 
 def email_context(more_context=dict()):

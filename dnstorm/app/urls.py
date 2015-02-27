@@ -51,7 +51,11 @@ urlpatterns = patterns('',
     # Users
 
     (r'^users/$', user.UsersView.as_view(), {}, 'users'),
+    (r'^users/invitations/$', user.UsersView.as_view(), {}, 'users_invitations'),
+    (r'^users/inactive/$', user.UsersView.as_view(), {}, 'users_inactive'),
     (r'^users/(?P<username>[^/]+)/$', user.UserView.as_view(), {}, 'user'),
+    (r'^users/(?P<username>[^/]+)/activate/$', user.UserActivateView.as_view(), {}, 'user_activate'),
+    (r'^users/(?P<username>[^/]+)/inactivate/$', user.UserInactivateView.as_view(), {}, 'user_inactivate'),
     (r'^users/(?P<username>[^/]+)/update/$', user.UserUpdateView.as_view(), {}, 'user_update'),
     (r'^users/(?P<username>[^/]+)/update/password/$', user.UserPasswordUpdateView.as_view(), {}, 'user_password_update'),
 

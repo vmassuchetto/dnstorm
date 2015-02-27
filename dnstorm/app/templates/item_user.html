@@ -1,13 +1,19 @@
 {% load i18n avatar_tags display_name user_tags %}
-<div class="user-box{% if enclosed %} enclosed{% endif %}{% if not user.is_staff %} pending-user{% endif %}" data-username="{{ user.username }}"{% if email_invitation %} data-email="{{ email_invitation }}"{% endif %}>
+<div class="user-box{% if enclosed %} enclosed{% endif %}{% if not user.is_staff %} pending-user{% endif %}{% if not user.is_active %} inactive-user{% endif %}" data-username="{{ user.username }}"{% if email_invitation %} data-email="{{ email_invitation }}"{% endif %}>
     <div class="row collapse">
         <div class="columns large-12">
-            <a class="avatar left" {% if show_links and user.is_staff %}href="{% url "user" user.username %}"{% else %}href="javascript:void(0)"{% endif %}>{% if user.is_active %}{% avatar user 32 %}{% else %}<i class="fi-mail"></i>{% endif %}</a>
+
+            <a class="avatar left" {% if show_links and user.is_staff %}href="{% url "user" user.username %}"{% else %}href="javascript:void(0)"{% endif %}>{% if user.is_staff %}{% avatar user 32 %}{% else %}{% if user.is_active %}<i class="fi-mail"></i>{% else %}<i class="fi-prohibited"></i>{% endif %}{% endif %}</a>
+
             <div class="info">
 
                 {# Username #}
+                <a class="username" {% if show_links and user.is_staff %}href="{% url "user" user.username %}"{% else %}href="javascript:void(0)"{% endif %}>{% if user.is_active %}{% display_name user %}{% else %}{{ user.last_name }}{% endif %}</a>
 
-                <a class="username" {% if show_links and user.is_staff %}href="{% url "user" user.username %}"{% else %}href="javascript:void(0)"{% endif %}>{% display_name user %}</a>{% if email_invitation %}<span class="label secondary small">{% trans "Send invitation" %}</span>{% endif %}
+                {# Pending invitation #}
+                {% if email_invitation %}
+                    <span class="label secondary small">{% trans "Send invitation" %}</span>
+                {% endif %}
 
                 {# Date #}
 
@@ -34,6 +40,13 @@
                         {% endif %}
                     {% endwith %}
                 {% endif %}
+
+                {# Inactivation and activation link #}
+                {% if show_actions and user.is_active %}
+                    <a class="action inactivate button radius alert tiny" href="{% url "user_inactivate" user.username %}"><i class="fi-prohibited"></i>{% trans "inactivate user" %}</a>
+                {% else %} {% if show_actions and not user.is_active %}
+                    <a class="action activate button radius success tiny" href="{% url "user_activate" user.username %}"><i class="fi-check"></i>{% trans "activate user" %}</a>
+                {% endif %} {% endif %}
 
             </div>
         </div>

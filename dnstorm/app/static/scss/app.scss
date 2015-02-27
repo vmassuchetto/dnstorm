@@ -620,15 +620,45 @@ h6.subheader {
 .user-box {
     margin: emCalc(5px) 0;
     line-height: 1;
+    position: relative;
     &.enclosed {
         @include panel(lighten($black, 70%), 5px);
     }
-    &.pending-user .info a {
-        color: $light-black;
+    &.pending-user,
+    &.inactive-user {
+        i.fi-mail,
+        i.fi-prohibited {
+            color: $dark-grey;
+        }
+        a.username {
+            color: $light-black;
+        }
+    }
+    &:hover {
+        a.inactivate,
+        a.activate {
+            display: inline;
+        }
+    }
+    a.action {
+        cursor: pointer;
+        display: none;
+        color: white;
+        position: absolute;
+        top:0;
+        right: 0;
+        padding: 0 6px;
+    }
+    a.inactivate {
+        margin-top: emCalc(3px);
     }
     .avatar {
         @include thumb(1px, $light-black);
         margin-right: emCalc(4px);
+        i {
+            font-size: 32px;
+            padding: 0 4px;
+        }
     }
     .info {
         line-height: emCalc(18px);
@@ -642,10 +672,6 @@ h6.subheader {
         display: block;
         font-weight: bold;
         margin: 5px 0 0 0;
-    }
-    i.fi-mail {
-        font-size: 32px;
-        padding: 0 4px;
     }
     .badges {
         span {

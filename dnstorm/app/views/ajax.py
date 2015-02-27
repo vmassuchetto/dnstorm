@@ -195,9 +195,10 @@ class AjaxView(View):
         # user
         email = self.request.GET['contributor_add']
         user = get_object_or_none(User, email=email)
+        password = '%032x' % random.getrandbits(128)
         if not user:
             user = User.objects.create(username=email, email=email, first_name=email,
-                is_active=False, is_staff=False)
+                password=password,is_active=True, is_staff=False)
         problem.contributor.add(user)
         # invitation
         hash = '%032x' % random.getrandbits(128)

@@ -9,16 +9,33 @@
         <div class="columns large-12"><h3>{% trans "Users" %}</h3></div>
     </div>
 
+    {# Action butons #}
+
+    {% if user.is_superuser %}
+        <div class="row collapse bottom-1em">
+            <div class="columns large-12">
+                <a class="action-button{% if mode == "users" %} marked{% endif %}" href="{% url "users" %}"><i class="fi-list"></i>&nbsp;{% trans "all users" %}</a>
+                <a class="action-button{% if mode == "users_invitations" %} marked{% endif %}" href="{% url "users_invitations" %}"><i class="fi-mail"></i>&nbsp;{% trans "invitations" %}</a>
+                <a class="action-button{% if mode == "users_inactive" %} marked{% endif %}" href="{% url "users_inactive" %}"><i class="fi-prohibited"></i>&nbsp;{% trans "inactive" %}</a>
+            </div>
+        </div>
+    {% endif %}
+
     <div class="row users-list">
-        {% for user in users %}
-            <div class="columns large-3">{% include "item_user.html" with clean=True show_links=True show_date=False show_badges=True %}</div>
+        {% if users %}
+            {% for user in users %}
+                <div class="columns large-3">{% include "item_user.html" with clean=True show_actions=show_actions show_links=True show_date=False show_badges=True %}</div>
 
-            {% if forloop.counter|divisibleby:4 %}
-                </div>
-                <div class="row users-list">
-            {% endif %}
+                {% if forloop.counter|divisibleby:4 %}
+                    </div>
+                    <div class="row users-list">
+                {% endif %}
 
-        {% endfor %}
+            {% endfor %}
+        {% else %}
+            {% trans "No users around here." as message %}
+            {% include "part_panel.html" with message=message icon="prohibited" %}
+        {% endif %}
     </div>
 
     <div class="row">
