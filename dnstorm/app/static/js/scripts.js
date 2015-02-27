@@ -1,14 +1,11 @@
 jQuery.noConflict();
 (function($){
 
-/* General {{{ */
-
 if (!String.prototype.format) {
     String.prototype.format = function() {
-        /**:Global:String.prototype.format
-
+        /***
         Returns the prototype format.
-        */
+        ***/
         var args = arguments;
         return this.replace(/{(\d+)}/g, function(match, number) {
             return typeof args[number] != 'undefined' ? args[number] : match;
@@ -17,10 +14,9 @@ if (!String.prototype.format) {
 }
 
 function get_cookie(name) {
-    /**:Global:get_cookie
-
+    /***
     Gets a cookie from the browser.
-    */
+    ***/
     var cookieValue = null;
     if (document.cookie && document.cookie !== '') {
         var cookies = document.cookie.split(';');
@@ -38,21 +34,20 @@ function get_cookie(name) {
 var csrftoken = get_cookie('csrftoken');
 
 function csrf_safe_method(method) {
-    /**:Global:csrf_safe_method
-
+    /***
     Tests for HTTP methods that do not require CSRF protection.
-    */
+    ***/
     return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
 }
 
 function same_origin(url) {
-    /**:Global:same_origin
+    /***Global:same_origin
 
     Test that a given url is a same-origin URL. Url could be relative or scheme
     relative or absolute. Allow absolute or scheme relative URLs to same
     origin, or any other URL that isn't scheme relative or absolute i.e
     relative.
-    */
+    ***/
     var host = document.location.host; // host + port
     var protocol = document.location.protocol;
     var sr_origin = '//' + host;
@@ -63,35 +58,31 @@ function same_origin(url) {
 }
 
 $.ajaxSetup({
-    /**:Global:ajaxSetup
-
+    /***
     Setups common ajax actions across all site.
-    */
+    ***/
     beforeSend: function(xhr, settings) {
-        /**:Global:ajaxSetup.beforeSend
-
+        /***
         Send the token to same-origin, relative URLs only. Send the token only
         if the method warrants CSRF protection Using the CSRFToken value
         acquired earlier
-        */
+        ***/
         if (!csrf_safe_method(settings.type) && same_origin(settings.url)) {
             xhr.setRequestHeader("X-CSRFToken", csrftoken);
         }
     },
     error : function(jqXHR, textStatus, errorThrown) {
-        /**:Global:ajaxSetup.error
-
+        /***
         Shows a nice error modal when and ajax error occurs.
-        */
+        ***/
         $('#response-error-modal').foundation('reveal', 'open');
     }
 });
 
 $.fn.clearForm = function() {
-    /**:Global:fn.clearForm
-
+    /***
     Clears a form.
-    */
+    ***/
     return this.each(function() {
         var type = this.type, tag = this.tagName.toLowerCase();
         if (tag == 'form')
@@ -106,18 +97,16 @@ $.fn.clearForm = function() {
 };
 
 function scrollTo(selector) {
-    /**:Global:scrollTo
-
+    /***
     Scrolls the screen to the given selector.
-    */
+    ***/
     $('html, body').animate({ scrollTop: $(selector).offset().top }, 200);
 }
 
 $.fn.highlight = function (color, duration) {
-    /**:Global:fn.highlight
-
+    /***
     Renders a highlight animation in an object.
-    */
+    ***/
     if (!duration)
         duration = 1000;
     if (color == 'red')
@@ -132,50 +121,43 @@ $.fn.highlight = function (color, duration) {
 };
 
 $(document).ready(function(){
+    /***
+    Sets sticable effect on elements.
+    ***/
     var s = $('.sticable');
     var pos = s.position();
-    if (s.length > 0) {
-        $(window).scroll(function(){
-            var windowpos = $(window).scrollTop();
-            if (windowpos >= pos.top + 180){
-                s.addClass("stick");
-            } else {
-                s.removeClass("stick");
-            }
-        });
-    }
+    $(window).scroll(function(){
+        var windowpos = $(window).scrollTop();
+        if (windowpos >= pos.top + 180){
+            s.addClass("stick");
+        } else {
+            s.removeClass("stick");
+        }
+    });
 });
 
-/* }}} */
-
-/* Modals {{{ */
-
 $('.message-bar').on('click', '.close', function(){
-    /**:Modals:click:.message-bar
+    /***Modals:click:.message-bar
 
     Hides the top message bar.
-    */
+    ***/
     $(this).parent().parent().parent().slideUp(200);
 });
 
 $(document).on('click', '.close-reveal-modal-button', function(){
-    /**:Modals:click:.close-reveal-modal-button
+    /***Modals:click:.close-reveal-modal-button
 
      Closes the modal cancel button. Used when we want to use a "Cancel" button
      instead of the "X" at the top.
-     */
+     ***/
     $(this).parents('.reveal-modal').foundation('reveal', 'close');
 });
 
-/* }}} */
-
-/* TopBar {{{ */
-
 function activity_reset_counter() {
-    /**:TopBar:activity_reset_counter
+    /***TopBar:activity_reset_counter
 
     Resets the activity counter.
-    */
+    ***/
     var notification = $('.notification');
     var activity_counter = $('.notification .counter');
     if (parseInt(activity_counter.text()) > 0) {
@@ -190,10 +172,10 @@ function activity_reset_counter() {
 }
 
 $(document).on('click', '.drafts-icon', function(e){
-    /**:TopBar:click:.drafts-icon
+    /***TopBar:click:.drafts-icon
 
     Show and hide the drafts box.
-    */
+    ***/
     drafts = $('#drafts');
     drafts_box = $('#drafts-box');
     $('.scroll-box').not('#drafts').hide();
@@ -207,10 +189,10 @@ $(document).on('click', '.drafts-icon', function(e){
 });
 
 $(document).on('click', '.notification-icon', function(e){
-    /**:TopBar:click:.notification-icon
+    /***TopBar:click:.notification-icon
 
     Show and hide the activity box.
-    */
+    ***/
     activity_reset_counter();
     activity = $('#activity');
     activity_button = $('#activity .button');
@@ -227,15 +209,10 @@ $(document).on('click', '.notification-icon', function(e){
     }
 });
 
-/* }}} */
-
-// ProblemView {{{
-
 $('.problem-tabs').on('click', '>div', function(e){
-    /**:ProblemView:click:.problem-tabs
-
+    /***
     Tab selection on the problem frontend.
-    */
+    ***/
     e.preventDefault();
     window.location.hash = $(this).data('tab');
     $('.problem-tabs > div').removeClass('marked');
@@ -246,16 +223,11 @@ $('.problem-tabs').on('click', '>div', function(e){
     });
 });
 
-// }}}
-
-// ProblemForm {{
-
 $('.problem-form').on('click', '#id_public', criteria_form);
 function criteria_form() {
-    /**:ProblemForm:click:#id_public
-
+    /***
     Show or hide the contributors section.
-    */
+    ***/
     if ($('#id_public').is(':checked')) {
         $('.contributors-section').hide();
     } else {
@@ -265,11 +237,10 @@ function criteria_form() {
 criteria_form();
 
 $('.problem-form').on('click', '.criteria-add', function(e){
-    /**:ProblemForm:Criteria:click:.criteria-add
-
+    /***
     Copy the ``#criteria-form`` to the Problem form area. Attach triggers on
     the end as it's a recently created object.
-    */
+    ***/
     e.preventDefault();
     $('.criteria').append($('#criteria-form').html());
     var c = $('.criteria .criteria-new:last');
@@ -278,10 +249,9 @@ $('.problem-form').on('click', '.criteria-add', function(e){
 });
 
 $('.problem-edit #delete-modal form').on('submit', function(e){
-    /**:ProblemForm:click:.problem-edit #delete-modal
-
+    /***
     Triggers the delete modal for a criteria object.
-    */
+    ***/
     if ($(this).find('#id_delete_problem').val()) {
         return;
     }
@@ -312,18 +282,16 @@ $('.problem-edit #delete-modal form').on('submit', function(e){
 });
 
 $('.problem-form').on('click', '.criteria-delete', function criteria_delete(e) {
-    /**:ProblemForm:click:.criteria-delete
-
+    /***
     Toggles the delete modal for criteria.
-    */
+    ***/
     toggle_delete('criteria', $(e.currentTarget).closest('.criteria-row').data('id'));
 });
 
 $('.problem-form').on('click', '.criteria-cancel', function(e) {
-    /**:ProblemForm:click:.criteria-cancel
-
+    /***
     Hides the criteria form and removes it if new.
-    */
+    ***/
     row = $(this).closest('.criteria-row');
     row.find('.backend').slideUp(200, function(){
         if (row.hasClass('criteria-new')) {
@@ -333,10 +301,9 @@ $('.problem-form').on('click', '.criteria-cancel', function(e) {
 });
 
 $('.problem-form').on('change', 'select[name="fmt"]', function(e){
-    /**:ProblemForm:change:select[name="fmt"]
-
+    /***
     Show format-dependent fields on the form.
-    */
+    ***/
     if ($(this).val() == 'scale') {
         $(this).closest('.backend').find('.minmax').show();
     } else {
@@ -348,10 +315,9 @@ $('.problem-form').on('change', 'select[name="fmt"]', function(e){
 });
 
 $('.problem-form').on('click', '.criteria-submit', function(e) {
-    /**:ProblemForm:criteria_submit
-
+    /***
     Submits the criteria form.
-    */
+    ***/
     e.preventDefault();
     if ($(this).attr('disabled') == 'disabled')
         return false;
@@ -388,10 +354,9 @@ $('.problem-form').on('click', '.criteria-submit', function(e) {
 });
 
 $('.problem-form,.idea-edit').on('click', '.criteria-edit', function(e) {
-    /**:ProblemForm:click:.criteria_edit
-
+    /***
     Toggle a criteria form among the problem criteria.
-    */
+    ***/
     // Hide all other rows
     $('.criteria .backend').filter(':visible').slideUp(200);
     // Show the activated one
@@ -405,10 +370,9 @@ $('.problem-form,.idea-edit').on('click', '.criteria-edit', function(e) {
 });
 
 $('.problem-form,.idea-edit').on('click', '.criteria-unedit', function(e) {
-    /**:ProblemForm:click:.problem-form.criteria_unedit
-
+    /***
     Toggle a criteria form among the problem criteria.
-    */
+    ***/
     $(this).closest('.backend').slideUp(200);
 });
 
@@ -495,16 +459,12 @@ $('.problem-form').on('click', '.user-search-result .user-box', function(){
     }
 });
 
-/* }}} */
-
 $('.problem-tabs').ready(function(){
-    /**:Problem:problem-tabs
-
+    /***
     Actions related to hyperlinks for problem view
-    */
+    ***/
 
     // When accessing the URL directly to a tab
-
     if (window.location.hash.match(/^#(criteria|ideas|alternatives)$/)) {
         $('.problem-tabs').find('[data-tab="' + window.location.hash.replace('#', '') + '"]').trigger('click');
     } else if (window.location.hash.match(/^#(idea|comment|criteria|alternative)-[0-9]+$/)) {
@@ -527,8 +487,6 @@ $('.problem-tabs').ready(function(){
     }
 });
 
-// Vote criteria
-
 var timeout;
 $('.criteria-button:not(.expanded)').hover(function() {
     var description = $(this).find('.criteria-description');
@@ -547,10 +505,6 @@ $('.criteria-button:not(.expanded)').hover(function() {
         description.fadeOut();
     }
 });
-
-/**
- * Idea: Likes
- */
 
 $(document).on('mouseenter', '.like-bulb', function(){
     $(this).addClass('highlighted');
@@ -607,10 +561,9 @@ $(document).on('click', '.alternative-like', function(){
 });
 
 $('.problem').on('click', '.comment-button', function(e){
-    /**:Comment:click:.action-comment
-
+    /***
     Show the comment form in the proper place for ideas and criteria.
-    */
+    ***/
     e.preventDefault();
     var form = $('#comment-form');
     var new_form = form.clone();
@@ -638,10 +591,9 @@ $('.problem').on('click', '.comment-button', function(e){
 // Comment form submit
 
 $('.problem').on('submit', '.comment-form form', function(e){
-    /**:Comment:submit:.comment-form>form
-
+    /***
     Submits a comment.
-    */
+    ***/
     e.preventDefault();
     var button = $(this).find('input[type="submit"]');
     if (button.attr('disabled') == 'disabled')
@@ -683,11 +635,10 @@ $(document).on('click', 'a.display-more', function(e){
 });
 
 function toggle_delete(type, id) {
-    /**:toggle_delete
-
+    /***
     Prepare the delete confirmation modal for a problem, idea, comment or
     criteria.
-    */
+    ***/
     var delete_modal = $('#delete-modal');
     delete_modal.find('#id_delete_problem,#id_delete_idea,#id_delete_comment,#id_delete_criteria').each(function(){
         $(this).val('');
@@ -715,10 +666,9 @@ $(document).on('click', '.comment-delete', function(){
 });
 
 $(document).on('click', '.new-alternative', function(){
-    /**:ProblemView:click:.new-alternative
-
+    /***
     Add new alternative to problem.
-    */
+    ***/
     if ($(this).attr('disabled') == 'disabled')
         return false;
     var button = $(this);
@@ -746,18 +696,16 @@ $(document).on('click', '.new-alternative', function(){
 
 var alternative_delete_modal = $('#alternative-delete-modal');
 $(document).on('click', '.delete-alternative', function(){
-    /**:ProblemView:click:.delete-alternative
-
+    /***
     Pops the confirmation dialog to delete an alternative.
-    */
+    ***/
     alternative_delete_modal.data('alternative', $(this).data('alternative'));
     alternative_delete_modal.foundation('reveal', 'open');
 });
 $(document).on('click', '.delete-alternative-confirm', function(){
-    /**:ProblemView:click:.delete-alternative-confirm
-
+    /***
     Confirms the deletion of an alternative and sends the ajax action for it.
-    */
+    ***/
     var button = $(this);
     if ($(this).attr('disabled') == 'disabled')
         return false;
@@ -781,9 +729,6 @@ $(document).on('click', '.delete-alternative-confirm', function(){
     });
 });
 
-/**
- * Strategy table: Vote
- */
 $(document).on('mouseenter', '.alternative-vote .cell-wrap', function(){
     $(this).parent().addClass('hover');
 });
@@ -791,16 +736,13 @@ $(document).on('mouseleave', '.alternative-vote .cell-wrap', function(){
     $(this).parent().removeClass('hover');
 });
 $(document).on('click', '.alternative-vote .cell-wrap', function(){
-
     var obj = $(this).parent();
     if (obj.hasClass('voted'))
         obj.removeClass('voted');
     else
         obj.addClass('voted');
-
     var vote_count = $(this);
     var alternative = $(this).closest('.alternative').data('alternative');
-
     $.ajax({
         url: '/ajax/',
         type: 'GET',
@@ -816,18 +758,12 @@ $(document).on('click', '.alternative-vote .cell-wrap', function(){
             }
         }
     });
-
 });
 
-/**
- * Strategy table: Select ideas
- */
-
 $(document).on('click', '.select-ideas', function(){
-    /**:ProblemView:.select-ideas
-
+    /***
     Shows the ideas modal to select them for alternatives.
-    */
+    ***/
     var m = $('#select-idea-modal');
     m.data('alternative', $(this).data('alternative'));
     m.data('idea', {});
@@ -846,10 +782,9 @@ $(document).on('click', '.select-ideas', function(){
     m.foundation('reveal', 'open');
 });
 $(document).on('click', '.problem-idea-modal', function(){
-    /**:ProblemView:.problem-idea-modal
-
+    /***
     Select ideas in a modal.
-    */
+    ***/
     var m = $('#select-idea-modal');
     var i = $(this).find('.idea-row').data('id');
     var s = $(this).find('i.idea-status');
@@ -864,10 +799,9 @@ $(document).on('click', '.problem-idea-modal', function(){
     }
 });
 $(document).on('click', '.problem-idea-modal-save', function(){
-    /**:ProblemView:.problem-idea-modal-save
-
+    /***
     Saves the selected ideas in a modal.
-    */
+    ***/
     var button = $(this);
     if ($(this).attr('disabled') == 'disabled')
         return false;
