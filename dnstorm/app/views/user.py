@@ -8,6 +8,7 @@ from django.forms.util import ErrorList
 from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import get_object_or_404, render
 from django.utils.decorators import method_decorator
+from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
 from django.views.generic.base import TemplateView, RedirectView
 from django.views.generic.edit import FormView, UpdateView
@@ -151,7 +152,8 @@ class UserPasswordUpdateView(FormView):
 
         self.object.set_password(self.request.POST['password1'])
         self.object.save()
-        messages.success(self.request, _('User password was updated.'))
+        label = '<span class="label radius success">%s</span>' % user.email
+        messages.success(self.request, mark_safe(_('The password for %s was updated.') % label))
         return HttpResponseRedirect(reverse('user', kwargs={'username': self.object.username}))
 
 class UserInactivateView(RedirectView):
@@ -166,14 +168,23 @@ class UserInactivateView(RedirectView):
         """
         if not self.request.user.is_superuser:
             raise PermissionDenied
-
         user = get_object_or_404(User, username=kwargs['username'])
+
+        # invitation
+        if user.is_active and not user.is_staff:
+            label = '<span class="label radius alert">%s</span>' % user.email
+            user.delete()
+            messages.warning(self.request, mark_safe(_('The invitation to %s was cancelled.') % label))
+            return reverse('users_invitations')
+
+        # confirmed user
         user.first_name = 'u%d' % user.id
         user.is_active = False
         user.is_staff = False
         user.save()
 
-        messages.warning(self.request, _('The user was inactivated.'))
+        label = '<span class="label radius alert">%s</span>' % user.last_name
+        messages.warning(self.request, mark_safe(_('The user %s was inactivated.') % label))
         return reverse('users')
 
 class UserActivateView(RedirectView):
@@ -196,5 +207,6 @@ class UserActivateView(RedirectView):
         user.is_staff = True
         user.save()
 
-        messages.success(self.request, _('The user was activated.'))
-        return reverse('users')
+        label = '<span class="label radius success">%s</span>' % user.last_name
+        messages.success(self.request, mark_safe(_('The user %s was activated.') % label))
+        return reverse('users_inactive')

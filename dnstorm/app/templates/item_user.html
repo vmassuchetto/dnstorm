@@ -9,6 +9,7 @@
 
                 {# Username #}
                 <a class="username" {% if show_links and user.is_staff %}href="{% url "user" user.username %}"{% else %}href="javascript:void(0)"{% endif %}>{% if user.is_active %}{% display_name user %}{% else %}{{ user.last_name }}{% endif %}</a>
+                {% if not user.is_active %}<span class="subheader">({{ user.first_name }})</span>{% endif %}
 
                 {# Pending invitation #}
                 {% if email_invitation %}
@@ -16,7 +17,6 @@
                 {% endif %}
 
                 {# Date #}
-
                 {% if show_date %}
                     <span class="contributed">
                         {% if show_links %}<a href="{{ date_link }}">{% endif %}{% blocktrans with day=date|date:"d b Y" hour=date|date:"H:i" %}{{ day }} at {{ hour }}{% endblocktrans %}{% if show_links %}</a>{% endif %}
@@ -25,7 +25,7 @@
 
                 {# Invitation label #}
 
-                {% if not user.is_staff and not email_invitation %}<span class="label secondary small pending-invitation">{% trans "Pending invitation" %}</span>{% endif %}
+                {% if not user.is_staff and user.is_active and not email_invitation %}<span class="label secondary small pending-invitation">{% trans "Pending invitation" %}</span>{% endif %}
 
                 {# Badges #}
 
@@ -43,7 +43,7 @@
 
                 {# Inactivation and activation link #}
                 {% if show_actions and user.is_active %}
-                    <a class="action inactivate button radius alert tiny" href="{% url "user_inactivate" user.username %}"><i class="fi-prohibited"></i>{% trans "inactivate user" %}</a>
+                    <a class="action inactivate button radius alert tiny" href="{% url "user_inactivate" user.username %}"><i class="fi-prohibited"></i>{% if user.is_active and not user.is_staff %}{% trans "cancel invitation" %}{% else %}{% trans "inactivate user" %}{% endif %}</a>
                 {% else %} {% if show_actions and not user.is_active %}
                     <a class="action activate button radius success tiny" href="{% url "user_activate" user.username %}"><i class="fi-check"></i>{% trans "activate user" %}</a>
                 {% endif %} {% endif %}
