@@ -1,13 +1,13 @@
 {% load crispy_forms_tags humanize i18n paragraphs %}
 
-<div class="idea-row" id="idea-{{ idea.id }}" data-id="{{ idea.id }}">
+<div id="idea-{{ idea.id }}" class="idea-row" data-id="{{ idea.id }}">
 
     <div class="row">
 
         {% if show_likes %}
-            <div class="columns large-1 medium-2 small-3 idea-like like-bulb{% if not user.is_authenticated %} like-bulb-disabled{% endif %}{% if idea.voted %} voted{% endif %}" data-idea="{{ idea.id }}" data-counter="{{ idea.vote_count }}">
-                <a class="like-bulb-bulb idea-like-bulb"><i class="fi-lightbulb"></i></a>
-                <span class="like-bulb-counter idea-like-counter">{{ idea.vote_count }}</span>
+            <div class="columns large-1 medium-2 small-3 idea-like like{% if not user.is_authenticated %} like-disabled{% endif %}{% if idea.voted %} voted{% endif %}" data-idea="{{ idea.id }}" data-counter="{{ idea.vote_count }}">
+                <a class="like"><i class="fi-like"></i></a>
+                <span class="like-counter idea-like-counter">{{ idea.vote_count }}</span>
             </div>
         {% endif %}
 
@@ -42,18 +42,17 @@
                     <div class="row collapse">
                         <div class="columns large-12 right idea-actions">
                             {% if show_actions %}
-
                                 {% if problem_perm_manage or problem_perm_edit %}
                                     <a class="action-button problem-idea-edit" href="{% url "idea_update" idea.id %}"><i class="fi-pencil"></i>&nbsp;{% trans "Edit" %}</a>
                                 {% endif %}
-
                             {% endif %}
                         </div>
                     </div>
                 </div>
 
                 <div class="columns medium-3 large-3">
-                    {% include "item_user.html" with user=idea.author date=idea.created link=idea.get_absolute_url %}
+                    <h6 class="subheader">{% trans "Idea author" %}</h6>
+                    {% include "item_user.html" with user=idea.author date=idea.created link=idea.get_absolute_url show_badges=True %}
                 </div>
 
             </div>

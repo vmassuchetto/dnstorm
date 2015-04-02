@@ -96,9 +96,8 @@ class AjaxView(View):
 
         # Alternative
         # put an idea in an alternative
-        elif self.request.POST.get('alternative', None) \
-            and self.request.POST.get('idea_alternative', None):
-            return self.idea_alternative()
+        elif self.request.POST.get('alternative_save', None):
+            return self.alternative_save()
 
         # Comment
         elif self.request.POST.get('comment_new', None):
@@ -153,7 +152,7 @@ class AjaxView(View):
         follow(user, problem, actor_only=False) if not is_following(user, problem) else None
 
         # Response
-        result = loader.render_to_string('_update_problem_users.html', {'users': problem.contributor.order_by('first_name')})
+        result = ''.join([loader.render_to_string('item_user_contributor.html', {'users': problem.contributor.order_by('first_name')})])
         return HttpResponse(json.dumps({'result': result}), content_type='application/json')
 
     def contributor_delete(self):
@@ -175,7 +174,7 @@ class AjaxView(View):
             models.Invitation.objects.filter(user=user).delete()
 
         # Response
-        result = loader.render_to_string('_update_problem_users.html', {'users': problem.contributor.order_by('first_name')})
+        result = ''.join([loader.render_to_string('item_user_contributor.html', {'users': problem.contributor.order_by('first_name')})])
         return HttpResponse(json.dumps({'result': result}), content_type='application/json')
 
     def invitation_add(self):
@@ -209,7 +208,7 @@ class AjaxView(View):
         notification.send([user], 'invitation', email_context({ 'invitation': invitation }))
 
         # Response
-        result = loader.render_to_string('_update_problem_users.html', {'users': problem.contributor.order_by('first_name')})
+        result = loader.render_to_string('_update_problem_contributors.html', {'users': problem.contributor.order_by('first_name')})
         return HttpResponse(json.dumps({'result':result}))
 
     def activity_reset_counter(self):
@@ -265,14 +264,16 @@ class AjaxView(View):
         problem = get_object_or_404(models.Problem, id=self.request.GET['problem'])
         if not problem or not self.request.user.is_authenticated():
             raise Http404
-        if not permissions.problem(obj=problem, user=self.request.user, mode='manage'):
+        if not permissions.problem(obj=problem, user=self.request.user, mode='contribute'):
             raise PermissionDenied
 
         # Commit
         order = models.Alternative.objects.filter(problem=problem).count() + 1
-        a = models.Alternative(problem=problem, order=order)
+        a = models.Alternative(problem=problem, order=order, author=self.request.user)
         a.save()
-        a.fill_data()
+        a.name = _('Alternative %d' % a.id)
+        a.save()
+        a.fill_data(self.request.user)
 
         # Response
         activity_register(self.request.user, a)
@@ -365,7 +366,7 @@ class AjaxView(View):
         a = get_object_or_404(models.Alternative, id=self.request.GET.get('delete_alternative'))
         if not a or not self.request.user.is_authenticated():
             raise Http404
-        if not permissions.problem(obj=a.problem, user=self.request.user, mode='manage'):
+        if not permissions.alternative(obj=a, user=self.request.user, mode='manage'):
             raise PermissionDenied
 
         # Commit
@@ -405,26 +406,35 @@ class AjaxView(View):
         response = {'votes': votes, 'voted': voted}
         return HttpResponse(json.dumps(response), content_type='application/json')
 
-    def idea_alternative(self):
+    def alternative_save(self):
         """
         Select an idea for an alternative.
         """
         # Validation
         alternative = get_object_or_404(models.Alternative, id=self.request.POST.get('alternative', None))
-        if not permissions.problem(obj=alternative.problem, user=self.request.user, mode='manage'):
+        if not permissions.alternative(obj=alternative, user=self.request.user, mode='manage'):
             return HttpResponseForbidden()
-
-        # Commit
-        alternative.idea.clear()
+        errors = dict()
+        name = self.request.POST.get('name', None)
+        if not name:
+            errors['name'] = unicode(_('You need to fill a title for the alternative.'))
         ideas = list()
         r = re.compile('idea\[[0-9]+\]')
         for key in self.request.POST:
             if r.match(key) and int(self.request.POST[key]):
                 ideas.append(int(self.request.POST[key]))
+        if len(ideas) == 0:
+            errors['ideas'] = unicode(_('You need to select at least one idea.'))
+        if len(errors) > 0:
+            return HttpResponse(json.dumps({'errors':dict(errors)}), content_type='application/json')
+
+        # Commit
+        alternative.name = name
+        alternative.idea.clear()
         for i in ideas:
             alternative.idea.add(i)
         alternative.save()
-        alternative.fill_data()
+        alternative.fill_data(self.request.user)
 
         # Response
         response = {'html': loader.render_to_string('item_alternative.html', {
@@ -455,22 +465,20 @@ class AjaxView(View):
 
     def alternative_like(self):
         """
-        Performs a 'like' and 'unlike' action on an alternative.
+        Applies the 'like' like counter for alternatives.
         """
         # Validation
         alternative = get_object_or_404(models.Alternative, id=self.request.GET.get('alternative_like', None))
+        value = self.request.GET.get('value', 0)
         if not permissions.problem(obj=alternative.problem, user=self.request.user, mode='contribute'):
             return HttpResponseForbidden()
 
         # Commit
-        if models.Vote.objects.filter(alternative=alternative, author=self.request.user).exists():
-            models.Vote.objects.filter(alternative=alternative, author=self.request.user).delete()
-            voted = False
-        else:
-            models.Vote.objects.create(alternative=alternative, author=self.request.user)
-            voted = True
+        obj, created = models.Vote.objects.get_or_create(alternative=alternative, author=self.request.user)
+        obj.value = value
+        obj.save()
 
         # Response
-        response = {'counter': alternative.vote_count(), 'voted': voted}
+        response = {'counter': value}
         return HttpResponse(json.dumps(response), content_type='application/json')
 

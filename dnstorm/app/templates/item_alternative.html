@@ -1,32 +1,45 @@
 {% load i18n %}
 
-<div class="alternative-row alternative-{{ alternative.id }}" data-id="{{ alternative.id }}">
+<div id="alternative-{{ alternative.id }}" class="alternative-row alternative-{{ alternative.id }}" data-id="{{ alternative.id }}">
 
     <div class="row">
 
-        <div class="columns large-1 medium-2 small-3 alternative-like like-bulb{% if not user.is_authenticated %} like-bulb-disabled{% endif %}{% if alternative.voted %} voted{% endif %}" data-alternative="{{ alternative.id }}" data-counter="{{ alternative.vote_count }}">
-            <a class="like-bulb-bulb alternative-like-bulb"><i class="fi-lightbulb"></i></a>
-            <span class="like-bulb-counter alternative-like-counter">{{ alternative.vote_count }}</span>
+        <div class="columns large-1 medium-2 small-3 alternative-like like{% if not user.is_authenticated %} like-disabled{% endif %}{% if alternative.voted %} voted{% endif %}" data-alternative="{{ alternative.id }}" data-counter="{{ alternative.vote_count }}">
+            <a class="like alternative-like"><i class="fi-like"></i></a>
+            <span id="alternative-{{ alternative.id }}-like-counter" class="like-counter alternative-like-counter">{{ alternative.vote_value }}</span>
+            <div class="range-slider vertical-range" data-slider data-options="vertical: true; display_selector: #alternative-{{ alternative.id }}-like-counter; initial: {{ alternative.vote_value }};">
+                <span class="range-slider-handle" role="slider" tabindex="0"></span>
+                <span class="range-slider-active-segment"></span>
+                <input type="hidden">
+            </div>
         </div>
 
         <div class="columns large-11 medium-10 small-9">
 
             <div class="row">
 
-                <div class="columns large-4 alternative-ideas">
-                    {% for idea in alternative.idea.all %}
-                        <a class="button tiny secondary radius disabled" data-idea="{{ idea.id }}" href="javascript:void(0);">{{ idea.title }}</a>
-                    {% endfor %}
+                <div class="columns large-4">
+                    <h4 class="alternative-name"><a href="{% url "problem_alternative" alternative.problem.id alternative.problem.slug alternative.id %}">{{ alternative.name }}</a></h4>
+
+                    {# Ideas #}
+
+                    <div class="alternative-ideas">
+                        {% for idea in alternative.idea.all %}
+                            <a class="button tiny secondary radius disabled" data-idea="{{ idea.id }}" href="javascript:void(0);">{{ idea.title }}</a>
+                            {% if not forloop.last %}<i class="fi-plus"></i>{% endif %}
+                        {% endfor %}
+                    </div>
+
                 </div>
 
                 <div class="columns large-8 alternative-results">
                     {% for r in alternative.results.values %}
                         <div class="row ideacriteria-row">
-                            <div class="columns large-6">
+                            <div class="columns large-7">
                                 <i class="fi-{{ r.criteria.icon }}"></i>
                                 <h5 class="criteria-name">{{ r.criteria.name }}</h5>
                             </div>
-                            <div class="columns large-6 criteria-value">
+                            <div class="columns large-5 criteria-value">
                                 <a class="button radius secondary expand">{% if r.criteria.fmt == "currency" %}${% endif %}{{ r.value }}</a>
                             </div>
                         </div>
@@ -37,11 +50,11 @@
 
             {# Action mini bar #}
 
-            {% if problem_perm_manage %}
+            {% if alternative.perm_manage %}
                 <div class="row top-1em bottom-1em">
                 <div class="columns large-12">
-                    <a class="action-button select-ideas" data-alternative="{{ alternative.id }}"><i class="fi-pencil"></i>&nbsp;{% trans "Select ideas for this alternative" %}</a>
-                    <a class="action-button delete-alternative" data-alternative="{{ alternative.id }}"><i class="fi-x"></i>&nbsp;{% trans "Delete alternative" %}</a>
+                    <a class="action-button edit-alternative" data-alternative="{{ alternative.id }}"><i class="fi-pencil"></i>&nbsp;{% trans "Edit" %}</a>
+                    <a class="action-button delete-alternative" data-alternative="{{ alternative.id }}"><i class="fi-x"></i>&nbsp;{% trans "Delete" %}</a>
                 </div>
                 </div>
             {% endif %}

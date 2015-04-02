@@ -11,23 +11,6 @@
 
 {% block content %}
 
-    {# Title #}
-
-    <h3>{% trans "Problems" %}{% if criteria %} &mdash; {% trans "criteria" %} {{ criteria.name }}{% endif %}</h3>
-
-    {# Listing links #}
-
-    {% if user.is_authenticated %}
-        <div class="row bottom-1em">
-            <div class="columns large-12">
-                <a class="action-button all-problems{% if mode == "home" %} marked{% endif %}" href="{% url "home" %}"><i class="fi-asterisk"></i>&nbsp;{% trans "all problems" %}</a>
-                <a class="action-button my-problems{% if mode == "problems_my" %} marked{% endif %}" href="{% url "problems_my" %}"><i class="fi-target-two"></i>&nbsp;{% trans "managed by me" %}</a>
-                <a class="action-button draft-problems{% if mode == "drafts" %} marked{% endif %}" href="{% url "problems_drafts" %}"><i class="fi-page-edit"></i>&nbsp;{% trans "draft problems" %}</a>
-                <a class="action-button contributed-problems{% if mode == "problems_contribute" %} marked{% endif %}" href="{% url "problems_contribute" %}"><i class="fi-lightbulb"></i>&nbsp;{% trans "contributing" %}</a>
-            </div>
-        </div>
-    {% endif %}
-
     {% if problems %}
 
         {% for problem in problems %}
@@ -70,7 +53,7 @@
         {% if user.is_authenticated %}
             {% url "problem_create" as item_url %}
             {% captureas message %}
-                {% blocktrans %}No problem was created yet.{% endblocktrans %}
+                {% blocktrans %}No problem around here.{% endblocktrans %}
             {% endcaptureas %}
         {% else %}
             {% url "auth_login" as item_url %}

@@ -27,20 +27,27 @@ urlpatterns = patterns('',
     # Problem
 
     (r'^problems/create/$', problem.ProblemCreateView.as_view(), {}, 'problem_create'),
-    (r'^problems/(?P<pk>\d+)/update/$', problem.ProblemUpdateView.as_view(), {}, 'problem_update'),
+    (r'^problems/update/(?P<pk>\d+)/$', problem.ProblemUpdateView.as_view(), {}, 'problem_update'),
+    (r'^problems/contributors/(?P<pk>\d+)/$', problem.ProblemContributorView.as_view(), {}, 'problem_contributors'),
     (r'^problems/(?P<pk>\d+)/#ideas$', problem.ProblemUpdateView.as_view(), {}, 'problem_ideas'),
-    (r'^problems/(?P<pk>\d+)/$', problem.ProblemView.as_view(), {}, 'problem'),
+    (r'^problems/(?P<pk>\d+)/$', problem.ProblemView.as_view(), {}, 'problem_short'),
     (r'^problems/(?P<pk>\d+)/(?P<slug>[^/]+)/$', problem.ProblemView.as_view(), {}, 'problem'),
     (r'^problems/(?P<pk>\d+)/(?P<slug>[^/]+)/#description$', problem.ProblemView.as_view(), {}, 'problem_tab_description'),
     (r'^problems/(?P<pk>\d+)/(?P<slug>[^/]+)/#criteria$', problem.ProblemView.as_view(), {}, 'problem_tab_criteria'),
     (r'^problems/(?P<pk>\d+)/(?P<slug>[^/]+)/#ideas$', problem.ProblemView.as_view(), {}, 'problem_tab_ideas'),
     (r'^problems/(?P<pk>\d+)/(?P<slug>[^/]+)/#alternatives$', problem.ProblemView.as_view(), {}, 'problem_tab_alternatives'),
     (r'^problems/(?P<pk>\d+)/(?P<slug>[^/]+)/#idea-(?P<idea>\d+)$', problem.ProblemView.as_view(), {}, 'problem_idea'),
-    (r'^problems/(?P<pk>\d+)/(?P<slug>[^/]+)/activity/$', problem.ProblemActivityView.as_view(), {}, 'problem_activity'),
+    (r'^problems/(?P<pk>\d+)/(?P<slug>[^/]+)/#alternative-(?P<alternative>\d+)$', problem.ProblemView.as_view(), {}, 'problem_alternative'),
+
+    # Criteria
+
+    (r'^criteria/create/(?P<problem>\d+)/$', criteria.CriteriaCreateView.as_view(), {}, 'criteria_create'),
+    (r'^criteria/(?P<pk>\d+)/update/$', criteria.CriteriaUpdateView.as_view(), {}, 'criteria_update'),
+    (r'^criteria/(?P<pk>\d+)/delete/$', criteria.CriteriaDeleteView.as_view(), {}, 'criteria_delete'),
 
     # Ideas
 
-    (r'^ideas/create/(?P<pk>\d+)/$', idea.IdeaCreateView.as_view(), {}, 'idea_create'),
+    (r'^ideas/create/(?P<problem>\d+)/$', idea.IdeaCreateView.as_view(), {}, 'idea_create'),
     (r'^ideas/(?P<pk>\d+)/update/$', idea.IdeaUpdateView.as_view(), {}, 'idea_update'),
     (r'^ideas/(?P<pk>\d+)/$', idea.IdeaView.as_view(), {}, 'idea'),
 
@@ -51,8 +58,7 @@ urlpatterns = patterns('',
     # Users
 
     (r'^users/$', user.UsersView.as_view(), {}, 'users'),
-    (r'^users/invitations/$', user.UsersView.as_view(), {}, 'users_invitations'),
-    (r'^users/inactive/$', user.UsersView.as_view(), {}, 'users_inactive'),
+    (r'^users/(?P<user_type>invitations|inactive)/$', user.UsersView.as_view(), {}, 'users_filter'),
     (r'^users/(?P<username>[^/]+)/$', user.UserView.as_view(), {}, 'user'),
     (r'^users/(?P<username>[^/]+)/activate/$', user.UserActivateView.as_view(), {}, 'user_activate'),
     (r'^users/(?P<username>[^/]+)/inactivate/$', user.UserInactivateView.as_view(), {}, 'user_inactivate'),
@@ -62,6 +68,9 @@ urlpatterns = patterns('',
     # Activity
 
     (r'^activity/$', base.ActivityView.as_view(), {}, 'activity'),
+    (r'^activity/(?P<content_type>problems|ideas|alternatives|comments)/$', base.ActivityView.as_view(), {}, 'activity_objects'),
+    (r'^activity/problem/(?P<pk>\d+)/$', base.ActivityView.as_view(), {}, 'activity_problem'),
+    (r'^activity/problem/(?P<pk>\d+)/(?P<content_type>description|ideas|alternatives|comments)/$', base.ActivityView.as_view(), {}, 'activity_problem_objects'),
 
     # Options
 

@@ -26,7 +26,7 @@ from django.utils.translation import ugettext as _
 from django.views.decorators.csrf import csrf_protect
 from django.views.generic import DetailView
 from django.views.generic.base import TemplateView, RedirectView
-from django.views.generic.edit import FormView, CreateView, UpdateView, DeleteView
+from django.views.generic.edit import FormView, CreateView, UpdateView
 
 from actstream.models import any_stream
 
@@ -35,6 +35,37 @@ from dnstorm.app import forms
 from dnstorm.app import models
 from dnstorm.app import permissions
 from dnstorm.app.utils import get_object_or_none, activity_count, get_option, activity_register
+
+def problem_buttons(request, obj):
+    url_name = request.resolver_match.url_name
+    user = get_user(request)
+    return [
+        {
+            'icon': 'page-export',
+            'title': _('Published') if obj.published else _('Draft'),
+            'url': reverse('problem', kwargs={'pk': obj.id, 'slug':obj.slug}),
+            'marked': url_name == 'problem',
+            'show': True
+        },{
+            'icon': 'pencil',
+            'title': _('Edit'),
+            'url': reverse('problem_update', kwargs={'pk': obj.id}),
+            'marked': url_name == 'problem_update',
+            'show': permissions.problem(obj=obj, user=request.user, mode='edit')
+        },{
+            'icon': 'list',
+            'title': _('Activity'),
+            'url': reverse('activity_problem', kwargs={'pk': obj.id }),
+            'marked': url_name in ['activity_problem', 'activity_problem_objects', 'activity_problem_object'],
+            'show': True,
+        },{
+            'icon': 'torso',
+            'title': _('Contributors and permissions') if permissions.problem(obj=obj, user=request.user, mode='manage') else _('Contributors'),
+            'url': reverse('problem_contributors', kwargs={'pk': obj.id}),
+            'marked': url_name == 'problem_contributors',
+            'show': True
+        }
+    ]
 
 class ProblemCreateView(RedirectView):
     permanent = False
@@ -69,7 +100,6 @@ class ProblemUpdateView(UpdateView):
         """
         Checks for a delete action from forms.DeleteForm.
         """
-
         yes = args[0].POST.get('yes', None)
         try:
             delete_problem = int(args[0].POST.get('delete_problem', ''))
@@ -89,20 +119,16 @@ class ProblemUpdateView(UpdateView):
     def get_context_data(self, *args, **kwargs):
         context = super(ProblemUpdateView, self).get_context_data(**kwargs)
         context['site_title'] = '%s | %s' % (self.object.title, _('Edit'))
-        context['breadcrumbs'] = self.get_breadcrumbs()
+        context['info'] = self.get_info()
         context['delete_form'] = forms.DeleteForm()
-        context['criteria_form'] = forms.CriteriaForm()
         context['title'] = _('Edit problem')
         return context
-
-    def get_breadcrumbs(self):
-        return [
-            { 'title': _('Update'), 'url': reverse('problem_update', kwargs={'pk':self.object.id}), 'classes': 'current' } ]
 
     def get_form_kwargs(self):
         kwargs = super(ProblemUpdateView, self).get_form_kwargs()
         kwargs['problem_perm_edit'] = permissions.problem(obj=self.problem, user=self.request.user, mode='edit')
         kwargs['problem_perm_manage'] = permissions.problem(obj=self.problem, user=self.request.user, mode='manage')
+        kwargs['user'] = self.request.user
         return kwargs
 
     def form_valid(self, form):
@@ -121,7 +147,7 @@ class ProblemUpdateView(UpdateView):
             attributes=settings.SANITIZER_ALLOWED_ATTRIBUTES,
             styles=settings.SANITIZER_ALLOWED_STYLES,
             strip=True, strip_comments=True)
-        self.object.published = True if self.request.POST.get('publish', None) else False
+        self.object.published = self.object.published if self.object.published else False
         self.object.save()
 
         if self.object.author.id != self.request.user.id and self.object.open:
@@ -143,6 +169,68 @@ class ProblemUpdateView(UpdateView):
             activity_register(self.request.user, self.object)
         return HttpResponseRedirect(reverse(view, kwargs=kwargs))
 
+    def get_info(self):
+        return {
+            'icon': 'pencil',
+            'icon_url': reverse('problem', kwargs={'pk': self.object.id, 'slug': self.object.slug}),
+            'title': _('Edit problem: %s' % self.object.title),
+            'title_url': self.object.get_absolute_url(),
+            'buttons': problem_buttons(self.request, self.object),
+            'show': permissions.problem(obj=self.object, user=self.request.user, mode='edit')
+        }
+
+class ProblemContributorView(FormView):
+    template_name = '_update_problem_contributors.html'
+    form_class = forms.ProblemContributorForm
+
+    def dispatch(self, request, *args, **kwargs):
+        # Permissions
+        self.object = get_object_or_404(models.Problem, id=kwargs['pk'])
+        if not permissions.problem(obj=self.object, user=request.user, mode='view'):
+            raise PermissionDenied
+        # OK
+        return super(ProblemContributorView, self).dispatch(request, *args, **kwargs)
+
+    def get_form_kwargs(self):
+        kwargs = super(ProblemContributorView, self).get_form_kwargs()
+        kwargs['problem'] = self.object
+        return kwargs
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(ProblemContributorView, self).get_context_data(**kwargs)
+        context['site_title'] = '%s | %s' % (self.object.title, _('Contributors'))
+        context['info'] = self.get_info()
+        context['title'] = _('Problem contributors')
+        context['delete_form'] = forms.DeleteForm()
+        context['problem'] = self.object
+        context['users'] = self.object.contributor.all()
+        context['problem_perm_manage'] = permissions.problem(obj=self.object, user=self.request.user, mode='manage')
+        return context
+
+    def form_valid(self, form):
+        """
+        Save the contributors and problem status.
+        """
+        # permissions
+        if not permissions.problem(obj=self.object, user=self.request.user, mode='manage'):
+            raise PermissionDenied
+        # commit
+        form.problem.open = form.cleaned_data.get('open', False)
+        form.problem.public = form.cleaned_data.get('public', False)
+        form.problem.save()
+        messages.success(self.request, mark_safe(_('Permission options in the problem was successfully saved.')))
+        return HttpResponseRedirect(reverse('problem', kwargs={'pk': form.problem.id, 'slug': form.problem.slug}))
+
+    def get_info(self):
+        return {
+            'icon': 'torso',
+            'icon_url': reverse('problem_contributors', kwargs={'pk': self.object.id }),
+            'title': _('Problem contributors: %s' % self.object.title),
+            'title_url': self.object.get_absolute_url(),
+            'buttons': problem_buttons(self.request, self.object),
+            'show': permissions.problem(obj=self.object, user=self.request.user, mode='view'),
+        }
+
 class ProblemView(TemplateView):
     template_name = '_single_problem.html'
 
@@ -155,7 +243,7 @@ class ProblemView(TemplateView):
         self.object = get_object_or_404(models.Problem, id=kwargs['pk'])
         if 'slug' not in kwargs or kwargs['slug'] != self.object.slug:
             return HttpResponseRedirect(reverse('problem', kwargs={'pk': self.object.id, 'slug': self.object.slug}))
-        if not permissions.problem(obj=self.object, user=self.request.user, mode='view'):
+        if not permissions.problem(obj=self.object, user=request.user, mode='view'):
             raise PermissionDenied
         return super(ProblemView, self).dispatch(request, *args, **kwargs)
 
@@ -169,69 +257,86 @@ class ProblemView(TemplateView):
         user = get_user(self.request)
         coauthor = self.object.coauthor.count()
         context['site_title'] = '%s | %s' % (self.object.title, get_option('site_title'))
-        context['breadcrumbs'] = self.get_breadcrumbs()
+        context['info'] = self.get_info()
+        context['tabs'] = self.get_tabs()
         context['title'] = self.object.title
         context['sidebar'] = True
         context['problem'] = self.object
         context['problem_perm_manage'] = permissions.problem(obj=self.object, user=user, mode='manage')
         context['problem_perm_edit'] = permissions.problem(obj=self.object, user=user, mode='edit')
         context['problem_perm_contribute'] = permissions.problem(obj=self.object, user=user, mode='contribute')
-        context['contributors'] = self.object.contributor.filter(is_staff=True)
         context['comments'] = models.Comment.objects.filter(problem=self.object)
         context['comment_form'] = forms.CommentForm()
-        context['ideas'] = models.Idea.objects.filter(problem=self.object.id, published=True)
-        for i in context['ideas']: i.fill_data(self.request.user);
         context['delete_form'] = forms.DeleteForm()
+        context['alternative_form'] = forms.AlternativeForm()
+
+        # Contributors
+        if self.request.resolver_match.url_name == 'problem_contributors':
+            context['contributors'] = self.object.contributor.filter(is_staff=True).order_by('first_name')
+            return context
 
         # Criterias
-
         context['criteria'] = list()
         for c in models.Criteria.objects.filter(problem=self.object):
             c.problem_count = models.Problem.objects.filter(criteria=c).count()
-            c.fill_data()
+            c.fill_data(user)
             context['criteria'].append(c)
+        context['criteria'] = sorted(context['criteria'], key=lambda x: (x.weight))
 
-        # Alternatives
-
-        context['alternatives'] = list()
-        for a in models.Alternative.objects.filter(problem=self.object):
-            a.fill_data(self.request.user)
-            context['alternatives'].append(a)
-
-        # Voting and comments
-
+        # Ideas
+        context['ideas'] = models.Idea.objects.filter(problem=self.object.id, published=True)
         for idea in context['ideas']:
-            idea.fill_data(user=self.request.user)
+            idea.fill_data(user)
         context['ideas'] = sorted(context['ideas'], key=lambda x: (x.votes, x.updated, x.created), reverse=True)
 
+        # Alternatives
+        context['alternatives'] = list()
+        for a in models.Alternative.objects.filter(problem=self.object):
+            a.fill_data(user)
+            context['alternatives'].append(a)
+        context['alternatives'] = sorted(context['alternatives'], key=lambda x: (x.vote_value, x.updated, x.created), reverse=True)
+
+        # Comments
         for comment in context['comments']:
             comment.perm_manage = permissions.comment(obj=comment, user=self.request.user, mode='manage')
 
+        # Results
+        self.object.fill_data(user)
+
         return context
 
-    def get_breadcrumbs(self):
-        return [
-            { 'title': self.object.title, 'url': self.object.get_absolute_url(), 'classes': 'current' } ]
+    def get_info(self):
+        return {
+            'icon': 'target-two',
+            'icon_url': reverse('problem', kwargs={'pk': self.object.id, 'slug': self.object.slug}),
+            'title': self.object.title,
+            'title_url': self.object.get_absolute_url(),
+            'buttons': problem_buttons(self.request, self.object),
+            'show': True
+        }
 
-class ProblemActivityView(TemplateView):
-    template_name = '_single_activity.html'
-
-    def dispatch(self, request, *args, **kwargs):
-        self.problem = get_object_or_404(models.Problem, id=self.kwargs.get('pk', None))
-        if not permissions.problem(obj=self.problem, user=self.request.user, mode='view'):
-            raise PermissionDenied
-        return super(ProblemActivityView, self).dispatch(request, *args, **kwargs)
-
-    def get_context_data(self, *args, **kwargs):
-        context = super(ProblemActivityView, self).get_context_data(**kwargs)
-        activities = Paginator(any_stream(self.problem), 20)
-        context['site_title'] = '%s | %s' % (self.problem.title, _('Problem activity'))
-        context['breadcrumbs'] = self.get_breadcrumbs()
-        context['problem'] = self.problem
-        context['activities'] = activities.page(self.request.GET.get('page', 1))
-        return context
-
-    def get_breadcrumbs(self):
-        return [
-            { 'title': self.problem.title, 'url': self.problem.get_absolute_url() },
-            { 'title': _('Activity'), 'url': reverse('problem_activity', kwargs={'pk': self.problem.id, 'slug':self.problem.slug}), 'classes': 'current' } ]
+    def get_tabs(self):
+        return {
+            'classes': 'problem-tabs',
+            'items': [{
+                'icon': 'target-two', 'name': _('Problem'),
+                'classes': 'problem-tab-selector small-12 medium-2 medium-offset-1',
+                'data': 'description'
+            },{
+                'icon': 'cloud', 'name': _('Criteria'),
+                'classes': 'problem-tab-selector small-12 medium-2',
+                'data': 'criteria'
+            },{
+                'icon': 'lightbulb', 'name': _('Ideas'),
+                'classes': 'problem-tab-selector small-12 medium-2',
+                'data': 'ideas'
+            },{
+                'icon': 'list', 'name': _('Alternatives'),
+                'classes': 'problem-tab-selector small-12 medium-2',
+                'data': 'alternatives'
+            },{
+                'icon': 'play', 'name': _('Results'),
+                'classes': 'problem-tab-selector small-12 medium-2 medium-pull-1',
+                'data': 'results'
+            }]
+        }

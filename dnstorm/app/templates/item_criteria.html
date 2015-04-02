@@ -58,7 +58,10 @@
         </div>
         <div class="row">
             <div class="columns large-12 top-1em">
-                <a href="javascript:void(0)" class="action-button comment-button" data-criteria="{{ criteria.id }}"><i class="fi-comments"></i>&nbsp;{% trans "comment this criteria" %}</a>
+                {% if criteria.perm_manage %}
+                    <a href="{% url "criteria_update" criteria.id %}" class="action-button"><i class="fi-pencil"></i>&nbsp;{% trans "edit" %}</a>&nbsp;
+                {% endif %}
+                <a href="javascript:void(0)" class="action-button comment-button" data-criteria="{{ criteria.id }}"><i class="fi-comments"></i>&nbsp;{% trans "comment" %}</a>
             </div>
         </div>
     {% endif %}

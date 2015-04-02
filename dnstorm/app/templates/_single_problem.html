@@ -1,8 +1,6 @@
 {% extends "_base.html" %}
 {% load crispy_forms_tags i18n captureas %}
 
-{% block bodyclass %}problem{% endblock %}
-
 {% block head %}
     {{ form.media }}
     <script type="text/javascript">
@@ -10,8 +8,10 @@
     </script>
 {% endblock %}
 
+{% block bodyclass %}problem{% endblock %}
+
 {% block modals %}
-    {% if problem_perm_manage %}
+    {% if problem_perm_contribute %}
 
         {# Alternative removal confirmation #}
 
@@ -31,29 +31,34 @@
             </div>
         </div>
 
-        {# Ideas selector for the alternatives #}
+        {# Edit alternatives #}
 
-        <div id="select-idea-modal" class="reveal-modal large" data-reveal>
+        <div id="alternative-edit" class="reveal-modal large" data-reveal>
             <a class="close-reveal-modal">&#215;</a>
-            <h3>{% trans "Select ideas" %}</h3>
-            <hr/>
-            <div class="problem-ideas-modal">
-            {% for idea in ideas %}
-                <div class="row problem-idea-modal" id="idea-{{ idea.id }}-modal-item">
-                    <div class="columns large-1">
-                        <i class="fi-check idea-status"></i>
-                    </div>
-                    <div class="columns large-11">
-                        {% include "item_idea.html" with show_likes=False show_actions=False show_comments=False %}
+            <h3>{% trans "Edit alternative" %}</h3>
+            <form>
+                {% crispy alternative_form %}
+                <hr/>
+                <div id="div_id_ideas" class="row collapse ideas-selector">
+                    <div class="columns large-12">
+                    {% for idea in ideas %}
+                        <div class="row collapse problem-idea-modal" id="idea-{{ idea.id }}-modal-item">
+                            <div class="columns large-1 text-center">
+                                <i class="fi-check idea-status"></i>
+                            </div>
+                            <div class="columns large-11">
+                                {% include "item_idea.html" with show_likes=False show_actions=False show_comments=False %}
+                            </div>
+                        </div>
+                    {% endfor %}
                     </div>
                 </div>
-            {% endfor %}
-            </div>
-            <div class="row problem-ideas-modal-buttons">
-                <div class="large-12 text-right">
-                    <a class="button success radius problem-idea-modal-save">{% trans "Done" %}</a>
+                <div class="row">
+                    <div class="large-12 text-right">
+                        <a class="button success radius alternative-save">{% trans "Save" %}</a>
+                    </div>
                 </div>
-            </div>
+            </form>
         </div>
 
     {% endif %}
@@ -64,11 +69,6 @@
 
 {% endblock %}
 
-{% block topicon %}
-    <li class="has-icon"><a href="javascript:void(0);"><i class="fi-megaphone"></i></a></li>
-    <li class="divider"></li>
-{% endblock %}
-
 {% block messages %}
 
     {# Draft mode #}
@@ -76,7 +76,7 @@
     {% if not problem.published %}
         {% url "problem_update" problem.id problem.slug as problem_update_url %}
         {% captureas message %}
-            {% blocktrans %}This is a preview mode from a unpublished draft. The problem is not available for user contribution until it is published. <a class="left-1em button secondary tiny radius" href="{{ problem_update_url }}">Edit problem</a>{% endblocktrans %}
+            {% blocktrans %}This is a preview mode from an unpublished draft. The problem is not available for user contribution until it is published. <a class="left-1em button secondary tiny radius" href="{{ problem_update_url }}">Edit problem</a>{% endblocktrans %}
         {% endcaptureas %}
         {% include "part_message.html" with icon="page-edit" message=message %}
     {% endif %}
@@ -85,98 +85,7 @@
 
 {% block content %}
 
-    {# Title #}
-
     <div class="row collapse">
-        <div class="columns large-12 problem-title">
-            <h3>{{ problem.title }}</h3>
-        </div>
-    </div>
-
-    <div class="row collapse bottom-1em">
-
-        {# Action butons #}
-
-        <div class="columns large-6">
-            {% if problem_perm_contribute %}
-                <a class="action-button" href="{% url "problem_update" problem.id %}"><i class="fi-pencil"></i>&nbsp;{% trans "edit problem" %}</a>
-            {% endif %}
-            <a class="action-button" href="{% url "problem_activity" problem.id problem.slug %}"><i class="fi-list"></i>&nbsp;{% trans "view activity log" %}</a>
-            {% if contributors|length > 1 %}
-                <a class="action-button show-problem-contributors" href="javascript:void(0);"><i class="fi-torso"></i>&nbsp;{{ contributors|length }}&nbsp;{% trans "contributors" %}</a>
-            {% endif %}
-        </div>
-
-        {# Status label #}
-
-        <div class="columns large-6 text-right problem-status">
-            <span class="public text-left">{% if problem.public %}<i class="fi-megaphone"></i>&nbsp;<b>{% trans "Public problem" %}</b><br/>{% trans "Anyone can view and collaborate" %}{% else %}<i class="fi-lock"></i>&nbsp;<b>{% trans "Private problem" %}</b><br/>{% trans "Only invited contributors can view and collaborate" %}</b>{% endif %}</span>
-        </div>
-
-    </div>
-
-    {# Contributors #}
-
-    <div class="contributors">
-        <div class="row users-list">
-            {% for user in contributors %}
-                <div class="columns large-3">{% include "item_user.html" with expanded=True show_links=True show_date=False show_badges=True %}</div>
-                {% if forloop.counter|divisibleby:4 %}
-                    </div>
-                    <div class="row users-list">
-                {% endif %}
-            {% endfor %}
-        </div>
-    </div>
-
-    {# Tabs #}
-
-    <div class="row row-line problem-tabs sticable">
-        <div class="columns large-3 medium-3 text-center problem-tab-selector" data-tab="description">
-            <div class="problem-tab-wrapper">
-                <i class="fi-target-two"></i>
-                <p>{% trans "Problem" %}</p>
-            </div>
-        </div>
-        <div class="columns large-3 medium-3 text-center problem-tab-selector" data-tab="criteria">
-            <div class="problem-tab-wrapper">
-                <i class="fi-cloud"></i>
-                <p>{% trans "Criteria" %}</p>
-            </div>
-        </div>
-        <div class="columns large-3 medium-3 text-center problem-tab-selector" data-tab="ideas">
-            <div class="problem-tab-wrapper">
-                <i class="fi-lightbulb"></i>
-                <p>{% trans "Ideas" %}</p>
-            </div>
-        </div>
-        <div class="columns large-3 medium-3 text-center problem-tab-selector" data-tab="alternatives">
-            <div class="problem-tab-wrapper">
-                <i class="fi-list-thumbnails"></i>
-                <p>{% trans "Alternatives" %}</p>
-            </div>
-        </div>
-    </div>
-
-<!--<div class="row">   
-        <div class="small-12 medium-2 medium-offset-1  columns">   
-          <img src="http://placehold.it/480x600&text=[img 1]"/>
-        </div>     
-        <div class="small-12 medium-2 columns">
-           <img src="http://placehold.it/480x600&text=[img 2]"/>         
-        </div>
-        <div class="small-12 medium-2 columns">  
-           <img src="http://placehold.it/480x600&text=[img 3]"/>    
-        </div>
-        <div class="small-12 medium-2 columns">    
-           <img src="http://placehold.it/480x600&text=[img 4]"/>
-        </div>
-        <div class="small-12 medium-2 medium-pull-1 columns">    
-           <img src="http://placehold.it/480x600&text=[img 5]"/> 
-        </div>   
-</div>-->
-
-    <div class="row collapse top-1em">
     <div class="columns large-12 problem-detail">
 
         {# Description #}
@@ -184,12 +93,17 @@
         <div class="problem-tab problem-description">
 
             {% if problem.open %}
-                {% trans "The description is editable by anyone. Click on 'edit problem' if you want to improve it." as message %}
-                {% include "part_panel.html" with icon="pencil" message=message %}
+                {% url "problem_update" problem.id as problem_link %}
+                {% trans "This description is open for improvements. Click here to edit the problem description." as message %}
+                {% include "part_panel.html" with icon="pencil" message=message link=problem_link %}
+            {% else %}{% if problem_perm_edit %}
+                {% url "problem_update" problem.id as problem_link %}
+                {% trans "Click here to edit the problem description." as message %}
+                {% include "part_panel.html" with icon="pencil" message=message link=problem_link %}
             {% else %}
                 {% trans "The description is editable only by managers. Leave a comment with your improvement suggestions." as message %}
                 {% include "part_panel.html" with icon="lock" message=message %}
-            {% endif %}
+            {% endif %} {% endif %}
 
             <div class="row">
             <div class="columns large-12 description">
@@ -244,12 +158,17 @@
         <div class="problem-tab problem-criteria">
 
             {% if problem.open %}
-                {% trans "The criteria of this problem is editable by anyone. Click on 'edit problem' if you want to improve them." as message %}
-                {% include "part_panel.html" with icon="pencil" message=message %}
+                {% url "criteria_create" problem.id as criteria_link %}
+                {% trans "Anyone can give a criteria to this problem. Click here to insert a new criteria." as message %}
+                {% include "part_panel.html" with icon="plus" message=message link=criteria_link %}
+            {% else %}{% if problem_perm_manage %}
+                {% url "criteria_create" problem.id as criteria_link %}
+                {% trans "Click here to insert a new criteria." as message %}
+                {% include "part_panel.html" with icon="plus" message=message link=criteria_link %}
             {% else %}
-                {% trans "The criteria of this problem is editable only by managers. Leave a comment in the criteria with your improvement suggestions." as message %}
+                {% trans "Only managers can give criteria to this problem. Leave a comment with your improvement suggestions." as message %}
                 {% include "part_panel.html" with icon="lock" message=message %}
-            {% endif %}
+            {% endif %} {% endif %}
 
             {% if criteria %}
                 {% for c in criteria %}
@@ -264,19 +183,21 @@
         {# Ideas list #}
 
         <div class="problem-tab problem-ideas">
+
             {% if problem.criteria_set.all|length > 0 %}
+
+                {% if problem_perm_contribute %}
+                    {% url "idea_create" problem.id as idea_link %}
+                    {% trans "Click here to insert a new idea." as message %}
+                    {% include "part_panel.html" with icon="plus" message=message link=idea_link %}
+                {% endif %}
+
                 {% if ideas %}
                     {% for idea in ideas %}
                         {% include "item_idea.html" with show_likes=True show_actions=True show_comments=True %}
                     {% endfor %}
-                {% else %}
-                    {% url "idea_create" problem.id as item_url %}
-                    {% trans "There's no idea submitted to this problem yet." as message %}
-                    {% include "part_panel.html" with icon="prohibited" message=message %}
                 {% endif %}
-                {% if problem_perm_contribute %}
-                    <p><a class="button radius expand secondary" href="{% url "idea_create" problem.id %}">{% trans "Add new idea" %}</a></p>
-                {% endif %}
+
             {% else %}
                 {% trans "Ideas submission will be available when criteria are defined." as message %}
                 {% include "part_panel.html" with icon="prohibited" message=message %}
@@ -286,22 +207,65 @@
         {# Alternatives #}
 
         <div class="problem-tab problem-alternatives">
+
             {% if problem.criteria_set.all|length > 0 and ideas %}
+
+                {% if problem_perm_contribute %}
+                    {% trans "Click here to insert a new alternative." as message %}
+                    {% include "part_panel.html" with icon="plus" message=message class="new-alternative" link="javascript:void(0)" %}
+                {% endif %}
+
                 {% if alternatives %}
                     {% for alternative in alternatives %}
                         {% include "item_alternative.html" %}
                     {% endfor %}
                 {% else %}
-                    {% captureas message %}
-                        {% blocktrans %}There's no alternative created yet.{% endblocktrans %}
-                    {% endcaptureas %}
+                    {% trans "There's no alternative created yet." as message %}
                     {% include "part_panel.html" with icon="prohibited" message=message %}
                 {% endif %}
-                {% if problem_perm_contribute %}
-                    <p><a class="button radius expand secondary new-alternative" href="javascript:void(0)">{% trans "Add new alternative" %}</a></p>
-                {% endif %}
+
             {% else %}
                 {% trans "Alternatives will be available when there's criteria and ideas." as message %}
+                {% include "part_panel.html" with icon="prohibited" message=message %}
+            {% endif %}
+
+        </div>
+
+        {# Results #}
+
+        <div class="problem-tab problem-results">
+            {% if problem.results %}
+                <script type="text/javascript">
+                    Chart.defaults.global.scaleIntegersOnly = false;
+                </script>
+                {% for result in problem.results %}
+                    <div class="row">
+                        <div class="columns large-4">{% include "item_criteria.html" with criteria=result.criteria show_actions=False show_parameters=True show_icons=True show_description=True show_comments=False %}</h4></div>
+                        <div class="columns large-8 text-left">
+                            <canvas id="criteria-chart-{{ result.criteria.id }}" class="criteria-chart"></canvas>
+                        </div>
+                        <script type="text/javascript">
+                            var data = {
+                                labels: [{% for alternative in result.alternatives %}'{{ alternative.name }}'{% if not forloop.last %},{% endif %}{% endfor %}],
+                                datasets: [{
+                                    label: "{% trans "Alternatives" %}",
+                                    data: [{% for alternative in result.alternatives %}parseFloat({{ alternative.value }}){% if not forloop.last %},{% endif %}{% endfor %}]
+                                }]
+                            };
+                            var context = document.getElementById('criteria-chart-{{ result.criteria.id }}').getContext('2d');
+                            var options = {
+                                animationSteps: 20,
+                                scaleShowValues: true,
+                                tooltipTemplate: "<%= value %>"
+                            }
+                            var chart = new Chart(context).Bar(data, options);
+                        </script>
+                    </div>
+                {% endfor %}
+            {% else %}
+                {% captureas message %}
+                    {% blocktrans %}There's not enough data to show results.{% endblocktrans %}
+                {% endcaptureas %}
                 {% include "part_panel.html" with icon="prohibited" message=message %}
             {% endif %}
         </div>

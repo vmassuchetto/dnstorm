@@ -1,4 +1,4 @@
-<div class="panel radius{% if icon %} has-icon{% endif %}{% if class %} {{ class }}{% endif %}">
+<div class="panel radius{% if icon %} has-icon{% endif %}{% if link %} has-link{% endif %}{% if class %} {{ class }}{% endif %}">
     {% if icon %}<i class="fi-{{ icon }}"></i>{% endif %}
-    <p>{{ message }}</p>
+    <p>{% if link %}<a href="{{ link }}">{% endif %}{{ message }}{% if link %}</a>{% endif %}</p>
 </div>

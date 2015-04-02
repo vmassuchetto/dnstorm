@@ -1,7 +1,5 @@
 {% extends "_base.html" %}
-{% load crispy_forms_tags i18n %}
-
-{% block bodyclass %}problem-edit{% endblock %}
+{% load i18n crispy_forms_tags %}
 
 {% block head %}
     {{ form.media }}
@@ -10,17 +8,17 @@
     </script>
 {% endblock %}
 
-{% block modals %}
-    {% include "modal_delete.html" %}
-{% endblock %}
+{% block bodyclass %}problem-contributors{% endblock %}
 
 {% block content %}
 
-    <div class="hidden" id="criteria-form">{% include "item_criteria.html" %}</div>
-
     <div class="row">
         <div class="columns large-12">
-            {% crispy form %}
+            {% if problem_perm_manage %}
+                {% crispy form %}
+            {% else %}
+                {% include "item_user_contributor.html" %}
+            {% endif %}
         </div>
     </div>
 

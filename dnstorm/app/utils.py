@@ -50,6 +50,8 @@ def activity_count(obj):
     """
     from actstream.models import followers
 
+    if not obj:
+        return 0
     for user in followers(obj):
         name = 'user_%d_activity_counter' % user.id
         count = get_option(name)
@@ -82,28 +84,38 @@ def activity_register(_user, _action_object):
     _content = render_to_string('diffbase_' + klass + '.html', {klass: _action_object})
     _emsg = _action_object.edit_message if hasattr(_action_object, 'edit_message') else ''
     _diff = htmldiff(content_old, _content)
-    _verb = 'edited'
+    _obj = _action_object
 
     # Set target problem
-    _obj = None
+    _target = False
+    if klass in ['comment']:
+        if getattr(_action_object, 'problem'):
+            _target = getattr(_action_object, 'problem')
+        else:
+            for attr in ['criteria', 'idea', 'alternative']:
+                if getattr(_action_object, attr):
+                    _target = getattr(_action_object, attr)
+                    break
+            _target = getattr(_target, 'problem')
+    elif klass in ['criteria', 'idea', 'alternative']:
+        _target = getattr(_action_object, 'problem')
+    elif klass in ['problem']:
+        _target = _action_object
+
+    # Don't do anything if problem is a draft
+    if not _target.public:
+        return None
+
+    # Set verb
+    _verb = 'edited'
     if klass == 'comment':
         _verb = 'commented'
-        _obj = _action_object
-        if _action_object.problem:
-            _action_object = _action_object.problem
-            _target = _action_object
-        elif _action_object.criteria:
-            _action_object = _action_object.criteria
-        elif _action_object.idea:
-            _action_object = _action_object.idea
-        elif _action_object.alternative:
-            _action_object = _action_object.alternative
     elif not content_old:
         _verb = 'created'
-    _target = _action_object.problem if hasattr(_action_object, 'problem') else _action_object
 
     # Add user as contributor
     _target.contributor.add(_user)
+    _follow = _target
 
     # Action
     a = action.send(_user, verb=_verb, action_object=_action_object, target=_target)
@@ -115,7 +127,7 @@ def activity_register(_user, _action_object):
     }
     a[0][1].save()
     activity_count(_target)
-    follow(_user, _target, actor_only=False) if not is_following(_user, _target) else None
+    follow(_user, _follow, actor_only=False) if not is_following(_user, _follow) else None
 
 email_regex = '[^@]+@[^@]+\.[^@]+'
 

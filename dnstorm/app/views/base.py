@@ -2,10 +2,11 @@ from datetime import datetime
 import urlparse
 
 from django.contrib import messages
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, get_user
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.auth.views import login as login_view
+from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.models import Site
 from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
@@ -21,14 +22,15 @@ from django.views.generic.base import TemplateView, View
 from django.views.generic.edit import FormView, UpdateView
 
 from actstream.actions import follow
-from actstream.models import user_stream
+from actstream.models import user_stream, Action
 from registration.backends.default.views import RegistrationView as BaseRegistrationView
 from registration import signals as registration_signals
 
 from dnstorm.app import permissions
-from dnstorm.app.forms import OptionsForm, RegistrationForm
+from dnstorm.app.forms import OptionsForm, RegistrationForm, CommentForm
 from dnstorm.app.utils import get_object_or_none, activity_count, get_option, update_option
 from dnstorm.app.models import Option, Problem, Idea, Comment, Criteria, Alternative, Invitation
+from dnstorm.app.views.problem import problem_buttons
 
 class HomeView(TemplateView):
     """
@@ -38,30 +40,58 @@ class HomeView(TemplateView):
 
     def get_context_data(self, *args, **kwargs):
         context = super(HomeView, self).get_context_data(**kwargs)
-        mode = resolve(self.request.path_info).url_name
+        self.request.user = get_user(self.request)
         authenticated = self.request.user.is_authenticated()
 
         # problems
-        if authenticated and mode == 'problems_my':
+        if authenticated and self.request.resolver_match.url_name == 'problems_my':
             q_problems = (Q(published=True) & Q(author=self.request.user))
-        elif authenticated and mode == 'problems_drafts':
+        elif authenticated and self.request.resolver_match.url_name == 'problems_drafts':
             q_problems = (Q(published=False) & Q(author=self.request.user))
-        elif authenticated and mode == 'problems_contribute':
-            q_problems = (Q(published=True) & Q(contributor__in=[self.request.user]) & ~Q(author=self.request.user))
-        elif authenticated:
-            q_problems = (Q(published=True)) & (Q(public=True) | Q(contributor__in=[self.request.user]))
+        elif authenticated and self.request.resolver_match.url_name == 'problems_contribute':
+            q_problems = (Q(contributor__in=[self.request.user]) & ~Q(author=self.request.user))
         else:
-             q_problems = (Q(published=True) & Q(public=True))
+            q_problems = (Q(published=True, public=True)
+                | Q(published=True, contributor__in=[self.request.user])
+                | Q(published=True, author=self.request.user))
 
-        context['mode'] = mode
-        context['breadcrumbs'] = self.get_breadcrumbs()
-
+        context['info'] = self.get_info()
+        if authenticated:
+            context['tabs'] = self.get_tabs()
         problems = Paginator(Problem.objects.filter(q_problems).distinct().order_by('-last_activity'), 25)
         context['problems'] = problems.page(self.request.GET.get('page', 1))
         return context
 
-    def get_breadcrumbs(self):
-        return [{ 'title': _('Problems'), 'classes': 'current' }]
+    def get_info(self):
+        return {
+            'icon': 'target-two',
+            'title': _('Problems')
+        }
+
+    def get_tabs(self):
+        return {
+            'items': [{
+                    'icon': 'asterisk', 'name': _('All'),
+                    'classes': 'small-12 medium-2 medium-offset-2',
+                    'url': reverse('home'),
+                    'marked': self.request.resolver_match.url_name == 'home'
+                },{
+                    'icon': 'target-two', 'name': _('Managed by me'),
+                    'classes': 'small-12 medium-2',
+                    'url': reverse('problems_my'),
+                    'marked': self.request.resolver_match.url_name == 'problems_my'
+                },{
+                    'icon': 'page-edit', 'name': _('Drafts'),
+                    'classes': 'small-12 medium-2',
+                    'url': reverse('problems_drafts'),
+                    'marked': self.request.resolver_match.url_name == 'problems_drafts'
+                },{
+                    'icon': 'lightbulb', 'name': _('Contributed to'),
+                    'classes': 'small-12 medium-2 medium-pull-2',
+                    'url': reverse('problems_contribute'),
+                    'marked': self.request.resolver_match.url_name == 'problems_contribute'
+                }]
+            }
 
 class RegistrationView(BaseRegistrationView):
     form_class = RegistrationForm
@@ -94,6 +124,13 @@ class RegistrationView(BaseRegistrationView):
 
     def register(self, request, **cleaned_data):
         """
+        Defaul User model flags are used in combination to define the following statuses:
+
+        * superuser = is_superuser=True
+        * active: is_active=True and is_staff=True
+        * invitation: is_active=True and is_staff=False
+        * inactive: is_active=False and is_staff=False
+
         Register the user checking for invitations. Django default user fields
         are filled as follow:
 
@@ -190,13 +227,17 @@ class OptionsView(FormView):
     def get_context_data(self, *args, **kwargs):
         context = super(OptionsView, self).get_context_data(**kwargs)
         context['site_title'] = '%s | %s' % (_('Site options'), get_option('site_title'))
-        context['breadcrumbs'] = self.get_breadcrumbs()
+        context['info'] = self.get_info()
         context['title'] = _('Options')
         return context
 
-    def get_breadcrumbs(self):
-        return [
-            { 'title': _('Options'), 'classes': 'current' } ]
+    def get_info(self):
+        return {
+            'icon': 'widget',
+            'icon_url': reverse('options'),
+            'title': _('Options'),
+            'show': True
+        }
 
     def form_valid(self, form):
 
@@ -230,26 +271,138 @@ class CommentView(RedirectView):
 class ActivityView(TemplateView):
     template_name = '_single_activity.html'
 
-    @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
-        if not self.request.user.is_authenticated():
-            raise PermissionDenied
+        self.url_name = self.request.resolver_match.url_name
+        if self.url_name in ['activity_problem', 'activity_problem_objects']:
+            _pk = self.kwargs.get('pk', None)
+            self.problem = _problem = get_object_or_none(Problem, pk=_pk)
+            if not permissions.problem(obj=_problem, user=self.request.user, mode='view'):
+                raise PermissionDenied
+        else:
+            self.problem = None
         return super(ActivityView, self).dispatch(*args, **kwargs)
 
     def get_context_data(self, *args, **kwargs):
         context = super(ActivityView, self).get_context_data(**kwargs)
-        activities = Paginator(user_stream(self.request.user), 25)
-        context['site_title'] = '%s | %s' % (_('Activity'), get_option('site_title'))
-        context['breadcrumbs'] = self.get_breadcrumbs()
+
+        # Content type
+        _c = {
+            'problems': 'problem', 'description': 'problem', 'problem': 'problem',
+            'criteria': 'criteria',
+            'idea': 'idea', 'ideas': 'idea',
+            'alternatives': 'alternative', 'alternative': 'alternative',
+            'comments': 'comment', 'comment': 'comment' }
+        c = _c.get(self.kwargs.get('content_type', 'problem'), 'problem')
+        _content_type = get_object_or_none(ContentType, name=c)
+        self.content_type = _content_type
+
+        # Activities
+        if self.url_name in ['activity', 'activity_short']:
+            activities = user_stream(self.request.user)
+            context['tabs'] = self.get_tabs()
+        elif self.url_name == 'activity_objects':
+            activities = Action.objects.global_stream(self.request.user, content_type=_content_type)
+            context['tabs'] = self.get_tabs()
+        elif self.url_name == 'activity_problem':
+            activities = Action.objects.problem_stream(user=self.request.user, problem=self.problem)
+            context['tabs'] = self.get_problem_tabs()
+        elif self.url_name == 'activity_problem_objects':
+            activities = Action.objects.problem_objects_stream(user=self.request.user, problem=self.problem, content_type=_content_type)
+            context['tabs'] = self.get_problem_tabs()
+        activities = Paginator(activities, 25)
         context['activities'] = activities.page(self.request.GET.get('page', 1))
-        context['problem_count'] = Problem.objects.filter(published=True).count()
-        context['criteria_count'] = Criteria.objects.all().count()
-        context['idea_count'] = Idea.objects.filter(published=True).count()
-        context['alternative_count'] = Alternative.objects.all().count()
-        context['comment_count'] = Comment.objects.all().count()
+
+        context['info'] = self.get_info()
+        context['site_title'] = '%s | %s' % (_('Activity'), get_option('site_title'))
+        for a in context['activities']:
+            a.action_object.fill_data() if callable(getattr(self, 'fill_data', None)) else None
+        if self.problem:
+            context['criteria_count'] = Criteria.objects.filter(problem=self.problem).count()
+            context['idea_count'] = Idea.objects.filter(problem=self.problem, published=True).count()
+            context['alternative_count'] = Alternative.objects.filter(problem=self.problem).count()
+            context['comment_count'] = Comment.objects.filter(Q(problem=self.problem) | Q(criteria__problem=self.problem) | \
+                Q(idea__problem=self.problem) | Q(alternative__problem=self.problem)).count()
+        else:
+            context['problem_count'] = Problem.objects.filter(published=True).count()
+            context['idea_count'] = Idea.objects.filter(published=True).count()
+            context['comment_count'] = Comment.objects.all().count()
         return context
 
-    def get_breadcrumbs(self):
-        return [
-            { 'title': _('Activity'), 'classes': 'current' }
-        ]
+    def get_info(self):
+        if self.url_name in ['activity_problem', 'activity_problem_objects']:
+            return {
+                'icon': 'target-two',
+                'icon_url': reverse('problem', kwargs={'pk': self.problem.id, 'slug': self.problem.slug}),
+                'title': self.problem.title,
+                'title_url': self.problem.get_absolute_url(),
+                'buttons': problem_buttons(self.request, self.problem),
+                'status': 'public' if self.problem.public else 'private',
+                'show': True
+            }
+        else:
+            return {
+                'icon': 'list',
+                'icon_url': reverse('activity'),
+                'title': _('Sitewide activity'),
+                'show': True
+            }
+
+    def get_tabs(self):
+        return {
+            'items': [{
+                    'icon': 'asterisk', 'name': _('All'),
+                    'classes': 'small-12 medium-2 medium-offset-1',
+                    'url': reverse('activity'),
+                    'marked': self.url_name == 'activity'
+                },{
+                    'icon': 'target-two', 'name': _('Problems'),
+                    'classes': 'small-12 medium-2',
+                    'url': reverse('activity_objects', kwargs={'content_type': 'problems'}),
+                    'marked': self.url_name == 'activity_objects' and self.content_type.name == 'problem'
+                },{
+                    'icon': 'lightbulb', 'name': _('Ideas'),
+                    'classes': 'small-12 medium-2',
+                    'url': reverse('activity_objects', kwargs={'content_type': 'ideas'}),
+                    'marked': self.content_type.name == 'idea'
+                },{
+                    'icon': 'list', 'name': _('Alternatives'),
+                    'classes': 'small-12 medium-2',
+                    'url': reverse('activity_objects', kwargs={'content_type': 'alternatives'}),
+                    'marked': self.content_type.name == 'alternative'
+                },{
+                    'icon': 'list', 'name': _('Comments'),
+                    'classes': 'small-12 medium-2 medium-pull-1',
+                    'url': reverse('activity_objects', kwargs={'content_type': 'comments'}),
+                    'marked': self.content_type.name == 'comment'
+                }]
+            }
+
+    def get_problem_tabs(self):
+        return {
+            'items': [{
+                    'icon': 'asterisk', 'name': _('All'),
+                    'classes': 'small-12 medium-2 medium-offset-1',
+                    'url': reverse('activity_problem', kwargs={'pk': self.problem.id}),
+                    'marked': self.url_name == 'activity_problem'
+                },{
+                    'icon': 'target-two', 'name': _('Description'),
+                    'classes': 'small-12 medium-2',
+                    'url': reverse('activity_problem_objects', kwargs={'pk': self.problem.id, 'content_type': 'description'}),
+                    'marked': self.url_name == 'activity_problem_objects' and self.content_type.name == 'problem'
+                },{
+                    'icon': 'lightbulb', 'name': _('Ideas'),
+                    'classes': 'small-12 medium-2',
+                    'url': reverse('activity_problem_objects', kwargs={'pk': self.problem.id, 'content_type': 'ideas'}),
+                    'marked': self.content_type.name == 'idea'
+                },{
+                    'icon': 'list', 'name': _('Alternatives'),
+                    'classes': 'small-12 medium-2',
+                    'url': reverse('activity_problem_objects', kwargs={'pk': self.problem.id, 'content_type': 'alternatives'}),
+                    'marked': self.content_type.name == 'alternative'
+                },{
+                    'icon': 'list', 'name': _('Comments'),
+                    'classes': 'small-12 medium-2 medium-pull-1',
+                    'url': reverse('activity_problem_objects', kwargs={'pk': self.problem.id, 'content_type': 'comments'}),
+                    'marked': self.content_type.name == 'comment'
+                }]
+            }

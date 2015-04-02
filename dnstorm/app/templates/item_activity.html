@@ -1,10 +1,8 @@
-{% load activity_tags humanize avatar_tags %}
+{% load activity_tags humanize avatar_tags i18n %}
 
-<div class="row activity-row">
-    <div class="columns large-1 activity-icon text-right">
-        {% if action.verb|stringformat:"s" == "commented" %}
-            <i class="fi-comments"></i>
-        {% else %} {% if action.verb|stringformat:"s" == "started following" %}
+<div class="row activity-row" id="activity-{{ action.id }}">
+    <div class="columns large-1 activity-icon text-center button secondary radius">
+        {% if action.verb|stringformat:"s" == "started following" %}
             <i class="fi-torsos"></i>
         {% else %} {% if action.action_object|stringformat:"s" == "Problem object" %}
             <i class="fi-target-two"></i>
@@ -14,14 +12,42 @@
             <i class="fi-lightbulb"></i>
         {% else %} {% if action.action_object|stringformat:"s" == "Alternative object" %}
             <i class="fi-list-thumbnails"></i>
+        {% else %} {% if action.verb|stringformat:"s" == "commented" %}
+            <i class="fi-comments"></i>
         {% endif %} {% endif %} {% endif %} {% endif %} {% endif %} {% endif %}
     </div>
     <div class="columns large-11 activity-content">
         <h6 class="subheader">{{ action.timestamp|naturaltime }}</h6>
-        <h4>{% display_action action %}</h5>
+        <h4>{% display_action action %}</h4>
         <div class="activity-description">
             <div class="activity-avatar">{% avatar action.actor 32 %}</div>
             {{ action.data.diff|safe }}
         </div>
+
+        {% if show_comments %}
+            <div class="comments" id="comment-activity-{{ action.id }}">
+                {% if action.action_object.comments %}
+
+                    {% for comment in action.action_object.comments %}
+                        {% if forloop.counter > 3 %}
+                            {% include "item_comment.html" with hidden=True %}
+                        {% else %}
+                            {% include "item_comment.html" %}
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if action.action_object.comments|length > 3 %}
+                        <div class="row collapse comment">
+                            <div class="columns large-12">
+                                <div class="comment-content">
+                                    <a class="action-button display-more" href="javascript:void(0)"><i class="fi-arrow-down"></i>&nbsp;{% blocktrans with count=alternative.comments|length|add:"-3" %}Display the other <b>{{ count }}</b> comments{% endblocktrans %}</a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endif %}
+            </div>
+        {% endif %}
+
     </div>
 </div>

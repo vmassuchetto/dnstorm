@@ -16,7 +16,7 @@ from django.views.generic.edit import FormView, UpdateView
 from actstream.models import actor_stream
 
 from dnstorm.app import permissions
-from dnstorm.app.forms import UserForm, UserPasswordForm
+from dnstorm.app.forms import UserForm, UserPasswordForm, CommentForm
 from dnstorm.app.models import Problem, Idea, Comment, Option
 from dnstorm.app.utils import get_option, get_object_or_none, get_user
 
@@ -31,41 +31,72 @@ class UserView(TemplateView):
 
         context['site_title'] = '%s | %s' % (user.username, _('User profile'))
         context['profile'] = user
-        context['breadcrumbs'] = self.get_breadcrumbs(username=context['username'])
+        context['info'] = self.get_info()
         activities = Paginator(actor_stream(context['profile']), 25)
         context['activities'] = activities.page(self.request.GET.get('page', 1))
+        context['comment_form'] = CommentForm()
         context['user_perm_manage'] = permissions.user(obj=user, user=self.request.user, mode='manage')
         return context
 
-    def get_breadcrumbs(self, **kwargs):
-        return [
-            { 'title': _('Users'), 'classes': 'unavailable' },
-            { 'title': kwargs['username'], 'classes': 'current' } ]
+    def get_info(self):
+        return {
+            'icon': 'torso',
+            'icon_url': reverse('users'),
+            'title': _('Users'),
+            'show': True
+        }
 
 class UsersView(TemplateView):
     template_name = '_single_users.html'
 
     def get_context_data(self, *args, **kwargs):
         context = super(UsersView, self).get_context_data(**kwargs)
-        mode = resolve(self.request.path_info).url_name
-
-        if self.request.user.is_superuser and mode == 'users_invitations':
-            users = Paginator(User.objects.filter(is_staff=False, is_active=True).order_by('username'), 32)
-        elif self.request.user.is_superuser and mode == 'users_inactive':
-            users = Paginator(User.objects.filter(is_active=False).order_by('username'), 32)
+        self.url_name = self.request.resolver_match.url_name
+        self.user_type = self.kwargs.get('user_type', 'active')
+        if self.user_type == 'invitations':
+            users = User.objects.filter(is_active=True, is_staff=False)
+        elif self.user_type == 'inactive':
+            users = User.objects.filter(is_active=False, is_staff=False)
         else:
-            users = Paginator(User.objects.filter(is_staff=True).order_by('username'), 32)
+            users = User.objects.filter(is_active=True, is_staff=True)
         page = self.request.GET['page'] if 'page' in self.request.GET else 1
 
         context['show_actions'] = True if self.request.user.is_superuser else False
-        context['mode'] = mode
+        context['user_type'] = self.user_type
         context['site_title'] = '%s | %s' % (_('Users'), get_option('site_title'))
-        context['breadcrumbs'] = self.get_breadcrumbs()
-        context['users'] = users.page(page)
+        context['info'] = self.get_info()
+        context['tabs'] = self.get_tabs()
+        context['comment_form'] = CommentForm()
+        context['users'] = Paginator(users, 25).page(page)
         return context
 
-    def get_breadcrumbs(self, **kwargs):
-        return [{ 'title': _('Users'), 'classes': 'current' }]
+    def get_info(self):
+        return {
+            'icon': 'torso',
+            'icon_url': reverse('home'),
+            'title': _('Users'),
+            'show': True
+        }
+
+    def get_tabs(self):
+        return {
+            'items': [{
+                    'icon': 'torso', 'name': _('Active'),
+                    'classes': 'small-12 medium-2 medium-offset-3',
+                    'url': reverse('users'),
+                    'marked': self.user_type == 'active'
+                },{
+                    'icon': 'mail', 'name': _('Invitations'),
+                    'classes': 'small-12 medium-2',
+                    'url': reverse('users_filter', kwargs={'user_type': 'invitations'}),
+                    'marked': self.user_type == 'invitations'
+                },{
+                    'icon': 'prohibited', 'name': _('Inactive'),
+                    'classes': 'small-12 medium-2 medium-pull-3',
+                    'url': reverse('users_filter', kwargs={'user_type': 'inactive'}),
+                    'marked': self.user_type == 'inactive'
+                }]
+            }
 
 class UserUpdateView(UpdateView):
     form_class = UserForm
@@ -113,8 +144,9 @@ class UserUpdateView(UpdateView):
         user.last_name = _form.username
         user.is_superuser = _form.is_superuser
         user.save()
-        messages.success(self.request, _('User information was updated.'))
-        return HttpResponseRedirect(reverse('user', kwargs={'username': user_obj.username}))
+        label = '<span class="label success radius">%s</span>' % user.username
+        messages.success(self.request, mark_safe(_('User information for %s was updated.') % label))
+        return HttpResponseRedirect(reverse('user', kwargs={'username': user.username}))
 
 class UserPasswordUpdateView(FormView):
     form_class = UserPasswordForm
@@ -156,6 +188,25 @@ class UserPasswordUpdateView(FormView):
         messages.success(self.request, mark_safe(_('The password for %s was updated.') % label))
         return HttpResponseRedirect(reverse('user', kwargs={'username': self.object.username}))
 
+class UserResendInvitationView(RedirectView):
+    """
+    Resends an invitation to an user.
+    """
+    permanent = False
+
+    def get_redirect_url(self, *args, **kwargs):
+        """
+        Resends invitation to user.
+        """
+        if not self.request.user.is_superuser:
+            raise PermissionDenied
+        user = get_object_or_404(User, username=kwargs['username'])
+
+        # won't send if user is in 'invitation' status
+        self.send_invitation()
+
+        return self.request.META.get('HTTP_REFERER', reverse('users'))
+
 class UserInactivateView(RedirectView):
     """
     Marks a user as inactive.
@@ -169,13 +220,14 @@ class UserInactivateView(RedirectView):
         if not self.request.user.is_superuser:
             raise PermissionDenied
         user = get_object_or_404(User, username=kwargs['username'])
+        _r = self.request.META.get('HTTP_REFERER', reverse('users'))
 
         # invitation
         if user.is_active and not user.is_staff:
             label = '<span class="label radius alert">%s</span>' % user.email
             user.delete()
             messages.warning(self.request, mark_safe(_('The invitation to %s was cancelled.') % label))
-            return reverse('users_invitations')
+            return _r
 
         # confirmed user
         user.first_name = 'u%d' % user.id
@@ -185,7 +237,7 @@ class UserInactivateView(RedirectView):
 
         label = '<span class="label radius alert">%s</span>' % user.last_name
         messages.warning(self.request, mark_safe(_('The user %s was inactivated.') % label))
-        return reverse('users')
+        return _r
 
 class UserActivateView(RedirectView):
     """
@@ -209,4 +261,4 @@ class UserActivateView(RedirectView):
 
         label = '<span class="label radius success">%s</span>' % user.last_name
         messages.success(self.request, mark_safe(_('The user %s was activated.') % label))
-        return reverse('users_inactive')
+        return self.request.META.get('HTTP_REFERER', reverse('users'))

@@ -1,5 +1,7 @@
 {% load display_name i18n %}
 
+{# Top bar #}
+
 <div class="contain-to-grid">
 <nav class="top-bar">
 
@@ -16,15 +18,15 @@
     <section class="top-bar-section">
         <ul class="left">
             <li class="divider"></li>
-            <li><h1><a id="logo" href="{% url "home" %}">DNStorm</a></h1></li>
+            <li class="title"><h1><a id="logo" href="{% url "home" %}">DNStorm</a></h1></li>
             <li class="divider"></li>
             {% if user.is_authenticated %}
                 <li><a href="{% url "users" %}">{% trans "Users" %}</a></li>
                 <li class="divider"></li>
                 <li><a href="{% url "activity" %}">{% trans "Activity" %}</a></li>
                 <li class="divider"></li>
-                <li class="active">
-                    <a href="{% url "problem_create" %}"><i class="fi-plus"></i> {% trans "Post problem" %}</a>
+                <li>
+                    <a class="post-problem" href="{% url "problem_create" %}"><i class="fi-plus"></i> {% trans "Post problem" %}</a>
                 </li>
             {% endif %}
         </ul>
@@ -33,16 +35,15 @@
                 <li class="divider"></li>
                 <li class="has-icon notification notification-icon{% if user_activity_counter > "0" %} alert{% endif %}"><a href="javascript:void(0);"><i class="fi-lightbulb"></i><span class="counter">{{ user_activity_counter }}</span></a></li>
                 <li class="divider"></li>
-                {% block topicon %}{% endblock %}
                 {% if user.is_superuser %}
                     <li class="has-icon"><a href="{% url "options" %}"><i class="fi-widget"></i></a></li>
                     <li class="divider"></li>
                 {% endif %}
                 <li class="divider"></li>
-                <li class="has-icon torso"><a href="{% url "user" user %}"><i class="fi-torso"></i></a></li>
-                <li class="user"><a href="{% url "user" user %}">{% display_name user %}</a></li>
+                <li class="has-icon torso user-li"><a href="{% url "user" user %}"><i class="fi-torso"></i></a></li>
+                <li class="user user-li"><a href="{% url "user" user %}">{% display_name user %}</a></li>
                 {% if user.is_superuser %}
-                    <li class="superuser"><span class="label alert tiny radius">{% trans "Superuser" %}</span></li>
+                    <li class="superuser user-li"><span class="label alert tiny radius">{% trans "Superuser" %}</span></li>
                 {% endif %}
                 <li class="divider"></li>
                 <li><a href="{{ logout_url }}">{% trans 'Logout' %}</a></li>
@@ -58,3 +59,45 @@
 
 </nav>
 </div>
+
+{# Title bar #}
+
+{% if info %}
+    <div class="title-bar-wrap show-for-medium-up">
+        <div class="row">
+            <div class="columns medium-9">
+                <nav class="title-bar-inner">
+                    <div class="title-bar-icon">
+                        <a href="{{ info.icon_url }}" class="icon"><i class="fi-{{ info.icon }}"></i></a>
+                    </div>
+                    <div class="title-bar-info">
+                        <h2>{% if info.title_url %}<a href="{{ info.title_url }}"{% if info.title_classes %} class="{{ info.title_classes }}"{% endif %}>{% endif %}{% if info.title %}{{ info.title }}{% else %}{% trans "Problem draft" %}{% endif %}{% if info.title_url %}</a>{% endif %}</h2>
+                        {% if info.buttons %}
+                            <div class="buttons">
+                                {% for button in info.buttons %}
+                                    {% if info.show %}
+                                        <a class="action-button {% if button.marked %} marked{% endif %}" href="{{ button.url }}"><i class="fi-{{ button.icon }}"></i>&nbsp;{{ button.title }}</a>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </nav>
+            </div>
+            {% if problem %}
+                <div class="columns medium-3 info-status">
+                    {% if problem.public %}
+                        <span class="status" data-tooltip title="{% trans "Anyone can view" %}"><i class="fi-web"></i>&nbsp;<b>{% trans "Public problem" %}</b></span>
+                    {% else %}
+                        <span class="status" data-tooltip title="{% trans "Only invited people can view" %}"><i class="fi-eye"></i>&nbsp;<b>{% trans "Private problem" %}</b></span>
+                    {% endif %}
+                    {% if problem.open %}
+                        <span class="status" data-tooltip title="{% trans "Anyone can collaborate" %}"><i class="fi-unlock"></i>&nbsp;<b>{% trans "Open collaboration" %}</b></span>
+                    {% else %}
+                        <span class="status" data-tooltip title="{% trans "Only managers collaborate" %}"><i class="fi-lock"></i>&nbsp;<b>{% trans "Closed collaboration" %}</b></span>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endif %}

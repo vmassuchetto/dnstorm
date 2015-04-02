@@ -1,1 +1,1 @@
-__all__ = ['ajax', 'base', 'idea', 'problem', 'user']
+__all__ = ['ajax', 'base', 'criteria', 'idea', 'problem', 'user']

@@ -1,5 +1,8 @@
+import operator
+import random
 import re
 from datetime import datetime
+from collections import OrderedDict
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
@@ -29,7 +32,6 @@ class Option(models.Model):
         * ``name`` unique entry key
         * ``value`` value for the key
     """
-
     name = models.TextField(verbose_name=_('Name'), blank=False, unique=True)
     value = models.TextField(verbose_name=_('Value'), blank=False)
 
@@ -46,7 +48,6 @@ class Option(models.Model):
         returned when querying for an option value. `None` is returned if the
         option name is invalid.
         """
-
         if len(args) <= 0 or len(args) > 1:
             return None
         try:
@@ -88,7 +89,6 @@ class Option(models.Model):
         """
         Get all the default values.
         """
-
         options = dict()
         defaults = self.get_defaults()
         for default in defaults:
@@ -105,15 +105,14 @@ class Problem(models.Model):
         * ``last_activity`` Gets updated in favor of the ``ActivityManager``
           ordering every time an idea or a comment is made for this problem.
     """
-
     title = models.CharField(verbose_name=_('Title'), max_length=90, help_text=_('Give your problem a compreensive title, this will be the main call for users.'))
     slug = AutoSlugField(populate_from='title', max_length=60, editable=False, unique=True, always_update=True)
     description = RichTextField(verbose_name=_('Description'), help_text=_('The description needs to be complete and address all the variables of the problem, giving users the correct parameters to give ideas according to the criteria specified.'))
     author = models.ForeignKey(User, related_name='author', editable=False)
     coauthor = models.ManyToManyField(User, related_name='problem_coauthor', editable=False, blank=True, null=True)
     contributor = models.ManyToManyField(User, related_name='contributor', verbose_name=_('Contributors'), blank=True, null=True)
-    public = models.BooleanField(verbose_name=_('Public'), help_text=_('Anyone is able to view and contribute to this problem. If not public, you\'ll need to choose the contributors that will have access to it.'), default=True, blank=True)
-    open = models.BooleanField(verbose_name=_('Open edit'), help_text=_('Let users change the title and description of problems and ideas as coauthors.'), default=True, blank=True)
+    public = models.BooleanField(default=True, blank=True)
+    open = models.BooleanField(default=True, blank=True)
     published = models.BooleanField(editable=False, blank=True, default=False)
     models.CharField(verbose_name=_('Publish status'), max_length=10, editable=False, blank=False, choices=(
         ('draft', _('Draft')),
@@ -133,15 +132,42 @@ class Problem(models.Model):
         return reverse('problem', args=[self.id, self.slug])
 
     def idea_count(self):
-        return 0
-        #return self.probelma.criteria_set.idea_set.all().count()
+        return self.idea_set.filter(published=True).count()
 
     def alternative_count(self):
-        return 0
-        #return Alternative.objects.filter(problem=self).count()
+        return self.alternative_set.count()
 
     def criteria_count(self):
-        return Criteria.objects.filter(problem=self).count()
+        return self.criteria_set.count()
+
+    def fill_data(self, user=False):
+        if getattr(self, '_fill_data_cached', None):
+            return
+        self.results = list()
+        # Data organization
+        self.comments = Comment.objects.filter(problem=self).order_by('created')
+        # Permissions
+        self.perm_view = permissions.problem(obj=self, user=user, mode='view')
+        self.perm_manage = permissions.problem(obj=self, user=user, mode='manage')
+        for c in self.criteria_set.all():
+            alternatives = list()
+            for a in self.alternative_set.all():
+                a.fill_data(user)
+                a.value = a.results[c.id].result_value
+                alternatives.append(a)
+            reverse = True if c.order == 'asc' else False
+            alternatives.sort(key=lambda x:x.value, reverse=reverse)
+            self.results.append({'criteria': c, 'alternatives': alternatives})
+
+    def send_invitation(self, request):
+        invitation = get_object_or_none(models.Invitation, user=self)
+        label = '<span class="label radius alert">%s</span>' % self.last_name
+        if invitation:
+            notification.send([self], 'invitation', email_context({ 'invitation': invitation }))
+            messages.success(self.request, mark_safe(_('The invitation to %s was sent.') % label))
+        else:
+            messages.warning(self.request, mark_safe(_('Wront request information for %s.') % label))
+        self._fill_data_cached = True
 
 class Criteria(models.Model):
     """
@@ -149,7 +175,6 @@ class Criteria(models.Model):
     reference for the ideas submitted by users. These will also be the columns
     for the strategy table of the problem.
     """
-
     problem = models.ForeignKey(Problem, blank=False, null=False, editable=False)
     name = models.CharField(verbose_name=_('Name'), max_length=90, blank=False)
     slug = AutoSlugField(populate_from='name', max_length=60, editable=False, unique=True, always_update=True)
@@ -182,7 +207,7 @@ class Criteria(models.Model):
         return _('criteria')
 
     def get_absolute_url(self, *args, **kwargs):
-        return reverse('criteria_update', kwargs={'slug': self.slug })
+        return reverse('criteria_update', kwargs={'pk': self.id })
 
     def problem_count(self):
         return Problem.objects.filter(criteria=self).count()
@@ -198,7 +223,8 @@ class Criteria(models.Model):
         return icons[self.fmt]
 
     def fill_data(self, user=False):
-        self.comments = Comment.objects.filter(criteria=self)
+        self.comments = Comment.objects.filter(criteria=self).order_by('created')
+        self.perm_manage = permissions.criteria(obj=self, user=user, mode='manage')
 
 class Idea(models.Model):
     """
@@ -206,10 +232,8 @@ class Idea(models.Model):
     problem-solving process requires idea generation and participation of
     users. These will after compose the strategy table.
     """
-
     problem = models.ForeignKey(Problem, editable=False)
     title = models.CharField(verbose_name=_('title'), max_length=90, help_text=_('Describe in a general basis what is the idea you\'re given to address the problem.'))
-    slug = AutoSlugField(populate_from='title', max_length=60, editable=False, unique=True, always_update=True)
     author = models.ForeignKey(User, editable=False)
     published = models.BooleanField(editable=False, blank=True, default=False)
     created = models.DateTimeField(auto_now_add=True, default='2000-01-01')
@@ -232,7 +256,6 @@ class Idea(models.Model):
         """
         Fill the idea with problem and user-specific data.
         """
-
         self.perm_manage = permissions.idea(obj=self, user=user, mode='manage')
         self.comments = Comment.objects.filter(idea=self).order_by('created')
 
@@ -241,17 +264,11 @@ class Idea(models.Model):
         self.criteria = list()
         for c in self.problem.criteria_set.all():
             ic = get_object_or_none(IdeaCriteria, idea=self, criteria=c)
-            v = getattr(ic, 'value_%s' % c.fmt, None)
-            c.value = v
+            c.value = ic.get_value() if ic else ''
             d = getattr(ic, 'description', None)
             c.description = d
             c.fill_data()
             self.criteria.append(c)
-
-        # Comments
-
-        for comment in self.comments:
-            comment.perm_manage = permissions.comment(obj=self.problem, user=user, mode='manage')
 
         # Votes
 
@@ -279,7 +296,14 @@ class IdeaCriteria(models.Model):
         return _('idea_criteria')
 
     def get_value(self):
-        return getattr(self, 'value_%s' % self.criteria.fmt)
+        if self.criteria.fmt in ['number', 'scale', 'time', 'integer', 'boolean']:
+            try:
+                v = int(getattr(self, 'value_%s' % self.criteria.fmt))
+            except:
+                v = 0
+        elif self.criteria.fmt in ['currency']:
+            v = getattr(self, 'value_%s' % self.criteria.fmt)
+        return v
 
 class Invitation(models.Model):
     """
@@ -302,9 +326,10 @@ class Alternative(models.Model):
     """
     Alternatives are the strategy table rows where ideas can be allocated.
     """
-
+    name = models.CharField(max_length=255)
     problem = models.ForeignKey(Problem, editable=False)
     idea = models.ManyToManyField(Idea, editable=False, null=True, blank=True)
+    author = models.ForeignKey(User, editable=False)
     order = models.PositiveSmallIntegerField(editable=False, default=0)
     created = models.DateTimeField(auto_now_add=True, editable=False, default='2001-01-01')
     updated = models.DateTimeField(auto_now=True, editable=False, default='2000-01-01')
@@ -323,45 +348,43 @@ class Alternative(models.Model):
         """
         Fill the alternative with problem and user-specific data.
         """
-        self.comments = list()
-        for c in Comment.objects.filter(alternative=self.id):
-            self.comments.append(c)
-        self.get_results()
+        self.perm_manage = permissions.alternative(obj=self, user=user, mode='manage')
+        self.comments = Comment.objects.filter(alternative=self).order_by('created')
         self.total_ideas = self.idea.all().count()
         self.votes = self.vote_count()
-        self.voted = Vote.objects.filter(alternative=self, author=user).exists() if isinstance(user, User) else False
-        self.total_ratio = 0
-
-    def get_results(self):
+        if user.is_authenticated():
+            vote = get_object_or_none(Vote, alternative=self, author=user)
+        else:
+            vote = False
+        self.voted = True if vote else False
+        self.vote_value = vote.value if vote else 0
         self.results = dict()
-        for c in self.problem.criteria_set.all():
+        for c in self.problem.criteria_set.order_by('name').all():
             c.fill_data()
-            self.results[c.id] = { 'criteria': c, 'value': 0 }
+            self.fmt = c.fmt
+            c.result_value = 0
+            self.results[c.id] = c
             if self.idea.count() == 0:
                 continue
             for i in self.idea.all():
                 ic = get_object_or_none(IdeaCriteria, idea=i, criteria=c)
                 value = ic.get_value() if ic else 0
-
                 # Just sum for sums or averages
                 if c.result == 'sum' or c.result == 'average':
-                    self.results[c.id]['value'] += value
-
+                    self.results[c.id].result_value += value * c.weight
                 # Absolute results depend on value ordering
                 elif c.result == 'absolute' and c.order == 'asc':
-                    self.results[c.id]['value'] = value if value > self.results[c.id] else self.results[c.id]
+                    self.results[c.id].result_value = value if value > self.results[c.id] else self.results[c.id]
                 elif c.result == 'absolute' and c.order == 'desc':
-                    self.results[c.id]['value'] = value if value < self.results[c.id] else self.results[c.id]
-
+                    self.results[c.id].result_value = value if value < self.results[c.id] else self.results[c.id]
             # Finish the average
             if c.result == 'average':
-                self.results[c.id]['value'] = '{0:.4g}'.format(self.results[c.id]['value'] / self.idea.count())
+                self.results[c.id].result_value = self.results[c.id].result_value / self.idea.count()
 
 class Comment(models.Model):
     """
     Comments that can be made for ideas or problems.
     """
-
     problem = models.ForeignKey(Problem, editable=False, blank=True, null=True)
     idea = models.ForeignKey(Idea, editable=False, blank=True, null=True)
     criteria = models.ForeignKey(Criteria, editable=False, blank=True, null=True)
@@ -381,10 +404,10 @@ class Vote(models.Model):
     """
     Votes for ideas, comments or alternatives.
     """
-
     idea = models.ForeignKey(Idea, blank=True, null=True, related_name='vote_idea')
     comment = models.ForeignKey(Alternative, blank=True, null=True, related_name='vote_comment')
     alternative = models.ForeignKey(Alternative, blank=True, null=True, related_name='vote_alternative')
+    value = models.IntegerField(blank=True, null=True, default=0)
     author = models.ForeignKey(User)
     created = models.DateTimeField(auto_now_add=True, editable=False, default='2001-01-01')
 

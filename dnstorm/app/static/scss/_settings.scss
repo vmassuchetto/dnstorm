@@ -15,25 +15,7 @@ $dark-white: darken($white, 20%);
 
 $grey: #B7B7B7;
 $dark-grey: #868686;
-$light-grey: #DDDDDD;
-
-$red: #FF0000;
-$light-red: lighten($red, 20%);
-
-$green: #089700;
-$light-green: lighten($green, 20%);
-
-$cyan: #00BAB1;
-$dark-cyan: darken($cyan, 20%);
-
-$orange: #FFA600;
-$dark-orange: darken($orange, 20%);
-
-$blue: #008CBA;
-$light-blue: lighten($blue, 20%);
-
-$yellow: #FFE303;
-$dark-yellow: darken($yellow, 20%);
+$light-grey: #F7F7F7;
 
 // The default font-size is set to 100% of the browser style sheet (usually 16px)
 // for compatibility with browser-based text zoom or user-set defaults.
@@ -71,7 +53,7 @@ $em-base: 16 !default;
 
 // Colors
 
-// $primary-color: #2ba6cb;
+$primary-color: darken(#2ba6cb, 20%);
 // $secondary-color: #e9e9e9;
 // $alert-color: #c60f13;
 // $success-color: #5da423;
@@ -1002,7 +984,7 @@ $panel-font-color-alt: $black;
 // $reveal-modal-bg: #fff;
 // $reveal-position-top: 50px;
 // $reveal-default-width: 80%;
-// $reveal-modal-padding: emCalc(20);
+$reveal-modal-padding: emCalc(10px);
 // $reveal-box-shadow: 0 0 10px rgba(#000,.4);
 
 // We use these to style the reveal close button

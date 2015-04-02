@@ -9,7 +9,7 @@ from django.contrib.auth.forms import UserChangeForm, PasswordChangeForm
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.core.validators import MinValueValidator
-from django.http import Http404, QueryDict
+from django.http import Http404, QueryDict, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.template.loader import render_to_string
 from django.utils.safestring import mark_safe
@@ -160,61 +160,47 @@ class UserPasswordForm(forms.Form):
             raise forms.ValidationError(_('Passwords don\'t match.'))
 
 class CriteriaForm(forms.ModelForm):
-    id = forms.IntegerField(widget=forms.HiddenInput, initial=0)
-    criteria_description = forms.CharField(widget=forms.Textarea(attrs={'id': 'criteria_description'}))
 
     class Meta:
         model = models.Criteria
-        exclude = ['slug', 'problem']
+        exclude = ['author', 'slug', 'problem']
 
     def __init__(self, *args, **kwargs):
         self.helper = FormHelper()
-        self.helper.disable_csrf = True
-        self.helper.form_tag = False
         self.helper.form_action = '.'
-        layout_args = (
-            'id',
-            'name',
-            'criteria_description',
-            'fmt',
-            Row(
-                Column('min', css_class='large-6'),
-                Column('max', css_class='large-6')
-            , css_class='minmax'),
-            Row(
-                Column('order', css_class='large-4'),
-                Column('weight', css_class='large-4'),
-                Column('result', css_class='large-4')
-            )
+        self.helper.layout = Layout(
+            Fieldset('<i class="fi-cloud"></i>&nbsp;' + _('Information'),
+                Row(Column('name','description')),
+            ),
+            Fieldset('<i class="fi-"></i>&nbsp;' + _('Values'),
+                Row(Column('fmt')),
+                Row(
+                    Column('min', css_class='large-6 minmax'),
+                    Column('max', css_class='large-6 minmax')),
+                Row(
+                    Column('order', css_class='large-4'),
+                    Column('weight', css_class='large-4'),
+                    Column('result', css_class='large-4')), css_class='criteria-values'),
+                Row(Column(
+                    ButtonHolder(
+                        Button('delete', _('Delete'), css_class='alert small radius align-top left'),
+                        Submit('submit', _('Save'), css_class='radius'), css_class='large-12 text-right')))
         )
-        layout_args += (Row(Column(
-            ButtonHolder(
-                Button('delete', _('Delete'), css_class='criteria-delete alert small radius align-top left'),
-                Button('cancel', _('Cancel'), css_class='criteria-cancel secondary small radius align-top right-1em'),
-                Button('submit', _('Save criteria'), css_class='radius criteria-submit'),
-            ), css_class='large-12 text-right')),
-        )
-        self.helper.layout = Layout(*layout_args)
         super(CriteriaForm, self).__init__(*args, **kwargs)
-        if self.instance:
-            self.fields['criteria_description'].initial = self.instance.description
 
     def clean(self):
         """
-        Custom form validation.
+        Scale format type must have minimum and maximum specified.
         """
         super(forms.ModelForm, self).clean()
-
         if 'fmt' in self.cleaned_data and self.cleaned_data['fmt'] == 'scale':
             if not self.cleaned_data['min']:
-                self._errors['min'] = [u'Minimum scale required for this format.']
+                self._errors['min'] = [_('Minimum scale required for this format.')]
             if not self.cleaned_data['max']:
-                self._errors['max'] = [u'Maximum scale required for this format.']
-
+                self._errors['max'] = [_('Maximum scale required for this format.')]
         return self.cleaned_data
 
 class ProblemForm(forms.ModelForm):
-    user_search = forms.CharField(_('Search and add contributors'), required=False, widget=forms.TextInput(attrs={'autocomplete':'off'}))
 
     class Meta:
         model = models.Problem
@@ -222,6 +208,7 @@ class ProblemForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         problem_perm_edit = kwargs.pop('problem_perm_edit') if 'problem_perm_edit' in kwargs else False
         problem_perm_manage = kwargs.pop('problem_perm_manage') if 'problem_perm_manage' in kwargs else False
+        user = kwargs.pop('user') if 'user' in kwargs else False
         self.instance = kwargs['instance'] if 'instance' in kwargs and kwargs['instance'] else False
         if self.instance:
             self.instance.id = self.instance.id if hasattr(self.instance, 'id') else 0
@@ -230,46 +217,10 @@ class ProblemForm(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.form_action = '.'
         self.helper.form_class = 'problem-form'
+        layout_args = ('title', 'description',)
 
-        layout_args = (
-            Fieldset('<i class="fi-puzzle"></i>&nbsp;' + _('Problem description'),
-                'title',
-                'description',
-            ),)
-
-        criteria_html = ''
-        if self.instance:
-            for c in self.instance.criteria_set.all().order_by('name'):
-                criteria_form = CriteriaForm(instance=c)
-                c.fill_data()
-                criteria_html += render_to_string('item_criteria.html', {'criteria': c, 'show_actions': True, 'criteria_form': criteria_form})
-        criteria_html = '<div class="criteria">%s</div>' % criteria_html
-
-        layout_args += (
-            Fieldset('<i class="fi-target-two"></i>&nbsp;' + _('Criterias'),
-                HTML(criteria_html),
-                HTML('<a class="secondary button expand radius criteria-add">' + _('Add criteria') + '</a>'),
-            ),
-        )
-
-        if self.instance and problem_perm_manage:
-            layout_args += (
-                Fieldset('<i class="fi-lock"></i>&nbsp;' + _('Permissions'),
-                    Row(
-                        Column('public', css_class='large-6'),
-                        Column('open', css_class='large-6')
-                    ),
-                    HTML('<div class="row collapse contributors-section"><div class="columns large-12"><h5>%s</h5><p class="help">%s</p>' % (_('Contributors'), _('Users with permission to contribute to this problem. Click a user box to remove from the selection.'))),
-                    HTML(render_to_string('_update_problem_users.html', {'users': self.instance.contributor.all()})),
-                    Row(
-                        Column('user_search', css_class='large-8'),
-                        Column(Button('add_user', _('Search and add contributors'), css_class='postfix secondary', disabled=True), css_class='large-4')
-                    , css_class='collapse'),
-                    HTML('<div class="user-search-result"></div></div></div>'),
-                ),
-            )
-
-        layout_args += (Button('delete', _('Delete problem'), css_class='left small radius alert problem-delete', data_problem=self.instance.id),)
+        if user == self.instance.author:
+            layout_args += (Button('delete', _('Delete problem'), css_class='left small radius alert problem-delete', data_problem=self.instance.id),)
 
         if not self.instance.published:
             layout_args += (
@@ -280,6 +231,40 @@ class ProblemForm(forms.ModelForm):
 
         self.helper.layout = Layout(*layout_args)
         super(ProblemForm, self).__init__(*args, **kwargs)
+
+class ProblemContributorForm(forms.Form):
+    user_search = forms.CharField(_('Search and add contributors'), required=False, widget=forms.TextInput(attrs={'autocomplete':'off'}))
+    public = forms.BooleanField(label=_('Public'), help_text=_('Anyone is able to view and contribute to this problem. If not public, you\'ll need to choose the contributors that will have access to it.'), required=False)
+    open = forms.BooleanField(label=_('Open edit'), help_text=_('Let users change the title and description of problems and ideas as coauthors.'), required=False)
+
+    def __init__(self, *args, **kwargs):
+        self.problem = kwargs.pop('problem')
+        users_html = ''.join([render_to_string('item_user_contributor.html', {'users': self.problem.contributor.order_by('first_name')})])
+        super(ProblemContributorForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            Fieldset('<i class="fi-torso"></i>&nbsp;' + _('Contributors'),
+                Div(HTML(users_html), css_class='large-12 collapse user-search-selected'),
+                Row(
+                    Column('user_search', help_text=_('Type to search for users. Click on them to insert or remove from the selected list. Go to the sitewide user section to resend an invitation for non-confirmed users.'), css_class='large-8'),
+                    Column(Button('add_user', _('Search and add contributors'), css_class='postfix secondary', disabled=True), css_class='large-4')
+                , css_class='collapse'),
+                Row(Div(css_class='columns large-12 collapse user-search-result'),),
+            css_class='user-search'),
+            Fieldset('<i class="fi-lock"></i>&nbsp;' + _('Permissions'),
+                Row(
+                    Column('public', css_class='large-6'),
+                    Column('open', css_class='large-6')
+                ),
+            ),
+            Row(Column(
+                ButtonHolder(
+                    Submit('submit', _('Save'), css_class='right radius'),
+                ),
+            ), css_class='large-12 collapse'),
+        )
+        self.fields['public'].initial = self.problem.public
+        self.fields['open'].initial = self.problem.open
 
 class DeleteForm(forms.Form):
     yes = forms.BooleanField(label=_("Yes. I know what I'm doing. Delete this!"))
@@ -403,23 +388,13 @@ class CommentForm(forms.ModelForm):
         self.fields['content'].label = ''
 
 class AlternativeForm(forms.Form):
-    problem = forms.IntegerField()
-    name = forms.CharField(label=_('Title'))
-    description = forms.CharField(label=_('Description'), widget=forms.Textarea)
-    mode = forms.CharField()
-    object = forms.CharField()
+    name = forms.CharField(label=_('Name'))
 
     def __init__(self, *args, **kwargs):
         self.helper = FormHelper()
         self.helper.form_action = '.'
+        self.helper.form_tag = False
         self.helper.layout = Layout(
-            'name',
-            'description',
-            Field('mode', type='hidden'),
-            Field('object', type='hidden'),
-            Field('problem', type='hidden'),
-            ButtonHolder(
-                Submit('submit', _('Save'), css_class='right radius'),
-            ),
+            InlineField('name', label_column='large-1', input_column='large-11', label_class='inline'),
         )
         super(AlternativeForm, self).__init__(*args, **kwargs)

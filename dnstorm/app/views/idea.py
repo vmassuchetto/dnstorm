@@ -26,6 +26,7 @@ from dnstorm.app import forms
 from dnstorm.app import permissions
 from dnstorm.app.forms import IdeaForm
 from dnstorm.app.utils import get_object_or_none, activity_count, get_option, activity_register
+from dnstorm.app.views.problem import problem_buttons
 
 class IdeaView(RedirectView):
     permanent = True
@@ -42,7 +43,7 @@ class IdeaCreateView(RedirectView):
         Creates a draft idea for the user to start edition.
         """
         # Validation
-        p = get_object_or_404(models.Problem, id=kwargs['pk'])
+        p = get_object_or_404(models.Problem, id=kwargs['problem'])
         if not permissions.problem(obj=p, user=self.request.user, mode='contribute'):
             raise PermissionDenied
         if p.criteria_set.all().count() == 0:
@@ -52,7 +53,6 @@ class IdeaCreateView(RedirectView):
         i = models.Idea.objects.create(
             problem=p,
             published=False,
-            slug=''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(100)),
             author=self.request.user)
         return reverse('idea_update', kwargs={'pk': i.id})
 
@@ -65,7 +65,7 @@ class IdeaUpdateView(UpdateView):
     @method_decorator(csrf_protect)
     def dispatch(self, request, *args, **kwargs):
         i = get_object_or_404(models.Idea, id=kwargs['pk'])
-        if not permissions.idea(obj=i, user=self.request.user, mode='edit'):
+        if not permissions.idea(obj=i, user=self.request.user, mode='manage'):
             raise PermissionDenied
         self.idea = i
         return super(IdeaUpdateView, self).dispatch(request, *args, **kwargs)
@@ -105,16 +105,19 @@ class IdeaUpdateView(UpdateView):
     def get_context_data(self, *args, **kwargs):
         context = super(IdeaUpdateView, self).get_context_data(**kwargs)
         context['problem'] = self.object.problem
-        context['breadcrumbs'] = self.get_breadcrumbs()
+        context['info'] = self.get_info()
         context['delete_form'] = forms.DeleteForm()
         return context
 
-    def get_breadcrumbs(self):
-        return [
-            { 'title': _('Problems'), 'url': reverse('home') },
-            { 'title': self.object.problem.title, 'url': self.object.problem.get_absolute_url() },
-            { 'title': '%s #%d' % (_('Idea'), self.object.id), 'url': reverse('idea', kwargs={ 'pk': self.object.id }) },
-            { 'title': _('Update'), 'url': reverse('idea_update', kwargs={ 'pk': self.object.id }), 'classes': 'current' } ]
+    def get_info(self):
+        return {
+            'icon': 'lightbulb',
+            'icon_url': reverse('problem', kwargs={'pk': self.object.problem.id, 'slug': self.object.problem.slug}),
+            'title': _('Post idea to problem: %s' % self.object.problem.title),
+            'title_url': self.object.problem.get_absolute_url(),
+            'buttons': problem_buttons(self.request, self.object.problem),
+            'show': permissions.problem(obj=self.object, user=self.request.user, mode='manage')
+        }
 
     def form_valid(self, form, *args, **kwargs):
         """

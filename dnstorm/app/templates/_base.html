@@ -12,6 +12,7 @@
     <script type="text/javascript" src="{% static "components/modernizr/modernizr.js" %}"></script>
     <script type="text/javascript" src="{% static "components/foundation/js/vendor/jquery.js" %}"></script>
     <script type="text/javascript" src="{% static "components/jscrollpane/script/jquery.jscrollpane.min.js" %}"></script>
+    <script type="text/javascript" src="{% static "components/Chart.js/Chart.js" %}"></script>
     <script type="text/javascript" src="{% url "jsi18n" %}"></script>
     {% block head %}{% endblock %}
 </head>
@@ -24,15 +25,21 @@
 {# Top bar #}
 {% include "_base_top_bar.html" %}
 
-{# Breadcrumbs #}
-{% include "_base_breadcrumbs.html" %}
-
 {# Messages #}
 {% include "_base_messages.html" %}
 {% block messages %}{% endblock %}
 
 {# Scroll boxes #}
 {% include "_base_scroll_boxes.html" %}
+
+{# Tabs #}
+{% if tabs %}
+    <div class="row action-tabs sticable{% if tabs.classes %} {{ tabs.classes }}{% endif %}">
+        {% for tab in tabs.items %}
+            <a class="action-tab columns{% if tab.marked %} marked{% endif %}{% if tab.classes %} {{ tab.classes }} {% else %} small-12 medium-2 {% endif %}text-center{% if tab.classes %} {{ tab.classes }}{% endif %}"{% if tab.data %} data-tab="{{ tab.data }}"{% endif %}{% if tab.url %} href="{{ tab.url }}"{% endif %}><i class="fi-{{ tab.icon }}"></i>&nbsp;{{ tab.name }}</a>
+        {% endfor %}
+    </div>
+{% endif %}
 
 {# Content #}
 <div class="row collapse top-1em">
@@ -54,6 +61,7 @@
 
 {# Scripts #}
 <script type="text/javascript" src="{% static "components/foundation/js/foundation.min.js" %}"></script>
+<script type="text/javascript" src="{% static "components/foundation/js/foundation/foundation.slider.js" %}"></script>
 <script type="text/javascript" src="{% static "js/scripts.js" %}"></script>
 
 {# Bye #}
