@@ -1,19 +1,17 @@
 {
   "name": "DNStorm",
   "version": "1.0.0",
+  "description": ".. image:: https://travis-ci.org/vmassuchetto/dnstorm.svg?branch=master     :target: https://travis-ci.org/vmassuchetto/dnstorm",
   "main": "Gruntfile.js",
   "directories": {
     "doc": "docs"
   },
   "dependencies": {
-    "bower": "~1.3.12",
-    "grunt": "~0.4.5",
-    "grunt-cli": "~0.1.13",
-    "grunt-contrib-jshint": "~0.11.0",
-    "grunt-contrib-watch": "~0.6.1",
-    "grunt-sass": "~0.17.0",
-    "grunt-uncss": "~0.4.0",
-    "uncss": "~0.12.0"
+    "grunt": "^0.4.5",
+    "grunt-contrib-watch": "^0.6.1",
+    "grunt-sass": "^0.18.1",
+    "grunt-cli": "^0.1.13",
+    "grunt-contrib-jshint": "^0.11.0"
   },
   "devDependencies": {},
   "scripts": {
@@ -21,11 +19,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/vmassuchetto/dnstorm.git"
+    "url": "https://github.com/vmassuchetto/dnstorm.git"
   },
   "author": "Vinicius Massuchetto",
-  "license": "GPL 2",
+  "license": "GPLv2",
   "bugs": {
     "url": "https://github.com/vmassuchetto/dnstorm/issues"
-  }
+  },
+  "homepage": "https://github.com/vmassuchetto/dnstorm"
 }
