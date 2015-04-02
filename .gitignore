@@ -16,7 +16,7 @@ node_modules
 
 # Static files and components
 /static
-dnstorm/app/static/components
+/dnstorm/app/static/components
 
 # Map files
 *.map
@@ -25,6 +25,10 @@ dnstorm/app/static/components
 *.sqlite3
 media
 dnstorm/app/static/dnstorm/css/app.css
+Gruntfile.js
+package.json
+bower.json
+.bowerrc
 
 # Heroku project
 dnstorm/settings/heroku.py
