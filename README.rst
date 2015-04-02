@@ -36,9 +36,11 @@ The development status is in its alpha stages. Feel free to help by reporting
 bugs and development suggestions on `Github issues
 <https://github.com/vmassuchetto/dnstorm/issues>`_.
 
+Build a test and development installation
+-----------------------------------------
 
-Start a development instance
-----------------------------
+The project uses Python 2.7. Make sure your `python`, `virtualenv` and `pip`
+binaries meets this version.
 
 Clone the repository and go the project's root to build the environment:
 
@@ -74,51 +76,31 @@ Run your server:
 The application might be running at ``http://localhost:8000``.
 
 
-Project URL
------------
-
-Change the project URL while in development or production by changing the URL
-in `sites framework
-<https://docs.djangoproject.com/en/1.5/ref/contrib/sites/>`_.
-
-::
-
-    python manage.py shell
-    from django.contrib.sites.models import Site
-    s = Site.objects.get(id=1)
-    s.domain = '<your domain>'
-    s.save()
-
-
 CSS
 ---
 
-The project's CSS is written in SCSS using `Sass <http://sass-lang.com>`_,
-`Compass <http://compass-style.org>`_ and `django-bower
-<https://github.com/nvbn/django-bower>`_. Make sure you have Ruby with Gem to
-install it:
+For hosting environment reasons, the compiled ``static/scss/app.css`` is
+already in the project's repository. That means you don't need to go further if
+you're not developing.
+
+The project's CSS uses the `Foundation <http://foundation.zurb.com>_` framework
+and is generated with `Sass <http://sass-lang.com>`_. DNStorm uses a set of
+`Grunt <http://gruntjs.com>`_ and `Bower <http://bower.io>`_ packages for the
+static files. To install everything via `nodejs`:
 
 ::
 
-    nmp install bower
-    python manage.py bower_install
+    npm install
+    ./node_modules/bower/bin/bower install
 
-If you have problems with the ``nodejs`` binary, try creating a symlink.
-
-::
-
-    sudo ln -s /usr/bin/nodejs /usr/bin/node
-
-And then, to generate the static files:
+And to generate the static CSS:
 
 ::
 
-    gem install compass
-    cd dnstorm/app/static/scss
-    compass compile
+    ./node_modules/grunt-cli/bin/grunt build
 
-If you're editing the ``.scss`` file, you might want to use ``compass watch``
-instead.
+If you're editing the main ``static/scss/app.scss`` file, you
+might want to use ``grunt watch`` instead.
 
 
 E-mails
@@ -157,22 +139,3 @@ To generate the `Sphinx <http://sphinx-doc.org/>`_ documentation files:
     make <documentation format>
 
 Usually you might want to replace ``<documentation format>`` with ``html``.
-
-
-Graphviz
---------
-
-You'll need Graphviz if you want to generate the system's UML model
-representation:
-
-::
-
-    apt-get install graphviz graphviz-dev pkg-config
-    pip install -r requirements.txt
-
-And to generate the thing:
-
-::
-
-    python manage.py graph_models -a -g -o project.png
-
