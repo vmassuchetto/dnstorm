@@ -41,7 +41,6 @@ class HomeView(TemplateView):
     def get_context_data(self, *args, **kwargs):
         context = super(HomeView, self).get_context_data(**kwargs)
         self.request.user = get_user(self.request)
-        print self.request.user
         authenticated = self.request.user.is_authenticated()
 
         # problems
@@ -70,25 +69,29 @@ class HomeView(TemplateView):
     def get_tabs(self):
         return {
             'items': [{
-                    'icon': 'web', 'name': _('Open'),
+                    'icon': 'web', 'name': _('Open problems'),
                     'classes': 'small-12 medium-2 medium-offset-2',
                     'url': reverse('home'),
-                    'marked': self.request.resolver_match.url_name == 'home'
+                    'marked': self.request.resolver_match.url_name == 'home',
+                    'show': True
                 },{
                     'icon': 'target-two', 'name': _('Managed by me'),
                     'classes': 'small-12 medium-2',
                     'url': reverse('problems_my'),
-                    'marked': self.request.resolver_match.url_name == 'problems_my'
+                    'marked': self.request.resolver_match.url_name == 'problems_my',
+                    'show': True
                 },{
                     'icon': 'page-edit', 'name': _('Drafts'),
                     'classes': 'small-12 medium-2',
                     'url': reverse('problems_drafts'),
-                    'marked': self.request.resolver_match.url_name == 'problems_drafts'
+                    'marked': self.request.resolver_match.url_name == 'problems_drafts',
+                    'show': True
                 },{
                     'icon': 'lightbulb', 'name': _('Contributed to'),
                     'classes': 'small-12 medium-2 medium-pull-2',
                     'url': reverse('problems_contribute'),
-                    'marked': self.request.resolver_match.url_name == 'problems_contribute'
+                    'marked': self.request.resolver_match.url_name == 'problems_contribute',
+                    'show': True
                 }]
             }
 

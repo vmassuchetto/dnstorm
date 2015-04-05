@@ -75,7 +75,7 @@
                         {% if info.buttons %}
                             <div class="buttons">
                                 {% for button in info.buttons %}
-                                    {% if info.show %}
+                                    {% if button.show %}
                                         <a class="action-button {% if button.marked %} marked{% endif %}" href="{{ button.url }}"><i class="fi-{{ button.icon }}"></i>&nbsp;{{ button.title }}</a>
                                     {% endif %}
                                 {% endfor %}

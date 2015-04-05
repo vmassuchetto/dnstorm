@@ -89,12 +89,14 @@ class UsersView(TemplateView):
                     'icon': 'mail', 'name': _('Invitations'),
                     'classes': 'small-12 medium-2',
                     'url': reverse('users_filter', kwargs={'user_type': 'invitations'}),
-                    'marked': self.user_type == 'invitations'
+                    'marked': self.user_type == 'invitations',
+                    'show': self.request.user.is_superuser
                 },{
                     'icon': 'prohibited', 'name': _('Inactive'),
                     'classes': 'small-12 medium-2 medium-pull-3',
                     'url': reverse('users_filter', kwargs={'user_type': 'inactive'}),
-                    'marked': self.user_type == 'inactive'
+                    'marked': self.user_type == 'inactive',
+                    'show': self.request.user.is_superuser
                 }]
             }
 
@@ -150,7 +152,7 @@ class UserUpdateView(UpdateView):
 
 class UserPasswordUpdateView(FormView):
     form_class = UserPasswordForm
-    template_name = '_update_userpassword.html'
+    template_name = '_update_user_password.html'
 
     def dispatch(self, *args, **kwargs):
         obj = get_object_or_404(User, username=kwargs['username'])
@@ -184,7 +186,7 @@ class UserPasswordUpdateView(FormView):
 
         self.object.set_password(self.request.POST['password1'])
         self.object.save()
-        label = '<span class="label radius success">%s</span>' % user.email
+        label = '<span class="label radius success">%s</span>' % self.object.username
         messages.success(self.request, mark_safe(_('The password for %s was updated.') % label))
         return HttpResponseRedirect(reverse('user', kwargs={'username': self.object.username}))
 

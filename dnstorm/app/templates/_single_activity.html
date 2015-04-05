@@ -15,14 +15,16 @@
                 {# Action butons #}
                 <div class="columns large-12">
                     <a class="action-button edit-user" href="{% url "user_update" profile.username %}"><i class="fi-pencil"></i>&nbsp;{% trans "Edit user info" %}</a>
-                    <a class="action-button inactivate-user" href="{% url "user_inactivate" profile.username %}"><i class="fi-prohibited"></i>&nbsp;{% trans "Inactivate user" %}</a>
+                    {% if user.is_superuser %}
+                        <a class="action-button inactivate-user" href="{% url "user_inactivate" profile.username %}"><i class="fi-prohibited"></i>&nbsp;{% trans "Inactivate user" %}</a>
+                    {% endif %}
                 </div>
             </div>
         {% endif %}
     {% endif %}
 
     <div class="row">
-        <div class="columns large-3 activity-info stickable">
+        <div class="columns large-3 activity-info">
 
             {% if problem %}
 

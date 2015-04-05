@@ -320,22 +320,27 @@ class ProblemView(TemplateView):
             'items': [{
                 'icon': 'target-two', 'name': _('Problem'),
                 'classes': 'problem-tab-selector small-12 medium-2 medium-offset-1',
-                'data': 'description'
+                'data': 'description',
+                'show': True
             },{
                 'icon': 'cloud', 'name': _('Criteria'),
                 'classes': 'problem-tab-selector small-12 medium-2',
-                'data': 'criteria'
+                'data': 'criteria',
+                'show': True
             },{
                 'icon': 'lightbulb', 'name': _('Ideas'),
                 'classes': 'problem-tab-selector small-12 medium-2',
-                'data': 'ideas'
+                'data': 'ideas',
+                'show': True
             },{
                 'icon': 'list', 'name': _('Alternatives'),
                 'classes': 'problem-tab-selector small-12 medium-2',
-                'data': 'alternatives'
+                'data': 'alternatives',
+                'show': True
             },{
                 'icon': 'play', 'name': _('Results'),
                 'classes': 'problem-tab-selector small-12 medium-2 medium-pull-1',
-                'data': 'results'
+                'data': 'results',
+                'show': True
             }]
         }
