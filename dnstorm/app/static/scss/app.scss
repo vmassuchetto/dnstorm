@@ -270,8 +270,6 @@ form.auth-form {
         line-height: emCalc(32px);
         a {
             color: $black;
-            display: block;
-            width: 100%;
         }
     }
     &.has-icon {
@@ -793,15 +791,18 @@ h6.subheader {
     [class*="column"]:last-child {
         float: left !important;
     }
-    .contributor-delete {
-        .user-box {
-            max-width: auto;
-            &:hover {
-                background-color: lighten($alert-color, 40%);
-                border-color: white;
-                cursor: pointer;
-            }
+}
+.contributor-delete {
+    .user-box {
+        max-width: auto;
+        &:hover {
+            background-color: lighten($alert-color, 40%);
+            border-color: white;
+            cursor: pointer;
         }
+    }
+    &:last-child {
+        float: left !important;
     }
 }
 
@@ -999,6 +1000,7 @@ h6.subheader {
         line-height: emCalc(18px);
     }
     .criteria-value a {
+        cursor: default;
         margin: 0;
         padding: emCalc(5px) 0;
         font-weight: bold;

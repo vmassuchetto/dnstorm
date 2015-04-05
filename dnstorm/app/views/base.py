@@ -41,6 +41,7 @@ class HomeView(TemplateView):
     def get_context_data(self, *args, **kwargs):
         context = super(HomeView, self).get_context_data(**kwargs)
         self.request.user = get_user(self.request)
+        print self.request.user
         authenticated = self.request.user.is_authenticated()
 
         # problems
@@ -51,9 +52,7 @@ class HomeView(TemplateView):
         elif authenticated and self.request.resolver_match.url_name == 'problems_contribute':
             q_problems = (Q(contributor__in=[self.request.user]) & ~Q(author=self.request.user))
         else:
-            q_problems = (Q(published=True, public=True)
-                | Q(published=True, contributor__in=[self.request.user])
-                | Q(published=True, author=self.request.user))
+            q_problems = (Q(published=True, public=True))
 
         context['info'] = self.get_info()
         if authenticated:
@@ -71,7 +70,7 @@ class HomeView(TemplateView):
     def get_tabs(self):
         return {
             'items': [{
-                    'icon': 'asterisk', 'name': _('All'),
+                    'icon': 'web', 'name': _('Open'),
                     'classes': 'small-12 medium-2 medium-offset-2',
                     'url': reverse('home'),
                     'marked': self.request.resolver_match.url_name == 'home'

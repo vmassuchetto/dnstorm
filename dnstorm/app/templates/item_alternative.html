@@ -33,14 +33,14 @@
                 </div>
 
                 <div class="columns large-8 alternative-results">
-                    {% for r in alternative.results.values %}
+                    {% for c in alternative.results.values %}
                         <div class="row ideacriteria-row">
                             <div class="columns large-7">
-                                <i class="fi-{{ r.criteria.icon }}"></i>
-                                <h5 class="criteria-name">{{ r.criteria.name }}</h5>
+                                <i class="fi-{{ c.icon }}"></i>
+                                <h5 class="criteria-name">{{ c.name }}</h5>
                             </div>
                             <div class="columns large-5 criteria-value">
-                                <a class="button radius secondary expand">{% if r.criteria.fmt == "currency" %}${% endif %}{{ r.value }}</a>
+                                <a class="button radius secondary expand">{% if c.fmt == "currency" %}${% endif %}{{ c.result_value }}</a>
                             </div>
                         </div>
                     {% endfor %}

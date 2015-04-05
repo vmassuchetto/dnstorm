@@ -34,7 +34,7 @@
 
 {# Tabs #}
 {% if tabs %}
-    <div class="row action-tabs sticable{% if tabs.classes %} {{ tabs.classes }}{% endif %}">
+    <div class="row action-tabs stickable{% if tabs.classes %} {{ tabs.classes }}{% endif %}">
         {% for tab in tabs.items %}
             <a class="action-tab columns{% if tab.marked %} marked{% endif %}{% if tab.classes %} {{ tab.classes }} {% else %} small-12 medium-2 {% endif %}text-center{% if tab.classes %} {{ tab.classes }}{% endif %}"{% if tab.data %} data-tab="{{ tab.data }}"{% endif %}{% if tab.url %} href="{{ tab.url }}"{% endif %}><i class="fi-{{ tab.icon }}"></i>&nbsp;{{ tab.name }}</a>
         {% endfor %}

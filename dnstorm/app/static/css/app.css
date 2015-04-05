@@ -5835,9 +5835,7 @@ form.auth-form a.button, form.auth-form input[type='button'], form.auth-form inp
   .panel p {
     line-height: 2rem; }
     .panel p a {
-      color: #444;
-      display: block;
-      width: 100%; }
+      color: #444; }
   .panel.has-icon p {
     padding-left: 3.125rem; }
   .panel.has-link:hover {
@@ -6237,12 +6235,15 @@ h6.subheader {
   padding: 0.625rem; }
   .user-search-selected [class*="column"]:last-child {
     float: left !important; }
-  .user-search-selected .contributor-delete .user-box {
-    max-width: auto; }
-    .user-search-selected .contributor-delete .user-box:hover {
-      background-color: #fde7e3;
-      border-color: white;
-      cursor: pointer; }
+
+.contributor-delete .user-box {
+  max-width: auto; }
+  .contributor-delete .user-box:hover {
+    background-color: #fde7e3;
+    border-color: white;
+    cursor: pointer; }
+.contributor-delete:last-child {
+  float: left !important; }
 
 .user-search-result {
   padding: 0; }
@@ -6382,6 +6383,7 @@ h6.subheader {
     font-size: 1.125rem;
     line-height: 1.125rem; }
   .ideacriteria-row .criteria-value a {
+    cursor: default;
     margin: 0;
     padding: 0.3125rem 0;
     font-weight: bold; }

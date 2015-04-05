@@ -122,18 +122,30 @@ $.fn.highlight = function (color, duration) {
 
 $(document).ready(function(){
     /***
-    Sets sticable effect on elements.
+    Sets stickable effect on elements.
     ***/
-    var s = $('.sticable');
+    var s = $('.stickable');
     if (s.length === 0) return false;
-    var pos = s.position();
+    s.each(function(){
+        s.data('top', s.offset().top);
+        s.data('left', s.offset().left);
+        s.data('width', s.width());
+    });
     $(window).scroll(function(){
         var windowpos = $(window).scrollTop();
-        if (windowpos >= pos.top + 100){
-            s.addClass("stick");
-        } else {
-            s.removeClass("stick");
-        }
+        s.each(function(){
+            if ($(this).hasClass('stick')) {
+                if (windowpos < $(this).data('top')) {
+                    $(this).css('width', 'auto');
+                    $(this).removeClass('stick');
+                }
+                return;
+            }
+            if (windowpos >= $(this).data('top')){
+                $(this).css('width', $(this).data('width'));
+                $(this).addClass("stick");
+            }
+        });
     });
 });
 

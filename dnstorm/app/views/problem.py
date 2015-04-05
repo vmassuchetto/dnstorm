@@ -140,14 +140,13 @@ class ProblemUpdateView(UpdateView):
         self.object = form.save(commit=False)
 
         # Problem save
-
         self.object.author = self.request.user if not self.object.author else self.object.author
         self.object.description = bleach.clean(self.object.description,
             tags=settings.SANITIZER_ALLOWED_TAGS,
             attributes=settings.SANITIZER_ALLOWED_ATTRIBUTES,
             styles=settings.SANITIZER_ALLOWED_STYLES,
             strip=True, strip_comments=True)
-        self.object.published = self.object.published if self.object.published else False
+        self.object.published = True if self.request.POST.get('publish', None) else False
         self.object.save()
 
         if self.object.author.id != self.request.user.id and self.object.open:
