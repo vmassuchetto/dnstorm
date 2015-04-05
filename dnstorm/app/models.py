@@ -369,9 +369,11 @@ class Alternative(models.Model):
             for i in self.idea.all():
                 ic = get_object_or_none(IdeaCriteria, idea=i, criteria=c)
                 value = ic.get_value() if ic else 0
+                weight = getattr(c, 'weight')
+                weight = weight if weight else 1
                 # Just sum for sums or averages
                 if c.result == 'sum' or c.result == 'average':
-                    self.results[c.id].result_value += value * c.weight
+                    self.results[c.id].result_value += value * weight
                 # Absolute results depend on value ordering
                 elif c.result == 'absolute' and c.order == 'asc':
                     self.results[c.id].result_value = value if value > self.results[c.id] else self.results[c.id]
