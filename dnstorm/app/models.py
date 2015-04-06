@@ -9,7 +9,7 @@ from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
 from django.core.urlresolvers import reverse
 from django.db import models, connection
-from django.db.models import Sum
+from django.db.models import Avg
 from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.safestring import mark_safe
@@ -143,7 +143,7 @@ class Problem(models.Model):
     def fill_data(self, user=False):
         if getattr(self, '_fill_data_cached', None):
             return
-        self.results = list()
+        self.criteria_results = list()
         # Data organization
         self.comments = Comment.objects.filter(problem=self).order_by('created')
         # Permissions
@@ -157,7 +157,7 @@ class Problem(models.Model):
                 alternatives.append(a)
             reverse = True if c.order == 'asc' else False
             alternatives.sort(key=lambda x:x.value, reverse=reverse)
-            self.results.append({'criteria': c, 'alternatives': alternatives})
+            self.criteria_results.append({'criteria': c, 'alternatives': alternatives})
 
     def send_invitation(self, request):
         invitation = get_object_or_none(models.Invitation, user=self)
@@ -358,6 +358,9 @@ class Alternative(models.Model):
             vote = False
         self.voted = True if vote else False
         self.vote_value = vote.value if vote else 0
+        self.vote_average = Vote.objects.filter(alternative=self).aggregate(avg=Avg('value'))['avg']
+        self.vote_average = '%2.d%%' % self.vote_average if self.vote_average else '0%'
+        self.vote_objects = Vote.objects.filter(alternative=self).order_by('-value')
         self.results = dict()
         for c in self.problem.criteria_set.order_by('name').all():
             c.fill_data()
