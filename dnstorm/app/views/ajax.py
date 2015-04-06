@@ -2,6 +2,7 @@ import random
 import re
 
 from django import forms
+from django.contrib.auth import get_user
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.core.urlresolvers import reverse
@@ -76,6 +77,9 @@ class AjaxView(View):
         # users
         elif self.request.GET.get('user_search', None):
             return self.user_search()
+        # help
+        elif self.request.GET.get('help', None):
+            return self.get_help()
 
         # Failure
         return HttpResponseForbidden()
@@ -112,7 +116,8 @@ class AjaxView(View):
         being searched is an e-mail.
         """
         # Validation
-        if not self.request.user.is_authenticated():
+        user = get_user(self.request)
+        if not user.is_authenticated():
             raise PermissionDenied
         q = self.request.GET.get('user_search', None)
         if not q:
@@ -231,14 +236,15 @@ class AjaxView(View):
         """
         # Permissions check
         problem = get_object_or_404(models.Problem, id=self.request.POST.get('problem_id'))
-        if not permissions.problem(obj=problem, user=self.request.user, mode='manage'):
+        user = get_user(self.request)
+        if not permissions.problem(obj=problem, user=user, mode='manage'):
             raise PermissionDenied
 
         # Commit
         # set data
         obj = get_object_or_none(models.Criteria, id=self.request.POST.get('id', None))
         self.request.POST = self.request.POST.copy()
-        self.request.POST['author'] = self.request.user.id
+        self.request.POST['author'] = user.id
         self.request.POST['description'] = self.request.POST['criteria_description']
         criteria = CriteriaForm(self.request.POST)
         criteria.instance = obj if obj else criteria.instance
@@ -250,9 +256,12 @@ class AjaxView(View):
         # reload with updated data
         criteria = CriteriaForm(instance=criteria.instance)
         criteria.instance.fill_data()
+        # contributor
+        criteria.problem.contributor.add(user)
+        follow(user, criteria.problem, actor_only=False) if not is_following(user, criteria.problem) else None
 
         # Response
-        activity_register(self.request.user, criteria.instance)
+        activity_register(user, criteria.instance)
         result = loader.render_to_string('item_criteria.html', {'criteria': criteria.instance, 'show_actions': True, 'criteria_form': criteria})
         return HttpResponse(json.dumps({'result': result}), content_type='application/json')
 
@@ -262,21 +271,25 @@ class AjaxView(View):
         """
         # Validation
         problem = get_object_or_404(models.Problem, id=self.request.GET['problem'])
-        if not problem or not self.request.user.is_authenticated():
+        user = get_user(self.request)
+        if not problem or not user.is_authenticated():
             raise Http404
-        if not permissions.problem(obj=problem, user=self.request.user, mode='contribute'):
+        if not permissions.problem(obj=problem, user=user, mode='contribute'):
             raise PermissionDenied
 
         # Commit
         order = models.Alternative.objects.filter(problem=problem).count() + 1
-        a = models.Alternative(problem=problem, order=order, author=self.request.user)
+        a = models.Alternative(problem=problem, order=order, author=user)
         a.save()
         a.name = _('Alternative %d' % a.id)
         a.save()
-        a.fill_data(self.request.user)
+        a.fill_data(user)
+        # contributor
+        a.problem.contributor.add(user)
+        follow(user, a.problem, actor_only=False) if not is_following(user, a.problem) else None
 
         # Response
-        activity_register(self.request.user, a)
+        activity_register(user, a)
         response = {
             'id': a.id,
             'html': loader.render_to_string('item_alternative.html', {
@@ -291,11 +304,13 @@ class AjaxView(View):
         Comment on a problem, criteria, idea or alternative.
         """
         # Validation
+        # user
+        user = get_user(self.request)
         # comment
         content = self.request.POST.get('content', None)
         if not content:
             raise Http404
-        comment = models.Comment(content=content, author=self.request.user)
+        comment = models.Comment(content=content, author=user)
         # problem
         problem = self.request.POST.get('problem', None)
         if problem:
@@ -327,15 +342,18 @@ class AjaxView(View):
         # permissions
         if not problem and not idea and not criteria and not alternative:
             raise Http404
-        if not permissions.problem(obj=_problem, user=self.request.user, mode='contribute'):
+        if not permissions.problem(obj=_problem, user=user, mode='contribute'):
             raise PermissionDenied
+        # contributor
+        _problem.contributor.add(user)
+        follow(user, _problem, actor_only=False) if not is_following(user, _problem) else None
 
         # Commit
         comment.save()
-        comment.perm_edit = permissions.problem(obj=_problem, user=self.request.user, mode='manage')
+        comment.perm_edit = permissions.problem(obj=_problem, user=user, mode='manage')
 
         # Response
-        activity_register(self.request.user, comment)
+        activity_register(user, comment)
         t = loader.get_template('item_comment.html')
         c = Context({'comment': comment})
         return HttpResponse(json.dumps({'target': target, 'html': re.sub("\n", '', t.render(c))}), content_type='application/json')
@@ -345,10 +363,11 @@ class AjaxView(View):
         Delete criteria from the problem form.
         """
         # Validation
+        user = get_user(self.request)
         c = get_object_or_404(models.Criteria, id=self.request.GET.get('delete_criteria'))
-        if not c or not self.request.user.is_authenticated() or 'on' != self.request.GET.get('yes', None):
+        if not c or not user.is_authenticated() or 'on' != self.request.GET.get('yes', None):
             raise Http404
-        if not permissions.problem(obj=c.problem, user=self.request.user, mode='manage'):
+        if not permissions.problem(obj=c.problem, user=user, mode='manage'):
             raise PermissionDenied
 
         # Commit
@@ -363,10 +382,11 @@ class AjaxView(View):
         Delete alternative.
         """
         # Validation
+        user = get_user(self.request)
         a = get_object_or_404(models.Alternative, id=self.request.GET.get('delete_alternative'))
-        if not a or not self.request.user.is_authenticated():
+        if not a or not user.is_authenticated():
             raise Http404
-        if not permissions.alternative(obj=a, user=self.request.user, mode='manage'):
+        if not permissions.alternative(obj=a, user=user, mode='manage'):
             raise PermissionDenied
 
         # Commit
@@ -388,17 +408,18 @@ class AjaxView(View):
         Vote for an alternative.
         """
         # Validation
+        user = get_user(self.request)
         a = get_object_or_404(models.Alternative, id=self.request.GET.get('vote_alternative'))
-        if not a or not self.request.user.is_authenticated():
+        if not a or not user.is_authenticated():
             raise Http404
 
         # Commit
-        vote = models.Vote.objects.filter(alternative=a, author=self.request.user)
+        vote = models.Vote.objects.filter(alternative=a, author=user)
         if len(vote) > 0:
             vote.delete()
             voted = False
         else:
-            models.Vote(alternative=a, author=self.request.user).save()
+            models.Vote(alternative=a, author=user).save()
             voted = True
 
         # Response
@@ -411,8 +432,9 @@ class AjaxView(View):
         Select an idea for an alternative.
         """
         # Validation
+        user = get_user(self.request)
         alternative = get_object_or_404(models.Alternative, id=self.request.POST.get('alternative', None))
-        if not permissions.alternative(obj=alternative, user=self.request.user, mode='manage'):
+        if not permissions.alternative(obj=alternative, user=user, mode='manage'):
             return HttpResponseForbidden()
         errors = dict()
         name = self.request.POST.get('name', None)
@@ -434,7 +456,7 @@ class AjaxView(View):
         for i in ideas:
             alternative.idea.add(i)
         alternative.save()
-        alternative.fill_data(self.request.user)
+        alternative.fill_data(user)
 
         # Response
         response = {'html': loader.render_to_string('item_alternative.html', {
@@ -447,16 +469,17 @@ class AjaxView(View):
         Performs a 'like' and 'unlike' action on an idea.
         """
         # Validation
+        user = get_user(self.request)
         idea = get_object_or_404(models.Idea, id=self.request.GET.get('idea_like', None))
-        if not permissions.idea(obj=idea, user=self.request.user, mode='contribute'):
+        if not permissions.idea(obj=idea, user=user, mode='contribute'):
             return HttpResponseForbidden()
 
         # Commit
-        if models.Vote.objects.filter(idea=idea, author=self.request.user).exists():
-            models.Vote.objects.filter(idea=idea, author=self.request.user).delete()
+        if models.Vote.objects.filter(idea=idea, author=user).exists():
+            models.Vote.objects.filter(idea=idea, author=user).delete()
             voted = False
         else:
-            models.Vote.objects.create(idea=idea, author=self.request.user)
+            models.Vote.objects.create(idea=idea, author=user)
             voted = True
 
         # Response
@@ -468,17 +491,26 @@ class AjaxView(View):
         Applies the 'like' like counter for alternatives.
         """
         # Validation
+        user = get_user(self.request)
         alternative = get_object_or_404(models.Alternative, id=self.request.GET.get('alternative_like', None))
         value = self.request.GET.get('value', 0)
-        if not permissions.problem(obj=alternative.problem, user=self.request.user, mode='contribute'):
+        if not permissions.problem(obj=alternative.problem, user=user, mode='contribute'):
             return HttpResponseForbidden()
 
         # Commit
-        obj, created = models.Vote.objects.get_or_create(alternative=alternative, author=self.request.user)
+        obj, created = models.Vote.objects.get_or_create(alternative=alternative, author=user)
         obj.value = value
         obj.save()
 
         # Response
         response = {'counter': value}
+        return HttpResponse(json.dumps(response), content_type='application/json')
+
+    def get_help(self):
+        """
+        Applies the 'like' like counter for alternatives.
+        """
+        # Response
+        response = {'html': loader.render_to_string('help.html')}
         return HttpResponse(json.dumps(response), content_type='application/json')
 
