@@ -261,7 +261,7 @@ $(document).on('click', '.theory-help a.toggle', function(e){
                         'showLabels': false,
                         'showTooltips': false,
                         'showScale': false
-                    }
+                    };
                     var chart = new Chart(document.getElementById("pie").getContext("2d")).Doughnut(data, options);
                 });
             }
