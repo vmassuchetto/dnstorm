@@ -183,9 +183,9 @@ a.action-button {
     }
     &.stick {
         @include single-transition(all, 200ms, ease-out);
-        max-width: 100%;
-        width: 100%;
-        z-index: 1;
+        max-width: 100% !important;
+        width: 100% !important;
+        z-index: 30;
         background-color: white;
         padding: emCalc(5px) 0 0 0;
     }
@@ -570,6 +570,7 @@ h6.subheader {
     font-size: emCalc(13px);
 }
 
+.counter-wrap,
 .problem-counter {
     .counter {
         border-left: 2px solid white;
@@ -1262,6 +1263,81 @@ h6.subheader {
     padding: emCalc(20px) 0 0 0;
     h4 {
         font-size: emCalc(18px);
+    }
+    .number {
+        font-weight: bold;
+        font-size: emCalc(16px);
+    }
+}
+.alternative-result {
+    .number {
+        padding: emCalc(10px) 0;
+    }
+    .user-box {
+        margin: 0 0 emCalc(10px) emCalc(10px);
+    }
+    hr {
+        display: block; height: 1px;
+        border: 0;
+        border-top: 1px solid #ccc;
+        margin: 1em 0;
+        padding: 0;
+    }
+}
+
+// Theory help
+
+.theory-help {
+    .help {
+        display: none;
+        background: $light-grey;
+        border-right: 1px solid $grey;
+        border-left: 1px solid $grey;
+        border-bottom: 1px solid $grey;
+        i.big,
+        .help-content {
+            padding: emCalc(5px) emCalc(25px);
+        }
+        i.big {
+            float: left;
+            color: $light-black;
+            display: block;
+            font-size: emCalc(155px);
+            height: emCalc(170px);
+            line-height: 1;
+            overflow: hidden;
+            width: emCalc(190px);
+        }
+    }
+    .help-button a {
+        display: block;
+        width: 40%;
+        margin: 0 auto;
+        text-transform: uppercase;
+    }
+    .help-index {
+        margin: emCalc(30px) 0 0 0;
+        li {
+            padding: emCalc(3px) emCalc(8px);
+            list-style-type: none;
+        }
+    }
+}
+
+// Orbit
+
+.orbit-container {
+    .left {
+        margin: emCalc(10px) emCalc(20px) emCalc(10px);
+    }
+    .orbit-bullets li {
+        width: 1.5rem;
+        height: 1.5rem;
+    }
+    .label {
+        background: $grey;
+        font-weight: bold;
+        font-size: emCalc(14px);
     }
 }
 

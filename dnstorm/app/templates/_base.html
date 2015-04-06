@@ -32,6 +32,14 @@
 {# Scroll boxes #}
 {% include "_base_scroll_boxes.html" %}
 
+{# Help #}
+<div class="row">
+    <div class="theory-help columns large-12">
+        <div class="help"></div>
+        <div class="help-button text-center"><a class="button tiny secondary expand toggle"><i class="fi-info"></i>&nbsp;{% trans "Theory help" %}</a></div>
+    </div>
+</div>
+
 {# Tabs #}
 {% if tabs %}
     <div class="row action-tabs stickable{% if tabs.classes %} {{ tabs.classes }}{% endif %}">
@@ -64,6 +72,7 @@
 {# Scripts #}
 <script type="text/javascript" src="{% static "components/foundation/js/foundation.min.js" %}"></script>
 <script type="text/javascript" src="{% static "components/foundation/js/foundation/foundation.slider.js" %}"></script>
+<script type="text/javascript" src="{% static "components/foundation/js/foundation/foundation.orbit.js" %}"></script>
 <script type="text/javascript" src="{% static "js/scripts.js" %}"></script>
 
 {# Bye #}

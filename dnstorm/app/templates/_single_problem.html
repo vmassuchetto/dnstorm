@@ -234,40 +234,52 @@
         {# Results #}
 
         <div class="problem-tab problem-results">
-            {% if problem.results %}
-                <script type="text/javascript">
-                    Chart.defaults.global.scaleIntegersOnly = false;
-                </script>
-                {% for result in problem.results %}
-                    <div class="row">
-                        <div class="columns large-4">{% include "item_criteria.html" with criteria=result.criteria show_actions=False show_parameters=True show_icons=True show_description=True show_comments=False %}</h4></div>
-                        <div class="columns large-8 text-left">
-                            <canvas id="criteria-chart-{{ result.criteria.id }}" class="criteria-chart"></canvas>
+            <script type="text/javascript">
+                Chart.defaults.global.scaleIntegersOnly = false;
+            </script>
+            <div class="inner-tab">
+                <h4>{% trans "Alternative preference from users" %}</h4>
+                {% if alternatives %}
+                    {% for alternative in alternatives %}
+                        {% include "item_alternative.html" with mode="result" %}
+                    {% endfor %}
+                {% else %}
+                    {% trans "There's no alternative to render data yet." as message %}
+                    {% include "part_panel.html" with icon="prohibited" message=message %}
+                {% endif %}
+                <h4>{% trans "Criteria attendance from alternatives" %}</h4>
+                {% if problem.criteria_results %}
+                    {% for result in problem.criteria_results %}
+                        <div class="row">
+                            <div class="columns large-4">{% include "item_criteria.html" with criteria=result.criteria show_actions=False show_parameters=True show_icons=True show_description=True show_comments=False %}</h4></div>
+                            <div class="columns large-8 text-left">
+                                <canvas id="criteria-chart-{{ result.criteria.id }}" class="criteria-chart"></canvas>
+                            </div>
+                            <script type="text/javascript">
+                                var data = {
+                                    labels: [{% for alternative in result.alternatives %}'{{ alternative.name }}'{% if not forloop.last %},{% endif %}{% endfor %}],
+                                    datasets: [{
+                                        label: "{% trans "Alternatives" %}",
+                                        data: [{% for alternative in result.alternatives %}parseFloat({{ alternative.value }}){% if not forloop.last %},{% endif %}{% endfor %}]
+                                    }]
+                                };
+                                var context = document.getElementById('criteria-chart-{{ result.criteria.id }}').getContext('2d');
+                                var options = {
+                                    animationSteps: 20,
+                                    scaleShowValues: true,
+                                    tooltipTemplate: "<%= value %>"
+                                }
+                                var chart = new Chart(context).Bar(data, options);
+                            </script>
                         </div>
-                        <script type="text/javascript">
-                            var data = {
-                                labels: [{% for alternative in result.alternatives %}'{{ alternative.name }}'{% if not forloop.last %},{% endif %}{% endfor %}],
-                                datasets: [{
-                                    label: "{% trans "Alternatives" %}",
-                                    data: [{% for alternative in result.alternatives %}parseFloat({{ alternative.value }}){% if not forloop.last %},{% endif %}{% endfor %}]
-                                }]
-                            };
-                            var context = document.getElementById('criteria-chart-{{ result.criteria.id }}').getContext('2d');
-                            var options = {
-                                animationSteps: 20,
-                                scaleShowValues: true,
-                                tooltipTemplate: "<%= value %>"
-                            }
-                            var chart = new Chart(context).Bar(data, options);
-                        </script>
-                    </div>
-                {% endfor %}
-            {% else %}
-                {% captureas message %}
-                    {% blocktrans %}There's not enough data to show results.{% endblocktrans %}
-                {% endcaptureas %}
-                {% include "part_panel.html" with icon="prohibited" message=message %}
-            {% endif %}
+                    {% endfor %}
+                {% else %}
+                    {% captureas message %}
+                        {% blocktrans %}There's not enough data to show criteria results.{% endblocktrans %}
+                    {% endcaptureas %}
+                    {% include "part_panel.html" with icon="prohibited" message=message %}
+                {% endif %}
+            </div>
         </div>
 
     </div>

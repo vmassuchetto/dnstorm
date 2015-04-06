@@ -1,0 +1,75 @@
+{% load i18n captureas %}
+
+<div class="help-content">
+<a class="toggle right" href="javascript:void(0);"><i class="fi-x"></i></a>
+<div class="row">
+
+{# Help index #}
+
+<div class="columns large-2">
+    <ul class="help-index">
+        <li><a data-orbit-link="about" class="button expand secondary">{% trans "About" %}</a></li>
+        <li><a data-orbit-link="description" class="button expand secondary">{% trans "Description" %}</a></li>
+        <li><a data-orbit-link="criteria" class="button expand secondary">{% trans "Criteria" %}</a></li>
+        <li><a data-orbit-link="ideas" class="button expand secondary">{% trans "Ideas" %}</a></li>
+        <li><a data-orbit-link="alternatives" class="button expand secondary">{% trans "Alternatives" %}</a></li>
+    </ul>
+</div>
+
+{# Help contents #}
+
+<div class="columns large-10">
+<ul data-orbit>
+
+<li data-orbit-slide="about">
+<h3>{% trans "About DNStorm" %}</h3>
+<p>{% blocktrans %}DNStorm tries to solve your problems by structuring them. We use some techniques based on theoretical research to make teams share their knowledge structurably, so better quality information can be used for decision-making.{% endblocktrans %}</p>
+{% captureas left %}<canvas id="pie" class="left" height="200" width="200"></canvas>{% endcaptureas %}
+{% captureas label %}<span class="label secondary radius">{% endcaptureas %}
+{% captureas _label %}</span>{% endcaptureas %}
+{% captureas button %}<a class="secondary radius tiny" href="{{ example_problem_url }}">{% endcaptureas %}
+{% captureas _button %}</a>{% endcaptureas %}
+<p>{% blocktrans %}{{ left }}Decisions can be measured in better or worse, involving the key idea of the 5 components of <i>decision quality</i>. To identify a good decision we certainly have to {{ label }}1{{ _label }} do a good problem definition, {{ label }}2{{ _label }} generate a good set of alternatives, {{ label }}3{{ _label }} get good information, {{ label }}4{{ _label }} know the consequences very well,{{ label }}5{{ _label }} make sure we're always thinking in a logically correct way.{% endblocktrans %}</p>
+<p>{% blocktrans %}We're confident that even small improvements in structuring the problems and alternatives are capable of highly contribute to better decision results, that's why DNStorm is meant to look only if the items {{ label }}1{{ _label }}, {{ label }}2{{ _label }}, and {{ label }}3{{ _label }}.{% endblocktrans %}</p>
+<p>{% blocktrans %}We'll now start to explain the flow of information in DNStorm. Remember there's an {{ button }}example problem{{ _button }} for you to see the application working.{% endblocktrans %}</p>
+</li>
+
+<li data-orbit-slide="description">
+<h3>{% trans "Writing a good problem description" %}</h3>
+{% captureas button %}<a class="button tiny radius"><i class="fi-plus"></i>&nbsp;{% endcaptureas %}
+{% captureas _button %}</a>{% endcaptureas %}
+{% captureas left %}<i class="fi-target-two big"></i>{% endcaptureas %}
+<p>{% blocktrans %}{{ left }}When you {{ button }}post a problem{{ _button }} you become its manager, being capable of selecting the problem's permissions and invite users to contribute. A good problem description is objective, properly introduced, summarized, with the relevant points cleared and well specified. There's no magic formula, but we can give you some tips about writing problems:{% endblocktrans %}</p>
+<ul>
+    <li>{% trans "Research before writing. And research serious. You have to understand the problem." %}</li>
+    <li>{% trans "Try to use well the web editor while writing. People will understand better the text if it uses headings, references, citations, lists, paragraphs separated properly, links, images, and so." %}</li>
+    <li>{% trans "Proof-read before posting. Grammar is important." %}</li>
+    <li>{% trans "Be open for questioning when the problem is published. Reply the comments and analyze each of the contributor's considerations." %}</li>
+</ul>
+</li>
+
+<li data-orbit-slide="criteria">
+<h3>{% trans "Define criteria to clarify the problem boundaries" %}</h3>
+{% captureas left %}<i class="fi-cloud big"></i>{% endcaptureas %}
+<p>{% blocktrans %}{{ left }}There's a need to be very specific when measuring problems, pushing values and situations that will make the problem <i>limited</i>. We call these parameters the problem's criteria, and each one of them have special parameters to define what we should look while analyzing how we can solve the problem.</p>{% endblocktrans %}
+</li>
+
+<li data-orbit-slide="ideas">
+<h3>{% trans "Brainstorm and generate a lot of possibilities" %}</h3>
+{% captureas left %}<i class="fi-lightbulb big"></i>{% endcaptureas %}
+<p>{% blocktrans %}{{ left }}</p>{% endblocktrans %}
+</li>
+
+<li data-orbit-slide="alternatives">
+<h3>{% trans "Combine ideas to get good alternatives" %}</h3>
+{% captureas left %}<i class="fi-list big"></i>{% endcaptureas %}
+<p>{% blocktrans %}{{ left }}</p>{% endblocktrans %}
+</li>
+
+
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>

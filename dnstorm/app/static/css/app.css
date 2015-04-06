@@ -5779,9 +5779,9 @@ a.action-button {
       border-top-right-radius: 0.1875rem; }
   .action-tabs.stick {
     transition: all 200ms ease-out;
-    max-width: 100%;
-    width: 100%;
-    z-index: 1;
+    max-width: 100% !important;
+    width: 100% !important;
+    z-index: 30;
     background-color: white;
     padding: 0.3125rem 0 0 0; }
 
@@ -6065,33 +6065,33 @@ h6.subheader {
   margin: 0;
   font-size: 0.8125rem; }
 
-.problem-counter .counter {
+.counter-wrap .counter, .problem-counter .counter {
   border-left: 2px solid white;
   border-right: 2px solid white; }
-.problem-counter a.button {
+.counter-wrap a.button, .problem-counter a.button {
   padding: 0.9375rem 0 0.625rem 0;
   background-color: #F7F7F7;
   font-weight: bold;
   color: #777777; }
-  .problem-counter a.button:hover em {
+  .counter-wrap a.button:hover em, .problem-counter a.button:hover em {
     color: black; }
-  .problem-counter a.button.draft {
+  .counter-wrap a.button.draft, .problem-counter a.button.draft {
     padding: 0.625rem 0 0.625rem 0; }
-  .problem-counter a.button i {
+  .counter-wrap a.button i, .problem-counter a.button i {
     font-size: 1.5rem; }
-  .problem-counter a.button em {
+  .counter-wrap a.button em, .problem-counter a.button em {
     font-style: normal;
     font-weight: bold;
     line-height: 1; }
-  .problem-counter a.button em.draft {
+  .counter-wrap a.button em.draft, .problem-counter a.button em.draft {
     font-size: 1.125rem; }
-  .problem-counter a.button em.number {
+  .counter-wrap a.button em.number, .problem-counter a.button em.number {
     font-size: 1rem;
     display: block;
     clear: both;
     font-size: 2rem;
     line-height: 0.7; }
-  .problem-counter a.button em.description {
+  .counter-wrap a.button em.description, .problem-counter a.button em.description {
     font-size: 0.75rem;
     line-height: 0.7; }
 
@@ -6553,6 +6553,59 @@ h6.subheader {
   padding: 1.25rem 0 0 0; }
   .idea-row h4, .alternative-row h4 {
     font-size: 1.125rem; }
+  .idea-row .number, .alternative-row .number {
+    font-weight: bold;
+    font-size: 1rem; }
+
+.alternative-result .number {
+  padding: 0.625rem 0; }
+.alternative-result .user-box {
+  margin: 0 0 0.625rem 0.625rem; }
+.alternative-result hr {
+  display: block;
+  height: 1px;
+  border: 0;
+  border-top: 1px solid #ccc;
+  margin: 1em 0;
+  padding: 0; }
+
+.theory-help .help {
+  display: none;
+  background: #F7F7F7;
+  border-right: 1px solid #B7B7B7;
+  border-left: 1px solid #B7B7B7;
+  border-bottom: 1px solid #B7B7B7; }
+  .theory-help .help i.big, .theory-help .help .help-content {
+    padding: 0.3125rem 1.5625rem; }
+  .theory-help .help i.big {
+    float: left;
+    color: #777777;
+    display: block;
+    font-size: 9.6875rem;
+    height: 10.625rem;
+    line-height: 1;
+    overflow: hidden;
+    width: 11.875rem; }
+.theory-help .help-button a {
+  display: block;
+  width: 40%;
+  margin: 0 auto;
+  text-transform: uppercase; }
+.theory-help .help-index {
+  margin: 1.875rem 0 0 0; }
+  .theory-help .help-index li {
+    padding: 0.1875rem 0.5rem;
+    list-style-type: none; }
+
+.orbit-container .left {
+  margin: 0.625rem 1.25rem 0.625rem; }
+.orbit-container .orbit-bullets li {
+  width: 1.5rem;
+  height: 1.5rem; }
+.orbit-container .label {
+  background: #B7B7B7;
+  font-weight: bold;
+  font-size: 0.875rem; }
 
 .criteria-chart {
   width: 100%;

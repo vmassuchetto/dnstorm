@@ -217,6 +217,58 @@ $(document).on('click', '.notification-icon', function(e){
     }
 });
 
+$(document).on('click', '.theory-help a.toggle', function(e){
+    /***
+    Show the help panel.
+    ***/
+    if  ($('.help').is(':visible')) {
+        $('.help').slideUp(200);
+        return;
+    } else if ($('.help').not(':visible') && $('.help').html().length > 1) {
+        $('.help').slideDown(200);
+        return;
+    }
+    var button = $(this);
+    if (button.attr('disabled') == 'disabled')
+        return false;
+    button.attr('disabled', true);
+    button.addClass('loading');
+    $.ajax({
+        url: '/ajax/',
+        type: 'GET',
+        data: 'help=1',
+        complete: function(xhr, data) {
+            button.attr('disabled', false);
+            button.removeClass('loading');
+            if (data == 'success') {
+                response = $.parseJSON(xhr.responseText);
+                target = $('.help');
+                target.html(response.html);
+                target.slideDown(function(){
+                    $(document).foundation({'orbit': {
+                        'next_on_click': false,
+                        'navigation_arrows': false,
+                        'slide_number': false,
+                    }});
+                    var data = [
+                        { value: 1/5, color: "#666666", highlight: "#a1a1a1" },
+                        { value: 1/5, color: "#666666", highlight: "#a1a1a1" },
+                        { value: 1/5, color: "#666666", highlight: "#a1a1a1" },
+                        { value: 1/5, color: "#a1a1a1", highlight: "#666666" },
+                        { value: 1/5, color: "#a1a1a1", highlight: "#666666" },
+                    ];
+                    var options = {
+                        'showLabels': false,
+                        'showTooltips': false,
+                        'showScale': false
+                    }
+                    var chart = new Chart(document.getElementById("pie").getContext("2d")).Doughnut(data, options);
+                });
+            }
+        }
+    });
+});
+
 function criteria_value() {
     /***
     Show format-dependent fields on the form.
