@@ -50,6 +50,8 @@ class HomeView(TemplateView):
             q_problems = (Q(published=False) & Q(author=self.request.user))
         elif authenticated and self.request.resolver_match.url_name == 'problems_contribute':
             q_problems = (Q(contributor__in=[self.request.user]) & ~Q(author=self.request.user))
+        elif self.request.user.is_superuser:
+            q_problems = (~Q(contributor__in=[self.request.user]) & ~Q(author=self.request.user))
         else:
             q_problems = (Q(published=True, public=True))
 
@@ -69,10 +71,10 @@ class HomeView(TemplateView):
     def get_tabs(self):
         return {
             'items': [{
-                    'icon': 'web', 'name': _('Open problems'),
+                    'icon': 'lightbulb', 'name': _('Contributed to'),
                     'classes': 'small-12 medium-2 medium-offset-2',
-                    'url': reverse('home'),
-                    'marked': self.request.resolver_match.url_name == 'home',
+                    'url': reverse('problems_contribute'),
+                    'marked': self.request.resolver_match.url_name == 'problems_contribute',
                     'show': True
                 },{
                     'icon': 'target-two', 'name': _('Managed by me'),
@@ -87,10 +89,11 @@ class HomeView(TemplateView):
                     'marked': self.request.resolver_match.url_name == 'problems_drafts',
                     'show': True
                 },{
-                    'icon': 'lightbulb', 'name': _('Contributed to'),
+                    'icon': 'web' if not self.request.user.is_superuser else 'asterisk',
+                    'name': _('Open problems') if not self.request.user.is_superuser else _('All problems'),
                     'classes': 'small-12 medium-2 medium-pull-2',
-                    'url': reverse('problems_contribute'),
-                    'marked': self.request.resolver_match.url_name == 'problems_contribute',
+                    'url': reverse('home'),
+                    'marked': self.request.resolver_match.url_name == 'home',
                     'show': True
                 }]
             }
