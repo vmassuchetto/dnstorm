@@ -238,17 +238,17 @@ class ProblemCollaboratorsForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         self.problem = kwargs.pop('problem')
-        users_html = ''.join([render_to_string('item_user_collaborator.html', {'users': self.problem.collaborators.order_by('first_name')})])
+        users_html = ''.join([render_to_string('item_user_collaborator.html', {'users': self.problem.collaborator.order_by('first_name')})])
         super(ProblemCollaboratorsForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.layout = Layout(
             Fieldset('<i class="fi-torso"></i>&nbsp;' + _('Collaborators'),
-                Div(HTML(users_html), css_class='large-12 collapse user-search-selected'),
                 Row(
                     Column('user_search', help_text=_('Type to search for users. Click on them to insert or remove from the selected list. Go to the sitewide user section to resend an invitation for non-confirmed users.'), css_class='large-8'),
                     Column(Button('add_user', _('Search and add collaborators'), css_class='postfix secondary', disabled=True), css_class='large-4')
                 , css_class='collapse'),
-                Row(Div(css_class='columns large-12 collapse user-search-result'),),
+                Row(Column(Div(css_class='user-search-result'),css_class='large-12'), css_class='collapse'),
+                Div(HTML(users_html), css_class='large-12 collapse user-search-selected'),
             css_class='user-search'),
             Fieldset('<i class="fi-lock"></i>&nbsp;' + _('Permissions'),
                 Row(

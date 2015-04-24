@@ -317,7 +317,7 @@ $('input#id_user_search').on('keyup', function(){
             field.removeClass('loading');
             if (data == 'success') {
                 response = JSON.parse(xhr.responseText);
-                $('.user-search-result').html(response.result);
+                $('.user-search-result').html(response.result).show();
                 user_searching = false;
                 button.removeClass('loading');
             }
@@ -325,6 +325,20 @@ $('input#id_user_search').on('keyup', function(){
     });
 });
 
+$('.problem-collaborators').ready(function(){
+    if ($('input#id_public').is(':checked'))
+        $('fieldset.user-search').hide();
+    else
+        $('fieldset.user-search').show();
+});
+
+$('.problem-collaborators').on('click', 'input#id_public', function(){
+    if ($(this).is(':checked')) {
+        $('fieldset.user-search').slideUp();
+    } else {
+        $('fieldset.user-search').slideDown();
+    }
+});
 
 $('.problem-form').on('click', '.user-search-selected,.user-search-result a.username', function(e){
     e.preventDefault();
@@ -373,6 +387,8 @@ $('.user-search-result').on('click', '.user-box', function(){
                 if (data == 'success') {
                     response = JSON.parse(xhr.responseText);
                     $('.user-search-selected').html(response.result);
+                    $('.user-search-result').hide();
+                    $('#id_user_search').val('');
                 }
             }
         });

@@ -41,17 +41,11 @@ def problem_buttons(request, obj):
     user = get_user(request)
     return [
         {
-            'icon': 'page-export',
-            'title': _('Published') if obj.published else _('Draft'),
+            'icon': 'comments',
+            'title': _('Discussion') if obj.published else _('Draft'),
             'url': reverse('problem', kwargs={'pk': obj.id, 'slug':obj.slug}),
             'marked': url_name == 'problem',
             'show': True
-        },{
-            'icon': 'pencil',
-            'title': _('Edit'),
-            'url': reverse('problem_update', kwargs={'pk': obj.id}),
-            'marked': url_name == 'problem_update',
-            'show': permissions.problem(obj=obj, user=request.user, mode='edit')
         },{
             'icon': 'list',
             'title': _('Activity'),
@@ -61,7 +55,7 @@ def problem_buttons(request, obj):
         },{
             'icon': 'torso',
             'title': _('Contributors and permissions') if permissions.problem(obj=obj, user=request.user, mode='manage') else _('Contributors'),
-            'url': reverse('problem_contributors', kwargs={'pk': obj.id}),
+            'url': reverse('problem_collaborators', kwargs={'pk': obj.id}),
             'marked': url_name == 'problem_contributors',
             'show': True
         }
@@ -200,7 +194,7 @@ class ProblemCollaboratorsView(FormView):
         context['title'] = _('Problem collaborators')
         context['delete_form'] = forms.DeleteForm()
         context['problem'] = self.object
-        context['users'] = self.object.collaborators.all()
+        context['users'] = self.object.collaborator.all()
         context['problem_perm_manage'] = permissions.problem(obj=self.object, user=self.request.user, mode='manage')
         return context
 

@@ -101,9 +101,14 @@ class Problem(models.Model):
     around them. This is no more than the suubject of discussion for generating
     ideas and a strategy table.
 
+    Permissions flags are the following:
+     * published: if the problem is published or in draft mode
+     * open: open contribution mode -- anyone will be able to edit objects
+     * public: if the problem can be viewed by non-collaborators
+
     Attributes:
-        * ``last_activity`` Gets updated in favor of the ``ActivityManager``
-          ordering every time an idea or a comment is made for this problem.
+     * ``last_activity`` Gets updated in favor of the ``ActivityManager``
+       ordering every time an idea or a comment is made for this problem.
     """
     title = models.CharField(verbose_name=_('Title'), max_length=90, help_text=_('Give your problem a compreensive title, this will be the main call for users.'))
     slug = AutoSlugField(populate_from='title', max_length=60, editable=False, unique=True, always_update=True)
@@ -112,6 +117,8 @@ class Problem(models.Model):
     coauthor = models.ManyToManyField(User, related_name='coauthor', editable=False, blank=True, null=True)
     collaborator = models.ManyToManyField(User, related_name='collaborator', verbose_name=_('Collaborators'), blank=True, null=True)
     published = models.BooleanField(default=True, blank=True)
+    open = models.BooleanField(default=True, blank=True)
+    public = models.BooleanField(default=True, blank=True)
     created = models.DateTimeField(auto_now_add=True, editable=False, default='2000-01-01')
     updated = models.DateTimeField(auto_now=True, editable=False, default='2000-01-01')
     last_activity = models.DateTimeField(auto_now=True, editable=False, default='2000-01-01')

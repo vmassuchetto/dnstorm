@@ -15,7 +15,7 @@ def problem(**kwargs):
     elif mode == 'view':
         return (
             (obj.published and obj.public)
-            or (obj.published and user in obj.contributor.all())
+            or (obj.published and user in obj.collaborator.all())
             or obj.author == user
         )
     elif mode == 'contribute':
@@ -24,7 +24,7 @@ def problem(**kwargs):
             and (
                 obj.public
                 or obj.author == user
-                or user in obj.contributor.all()
+                or user in obj.collaborator.all()
             )
         )
     elif mode == 'edit':
@@ -32,7 +32,7 @@ def problem(**kwargs):
             (user.is_authenticated())
             and (
                 (obj.public and obj.open)
-                or (obj.open and user in obj.contributor.all())
+                or (obj.open and user in obj.collaborator.all())
                 or obj.author == user
             )
         )
@@ -54,7 +54,7 @@ def problem_queryset(user, mode='view'):
     elif mode == 'view':
         return (
             Q(published=True, public=True)
-            | Q(published=True, contributor__in=[user])
+            | Q(published=True, collaborator__in=[user])
             | Q(author=user))
 
 def problem_fk_queryset(user, mode='view'):
@@ -69,7 +69,7 @@ def problem_fk_queryset(user, mode='view'):
     elif mode == 'view':
         return (
             Q(problem__published=True, problem__public=True)
-            | Q(problem__published=True, problem__contributor__in=user)
+            | Q(problem__published=True, problem__collaborator__in=user)
             | Q(problem__author=user))
 
 def comment_queryset(user, mode='view'):
@@ -83,15 +83,15 @@ def comment_queryset(user, mode='view'):
     elif mode == 'view':
         return Q((
                 Q(problem__published=True, problem__public=True)
-                | Q(problem__published=True, problem__contributor__in=user)
+                | Q(problem__published=True, problem__collaborator__in=user)
                 | Q(problem__author=user)
             ) | (
                 Q(idea__problem__published=True, idea__problem__public=True)
-                | Q(idea__problem__published=True, idea__problem__contributor__in=user)
+                | Q(idea__problem__published=True, idea__problem__collaborator__in=user)
                 | Q(idea__problem__author=user)
             ) | (
                 Q(alternative__problem__published=True, alternative__problem__public=True)
-                | Q(alternative__problem__published=True, alternative__problem__contributor__in=user)
+                | Q(alternative__problem__published=True, alternative__problem__collaborator__in=user)
                 | Q(alternative__problem__author=user)
             ))
 
