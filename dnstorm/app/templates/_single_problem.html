@@ -12,47 +12,8 @@
 
 {% block modals %}
     {% if problem_perm_contribute %}
-
-        {# Alternative removal confirmation #}
-
-        <div id="alternative-delete-modal" class="reveal-modal tiny" data-reveal>
-            <div class="row">
-            <div class="columns large-12">
-                <p>{% trans "Really remove this alternative?" %}</p>
-            </div>
-            </div>
-            <div class="row">
-            <div class="columns large-6">
-                <a class="close-reveal-modal-button button small secondary radius no-margin-bottom">{% trans "Cancel" %}</a>
-            </div>
-            <div class="columns large-6 text-right">
-                <a class="delete button alert radius no-margin-bottom delete-alternative-confirm">{% trans "Remove!" %}</a>
-            </div>
-            </div>
-        </div>
-
-        {# Edit alternatives #}
-
-        <div id="alternative-edit" class="reveal-modal large" data-reveal>
-            <a class="close-reveal-modal">&#215;</a>
-            <h3>{% trans "Edit alternative" %}</h3>
-            <form>
-                {% crispy alternative_form %}
-                <hr/>
-                <div class="row">
-                    <div class="large-12 text-right">
-                        <a class="button success radius alternative-save">{% trans "Save" %}</a>
-                    </div>
-                </div>
-            </form>
-        </div>
-
-    {% endif %}
-
-    {% if problem_perm_contribute %}
         <div class="hide" id="comment-form">{% crispy comment_form %}</div>
     {% endif %}
-
 {% endblock %}
 
 {% block messages %}

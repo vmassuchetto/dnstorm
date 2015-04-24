@@ -34,16 +34,13 @@ from dnstorm.app.views.problem import problem_buttons
 
 class LoginRequiredMixin(TemplateResponseMixin):
 
-    @method_decorator(login_required)
-    def dispatch(self, *args, **kwargs):
-        self.request.user = get_user(self.request)
-        if not self.request.user.is_authenticated():
-            raise PermissionDenied()
-        return super(LoginRequiredMixin, self).dispatch(*args, **kwargs)
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated():
+            return self.handle_no_permission(request)
+        return super(LoginRequiredMixin, self).dispatch(request, *args, **kwargs)
 
 class SuperUserRequiredMixin(TemplateResponseMixin):
 
-    @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
         self.request.user = get_user(self.request)
         if not self.request.user.is_superuser:
@@ -314,6 +311,7 @@ class ActivityView(LoginRequiredMixin, TemplateView):
         c = _c.get(self.kwargs.get('content_type', 'problem'), 'problem')
         _content_type = get_object_or_none(ContentType, name=c)
         self.content_type = _content_type
+        self.problem = get_object_or_404(Problem, id=self.kwargs.get('pk', None))
 
         # Activities
         if self.url_name in ['activity', 'activity_short']:
@@ -323,7 +321,7 @@ class ActivityView(LoginRequiredMixin, TemplateView):
             activities = Action.objects.global_stream(self.request.user, content_type=_content_type)
             context['tabs'] = self.get_tabs()
         elif self.url_name == 'activity_problem':
-            activities = Action.objects.problem_stream(user=self.request.user, problem=self.problem)
+            activities = Action.objects.target(self.problem)
             context['tabs'] = self.get_problem_tabs()
             context['problem'] = self.problem
         elif self.url_name == 'activity_problem_objects':
@@ -354,7 +352,7 @@ class ActivityView(LoginRequiredMixin, TemplateView):
             return {
                 'icon': 'target-two',
                 'icon_url': reverse('problem', kwargs={'pk': self.problem.id, 'slug': self.problem.slug}),
-                'title': self.problem.title,
+                'title': _('Problem activity: %s' % self.problem.title),
                 'title_url': self.problem.get_absolute_url(),
                 'buttons': problem_buttons(self.request, self.problem),
                 'status': 'public' if self.problem.public else 'private',

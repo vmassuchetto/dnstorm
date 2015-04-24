@@ -180,7 +180,6 @@ class UserUpdateView(UpdateView):
             'buttons': user_buttons(self.request, self.object)
         }
 
-@permission_required('auth.change_user')
 class UserPasswordUpdateView(FormView):
     form_class = UserPasswordForm
     template_name = '_update_user_password.html'

@@ -83,7 +83,7 @@ urlpatterns = patterns('',
     (r'^accounts/', include('registration.backends.default.urls')),
     (r'^jsi18n/$', 'django.views.i18n.javascript_catalog', js_info_dict, 'jsi18n'),
     (r'^ckeditor/', include('ckeditor.urls')),
-    ('^stream/', include('actstream.urls')),
+    (r'^stream/', include('actstream.urls')),
 
     # Static files
     (r'^static/(?P<path>.*)$', 'django.views.static.serve', { 'document_root': settings.STATIC_ROOT }),
