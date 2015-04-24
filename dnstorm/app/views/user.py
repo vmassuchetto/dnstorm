@@ -16,6 +16,7 @@ from django.views.generic.edit import FormView, UpdateView
 from actstream.models import actor_stream
 
 from dnstorm.app import permissions
+from dnstorm.app.templatetags.user_tags import user_problem_count, user_idea_count, user_comment_count
 from dnstorm.app.forms import UserForm, UserPasswordForm, CommentForm
 from dnstorm.app.models import Problem, Idea, Comment, Option, Invitation
 from dnstorm.app.utils import get_option, get_object_or_none, get_user
@@ -54,13 +55,16 @@ class UserView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, *args, **kwargs):
         context = super(UserView, self).get_context_data(**kwargs)
         self.object = get_object_or_404(User, username=kwargs['username'])
+        self.object.problem_count = user_problem_count(self.object)
+        self.object.idea_count = user_idea_count(self.object)
+        self.object.comment_count = user_comment_count(self.object)
         context['site_title'] = '%s | %s' % (self.object.username, _('User profile'))
         context['profile'] = self.object
         context['info'] = self.get_info()
         activities = Paginator(actor_stream(context['profile']), 25)
         context['activities'] = activities.page(self.request.GET.get('page', 1))
         context['comment_form'] = CommentForm()
-        context['user_perm_manage'] = permissions.user(obj=user, user=self.request.user, mode='manage')
+        context['user_perm_manage'] = permissions.user(obj=self.object, user=self.request.user, mode='manage')
         return context
 
     def get_info(self):

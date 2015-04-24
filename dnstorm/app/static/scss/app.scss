@@ -899,7 +899,11 @@ h6.subheader {
 .activity-info {
     .activity-date {
         font-size: emCalc(16px);
-        margin: emCalc(10px) 0;
+        margin: emCalc(20px) 0;
+        line-height: emCalc(20px);
+        i {
+            font-size: emCalc(20px);
+        }
     }
 }
 

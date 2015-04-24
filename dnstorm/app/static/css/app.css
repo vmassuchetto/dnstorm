@@ -6314,7 +6314,10 @@ h6.subheader {
 
 .activity-info .activity-date {
   font-size: 1rem;
-  margin: 0.625rem 0; }
+  margin: 1.25rem 0;
+  line-height: 1.25rem; }
+  .activity-info .activity-date i {
+    font-size: 1.25rem; }
 
 .activity-row {
   border-top: 1px solid #F1F1F1;

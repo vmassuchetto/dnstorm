@@ -311,7 +311,8 @@ class ActivityView(LoginRequiredMixin, TemplateView):
         c = _c.get(self.kwargs.get('content_type', 'problem'), 'problem')
         _content_type = get_object_or_none(ContentType, name=c)
         self.content_type = _content_type
-        self.problem = get_object_or_404(Problem, id=self.kwargs.get('pk', None))
+        if self.kwargs.get('pk', None):
+            self.problem = get_object_or_404(Problem, id=self.kwargs.get('pk', None))
 
         # Activities
         if self.url_name in ['activity', 'activity_short']:
