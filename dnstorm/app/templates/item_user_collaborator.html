@@ -1,7 +1,7 @@
 
 <div class="row">
     {% for user in users %}
-        <div class="columns large-3 contributor-delete">
+        <div class="columns large-3 collaborator-delete">
             {% include "item_user.html" with user=user enclosed=True %}
         </div>
         {% if forloop.counter|divisibleby:4 %}

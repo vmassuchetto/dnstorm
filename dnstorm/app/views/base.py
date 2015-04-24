@@ -18,7 +18,7 @@ from django.utils.decorators import method_decorator
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
 from django.views.generic import DetailView, RedirectView
-from django.views.generic.base import TemplateView, View
+from django.views.generic.base import TemplateView, View, TemplateResponseMixin
 from django.views.generic.edit import FormView, UpdateView
 
 from actstream.actions import follow
@@ -31,6 +31,24 @@ from dnstorm.app.forms import OptionsForm, RegistrationForm, CommentForm
 from dnstorm.app.utils import get_object_or_none, activity_count, get_option, update_option
 from dnstorm.app.models import Option, Problem, Idea, Comment, Criteria, Alternative, Invitation
 from dnstorm.app.views.problem import problem_buttons
+
+class LoginRequiredMixin(TemplateResponseMixin):
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        self.request.user = get_user(self.request)
+        if not self.request.user.is_authenticated():
+            raise PermissionDenied()
+        return super(LoginRequiredMixin, self).dispatch(*args, **kwargs)
+
+class SuperUserRequiredMixin(TemplateResponseMixin):
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        self.request.user = get_user(self.request)
+        if not self.request.user.is_superuser:
+            raise PermissionDenied()
+        return super(SuperUserRequiredMixin, self).dispatch(*args, **kwargs)
 
 class HomeView(TemplateView):
     """
@@ -71,10 +89,11 @@ class HomeView(TemplateView):
     def get_tabs(self):
         return {
             'items': [{
-                    'icon': 'lightbulb', 'name': _('Contributed to'),
+                    'icon': 'web' if not self.request.user.is_superuser else 'asterisk',
+                    'name': _('Open problems') if not self.request.user.is_superuser else _('All problems'),
                     'classes': 'small-12 medium-2 medium-offset-2',
-                    'url': reverse('problems_contribute'),
-                    'marked': self.request.resolver_match.url_name == 'problems_contribute',
+                    'url': reverse('home'),
+                    'marked': self.request.resolver_match.url_name == 'home',
                     'show': True
                 },{
                     'icon': 'target-two', 'name': _('Managed by me'),
@@ -89,11 +108,10 @@ class HomeView(TemplateView):
                     'marked': self.request.resolver_match.url_name == 'problems_drafts',
                     'show': True
                 },{
-                    'icon': 'web' if not self.request.user.is_superuser else 'asterisk',
-                    'name': _('Open problems') if not self.request.user.is_superuser else _('All problems'),
+                    'icon': 'lightbulb', 'name': _('Contributed to'),
                     'classes': 'small-12 medium-2 medium-pull-2',
-                    'url': reverse('home'),
-                    'marked': self.request.resolver_match.url_name == 'home',
+                    'url': reverse('problems_collaborating'),
+                    'marked': self.request.resolver_match.url_name == 'problems_collaborating',
                     'show': True
                 }]
             }
@@ -120,12 +138,24 @@ class RegistrationView(BaseRegistrationView):
             context['form'] = RegistrationForm(hash=_hash)
         else:
             context['form'] = RegistrationForm()
+        context['info'] = self.get_info()
 
         if _hash:
             invitation = get_object_or_404(Invitation, hash=_hash)
-            context['problems'] = Problem.objects.filter(contributor__in=[invitation.user])
+            context['problems'] = Problem.objects.filter(collaborator__in=[invitation.user])
 
         return context
+
+    def get_info(self):
+        """
+        Information for the title bar.
+        """
+        return {
+            'icon': 'torso',
+            'icon_url': reverse('registration_register'),
+            'title': _('Registration'),
+            'show': True
+        }
 
     def register(self, request, **cleaned_data):
         """
@@ -180,13 +210,13 @@ class RegistrationView(BaseRegistrationView):
             i.delete()
 
         # Welcome message
-        pcs = Problem.objects.filter(contributor__in=[user])
+        pcs = Problem.objects.filter(collaborator__in=[user])
         msg = _('Welcome to DNStorm. ')
         if pcs:
-            msg += _('You are already a contributor of a problem:&nbsp;')
+            msg += _('You are already a collaborator of a problem:&nbsp;')
             for p in pcs:
                 msg += '<a class="label success radius" href="%s">%s</a>&nbsp;' % (reverse('problem', kwargs={'pk': p.id, 'slug': p.slug}), p.title)
-            _return = reverse('problems_contribute')
+            _return = reverse('problems_collaborating')
         else:
             msg += _('You can start by creating a new problem or contrubuting to existing ones.')
             _return = reverse('home')
@@ -216,18 +246,12 @@ class LoginView(View):
     def post(self, *args, **kwargs):
         return self.get(*args, **kwargs)
 
-class OptionsView(FormView):
+class OptionsView(SuperUserRequiredMixin, FormView):
     """
     Admin options page for superusers.
     """
     template_name = '_update_options.html'
     form_class = OptionsForm
-
-    @method_decorator(login_required)
-    def dispatch(self, *args, **kwargs):
-        if not self.request.user.is_superuser:
-            raise PermissionDenied()
-        return super(OptionsView, self).dispatch(*args, **kwargs)
 
     def get_context_data(self, *args, **kwargs):
         context = super(OptionsView, self).get_context_data(**kwargs)
@@ -273,22 +297,12 @@ class CommentView(RedirectView):
         problem = comment.problem if comment.problem else comment.idea.problem
         return reverse('problem', kwargs={'pk': problem.id, 'slug':problem.slug}) + '#comment-' + str(comment.id)
 
-class ActivityView(TemplateView):
+class ActivityView(LoginRequiredMixin, TemplateView):
     template_name = '_single_activity.html'
-
-    def dispatch(self, *args, **kwargs):
-        self.url_name = self.request.resolver_match.url_name
-        if self.url_name in ['activity_problem', 'activity_problem_objects']:
-            _pk = self.kwargs.get('pk', None)
-            self.problem = _problem = get_object_or_none(Problem, pk=_pk)
-            if not permissions.problem(obj=_problem, user=self.request.user, mode='view'):
-                raise PermissionDenied
-        else:
-            self.problem = None
-        return super(ActivityView, self).dispatch(*args, **kwargs)
 
     def get_context_data(self, *args, **kwargs):
         context = super(ActivityView, self).get_context_data(**kwargs)
+        self.url_name = self.request.resolver_match.url_name
 
         # Content type
         _c = {
@@ -311,9 +325,11 @@ class ActivityView(TemplateView):
         elif self.url_name == 'activity_problem':
             activities = Action.objects.problem_stream(user=self.request.user, problem=self.problem)
             context['tabs'] = self.get_problem_tabs()
+            context['problem'] = self.problem
         elif self.url_name == 'activity_problem_objects':
             activities = Action.objects.problem_objects_stream(user=self.request.user, problem=self.problem, content_type=_content_type)
             context['tabs'] = self.get_problem_tabs()
+            context['problem'] = self.problem
         activities = Paginator(activities, 25)
         context['activities'] = activities.page(self.request.GET.get('page', 1))
 
@@ -321,7 +337,7 @@ class ActivityView(TemplateView):
         context['site_title'] = '%s | %s' % (_('Activity'), get_option('site_title'))
         for a in context['activities']:
             a.action_object.fill_data() if callable(getattr(self, 'fill_data', None)) else None
-        if self.problem:
+        if hasattr(self, 'problem'):
             context['criteria_count'] = Criteria.objects.filter(problem=self.problem).count()
             context['idea_count'] = Idea.objects.filter(problem=self.problem, published=True).count()
             context['alternative_count'] = Alternative.objects.filter(problem=self.problem).count()
@@ -354,31 +370,37 @@ class ActivityView(TemplateView):
 
     def get_tabs(self):
         return {
+            'classes': 'activity-tabs',
             'items': [{
                     'icon': 'asterisk', 'name': _('All'),
                     'classes': 'small-12 medium-2 medium-offset-1',
                     'url': reverse('activity'),
-                    'marked': self.url_name == 'activity'
+                    'marked': self.url_name == 'activity',
+                    'show': True
                 },{
                     'icon': 'target-two', 'name': _('Problems'),
                     'classes': 'small-12 medium-2',
                     'url': reverse('activity_objects', kwargs={'content_type': 'problems'}),
-                    'marked': self.url_name == 'activity_objects' and self.content_type.name == 'problem'
+                    'marked': self.url_name == 'activity_objects' and self.content_type.name == 'problem',
+                    'show': True
                 },{
                     'icon': 'lightbulb', 'name': _('Ideas'),
                     'classes': 'small-12 medium-2',
                     'url': reverse('activity_objects', kwargs={'content_type': 'ideas'}),
-                    'marked': self.content_type.name == 'idea'
+                    'marked': self.content_type.name == 'idea',
+                    'show': True
                 },{
                     'icon': 'list', 'name': _('Alternatives'),
                     'classes': 'small-12 medium-2',
                     'url': reverse('activity_objects', kwargs={'content_type': 'alternatives'}),
-                    'marked': self.content_type.name == 'alternative'
+                    'marked': self.content_type.name == 'alternative',
+                    'show': True
                 },{
                     'icon': 'list', 'name': _('Comments'),
                     'classes': 'small-12 medium-2 medium-pull-1',
                     'url': reverse('activity_objects', kwargs={'content_type': 'comments'}),
-                    'marked': self.content_type.name == 'comment'
+                    'marked': self.content_type.name == 'comment',
+                    'show': True
                 }]
             }
 
@@ -388,26 +410,31 @@ class ActivityView(TemplateView):
                     'icon': 'asterisk', 'name': _('All'),
                     'classes': 'small-12 medium-2 medium-offset-1',
                     'url': reverse('activity_problem', kwargs={'pk': self.problem.id}),
-                    'marked': self.url_name == 'activity_problem'
+                    'marked': self.url_name == 'activity_problem',
+                    'show': True
                 },{
                     'icon': 'target-two', 'name': _('Description'),
                     'classes': 'small-12 medium-2',
                     'url': reverse('activity_problem_objects', kwargs={'pk': self.problem.id, 'content_type': 'description'}),
-                    'marked': self.url_name == 'activity_problem_objects' and self.content_type.name == 'problem'
+                    'marked': self.url_name == 'activity_problem_objects' and self.content_type.name == 'problem',
+                    'show': True
                 },{
                     'icon': 'lightbulb', 'name': _('Ideas'),
                     'classes': 'small-12 medium-2',
                     'url': reverse('activity_problem_objects', kwargs={'pk': self.problem.id, 'content_type': 'ideas'}),
-                    'marked': self.content_type.name == 'idea'
+                    'marked': self.content_type.name == 'idea',
+                    'show': True
                 },{
                     'icon': 'list', 'name': _('Alternatives'),
                     'classes': 'small-12 medium-2',
                     'url': reverse('activity_problem_objects', kwargs={'pk': self.problem.id, 'content_type': 'alternatives'}),
-                    'marked': self.content_type.name == 'alternative'
+                    'marked': self.content_type.name == 'alternative',
+                    'show': True
                 },{
                     'icon': 'list', 'name': _('Comments'),
                     'classes': 'small-12 medium-2 medium-pull-1',
                     'url': reverse('activity_problem_objects', kwargs={'pk': self.problem.id, 'content_type': 'comments'}),
-                    'marked': self.content_type.name == 'comment'
+                    'marked': self.content_type.name == 'comment',
+                    'show': True
                 }]
             }

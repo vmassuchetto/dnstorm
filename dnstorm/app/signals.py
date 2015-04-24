@@ -25,6 +25,10 @@ def create_notice_types(app, created_models, verbosity, **kwargs):
     notification.create_notice_type(
         'invitation',
         _('Invitation received'),
-        _('you have received an invitation to collaborate in problem'))
+        _('you have received an invitation to collaborate in a problem'))
+    notification.create_notice_type(
+        'problem',
+        _('Problem updated'),
+        _('a problem you\'re contributing was updated'))
 
 signals.post_syncdb.connect(create_notice_types, sender=notification)

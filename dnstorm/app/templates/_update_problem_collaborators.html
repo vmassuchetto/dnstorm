@@ -8,7 +8,7 @@
     </script>
 {% endblock %}
 
-{% block bodyclass %}problem-contributors{% endblock %}
+{% block bodyclass %}problem-collaborators{% endblock %}
 
 {% block content %}
 
@@ -17,7 +17,7 @@
             {% if problem_perm_manage %}
                 {% crispy form %}
             {% else %}
-                {% include "item_user_contributor.html" %}
+                {% include "item_user_collaborator.html" %}
             {% endif %}
         </div>
     </div>

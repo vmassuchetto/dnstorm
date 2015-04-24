@@ -29,7 +29,7 @@
                         <div class="columns large-12">
                             <h4>
                                 {% if problem.published %}
-                                    <a href="{% url "problem" problem.id problem.slug %}">{{ problem.title }}</a>
+                                    <a href="{% url "problem" problem.id problem.slug %}">{% if problem.title %}{{ problem.title }}{% else %}{% trans "No title" %}{% endif %}</a>
                                 {% else %}
                                     <a href="{% url "problem_update" problem.id %}" class="draft">{% if problem.title %}{{ problem.title }}{% else %}{% trans "No title" %}{% endif %}</a>
                                 {% endif %}
@@ -53,12 +53,12 @@
         {% if user.is_authenticated %}
             {% url "problem_create" as item_url %}
             {% captureas message %}
-                {% blocktrans %}No problem around here.{% endblocktrans %}
+                {% blocktrans %}Welcome to DNStorm. You can start by <a href="{{ item_url }}">creating a problem</a>.{% endblocktrans %}
             {% endcaptureas %}
         {% else %}
             {% url "auth_login" as item_url %}
             {% captureas message %}
-                {% blocktrans %}Hi! There's no problem around for you. Try <a href="{{ item_url }}">loggin in</a>.{% endblocktrans %}
+                {% blocktrans %}Welcome to DNStorm. There's no problem here. You can <a href="{{ item_url }}">log in</a> to create one.{% endblocktrans %}
             {% endcaptureas %}
         {% endif %}
         {% include "part_panel.html" with message=message icon="prohibited" %}

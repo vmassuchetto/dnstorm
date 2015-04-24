@@ -24,12 +24,18 @@
                         <i class="fi-{{ criteria.icon }}"></i>
                         <h5 class="criteria-name">{{ criteria.name }}</h5>
                     </div>
-                    <div class="columns large-3 criteria-value">
-                        <a class="button radius secondary expand">{% if criteria.fmt == "currency" %}${% endif %}{{ criteria.value }}</a>
-                    </div>
-                    <div class="columns large-6 criteria-description">
-                        {{ criteria.description|paragraphs|safe }}
-                    </div>
+                    {% if criteria.value %}
+                        <div class="columns large-3 criteria-value">
+                            <a class="button radius secondary expand">{% if criteria.fmt == "currency" %}${% endif %}{{ criteria.value }}</a>
+                        </div>
+                        <div class="columns large-6 criteria-description">
+                            {{ criteria.description|paragraphs|safe }}
+                        </div>
+                    {% else %}
+                        <div class="columns large-6 left">
+                            <a class="button large-icon alert radius" href="{% if criteria.perm_edit %}{% url "criteria_update" criteria.id %}{% else %}javascript:void(0);">{% endif %}<i class="fi-alert"></i>&nbsp;&nbsp;&nbsp;{% trans "Warning: No value for this criteria." %}</a>
+                        </div>
+                    {% endif %}
                 </div>
 
             {% endfor %}
@@ -49,6 +55,15 @@
                         </div>
                     </div>
                 </div>
+
+                {% if idea.coauthor.all %}
+                    <div class="columns medium-3 large-6">
+                        <h6 class="subheader">{% trans "Idea coauthors" %}</h6>
+                        {% for coauthor in idea.coauthor.all %}
+                            {% include "item_user.html" with user=coauthor link=idea.get_absolute_url show_badges=True %}
+                        {% endfor %}
+                    </div>
+                {% endif %}
 
                 <div class="columns medium-3 large-3">
                     <h6 class="subheader">{% trans "Idea author" %}</h6>

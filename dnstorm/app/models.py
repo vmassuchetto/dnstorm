@@ -8,7 +8,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
 from django.core.urlresolvers import reverse
-from django.db import models, connection
+from django.db import models
 from django.db.models import Avg
 from django.template.loader import render_to_string
 from django.utils import timezone
@@ -109,15 +109,9 @@ class Problem(models.Model):
     slug = AutoSlugField(populate_from='title', max_length=60, editable=False, unique=True, always_update=True)
     description = RichTextField(verbose_name=_('Description'), help_text=_('The description needs to be complete and address all the variables of the problem, giving users the correct parameters to give ideas according to the criteria specified.'))
     author = models.ForeignKey(User, related_name='author', editable=False)
-    coauthor = models.ManyToManyField(User, related_name='problem_coauthor', editable=False, blank=True, null=True)
-    contributor = models.ManyToManyField(User, related_name='contributor', verbose_name=_('Contributors'), blank=True, null=True)
-    public = models.BooleanField(default=True, blank=True)
-    open = models.BooleanField(default=True, blank=True)
-    published = models.BooleanField(editable=False, blank=True, default=False)
-    models.CharField(verbose_name=_('Publish status'), max_length=10, editable=False, blank=False, choices=(
-        ('draft', _('Draft')),
-        ('published', _('Published'))
-    ))
+    coauthor = models.ManyToManyField(User, related_name='coauthor', editable=False, blank=True, null=True)
+    collaborator = models.ManyToManyField(User, related_name='collaborator', verbose_name=_('Collaborators'), blank=True, null=True)
+    published = models.BooleanField(default=True, blank=True)
     created = models.DateTimeField(auto_now_add=True, editable=False, default='2000-01-01')
     updated = models.DateTimeField(auto_now=True, editable=False, default='2000-01-01')
     last_activity = models.DateTimeField(auto_now=True, editable=False, default='2000-01-01')
@@ -199,6 +193,7 @@ class Criteria(models.Model):
         ('absolute', _('Absolute')),
     ), help_text=_('How the results will be calculated across the given ideas.'))
     author = models.ForeignKey(User, blank=False, null=False)
+    coauthor = models.ManyToManyField(User, related_name='criteria_coauthor', editable=False, blank=True, null=True)
 
     class Meta:
         db_table = settings.DNSTORM['table_prefix'] + '_criteria'
@@ -225,6 +220,7 @@ class Criteria(models.Model):
     def fill_data(self, user=False):
         self.comments = Comment.objects.filter(criteria=self).order_by('created')
         self.perm_manage = permissions.criteria(obj=self, user=user, mode='manage')
+        self.perm_edit = permissions.criteria(obj=self, user=user, mode='edit')
 
 class Idea(models.Model):
     """
@@ -235,6 +231,7 @@ class Idea(models.Model):
     problem = models.ForeignKey(Problem, editable=False)
     title = models.CharField(verbose_name=_('title'), max_length=90, help_text=_('Describe in a general basis what is the idea you\'re given to address the problem.'))
     author = models.ForeignKey(User, editable=False)
+    coauthor = models.ManyToManyField(User, related_name='idea_coauthor', editable=False, blank=True, null=True)
     published = models.BooleanField(editable=False, blank=True, default=False)
     created = models.DateTimeField(auto_now_add=True, default='2000-01-01')
     updated = models.DateTimeField(auto_now=True, default='2000-01-01')
@@ -257,6 +254,7 @@ class Idea(models.Model):
         Fill the idea with problem and user-specific data.
         """
         self.perm_manage = permissions.idea(obj=self, user=user, mode='manage')
+        self.perm_edit = permissions.idea(obj=self, user=user, mode='edit')
         self.comments = Comment.objects.filter(idea=self).order_by('created')
 
         # Criterias
@@ -329,7 +327,9 @@ class Alternative(models.Model):
     name = models.CharField(max_length=255)
     problem = models.ForeignKey(Problem, editable=False)
     idea = models.ManyToManyField(Idea, editable=False, null=True, blank=True)
+    published = models.BooleanField(editable=False, blank=True, default=False)
     author = models.ForeignKey(User, editable=False)
+    coauthor = models.ManyToManyField(User, related_name='alternative_coauthor', editable=False, blank=True, null=True)
     order = models.PositiveSmallIntegerField(editable=False, default=0)
     created = models.DateTimeField(auto_now_add=True, editable=False, default='2001-01-01')
     updated = models.DateTimeField(auto_now=True, editable=False, default='2000-01-01')
@@ -421,3 +421,20 @@ class Vote(models.Model):
 
     def type(self):
         return _('vote')
+
+class Invitation(models.Model):
+    """
+    Invitations are used to add non-registered users as collaborators of
+    problems. The user will have access granted to the problem on registration.
+    """
+    user = models.ForeignKey(User)
+    hash = models.CharField(max_length=128)
+
+    class Meta:
+        db_table = settings.DNSTORM['table_prefix'] + '_invitation'
+
+    def type(self):
+        return _('invitation')
+
+    def get_absolute_url(self):
+        return 'http://%s%s?hash=%s' % (Site.objects.get_current(), reverse('registration_register'), self.hash)

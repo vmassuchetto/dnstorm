@@ -9,9 +9,10 @@
         {% trans "You are already logged in." as message %}
         {% include "part_panel.html" with icon="prohibited" message=message %}
     {% else %}
-        <h3>{% trans "Registration" %}</h3>
         <div class="row">
         <div class="large-8 large-offset-2 columns content">
+            {% trans "By filling the form you will receive an e-mail with an activation link." as message %}
+            {% include "part_panel.html" with icon="link" message=message %}
             {% crispy form %}
         </div>
         </div>

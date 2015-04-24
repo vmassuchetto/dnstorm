@@ -1,0 +1,89 @@
+{% load crispy_forms_tags humanize i18n paragraphs %}
+
+<div class="row collapse">
+
+    {# Edit button #}
+
+    <div class="columns large-12">
+
+        {% if problem_perm_edit %}
+            {% url "problem_update" problem.id as problem_link %}
+            {% if problem.description|length > 4 %}
+                {% trans "You can improve this description by editing it. Click here to contribute." as message %}
+            {% endif %}
+            {% if problem.description|length < 5 %}
+                {% trans "Start by giving the problem a good and detailed description." as message %}
+            {% endif %}
+            <a class="button radius large-icon text-left expand" href="{% url "problem_update" problem.id %}"><i class="fi-pencil"></i>{{ message }}</a>
+        {% endif %}
+
+    </div>
+
+</div>
+
+
+<div class="row">
+<div class="columns large-12 description">
+    {{ problem.description|safe }}
+</div>
+</div>
+
+<div class="row">
+
+    {# User lists #}
+
+    <div class="columns large-9">
+        {% if problem.coauthor.all %}
+            <h6 class="subheader text-right">{% trans "Problem coauthors" %}</h6>
+            <div class="row">
+            {% for user in problem.coauthor.all %}
+                <div class="columns large-3 right">
+                    {% include "item_user.html" with class="right" user=user date=problem.created show_links=True show_date=True show_badges=True %}
+                </div>
+                {% if forloop.counter|divisibleby:"3" and not forloop.last %}<div class="row"></div>{% endif %}
+            {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+    <div class="columns large-3">
+        <h6 class="subheader">{% trans "Problem author" %}</h6>
+        <div class="row">
+            <div class="large-12">
+                {% include "item_user.html" with user=problem.author date=problem.created show_links=True show_date=True show_badges=True %}
+            </div>
+        </div>
+    </div>
+    </div>
+
+    {% if problem_perm_contribute %}
+
+        {# Comments #}
+
+        <div class="row">
+        <div class="columns large-12 comments" id="comments-problem-{{ problem.id }}">
+            {% if comments %}
+                <h5 class="top-1em">{% trans "Comments" %}</h5>
+                {% for comment in comments %}
+                    {% include "item_comment.html" %}
+                {% endfor %}
+            {% endif %}
+        </div>
+        </div>
+
+        {# Comment form for the problem description #}
+
+        {% if problem_perm_contribute %}
+            <div class="row">
+            <div class="columns large-12 comment-form hide" id="comment-form-problem-{{ problem.id }}" data-problem="{{ problem.id }}"></div>
+            </div>
+        {% endif %}
+
+        {# Comment button #}
+
+        <div class="row top-1em">
+            <div class="columns large-12">
+                <a class="action-button comment-button" data-problem="{{ problem.id }}" href="javascript:void(0);"><i class="fi-comments"></i>&nbsp;{% trans "Comment" context "verb" %}</a>
+            </div>
+        </div>
+
+    {% endif %}

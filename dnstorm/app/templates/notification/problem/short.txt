@@ -1,0 +1,1 @@
+{% load i18n %}{% blocktrans %}A problem you're contributing to was updated{% endblocktrans %}

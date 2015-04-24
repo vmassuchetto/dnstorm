@@ -1,0 +1,29 @@
+{% load i18n %}
+
+<h3>{% trans "Login" %}</h3>
+
+<form class="auth-form" method="post" action="{% url "auth_login" %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}">
+
+    {% csrf_token %}
+    <input type="hidden" name="next" value="{% if request.GET.next %}{{ request.GET.next }}{% else %}{{ request.get_full_path }}{% endif %}" />
+
+    {{ form }}
+
+    <div class="row collapse">
+        <div class="columns large-12">
+            <input type="submit" class="button radius success expand" value="{% trans 'Login' %}" />
+        </div>
+    </div>
+
+    <hr/>
+
+    <div class="row collapse">
+        <div class="columns large-12">
+            <ul class="button-group even-2">
+                <li><a class="button radius" href="{% url 'registration_register' %}">{% trans "Register" %}</a></li>
+                <li><a class="button radius alert" href="{% url 'auth_password_reset' %}">{% trans "Reset password" %}</a></li>
+            </ul>
+        </div>
+    </div>
+
+</form>

@@ -15,20 +15,17 @@ handler403 = curry(permission_denied, template_name='_403.html')
 urlpatterns = patterns('',
 
     # Home
-
     (r'^$', base.HomeView.as_view(), {}, 'home'),
 
     # Problems
-
     (r'^problems/my/$', base.HomeView.as_view(), {}, 'problems_my'),
-    (r'^problems/contribute/$', base.HomeView.as_view(), {}, 'problems_contribute'),
+    (r'^problems/collaborating/$', base.HomeView.as_view(), {}, 'problems_collaborating'),
     (r'^problems/drafts/$', base.HomeView.as_view(), {}, 'problems_drafts'),
 
     # Problem
-
     (r'^problems/create/$', problem.ProblemCreateView.as_view(), {}, 'problem_create'),
     (r'^problems/update/(?P<pk>\d+)/$', problem.ProblemUpdateView.as_view(), {}, 'problem_update'),
-    (r'^problems/contributors/(?P<pk>\d+)/$', problem.ProblemContributorView.as_view(), {}, 'problem_contributors'),
+    (r'^problems/collaborators/(?P<pk>\d+)/$', problem.ProblemCollaboratorsView.as_view(), {}, 'problem_collaborators'),
     (r'^problems/(?P<pk>\d+)/#ideas$', problem.ProblemUpdateView.as_view(), {}, 'problem_ideas'),
     (r'^problems/(?P<pk>\d+)/$', problem.ProblemView.as_view(), {}, 'problem_short'),
     (r'^problems/(?P<pk>\d+)/(?P<slug>[^/]+)/$', problem.ProblemView.as_view(), {}, 'problem'),
@@ -40,23 +37,25 @@ urlpatterns = patterns('',
     (r'^problems/(?P<pk>\d+)/(?P<slug>[^/]+)/#alternative-(?P<alternative>\d+)$', problem.ProblemView.as_view(), {}, 'problem_alternative'),
 
     # Criteria
-
     (r'^criteria/create/(?P<problem>\d+)/$', criteria.CriteriaCreateView.as_view(), {}, 'criteria_create'),
     (r'^criteria/(?P<pk>\d+)/update/$', criteria.CriteriaUpdateView.as_view(), {}, 'criteria_update'),
     (r'^criteria/(?P<pk>\d+)/delete/$', criteria.CriteriaDeleteView.as_view(), {}, 'criteria_delete'),
 
     # Ideas
-
     (r'^ideas/create/(?P<problem>\d+)/$', idea.IdeaCreateView.as_view(), {}, 'idea_create'),
     (r'^ideas/(?P<pk>\d+)/update/$', idea.IdeaUpdateView.as_view(), {}, 'idea_update'),
+    (r'^ideas/(?P<pk>\d+)/delete/$', idea.IdeaDeleteView.as_view(), {}, 'idea_delete'),
     (r'^ideas/(?P<pk>\d+)/$', idea.IdeaView.as_view(), {}, 'idea'),
 
-    # Comments
+    # Alternatives
+    (r'^alternative/create/(?P<problem>\d+)/$', alternative.AlternativeCreateView.as_view(), {}, 'alternative_create'),
+    (r'^alternative/(?P<pk>\d+)/update/$', alternative.AlternativeUpdateView.as_view(), {}, 'alternative_update'),
+    (r'^alternative/(?P<pk>\d+)/delete/$', alternative.AlternativeDeleteView.as_view(), {}, 'alternative_delete'),
 
+    # Comments
     (r'^comments/(?P<pk>\d+)/$', base.CommentView.as_view(), {}, 'comment'),
 
     # Users
-
     (r'^users/$', user.UsersView.as_view(), {}, 'users'),
     (r'^users/(?P<user_type>invitations|inactive)/$', user.UsersView.as_view(), {}, 'users_filter'),
     (r'^users/(?P<username>[^/]+)/$', user.UserView.as_view(), {}, 'user'),
@@ -66,31 +65,27 @@ urlpatterns = patterns('',
     (r'^users/(?P<username>[^/]+)/update/password/$', user.UserPasswordUpdateView.as_view(), {}, 'user_password_update'),
 
     # Activity
-
     (r'^activity/$', base.ActivityView.as_view(), {}, 'activity'),
     (r'^activity/(?P<content_type>problems|ideas|alternatives|comments)/$', base.ActivityView.as_view(), {}, 'activity_objects'),
     (r'^activity/problem/(?P<pk>\d+)/$', base.ActivityView.as_view(), {}, 'activity_problem'),
     (r'^activity/problem/(?P<pk>\d+)/(?P<content_type>description|ideas|alternatives|comments)/$', base.ActivityView.as_view(), {}, 'activity_problem_objects'),
 
     # Options
-
     (r'^options/$', base.OptionsView.as_view(), {}, 'options'),
 
     # Ajax
-
     (r'^ajax/$', ajax.AjaxView.as_view(), {}, 'ajax'),
 
     # Other apps
-
     (r'^avatar/', include('avatar.urls')),
     (r'^accounts/register/$', base.RegistrationView.as_view(), {}, 'registration_register'),
     (r'^accounts/', include('django.contrib.auth.urls')),
     (r'^accounts/', include('registration.backends.default.urls')),
     (r'^jsi18n/$', 'django.views.i18n.javascript_catalog', js_info_dict, 'jsi18n'),
     (r'^ckeditor/', include('ckeditor.urls')),
+    ('^stream/', include('actstream.urls')),
 
     # Static files
-
     (r'^static/(?P<path>.*)$', 'django.views.static.serve', { 'document_root': settings.STATIC_ROOT }),
 
 )

@@ -1,8 +1,8 @@
-{% load display_name i18n %}
+{% load i18n activity_tags avatar_tags display_name humanize crispy_forms_tags %}
 
 {# Top bar #}
 
-<div class="contain-to-grid">
+<div class="contain-to-grid top-bar-wrap">
 <nav class="top-bar">
 
     {# Small devices section #}
@@ -16,45 +16,34 @@
     {# Medium and large devices section #}
 
     <section class="top-bar-section">
+        <form id="login-form" class="form">
         <ul class="left">
-            <li class="divider"></li>
             <li class="title"><h1><a id="logo" href="{% url "home" %}">DNStorm</a></h1></li>
-            <li class="divider"></li>
             {% if user.is_authenticated %}
                 <li><a href="{% url "users" %}">{% trans "Users" %}</a></li>
-                <li class="divider"></li>
                 <li><a href="{% url "activity" %}">{% trans "Activity" %}</a></li>
-                <li class="divider"></li>
-                <li>
-                    <a class="post-problem" href="{% url "problem_create" %}"><i class="fi-plus"></i> {% trans "Post problem" %}</a>
-                </li>
+                <li><a class="primary" href="{% url "problem_create" %}"><i class="fi-plus"></i> {% trans "Post problem" %}</a></li>
             {% endif %}
         </ul>
         <ul class="right">
             {% if user.is_authenticated %}
-                <li class="divider"></li>
                 <li class="has-icon notification notification-icon{% if user_activity_counter > "0" %} alert{% endif %}"><a href="javascript:void(0);"><i class="fi-lightbulb"></i><span class="counter">{{ user_activity_counter }}</span></a></li>
-                <li class="divider"></li>
                 {% if user.is_superuser %}
                     <li class="has-icon"><a href="{% url "options" %}"><i class="fi-widget"></i></a></li>
-                    <li class="divider"></li>
                 {% endif %}
-                <li class="divider"></li>
-                <li class="has-icon torso user-li"><a href="{% url "user" user %}"><i class="fi-torso"></i></a></li>
-                <li class="user user-li"><a href="{% url "user" user %}">{% display_name user %}</a></li>
+                <li class="has-icon torso hover-li user-li" data-hover="user-li"><a href="{% url "user" user %}"><i class="fi-torso"></i></a></li>
+                <li class="user hover-li user-li" data-hover="user-li"><a href="{% url "user" user %}">{% display_name user %}</a></li>
                 {% if user.is_superuser %}
                     <li class="superuser user-li"><span class="label alert tiny radius">{% trans "Superuser" %}</span></li>
                 {% endif %}
-                <li class="divider"></li>
-                <li><a href="{{ logout_url }}">{% trans 'Logout' %}</a></li>
+                <li class="has-icon x hover-li logout-li" data-hover="logout-li"><a href="{{ logout_url }}"><i class="fi-x"></i></a></li>
+                <li class="has-icon hover-li logout-li" data-hover="logout-li"><a href="{{ logout_url }}">{% trans 'Logout' %}</a></li>
             {% else %}
-                <li class="divider"></li>
-                <li><a href="{{ login_url }}">{% trans 'Login' %}</a></li>
-                <li class="divider"></li>
+                <li><a class="primary login-icon" href="javascript:void(0);"><i class="fi-torso"></i>&nbsp;{% trans "Login" %}</a></li>
                 <li><a href="{% url "registration_register" %}">{% trans 'Register' %}</a></li>
             {% endif %}
-            <li class="divider"></li>
         </ul>
+        </form>
     </section>
 
 </nav>
@@ -65,7 +54,7 @@
 {% if info %}
     <div class="title-bar-wrap show-for-medium-up">
         <div class="row">
-            <div class="columns medium-9">
+            <div class="columns medium-8">
                 <nav class="title-bar-inner">
                     <div class="title-bar-icon">
                         <a href="{{ info.icon_url }}" class="icon"><i class="fi-{{ info.icon }}"></i></a>
@@ -85,19 +74,81 @@
                 </nav>
             </div>
             {% if problem %}
-                <div class="columns medium-3 info-status">
-                    {% if problem.public %}
-                        <span class="status" data-tooltip title="{% trans "Anyone can view" %}"><i class="fi-web"></i>&nbsp;<b>{% trans "Public problem" %}</b></span>
-                    {% else %}
-                        <span class="status" data-tooltip title="{% trans "Only invited people can view" %}"><i class="fi-eye"></i>&nbsp;<b>{% trans "Private problem" %}</b></span>
-                    {% endif %}
-                    {% if problem.open %}
-                        <span class="status" data-tooltip title="{% trans "Anyone can collaborate" %}"><i class="fi-unlock"></i>&nbsp;<b>{% trans "Open collaboration" %}</b></span>
-                    {% else %}
-                        <span class="status" data-tooltip title="{% trans "Only managers collaborate" %}"><i class="fi-lock"></i>&nbsp;<b>{% trans "Closed collaboration" %}</b></span>
-                    {% endif %}
+                <div class="columns medium-4 info-status">
+                    <ul class="button-group status right">
+                        <li>
+                        {% if problem.public %}
+                            <a class="button small secondary" href="{% url "problem_update" problem.id %}" data-tooltip title="{% trans "Anyone can view" %}{% if problem_perm_manage %} {% trans "Edit the problem to change this permission." %}{% endif %}"><i class="fi-web"></i>&nbsp;<b>{% trans "Public" %}</b></a>
+                        {% else %}
+                            <a class="button small secondary" href="{% url "problem_update" problem.id %}" data-tooltip title="{% trans "Only invited people can view" %}{% if problem_perm_manage %} {% trans "Edit the problem to change this permission." %}{% endif %}"><i class="fi-eye"></i>&nbsp;<b>{% trans "Private" %}</b></a>
+                        {% endif %}
+                        </li>
+                        <li>
+                        {% if problem.open %}
+                            <a class="button small secondary" href="{% url "problem_update" problem.id %}" data-tooltip title="{% trans "Anyone can collaborate." %}{% if problem_perm_manage %} {% trans "Edit the problem to change this permission." %}{% endif %}"><i class="fi-unlock"></i>&nbsp;<b>{% trans "Open" %}</b></a>
+                        {% else %}
+                            <a class="button small secondary" href="{% url "problem_update" problem.id %}" data-tooltip title="{% trans "Only managers collaborate." %}{% if problem_perm_manage %} {% trans "Edit the problem to change this permission." %}{% endif %}"><i class="fi-lock"></i>&nbsp;<b>{% trans "Closed" %}</b></a>
+                        {% endif %}
+                        </li>
+                        <li>
+                            <a class="button small secondary" data-tooltip title="{% if user|is_following:problem %}{% trans "You are receiving updates via e-mail for this problem. Click to unsubscribe." %}{% else %}{% trans "You are currently not receiving updates via e-mail about this problem. Click to subscribe." %}{% endif %}" href="{% follow_url problem %}?next={% url "problem" problem.id problem.slug %}"><b>
+                                {% if user|is_following:problem %}
+                                    <i class="fi-check"></i>Following<br/>
+                                {% else %}
+                                    <i class="fi-x"></i>Not following<br/>
+                                {% endif %}
+                            </b></a>
+                        </li>
+                    </ul>
                 </div>
             {% endif %}
         </div>
     </div>
 {% endif %}
+
+{# Activity stream #}
+
+{% if user.is_authenticated %}
+<div id="activity" class="scroll-box">
+    <div class="row collapse">
+        <div id="activity-box" class="columns large-12 scroll-box-inner">
+            {% if user_activity %}
+                {% for action in user_activity %}
+                    <div class="row collapse">
+                        <div class="columns large-12 activity-item scroll-box-item">
+                            <div class="left avatar">{% avatar action.actor 32 %}</div>
+                            <div class="info">{% display_action action %}<span class="subheader"> &diams; {{ action.timestamp|naturaltime }}</span></div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="row collapse">
+                    <div class="columns large-12">
+                        <p class="button expand secondary" disabled="disabled">{% trans "No activity so far." %}</p>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+        {% if user_activity %}
+            <div class="row collapse">
+                <div class="columns large-12">
+                    <a class="button small radius expand no-margin-bottom" href="{% url "activity" %}">{% trans "View all activities" %}</a>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+
+{# Login form #}
+
+{% if not user.is_authenticated %}
+<div id="login" class="scroll-box">
+    <div class="row collapse">
+        <div class="columns large-12">
+            {% include "registration/login_form.html" with form=login_form %}
+        </div>
+    </div>
+</div>
+{% endif %}
+

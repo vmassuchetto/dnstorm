@@ -18,7 +18,7 @@ from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext as _
 from django.views.decorators.csrf import csrf_protect
 from django.views.generic import DetailView, RedirectView
-from django.views.generic.edit import CreateView, UpdateView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
 
 from dnstorm import settings
 from dnstorm.app import models
@@ -194,3 +194,13 @@ class IdeaUpdateView(UpdateView):
             activity_register(self.request.user, self.object)
         messages.success(self.request, _('Your idea was successfully saved.'))
         return HttpResponseRedirect(return_url)
+
+class IdeaDeleteView(DeleteView):
+    model = models.Idea
+
+    @method_decorator(login_required)
+    def get_object(self, *args, **kwargs):
+        idea = get_object_or_404(models.Idea, id=kwargs['pk'])
+        if not permissions.idea(obj=idea, user=self.request.user, mode='manage'):
+            raise PermissionDenied
+        return idea

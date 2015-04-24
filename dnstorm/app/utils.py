@@ -81,6 +81,7 @@ def activity_register(_user, _action_object):
     # Last activity
     last = (action_object_stream(_action_object)[:1] or [None])[0]
     content_old = last.data['content'] if hasattr(last, 'data') and 'content' in last.data else ''
+    _notification = False
     _content = render_to_string('diffbase_' + klass + '.html', {klass: _action_object})
     _emsg = _action_object.edit_message if hasattr(_action_object, 'edit_message') else ''
     _diff = htmldiff(content_old, _content)
@@ -112,9 +113,10 @@ def activity_register(_user, _action_object):
         _verb = 'commented'
     elif not content_old:
         _verb = 'created'
+        _notification = True
 
-    # Add user as contributor
-    _target.contributor.add(_user)
+    # Add user as collaborator
+    _target.collaborators.add(_user)
     _follow = _target
 
     # Action
@@ -128,6 +130,8 @@ def activity_register(_user, _action_object):
     a[0][1].save()
     activity_count(_target)
     follow(_user, _follow, actor_only=False) if not is_following(_user, _follow) else None
+    if _notification:
+        notification.send([_follow], 'problem', email_context({ 'action': a }))
 
 email_regex = '[^@]+@[^@]+\.[^@]+'
 

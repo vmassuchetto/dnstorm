@@ -1,0 +1,18 @@
+{% extends "_base.html" %}
+{% load crispy_forms_tags i18n %}
+
+{% block bodyclass %}alternative-edit{% endblock %}
+
+{% block head %}{{ form.media }}{% endblock %}
+
+{% block modals %}
+    {% include "modal_delete.html" %}
+{% endblock %}
+
+{% block content %}
+    <h3>{{ problem.title }}</h3>
+    <fieldset>
+        <legend><i class="fi-lightbulb"></i> {% trans "Add an alternative" %}</legend>
+        {% crispy form %}
+    </fieldset>
+{% endblock %}

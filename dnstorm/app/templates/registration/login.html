@@ -1,43 +1,18 @@
 {% extends "_base.html" %}
-{% load crispy_forms_tags i18n %}
+{% load i18n %}
 
 {% block bodyclass %}login{% endblock %}
 
 {% block content %}
 
     {% if user.is_authenticated %}
-        <h3>{% trans "Nothing to do here" %}</h3>
-        {% trans "You are already logged in." as message %}</p>
+        {% trans "Você requisitou uma operação inválida." as message %}</p>
         {% include "part_panel.html" with icon="prohibited" message=message %}
     {% else %}
 
         <div class="row">
-            <div class="large-8 large-offset-2 columns content">
-
-                <h3>{% trans "Login" %}</h3>
-
-                <form class="auth-form" method="post" action="{% url "auth_login" %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}">
-
-                    {% csrf_token %}
-                    <input type="hidden" name="next" value="{% if request.GET.next %}{{ request.GET.next }}{% else %}{{ request.get_full_path }}{% endif %}" />
-
-                    {{ form }}
-
-                    <input type="submit" class="button radius success expand" value="{% trans 'Login' %}" />
-
-                    <hr/>
-
-                    <div class="row">
-                        <div class="columns large-6">
-                            <a class="button radius expand" href="{% url 'registration_register' %}">{% trans "Register" %}</a>
-                        </div>
-
-                        <div class="columns large-6">
-                            <a class="button radius alert expand" href="{% url 'auth_password_reset' %}">{% trans "Reset password" %}</a>
-                        </div>
-                    </div>
-
-                </form>
+            <div class="large-6 large-offset-3 columns content">
+                {% include "registration/login_form.html" %}
             </div>
         </div>
 

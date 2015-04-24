@@ -56,7 +56,6 @@ class CriteriaCreateView(CreateView):
         return HttpResponseRedirect(reverse('problem_tab_criteria', kwargs={'pk': self.problem.id, 'slug': self.problem.slug}))
 
 class CriteriaDeleteView(DeleteView):
-    form_class = CriteriaForm
     model = Criteria
 
     @method_decorator(login_required)

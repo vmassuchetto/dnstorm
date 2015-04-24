@@ -49,9 +49,9 @@ class AjaxView(View):
         # alternative
         elif self.request.GET.get('delete_alternative', None):
             return self.delete_alternative()
-        # contributor
-        elif self.request.GET.get('contributor_delete', None):
-            return self.contributor_delete()
+        # collaborator
+        elif self.request.GET.get('collaborator_delete', None):
+            return self.collaborator_delete()
 
         # Create
         # alternative
@@ -69,9 +69,9 @@ class AjaxView(View):
         # activity
         elif self.request.GET.get('activity_reset_counter', None):
             return self.activity_reset_counter()
-        # contributor
-        elif self.request.GET.get('contributor_add', None):
-            return self.contributor_add()
+        # collaborator
+        elif self.request.GET.get('collaborator_add', None):
+            return self.collaborator_add()
 
         # Get
         # users
@@ -138,48 +138,48 @@ class AjaxView(View):
 
         return HttpResponse(json.dumps({'result': result}), content_type='application/json')
 
-    def contributor_add(self):
+    def collaborator_add(self):
         """
-        Add a user as contributor for a problem.
+        Add a user as collaborator for a problem.
         """
         # Validation
-        user = get_object_or_none(User, username=self.request.GET['contributor_add'])
+        user = get_object_or_none(User, username=self.request.GET['collaborator_add'])
         problem = get_object_or_404(models.Problem, id=self.request.GET['problem'])
         if not permissions.problem(obj=problem, user=self.request.user, mode='manage'):
             raise PermissionDenied
 
         # Commit
         # invitation
-        if not user and is_email(self.request.GET['contributor_add']):
+        if not user and is_email(self.request.GET['collaborator_add']):
             return self.invitation_add()
-        # contributor
-        problem.contributor.add(user)
+        # collaborator
+        problem.collaborator.add(user)
         follow(user, problem, actor_only=False) if not is_following(user, problem) else None
 
         # Response
-        result = ''.join([loader.render_to_string('item_user_contributor.html', {'users': problem.contributor.order_by('first_name')})])
+        result = ''.join([loader.render_to_string('item_user_collaborator.html', {'users': problem.collaborator.order_by('first_name')})])
         return HttpResponse(json.dumps({'result': result}), content_type='application/json')
 
-    def contributor_delete(self):
+    def collaborator_delete(self):
         """
-        Removes a user as contributor for a problem.
+        Removes a user as collaborator for a problem.
         """
         # Validation
-        user = get_object_or_404(User, username=self.request.GET['contributor_delete'])
+        user = get_object_or_404(User, username=self.request.GET['collaborator_delete'])
         problem = get_object_or_404(models.Problem, id=self.request.GET['problem'])
         if not permissions.problem(obj=problem, user=self.request.user, mode='manage'):
             raise PermissionDenied
 
         # Commit
-        problem.contributor.remove(user)
+        problem.collaborator.remove(user)
         unfollow(user, problem)
         # delete user and invitations if there's no other invitation
-        if not models.Problem.objects.filter(contributor__in=[user]).exists():
+        if not models.Problem.objects.filter(collaborator__in=[user]).exists():
             user.delete()
             models.Invitation.objects.filter(user=user).delete()
 
         # Response
-        result = ''.join([loader.render_to_string('item_user_contributor.html', {'users': problem.contributor.order_by('first_name')})])
+        result = ''.join([loader.render_to_string('item_user_collaborator.html', {'users': problem.collaborator.order_by('first_name')})])
         return HttpResponse(json.dumps({'result': result}), content_type='application/json')
 
     def invitation_add(self):
@@ -191,19 +191,19 @@ class AjaxView(View):
         problem = get_object_or_404(models.Problem, id=self.request.GET['problem'])
         if not permissions.problem(obj=problem, user=self.request.user, mode='manage'):
             raise PermissionDenied
-        if 'contributor_add' not in self.request.GET \
-            or not is_email(self.request.GET['contributor_add']):
+        if 'collaborator_add' not in self.request.GET \
+            or not is_email(self.request.GET['collaborator_add']):
             raise PermissionDenied
 
         # Commit
         # user
-        email = self.request.GET['contributor_add']
+        email = self.request.GET['collaborator_add']
         user = get_object_or_none(User, email=email)
         password = '%032x' % random.getrandbits(128)
         if not user:
             user = User.objects.create(username=email, email=email, first_name=email,
                 password=password,is_active=True, is_staff=False)
-        problem.contributor.add(user)
+        problem.collaborator.add(user)
         # invitation
         hash = '%032x' % random.getrandbits(128)
         while models.Invitation.objects.filter(hash=hash).exists():
@@ -213,7 +213,7 @@ class AjaxView(View):
         notification.send([user], 'invitation', email_context({ 'invitation': invitation }))
 
         # Response
-        result = loader.render_to_string('_update_problem_contributors.html', {'users': problem.contributor.order_by('first_name')})
+        result = loader.render_to_string('_update_problem_collaborators.html', {'users': problem.collaborator.order_by('first_name')})
         return HttpResponse(json.dumps({'result':result}))
 
     def activity_reset_counter(self):
@@ -256,8 +256,8 @@ class AjaxView(View):
         # reload with updated data
         criteria = CriteriaForm(instance=criteria.instance)
         criteria.instance.fill_data()
-        # contributor
-        criteria.problem.contributor.add(user)
+        # collaborator
+        criteria.problem.collaborator.add(user)
         follow(user, criteria.problem, actor_only=False) if not is_following(user, criteria.problem) else None
 
         # Response
@@ -284,8 +284,8 @@ class AjaxView(View):
         a.name = _('Alternative %d' % a.id)
         a.save()
         a.fill_data(user)
-        # contributor
-        a.problem.contributor.add(user)
+        # collaborator
+        a.problem.collaborator.add(user)
         follow(user, a.problem, actor_only=False) if not is_following(user, a.problem) else None
 
         # Response
@@ -344,8 +344,8 @@ class AjaxView(View):
             raise Http404
         if not permissions.problem(obj=_problem, user=user, mode='contribute'):
             raise PermissionDenied
-        # contributor
-        _problem.contributor.add(user)
+        # collaborator
+        _problem.collaborator.add(user)
         follow(user, _problem, actor_only=False) if not is_following(user, _problem) else None
 
         # Commit

@@ -1,5 +1,5 @@
 {% load i18n avatar_tags display_name user_tags %}
-<div class="user-box{% if enclosed %} enclosed{% endif %}{% if not user.is_staff %} pending-user{% endif %}{% if not user.is_active %} inactive-user{% endif %}" data-username="{{ user.username }}"{% if email_invitation %} data-email="{{ email_invitation }}"{% endif %}>
+<div class="user-box{% if enclosed %} enclosed{% endif %}{% if not user.is_staff %} pending-user{% endif %}{% if not user.is_active %} inactive-user{% endif %}{% if class %} {{ class }}{% endif %}" data-username="{{ user.username }}"{% if email_invitation %} data-email="{{ email_invitation }}"{% endif %}>
     <div class="row collapse">
         <div class="columns large-12">
 
@@ -24,11 +24,9 @@
                 {% endif %}
 
                 {# Invitation label #}
-
                 {% if not user.is_staff and user.is_active and not email_invitation %}<span class="label secondary small pending-invitation">{% trans "Pending invitation" %}</span>{% endif %}
 
                 {# Badges #}
-
                 {% if show_badges and user.is_staff %}
                     {% with pc=user|user_problem_count ic=user|user_idea_count cc=user|user_comment_count %}
                         {% if pc or ic or cc %}

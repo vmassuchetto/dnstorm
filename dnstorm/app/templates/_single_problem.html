@@ -39,20 +39,6 @@
             <form>
                 {% crispy alternative_form %}
                 <hr/>
-                <div id="div_id_ideas" class="row collapse ideas-selector">
-                    <div class="columns large-12">
-                    {% for idea in ideas %}
-                        <div class="row collapse problem-idea-modal" id="idea-{{ idea.id }}-modal-item">
-                            <div class="columns large-1 text-center">
-                                <i class="fi-check idea-status"></i>
-                            </div>
-                            <div class="columns large-11">
-                                {% include "item_idea.html" with show_likes=False show_actions=False show_comments=False %}
-                            </div>
-                        </div>
-                    {% endfor %}
-                    </div>
-                </div>
                 <div class="row">
                     <div class="large-12 text-right">
                         <a class="button success radius alternative-save">{% trans "Save" %}</a>
@@ -91,84 +77,16 @@
         {# Description #}
 
         <div class="problem-tab problem-description">
-
-            {% if problem.open %}
-                {% url "problem_update" problem.id as problem_link %}
-                {% trans "This description is open for improvements. Click here to edit the problem description." as message %}
-                {% include "part_panel.html" with icon="pencil" message=message link=problem_link %}
-            {% else %}{% if problem_perm_edit %}
-                {% url "problem_update" problem.id as problem_link %}
-                {% trans "Click here to edit the problem description." as message %}
-                {% include "part_panel.html" with icon="pencil" message=message link=problem_link %}
-            {% else %}
-                {% trans "The description is editable only by managers. Leave a comment with your improvement suggestions." as message %}
-                {% include "part_panel.html" with icon="lock" message=message %}
-            {% endif %} {% endif %}
-
-            <div class="row">
-            <div class="columns large-12 description">
-                {{ problem.description|safe }}
-            </div>
-            </div>
-
-            <div class="row users">
-            <div class="columns large-3 large-offset-9">
-                <h6 class="subheader">{% trans "Problem author" %}<h6>
-                {% include "item_user.html" with user=problem.author date=problem.created show_links=True show_date=True show_badges=True %}
-            </div>
-            </div>
-
-            {% if problem_perm_contribute %}
-
-                {# Comments #}
-
-                <div class="row">
-                <div class="columns large-12 comments" id="comments-problem-{{ problem.id }}">
-                    {% if comments %}
-                        <h5 class="top-1em">{% trans "Comments" %}</h5>
-                        {% for comment in comments %}
-                            {% include "item_comment.html" %}
-                        {% endfor %}
-                    {% endif %}
-                </div>
-                </div>
-
-                {# Comment form for the problem description #}
-
-                {% if problem_perm_contribute %}
-                    <div class="row">
-                    <div class="columns large-12 comment-form hide" id="comment-form-problem-{{ problem.id }}" data-problem="{{ problem.id }}"></div>
-                    </div>
-                {% endif %}
-
-                {# Comment button #}
-
-                <div class="row top-1em">
-                    <div class="columns large-12">
-                        <a class="action-button comment-button" data-problem="{{ problem.id }}" href="javascript:void(0);"><i class="fi-comments"></i>&nbsp;{% trans "Comment" context "verb" %}</a>
-                    </div>
-                </div>
-
-            {% endif %}
-
+            {% include "item_problem.html" %}
         </div>
 
         {# Criteria #}
 
         <div class="problem-tab problem-criteria">
 
-            {% if problem.open %}
-                {% url "criteria_create" problem.id as criteria_link %}
-                {% trans "Anyone can give a criteria to this problem. Click here to insert a new criteria." as message %}
-                {% include "part_panel.html" with icon="plus" message=message link=criteria_link %}
-            {% else %}{% if problem_perm_manage %}
-                {% url "criteria_create" problem.id as criteria_link %}
-                {% trans "Click here to insert a new criteria." as message %}
-                {% include "part_panel.html" with icon="plus" message=message link=criteria_link %}
-            {% else %}
-                {% trans "Only managers can give criteria to this problem. Leave a comment with your improvement suggestions." as message %}
-                {% include "part_panel.html" with icon="lock" message=message %}
-            {% endif %} {% endif %}
+            {% if problem_perm_contribute %}
+                <a class="button radius large-icon large-button text-left expand" href="{% url "criteria_create" problem.id %}"><i class="fi-plus"></i>{% trans "Click here to insert a new criteria." %}</a>
+            {% endif %}
 
             {% if criteria %}
                 {% for c in criteria %}
@@ -178,6 +96,7 @@
                 {% trans "There's no criteria defined for this problem yet." as message %}
                 {% include "part_panel.html" with icon="prohibited" message=message %}
             {% endif %}
+
         </div>
 
         {# Ideas list #}
@@ -187,9 +106,7 @@
             {% if problem.criteria_set.all|length > 0 %}
 
                 {% if problem_perm_contribute %}
-                    {% url "idea_create" problem.id as idea_link %}
-                    {% trans "Click here to insert a new idea." as message %}
-                    {% include "part_panel.html" with icon="plus" message=message link=idea_link %}
+                    <a class="button radius large-icon large-button text-left expand" href="{% url "idea_create" problem.id %}"><i class="fi-plus"></i>{% trans "Click here to insert a new idea." %}</a>
                 {% endif %}
 
                 {% if ideas %}
@@ -211,8 +128,7 @@
             {% if problem.criteria_set.all|length > 0 and ideas %}
 
                 {% if problem_perm_contribute %}
-                    {% trans "Click here to insert a new alternative." as message %}
-                    {% include "part_panel.html" with icon="plus" message=message class="new-alternative" link="javascript:void(0)" %}
+                    <a class="button radius large-icon large-button text-left expand" href="{% url "alternative_create" problem.id %}"><i class="fi-plus"></i>{% trans "Click here to insert a new alternative." %}</a>
                 {% endif %}
 
                 {% if alternatives %}
@@ -237,8 +153,8 @@
             <script type="text/javascript">
                 Chart.defaults.global.scaleIntegersOnly = false;
             </script>
-            <div class="inner-tab">
-                <h4>{% trans "Alternative preference from users" %}</h4>
+            <div class="inner-tab text-center">
+                <h3>{% trans "Alternative preference from users" %}</h3>
                 {% if alternatives %}
                     {% for alternative in alternatives %}
                         {% include "item_alternative.html" with mode="result" %}
@@ -247,7 +163,7 @@
                     {% trans "There's no alternative to render data yet." as message %}
                     {% include "part_panel.html" with icon="prohibited" message=message %}
                 {% endif %}
-                <h4>{% trans "Criteria attendance from alternatives" %}</h4>
+                <h3>{% trans "Criteria attendance from alternatives" %}</h3>
                 {% if problem.criteria_results %}
                     {% for result in problem.criteria_results %}
                         <div class="row">

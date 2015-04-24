@@ -115,20 +115,19 @@ class UserForm(forms.ModelForm):
             raise Exception(_('Wrong form kwargs.'))
         super(UserForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
-        self.helper.layout = Layout(
-            Fieldset('<i class="fi-torso"></i>&nbsp;' + _('Edit user \'%s\'' % self.instance.username),
-                'email',
-                'first_name',
-                'is_superuser' if request.user.is_superuser else '',
-                'user_id',
-                Row(Column(
-                    ButtonHolder(
-                        Submit('submit', _('Save'), css_class='right radius left-1em'),
-                        HTML('<a class="button secondary radius right" href="%s"><i class="fi-key"></i>&nbsp;%s</a>' % (reverse('user_password_update', kwargs={'username': self.instance.username}), _('Change password'))),
-                    ),
-                ), css_class='large-12 top-1em'),
-            )
+        layout_args = ('email', 'first_name')
+        if request.user.is_superuser:
+            layout_args += ('is_superuser',)
+        layout_args += (
+            'user_id',
+            Row(Column(
+                ButtonHolder(
+                    Submit('submit', _('Save'), css_class='right radius left-1em'),
+                    HTML('<a class="button secondary radius right" href="%s"><i class="fi-key"></i>&nbsp;%s</a>' % (reverse('user_password_update', kwargs={'username': self.instance.username}), _('Change password'))),
+                ),
+            ), css_class='large-12 top-1em'),
         )
+        self.helper.layout = Layout(*layout_args)
         self.fields['email'].required = True
         self.fields['first_name'].label = _('Display name')
         self.fields['user_id'].initial = self.instance.id
@@ -232,22 +231,22 @@ class ProblemForm(forms.ModelForm):
         self.helper.layout = Layout(*layout_args)
         super(ProblemForm, self).__init__(*args, **kwargs)
 
-class ProblemContributorForm(forms.Form):
-    user_search = forms.CharField(_('Search and add contributors'), required=False, widget=forms.TextInput(attrs={'autocomplete':'off'}))
-    public = forms.BooleanField(label=_('Public'), help_text=_('Anyone is able to view and contribute to this problem. If not public, you\'ll need to choose the contributors that will have access to it.'), required=False)
+class ProblemCollaboratorsForm(forms.Form):
+    user_search = forms.CharField(_('Search and add collaborators'), required=False, widget=forms.TextInput(attrs={'autocomplete':'off'}))
+    public = forms.BooleanField(label=_('Public'), help_text=_('Anyone is able to view and contribute to this problem. If not public, you\'ll need to choose the collaborators that will have access to it.'), required=False)
     open = forms.BooleanField(label=_('Open edit'), help_text=_('Let users change the title and description of problems and ideas as coauthors.'), required=False)
 
     def __init__(self, *args, **kwargs):
         self.problem = kwargs.pop('problem')
-        users_html = ''.join([render_to_string('item_user_contributor.html', {'users': self.problem.contributor.order_by('first_name')})])
-        super(ProblemContributorForm, self).__init__(*args, **kwargs)
+        users_html = ''.join([render_to_string('item_user_collaborator.html', {'users': self.problem.collaborators.order_by('first_name')})])
+        super(ProblemCollaboratorsForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.layout = Layout(
-            Fieldset('<i class="fi-torso"></i>&nbsp;' + _('Contributors'),
+            Fieldset('<i class="fi-torso"></i>&nbsp;' + _('Collaborators'),
                 Div(HTML(users_html), css_class='large-12 collapse user-search-selected'),
                 Row(
                     Column('user_search', help_text=_('Type to search for users. Click on them to insert or remove from the selected list. Go to the sitewide user section to resend an invitation for non-confirmed users.'), css_class='large-8'),
-                    Column(Button('add_user', _('Search and add contributors'), css_class='postfix secondary', disabled=True), css_class='large-4')
+                    Column(Button('add_user', _('Search and add collaborators'), css_class='postfix secondary', disabled=True), css_class='large-4')
                 , css_class='collapse'),
                 Row(Div(css_class='columns large-12 collapse user-search-result'),),
             css_class='user-search'),
@@ -387,14 +386,20 @@ class CommentForm(forms.ModelForm):
         super(CommentForm, self).__init__(*args, **kwargs)
         self.fields['content'].label = ''
 
-class AlternativeForm(forms.Form):
-    name = forms.CharField(label=_('Name'))
+class AlternativeForm(forms.ModelForm):
+
+    class Meta:
+        model = models.Alternative
 
     def __init__(self, *args, **kwargs):
         self.helper = FormHelper()
         self.helper.form_action = '.'
-        self.helper.form_tag = False
-        self.helper.layout = Layout(
-            InlineField('name', label_column='large-1', input_column='large-11', label_class='inline'),
-        )
+        self.helper.form_class = 'delete-form'
+        layout_args = ('name',)
+        for i in kwargs.get('instance', None).problem.idea_set.all():
+            i.fill_data()
+            layout_args += (Row(
+                Column(HTML(render_to_string('item_idea.html', {'idea': i, 'show_likes': True, 'show_actions': perms.alternative(obj=i.problem, user=self.request.user)})), css_class='large-6')
+                , css_class='collapse'),)
+        self.helper.layout = Layout(*layout_args)
         super(AlternativeForm, self).__init__(*args, **kwargs)

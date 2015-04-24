@@ -133,10 +133,27 @@ table.cke_dialog {
 
 // Buttons {{{
 
-.button i {
-    font-size: emCalc(15px);
-    vertical-align: middle;
-    margin-right: emCalc(4px);
+.button {
+    i {
+        font-size: emCalc(15px);
+        vertical-align: middle;
+    }
+    &.large-button {
+        margin: emCalc(15px) 0;
+    }
+    &.large-icon {
+        margin: emCalc(5px) 0;
+        padding: emCalc(10px) emCalc(50px);
+        line-height: 1.2;
+        position: relative;
+        i {
+            color: white;
+            font-size: 24px;
+            left: 20px;
+            position: absolute;
+            top: 5px
+        }
+    }
 }
 
 .buttonHolder {
@@ -285,6 +302,15 @@ form.auth-form {
         }
     }
 }
+.panel-inline {
+    .panel {
+        border-left: 3px solid $light-grey;
+        border-right: 3px solid $light-grey;
+    }
+    p {
+        line-height: 1.1;
+    }
+}
 
 .errorlist {
     list-style-type: none;
@@ -296,7 +322,8 @@ form.auth-form {
 }
 
 .panel.error, .errorlist li {
-    @include panel(lighten($alert-color, 20%), 20px);
+    @include panel($alert-color, 10px 15px);
+    border-radius: 4px;
     color: white;
 }
 
@@ -315,7 +342,25 @@ form.auth-form {
 
 // Messages {{{
 
+a.close {
+    position: absolute;
+    font-size: 16px;
+    line-height: emCalc(12px);
+    padding: emCalc(5px) 0 0 0;
+    position: absolute;
+    top: 0;
+    right: 0.6875rem;
+    color: $black;
+    font-weight: bold;
+    cursor: pointer;
+    right: 2.5em;
+    top: 0;
+    z-index: 100;
+}
+
 .message-bar {
+    background-color: $light-grey;
+    border-bottom: 1px solid $grey;
     padding: emCalc(10px) 0;
     margin: 0;
     position: relative;
@@ -325,18 +370,6 @@ form.auth-form {
         padding: emCalc(5px) emCalc(20px);
         text-align: center;
         text-transform: uppercase;
-    }
-    a.close {
-        position: absolute;
-        font-size: 2rem;
-        line-height: emCalc(12px);
-        padding: emCalc(5px) 0 0 0;
-        position: absolute;
-        top: 0;
-        right: 0.6875rem;
-        color: #aaa;
-        font-weight: bold;
-        cursor: pointer;
     }
 }
 
@@ -371,46 +404,54 @@ form.auth-form {
 
 // Top bar {{{
 
-.contain-to-grid,
-.top-bar,
-.top-bar-section li:not(.has-form) a:not(.button),
-.top-bar-section ul.right li.torso a:hover {
+
+.top-bar-wrap,.top-bar {
     background: linear-gradient(top, $black 0%,$dark-black 90%);
     background: -moz-linear-gradient(top, $black 0%,$dark-black 90%);
     background: -webkit-linear-gradient(top, $black 0%,$dark-black 90%);
-}
-
-.top-bar-section {
-    ul.left {
-        li.title {
-            h1 {
-                text-align: center;
-                font: bold emCalc(30px) 'Montserrat Subrayada';
-                line-height: emCalc(35px);
-                letter-spacing: emCalc(-3px);
-                margin: 0;
-                text-shadow: 0 1px 0 rgba(255, 255, 255, 0.4);
-                a {
-                    display: block;
-                    color: white;
-                    padding-top: emCalc(2px);
+    .top-bar-section {
+        li.has-form {
+            padding:0 emCalc(3px);
+        }
+        #login-form input {
+            width: emCalc(115px);
+        }
+        li:not(.has-form) {
+            a:not(.button) {
+                background: linear-gradient(top, $black 0%,$dark-black 90%);
+                background: -moz-linear-gradient(top, $black 0%,$dark-black 90%);
+                background: -webkit-linear-gradient(top, $black 0%,$dark-black 90%);
+                &:hover,&.hover {
+                    background: linear-gradient(top, $black 0%,lighten($dark-black, 15%) 90%);
+                    background: -moz-linear-gradient(top, $black 0%,lighten($dark-black, 15%) 90%);
+                    background: -webkit-linear-gradient(top, $black 0%,lighten($dark-black, 15%) 90%);
                 }
             }
-        }
-        a.post-problem {
-            background: linear-gradient(top, lighten($primary-color, 5%) 0%,$primary-color 90%);
-		    background: -moz-linear-gradient(top, lighten($primary-color, 5%) 0%,$primary-color 90%);
-		    background: -webkit-linear-gradient(top, lighten($primary-color, 5%) 0%,$primary-color 90%);
-            &:hover {
-                background: linear-gradient(top, $primary-color 0%,darken($primary-color, 5%) 90%);
-		        background: -moz-linear-gradient(top, $primary-color 0%,darken($primary-color, 5%) 90%);
-		        background: -webkit-linear-gradient(top, $primary-color 0%,darken($primary-color, 5%) 90%);
+            a:not(.button).primary {
+                background: linear-gradient(top, lighten($primary-color, 5%) 0%,$primary-color 90%);
+                background: -moz-linear-gradient(top, lighten($primary-color, 5%) 0%,$primary-color 90%);
+                background: -webkit-linear-gradient(top, lighten($primary-color, 5%) 0%,$primary-color 90%);
+                &:hover,&.hover {
+                    background: linear-gradient(top, $primary-color 0%,darken($primary-color, 5%) 90%);
+                    background: -moz-linear-gradient(top, $primary-color 0%,darken($primary-color, 5%) 90%);
+                    background: -webkit-linear-gradient(top, $primary-color 0%,darken($primary-color, 5%) 90%);
+                }
             }
-        }
-    }
-    ul.right li {
-        &.notification-icon {
-            a {
+            &.title {
+                h1 {
+                    text-align: center;
+                    font: bold emCalc(30px) 'Montserrat Subrayada';
+                    line-height: emCalc(35px);
+                    letter-spacing: emCalc(-3px);
+                    margin: 0;
+                    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.4);
+                    a {
+                        display: block;
+                        color: white;
+                    }
+                }
+            }
+            &.notification-icon a {
                 position: relative;
                 .counter {
                     display: none;
@@ -435,22 +476,23 @@ form.auth-form {
                     }
                 }
             }
-        }
-        &.torso a {
-            padding-right: 0;
-        }
-        &.user a {
-            padding-right: emCalc(5px);
-        }
-        &.superuser {
-            background: transparent;
-            span {
-                margin: emCalc(13px) emCalc(10px) 0 emCalc(3px);
-                text-transform: uppercase;
+            &.torso a,
+            &.x a {
+                padding-right: 0;
             }
-        }
-        &.has-icon i {
-            font-size: emCalc(26px);
+            &.user a {
+                padding-right: emCalc(15px);
+            }
+            &.superuser {
+                background: transparent;
+                span {
+                    margin: emCalc(13px) emCalc(10px) 0 emCalc(3px);
+                    text-transform: uppercase;
+                }
+            }
+            &.has-icon i {
+                font-size: emCalc(26px);
+            }
         }
     }
 }
@@ -526,8 +568,11 @@ a.logo-faded {
             }
         }
     }
+    ul.button-group {
+        display: inline-block;
+    }
     .info-status {
-        padding: emCalc(20px) 0 0 0;
+        padding: emCalc(35px) 0 0 0;
         line-height: 1;
         color: $light-black;
         font-size: emCalc(12px);
@@ -540,7 +585,6 @@ a.logo-faded {
             text-transform: uppercase;
         }
         .status {
-            display: block;
             &:hover {
                 cursor: help;
             }
@@ -568,6 +612,10 @@ p.pagination {
 h6.subheader {
     margin: 0;
     font-size: emCalc(13px);
+    border-bottom: 1px solid #eaeaea;
+    margin-bottom: 0.3rem;
+    margin-top: 0.2rem;
+    padding-bottom: 0.3rem;
 }
 
 .counter-wrap,
@@ -658,7 +706,7 @@ h6.subheader {
 
 // User {{{
 
-.contributors {
+.collaborators {
     display: none;
     margin: emCalc(15px) 0;
     padding: emCalc(10px) 0;
@@ -731,7 +779,6 @@ h6.subheader {
         }
     }
     .info {
-        line-height: emCalc(18px);
         padding: emCalc(7px) 0 0 emCalc(45px);
     }
     .contributed a {
@@ -741,7 +788,6 @@ h6.subheader {
     a.username {
         display: block;
         font-weight: bold;
-        margin: 5px 0 0 0;
     }
     .badges {
         span {
@@ -793,7 +839,7 @@ h6.subheader {
         float: left !important;
     }
 }
-.contributor-delete {
+.collaborator-delete {
     .user-box {
         max-width: auto;
         &:hover {
@@ -809,7 +855,7 @@ h6.subheader {
 
 .user-search-result {
     padding: 0;
-    .contributor-delete:last-child{
+    .collaborator-delete:last-child{
         float: left;
     }
     .user-box {
@@ -1288,6 +1334,7 @@ h6.subheader {
 // Theory help
 
 .theory-help {
+    overflow: hidden;
     .help {
         display: none;
         background: $light-grey;
@@ -1439,10 +1486,28 @@ h6.subheader {
             font-size: emCalc(12px);
         }
     }
+    &#login {
+        width: 25%;
+        h3 {
+            display: none;
+        }
+        .button,input[type="submit"] {
+            font-size: emCalc(13px);
+            margin: emCalc(8px) 0;
+            padding: emCalc(10px) emCalc(4px);;
+        }
+        hr {
+            display: none;
+        }
+    }
 }
 
 #activity {
     right: 150px;
+}
+
+#login {
+    right: 100px;
 }
 
 .activity-sidebar-avatar img {

@@ -1,7 +1,7 @@
 {% load i18n captureas %}
 
 <div class="help-content">
-<a class="toggle right" href="javascript:void(0);"><i class="fi-x"></i></a>
+<a class="close toggle right" href="javascript:void(0);"><i class="fi-x"></i></a>
 <div class="row">
 
 {# Help index #}
@@ -23,15 +23,15 @@
 
 <li data-orbit-slide="about">
 <h3>{% trans "About DNStorm" %}</h3>
-<p>{% blocktrans %}DNStorm tries to solve your problems by structuring them. We use some techniques based on theoretical research to make teams share their knowledge structurably, so better quality information can be used for decision-making.{% endblocktrans %}</p>
+<p>{% blocktrans %}DNStorm is an experiment in decision-theory that proposes a different way of discussing problems by making them measurable and votable. The whole process is oriented on information structure, user collaboration and scientific proved decision-making practices.{% endblocktrans %}</p>
 {% captureas left %}<canvas id="pie" class="left" height="200" width="200"></canvas>{% endcaptureas %}
 {% captureas label %}<span class="label secondary radius">{% endcaptureas %}
 {% captureas _label %}</span>{% endcaptureas %}
 {% captureas button %}<a class="secondary radius tiny" href="{{ example_problem_url }}">{% endcaptureas %}
 {% captureas _button %}</a>{% endcaptureas %}
 <p>{% blocktrans %}{{ left }}Decisions can be measured in better or worse, involving the key idea of the 5 components of <i>decision quality</i>. To identify a good decision we certainly have to {{ label }}1{{ _label }} do a good problem definition, {{ label }}2{{ _label }} generate a good set of alternatives, {{ label }}3{{ _label }} get good information, {{ label }}4{{ _label }} know the consequences very well,{{ label }}5{{ _label }} make sure we're always thinking in a logically correct way.{% endblocktrans %}</p>
-<p>{% blocktrans %}We're confident that even small improvements in structuring the problems and alternatives are capable of highly contribute to better decision results, that's why DNStorm is meant to look only if the items {{ label }}1{{ _label }}, {{ label }}2{{ _label }}, and {{ label }}3{{ _label }}.{% endblocktrans %}</p>
-<p>{% blocktrans %}We'll now start to explain the flow of information in DNStorm. Remember there's an {{ button }}example problem{{ _button }} for you to see the application working.{% endblocktrans %}</p>
+<p>{% blocktrans %}We're confident that even small improvements in structuring the problems and alternatives are capable of highly contribute to better decision results, that's why DNStorm is meant to look only if the items {{ label }}1{{ _label }}, {{ label }}2{{ _label }}, and {{ label }}3{{ _label }} are not developed in the decision process.{% endblocktrans %}</p>
+<a class="button secondary small" href="javascript:void(0);">{% blocktrans %}See how it works &raquo;{% endblocktrans %}</a>
 </li>
 
 <li data-orbit-slide="description">
@@ -39,12 +39,14 @@
 {% captureas button %}<a class="button tiny radius"><i class="fi-plus"></i>&nbsp;{% endcaptureas %}
 {% captureas _button %}</a>{% endcaptureas %}
 {% captureas left %}<i class="fi-target-two big"></i>{% endcaptureas %}
-<p>{% blocktrans %}{{ left }}When you {{ button }}post a problem{{ _button }} you become its manager, being capable of selecting the problem's permissions and invite users to contribute. A good problem description is objective, properly introduced, summarized, with the relevant points cleared and well specified. There's no magic formula, but we can give you some tips about writing problems:{% endblocktrans %}</p>
+<p>{% blocktrans %}{{ left }}Everything starts with a description or the problem. If you're invited to contribute in a problem, that's why a description was alredy started and now you can help improving it..{% endblocktrans %}</p>
+
+<p>{% blocktrans %}A good problem description is objective, properly introduced, summarized, with the relevant points cleared and well specified. There's no magic formula, but we can give you some tips about writing problems:{% endblocktrans %}</p>
 <ul>
     <li>{% trans "Research before writing. And research serious. You have to understand the problem." %}</li>
     <li>{% trans "Try to use well the web editor while writing. People will understand better the text if it uses headings, references, citations, lists, paragraphs separated properly, links, images, and so." %}</li>
     <li>{% trans "Proof-read before posting. Grammar is important." %}</li>
-    <li>{% trans "Be open for questioning when the problem is published. Reply the comments and analyze each of the contributor's considerations." %}</li>
+    <li>{% trans "Be open for questioning when the problem is published. Reply the comments and analyze each of the collaborator's considerations." %}</li>
 </ul>
 </li>
 

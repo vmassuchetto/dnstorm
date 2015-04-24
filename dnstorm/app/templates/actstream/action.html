@@ -7,7 +7,7 @@
 {% if action.target_content_type|stringformat:"s" == "problem" and action.verb|stringformat:"s" == "started following" %}
 {% url "problem" action.target.id action.target.slug as problem_url %}
 {% url "user" action.actor as actor_url %}
-{% blocktrans with problem_title=action.target.title %}<a href="{{ actor_url }}">{{ actor_name }}</a> is now is a contributor of the problem <a href="{{ problem_url }}">{{ problem_title }}</a>{% endblocktrans %}
+{% blocktrans with problem_title=action.target.title %}<a href="{{ actor_url }}">{{ actor_name }}</a> is now is a collaborator of the problem <a href="{{ problem_url }}">{{ problem_title }}</a>{% endblocktrans %}
 {% endif %}
 
 {# Created problem #}

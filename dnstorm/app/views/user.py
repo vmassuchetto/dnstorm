@@ -17,20 +17,45 @@ from actstream.models import actor_stream
 
 from dnstorm.app import permissions
 from dnstorm.app.forms import UserForm, UserPasswordForm, CommentForm
-from dnstorm.app.models import Problem, Idea, Comment, Option
+from dnstorm.app.models import Problem, Idea, Comment, Option, Invitation
 from dnstorm.app.utils import get_option, get_object_or_none, get_user
+from dnstorm.app.views.base import LoginRequiredMixin, SuperUserRequiredMixin
 
-class UserView(TemplateView):
+def user_buttons(request, obj):
+    return [{
+        'icon': 'torso',
+        'title': _('User profile'),
+        'url': reverse('user', kwargs={'username': obj.username}),
+        'marked': request.resolver_match.url_name == 'user',
+        'show': True
+    },{
+        'icon': 'pencil',
+        'title': _('Edit info'),
+        'url': reverse('user_update', kwargs={'username': obj.username}),
+        'marked': request.resolver_match.url_name == 'user_update',
+        'show': request.user.has_perm('auth.change_user', obj)
+    },{
+        'icon': 'key',
+        'title': _('Change password'),
+        'url': reverse('user_password_update', kwargs={'username': obj.username}),
+        'marked': request.resolver_match.url_name == 'user_password_update',
+        'show': request.user.has_perm('auth.change_user', obj)
+    },{
+        'icon': 'prohibited',
+        'title': _('Inactivate'),
+        'url': reverse('user_inactivate', kwargs={'username': obj.username}),
+        'show': request.user.is_superuser and not obj.is_superuser
+    }]
+
+
+class UserView(LoginRequiredMixin, TemplateView):
     template_name = '_single_activity.html'
 
     def get_context_data(self, *args, **kwargs):
         context = super(UserView, self).get_context_data(**kwargs)
-        user = get_user(kwargs['username'])
-        if not user:
-            raise Http404
-
-        context['site_title'] = '%s | %s' % (user.username, _('User profile'))
-        context['profile'] = user
+        self.object = get_object_or_404(User, username=kwargs['username'])
+        context['site_title'] = '%s | %s' % (self.object.username, _('User profile'))
+        context['profile'] = self.object
         context['info'] = self.get_info()
         activities = Paginator(actor_stream(context['profile']), 25)
         context['activities'] = activities.page(self.request.GET.get('page', 1))
@@ -42,11 +67,12 @@ class UserView(TemplateView):
         return {
             'icon': 'torso',
             'icon_url': reverse('users'),
-            'title': _('Users'),
-            'show': True
+            'title': _('User activity'),
+            'show': True,
+            'buttons': user_buttons(self.request, self.object)
         }
 
-class UsersView(TemplateView):
+class UsersView(LoginRequiredMixin, TemplateView):
     template_name = '_single_users.html'
 
     def get_context_data(self, *args, **kwargs):
@@ -54,13 +80,12 @@ class UsersView(TemplateView):
         self.url_name = self.request.resolver_match.url_name
         self.user_type = self.kwargs.get('user_type', 'active')
         if self.user_type == 'invitations':
-            users = User.objects.filter(is_active=True, is_staff=False)
+            users = User.objects.filter(is_active=True, is_staff=False).order_by('first_name')
         elif self.user_type == 'inactive':
-            users = User.objects.filter(is_active=False, is_staff=False)
+            users = User.objects.filter(is_active=False, is_staff=False).order_by('first_name')
         else:
-            users = User.objects.filter(is_active=True, is_staff=True)
+            users = User.objects.filter(is_active=True, is_staff=True).order_by('first_name')
         page = self.request.GET['page'] if 'page' in self.request.GET else 1
-
         context['show_actions'] = True if self.request.user.is_superuser else False
         context['user_type'] = self.user_type
         context['site_title'] = '%s | %s' % (_('Users'), get_option('site_title'))
@@ -119,24 +144,20 @@ class UserUpdateView(UpdateView):
         return kwargs
 
     def get_object(self, *args, **kwargs):
-        return self.object
+        return get_object_or_404(User, username=self.kwargs.get('username', None))
 
     def get_context_data(self, *args, **kwargs):
         context = super(UserUpdateView, self).get_context_data(**kwargs)
         context['site_title'] = '%s | %s' % (self.object.username, _('Update user'))
         context['profile'] = self.object
-        context['breadcrumbs'] = self.get_breadcrumbs()
+        context['info'] = self.get_info()
         return context
-
-    def get_breadcrumbs(self, **kwargs):
-        return [{ 'title': _('Users'), 'classes': 'current' }]
 
     def form_valid(self, form):
         """
         Checks for the given fields and changes the user object accordingly.
         Not nice, perhaps, some permissions handling are required here.
         """
-
         user = get_object_or_404(User, id=form.cleaned_data['user_id'])
         _form = form.save(commit=False)
         if not self.request.user.is_superuser and (self.request.user != user or _form.is_superuser):
@@ -150,45 +171,53 @@ class UserUpdateView(UpdateView):
         messages.success(self.request, mark_safe(_('User information for %s was updated.') % label))
         return HttpResponseRedirect(reverse('user', kwargs={'username': user.username}))
 
+    def get_info(self):
+        return {
+            'icon': 'torso',
+            'icon_url': reverse('home'),
+            'title': _('Update user: %s' % self.object.username),
+            'show': True,
+            'buttons': user_buttons(self.request, self.object)
+        }
+
+@permission_required('auth.change_user')
 class UserPasswordUpdateView(FormView):
     form_class = UserPasswordForm
     template_name = '_update_user_password.html'
 
-    def dispatch(self, *args, **kwargs):
-        obj = get_object_or_404(User, username=kwargs['username'])
-        if not self.request.user.is_superuser and self.request.user != obj:
-            raise PermissionDenied
-        self.object = obj
-        return super(UserPasswordUpdateView, self).dispatch(*args, **kwargs)
-
     def get_object(self, *args, **kwargs):
-        return self.object
+        return get_object_or_404(User, username=self.kwargs.get('username', None))
 
     def get_context_data(self, *args, **kwargs):
+        self.object = self.get_object()
         context = super(UserPasswordUpdateView, self).get_context_data(**kwargs)
         context['site_title'] = '%s | %s' % (self.object.username, _('Update user password'))
-        context['breadcrumbs'] = self.get_breadcrumbs()
+        context['info'] = self.get_info()
         return context
-
-    def get_breadcrumbs(self, **kwargs):
-        return [{ 'title': _('Users'), 'classes': 'current' }]
 
     def form_valid(self, form):
         """
         Updates the user password according to current password and two inputs
         of the new password.
         """
-
         if not self.object.check_password(self.request.POST['password']):
             form._errors.setdefault('password', ErrorList())
             form._errors['password'].append(_('Wrong password.'))
             return render(self.request, '_update_userpassword.html', {'form': form})
-
         self.object.set_password(self.request.POST['password1'])
         self.object.save()
         label = '<span class="label radius success">%s</span>' % self.object.username
         messages.success(self.request, mark_safe(_('The password for %s was updated.') % label))
         return HttpResponseRedirect(reverse('user', kwargs={'username': self.object.username}))
+
+    def get_info(self):
+        return {
+            'icon': 'torso',
+            'icon_url': reverse('home'),
+            'title': _('Update user: %s' % self.object.username),
+            'show': True,
+            'buttons': user_buttons(self.request, self.object)
+        }
 
 class UserResendInvitationView(RedirectView):
     """
@@ -209,7 +238,7 @@ class UserResendInvitationView(RedirectView):
 
         return self.request.META.get('HTTP_REFERER', reverse('users'))
 
-class UserInactivateView(RedirectView):
+class UserInactivateView(SuperUserRequiredMixin, RedirectView):
     """
     Marks a user as inactive.
     """
@@ -222,14 +251,12 @@ class UserInactivateView(RedirectView):
         if not self.request.user.is_superuser:
             raise PermissionDenied
         user = get_object_or_404(User, username=kwargs['username'])
+        if user.is_superuser:
+            raise Http404
         _r = self.request.META.get('HTTP_REFERER', reverse('users'))
 
         # invitation
-        if user.is_active and not user.is_staff:
-            label = '<span class="label radius alert">%s</span>' % user.email
-            user.delete()
-            messages.warning(self.request, mark_safe(_('The invitation to %s was cancelled.') % label))
-            return _r
+        Invitation.objects.filter(user=user).delete()
 
         # confirmed user
         user.first_name = 'u%d' % user.id
@@ -237,11 +264,11 @@ class UserInactivateView(RedirectView):
         user.is_staff = False
         user.save()
 
-        label = '<span class="label radius alert">%s</span>' % user.last_name
+        label = '<span class="label radius alert">%s</span>' % user.username
         messages.warning(self.request, mark_safe(_('The user %s was inactivated.') % label))
         return _r
 
-class UserActivateView(RedirectView):
+class UserActivateView(SuperUserRequiredMixin, RedirectView):
     """
     Marks a user as active.
     """

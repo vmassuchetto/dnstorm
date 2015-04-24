@@ -217,6 +217,19 @@ $(document).on('click', '.notification-icon', function(e){
     }
 });
 
+$(document).on('click', '.login-icon', function(e){
+    /***
+    Show and hide the login form.
+    ***/
+    login = $('#login');
+    $('.scroll-box').not('#login').hide();
+    if (login.is(':visible')) {
+        login.hide();
+    } else {
+        login.show();
+    }
+});
+
 $(document).on('click', '.theory-help a.toggle', function(e){
     /***
     Show the help panel.
@@ -317,7 +330,16 @@ $('.problem-form').on('click', '.user-search-selected,.user-search-result a.user
     e.preventDefault();
 });
 
-$('.user-search-selected').on('click', '.contributor-delete', function(e){
+$('.top-bar').on('mouseenter', '.hover-li', function(){
+    hover = $(this).data('hover');
+    $(this).parent().find('.' + hover + ' a').addClass('hover');
+});
+$('.top-bar').on('mouseleave', '.hover-li', function(){
+    hover = $(this).data('hover');
+    $(this).parent().find('.' + hover + ' a').removeClass('hover');
+});
+
+$('.user-search-selected').on('click', '.collaborator-delete', function(e){
     e.preventDefault();
     var user_box = $(this).find('.user-box');
     if (user_box.data('username')) {
@@ -325,7 +347,7 @@ $('.user-search-selected').on('click', '.contributor-delete', function(e){
             url: '/ajax/',
             type: 'GET',
             data: {
-                'contributor_delete': user_box.data('username'),
+                'collaborator_delete': user_box.data('username'),
                 'problem': problem_id
             },
             complete: function(xhr, data) {
@@ -344,7 +366,7 @@ $('.user-search-result').on('click', '.user-box', function(){
             url: '/ajax/',
             type: 'GET',
             data: {
-                'contributor_add': $(this).data('username'),
+                'collaborator_add': $(this).data('username'),
                 'problem': problem_id
             },
             complete: function(xhr, data) {
@@ -584,12 +606,12 @@ $('.comment-form').on('submit', 'form', function(e){
     });
 });
 
-$('.problem').on('click', 'a.show-problem-contributors', function(e){
-    c = $('.contributors');
+$('.problem').on('click', 'a.show-problem-collaborators', function(e){
+    c = $('.collaborators');
     if (c.is(':visible')) {
-        $('.contributors').stop().slideUp(200);
+        $('.collaborators').stop().slideUp(200);
     } else {
-        $('.contributors').stop().slideDown(200);
+        $('.collaborators').stop().slideDown(200);
     }
 });
 

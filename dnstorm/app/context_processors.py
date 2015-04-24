@@ -1,3 +1,4 @@
+from django.contrib.auth.forms import AuthenticationForm
 from django.core.urlresolvers import reverse
 
 from actstream.models import user_stream
@@ -5,6 +6,7 @@ from actstream.models import user_stream
 from dnstorm.app import DNSTORM_URL
 from dnstorm.app.utils import get_option
 from dnstorm.app.models import Problem, Idea
+from dnstorm.app.utils import get_option
 
 def base(request):
     """
@@ -16,6 +18,7 @@ def base(request):
     # Links
     context['site_title'] = '%s | %s' % (get_option('site_title'), get_option('site_description'))
     context['site_url'] = get_option('site_url')
+    context['login_form'] = AuthenticationForm()
     context['login_url'] = reverse('login') + '?next=' + request.build_absolute_uri() if 'next' not in request.GET else ''
     context['logout_url'] = reverse('logout') + '?next=' + request.build_absolute_uri() if 'next' not in request.GET else ''
 

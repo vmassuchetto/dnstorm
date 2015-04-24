@@ -105,15 +105,13 @@ class ProblemUpdateView(UpdateView):
             delete_problem = int(args[0].POST.get('delete_problem', ''))
         except ValueError:
             delete_problem = False
-        if delete_problem:
-            if yes and delete_problem == self.problem.id and \
-                permissions.problem(obj=self.problem, user=args[0].user, mode='manage'):
-                self.problem.delete()
-                messages.success(args[0], _('The problem was deleted.'))
-                return HttpResponseRedirect(reverse('home'))
-            elif not yes:
-                messages.warning(args[0], _('You need to mark the confirmation checkbox if you want to delete the form.'))
-
+        if delete_problem and yes and delete_problem == self.problem.id and \
+            permissions.problem(obj=self.problem, user=args[0].user, mode='manage'):
+            self.problem.delete()
+            messages.success(args[0], _('The problem was deleted.'))
+            return HttpResponseRedirect(reverse('home'))
+        elif not yes:
+            messages.warning(args[0], _('You need to mark the confirmation checkbox if you want to delete the form.'))
         return super(ProblemUpdateView, self).post(*args, **kwargs)
 
     def get_context_data(self, *args, **kwargs):
@@ -136,7 +134,7 @@ class ProblemUpdateView(UpdateView):
         Save the object, clear the criteria and add the submitted ones in
         ``request.POST``.
         """
-
+        self.request.user = get_user(self.request)
         self.object = form.save(commit=False)
 
         # Problem save
@@ -148,13 +146,10 @@ class ProblemUpdateView(UpdateView):
             strip=True, strip_comments=True)
         self.object.published = True if self.request.POST.get('publish', None) else False
         self.object.save()
-
-        if self.object.author.id != self.request.user.id and self.object.open:
-            self.object.coauthor.add(obj.request.user)
-        elif self.object.author.id != self.request.user.id and not self.object.open:
-            raise PermissionDenied
-
-        self.object.save()
+        # Coauthors
+        if self.object.author.id != self.request.user.id:
+            self.object.coauthor.add(self.request.user)
+            self.object.save()
 
         # Response
         if not self.object.published:
@@ -169,18 +164,21 @@ class ProblemUpdateView(UpdateView):
         return HttpResponseRedirect(reverse(view, kwargs=kwargs))
 
     def get_info(self):
+        """
+        Information for the title bar.
+        """
         return {
             'icon': 'pencil',
             'icon_url': reverse('problem', kwargs={'pk': self.object.id, 'slug': self.object.slug}),
             'title': _('Edit problem: %s' % self.object.title),
             'title_url': self.object.get_absolute_url(),
             'buttons': problem_buttons(self.request, self.object),
-            'show': permissions.problem(obj=self.object, user=self.request.user, mode='edit')
+            # TODO 'show': permissions.problem(obj=self.object, user=self.request.user, mode='edit')
         }
 
-class ProblemContributorView(FormView):
-    template_name = '_update_problem_contributors.html'
-    form_class = forms.ProblemContributorForm
+class ProblemCollaboratorsView(FormView):
+    template_name = '_update_problem_collaborators.html'
+    form_class = forms.ProblemCollaboratorsForm
 
     def dispatch(self, request, *args, **kwargs):
         # Permissions
@@ -188,27 +186,27 @@ class ProblemContributorView(FormView):
         if not permissions.problem(obj=self.object, user=request.user, mode='view'):
             raise PermissionDenied
         # OK
-        return super(ProblemContributorView, self).dispatch(request, *args, **kwargs)
+        return super(ProblemCollaboratorsView, self).dispatch(request, *args, **kwargs)
 
     def get_form_kwargs(self):
-        kwargs = super(ProblemContributorView, self).get_form_kwargs()
+        kwargs = super(ProblemCollaboratorsView, self).get_form_kwargs()
         kwargs['problem'] = self.object
         return kwargs
 
     def get_context_data(self, *args, **kwargs):
-        context = super(ProblemContributorView, self).get_context_data(**kwargs)
-        context['site_title'] = '%s | %s' % (self.object.title, _('Contributors'))
+        context = super(ProblemCollaboratorsView, self).get_context_data(**kwargs)
+        context['site_title'] = '%s | %s' % (self.object.title, _('Collaborators'))
         context['info'] = self.get_info()
-        context['title'] = _('Problem contributors')
+        context['title'] = _('Problem collaborators')
         context['delete_form'] = forms.DeleteForm()
         context['problem'] = self.object
-        context['users'] = self.object.contributor.all()
+        context['users'] = self.object.collaborators.all()
         context['problem_perm_manage'] = permissions.problem(obj=self.object, user=self.request.user, mode='manage')
         return context
 
     def form_valid(self, form):
         """
-        Save the contributors and problem status.
+        Save the collaborators and problem status.
         """
         # permissions
         if not permissions.problem(obj=self.object, user=self.request.user, mode='manage'):
@@ -221,10 +219,13 @@ class ProblemContributorView(FormView):
         return HttpResponseRedirect(reverse('problem', kwargs={'pk': form.problem.id, 'slug': form.problem.slug}))
 
     def get_info(self):
+        """
+        Information for the title bar.
+        """
         return {
             'icon': 'torso',
-            'icon_url': reverse('problem_contributors', kwargs={'pk': self.object.id }),
-            'title': _('Problem contributors: %s' % self.object.title),
+            'icon_url': reverse('problem_collaborators', kwargs={'pk': self.object.id }),
+            'title': _('Problem collaborators: %s' % self.object.title),
             'title_url': self.object.get_absolute_url(),
             'buttons': problem_buttons(self.request, self.object),
             'show': permissions.problem(obj=self.object, user=self.request.user, mode='view'),
@@ -267,11 +268,10 @@ class ProblemView(TemplateView):
         context['comments'] = models.Comment.objects.filter(problem=self.object)
         context['comment_form'] = forms.CommentForm()
         context['delete_form'] = forms.DeleteForm()
-        context['alternative_form'] = forms.AlternativeForm()
 
-        # Contributors
-        if self.request.resolver_match.url_name == 'problem_contributors':
-            context['contributors'] = self.object.contributor.filter(is_staff=True).order_by('first_name')
+        # Collaborators
+        if self.request.resolver_match.url_name == 'problem_collaborators':
+            context['collaborators'] = self.object.collaborators.filter(is_staff=True).order_by('first_name')
             return context
 
         # Criterias
@@ -305,6 +305,9 @@ class ProblemView(TemplateView):
         return context
 
     def get_info(self):
+        """
+        Information for the title bar.
+        """
         return {
             'icon': 'target-two',
             'icon_url': reverse('problem', kwargs={'pk': self.object.id, 'slug': self.object.slug}),
@@ -318,29 +321,29 @@ class ProblemView(TemplateView):
         return {
             'classes': 'problem-tabs',
             'items': [{
-                'icon': 'target-two', 'name': _('Problem'),
-                'classes': 'problem-tab-selector small-12 medium-2 medium-offset-1',
-                'data': 'description',
-                'show': True
-            },{
-                'icon': 'cloud', 'name': _('Criteria'),
-                'classes': 'problem-tab-selector small-12 medium-2',
-                'data': 'criteria',
-                'show': True
-            },{
-                'icon': 'lightbulb', 'name': _('Ideas'),
-                'classes': 'problem-tab-selector small-12 medium-2',
-                'data': 'ideas',
-                'show': True
-            },{
-                'icon': 'list', 'name': _('Alternatives'),
-                'classes': 'problem-tab-selector small-12 medium-2',
-                'data': 'alternatives',
-                'show': True
-            },{
-                'icon': 'play', 'name': _('Results'),
-                'classes': 'problem-tab-selector small-12 medium-2 medium-pull-1',
-                'data': 'results',
-                'show': True
-            }]
-        }
+                    'icon': 'target-two', 'name': _('Problem'),
+                    'classes': 'problem-tab-selector small-12 medium-2 medium-offset-1',
+                    'data': 'description',
+                    'show': True
+                },{
+                    'icon': 'cloud', 'name': _('Criteria'),
+                    'classes': 'problem-tab-selector small-12 medium-2',
+                    'data': 'criteria',
+                    'show': True
+                },{
+                    'icon': 'lightbulb', 'name': _('Ideas'),
+                    'classes': 'problem-tab-selector small-12 medium-2',
+                    'data': 'ideas',
+                    'show': True
+                },{
+                    'icon': 'list', 'name': _('Alternatives'),
+                    'classes': 'problem-tab-selector small-12 medium-2',
+                    'data': 'alternatives',
+                    'show': True
+                },{
+                    'icon': 'play', 'name': _('Results'),
+                    'classes': 'problem-tab-selector small-12 medium-2 medium-pull-1',
+                    'data': 'results',
+                    'show': True
+                }]
+            }

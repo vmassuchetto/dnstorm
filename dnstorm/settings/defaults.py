@@ -4,6 +4,7 @@ from django.conf import global_settings
 
 ALLOWED_HOSTS = ['*']
 
+# available translations
 LANGUAGES = (
     ('en', 'English'),
     ('pt-br', 'Brazilian Portuguese'),
@@ -71,7 +72,7 @@ INSTALLED_APPS = (
     'crispy_forms_foundation',
     'notification',
     'registration',
-    'south'
+    'south',
 
 )
 
