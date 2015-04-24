@@ -6267,7 +6267,7 @@ h6.subheader {
 
 .user-search-selected {
   transition: all 200ms ease-out;
-  margin: 0 0 0.9375rem;
+  margin: 0;
   border: 1px solid #F7F7F7;
   padding: 0.625rem; }
   .user-search-selected [class*="column"]:last-child {
@@ -6283,7 +6283,10 @@ h6.subheader {
   float: left !important; }
 
 .user-search-result {
-  padding: 0; }
+  padding: 0;
+  width: 100%;
+  position: absolute;
+  z-index: 3; }
   .user-search-result .collaborator-delete:last-child {
     float: left; }
   .user-search-result .user-box {

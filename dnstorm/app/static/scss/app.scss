@@ -832,7 +832,7 @@ h6.subheader {
 
 .user-search-selected {
     @include single-transition(all, 200ms, ease-out);
-    margin: 0 0 emCalc(15px);
+    margin: 0;
     border: 1px solid $light-grey;
     padding: emCalc(10px);
     [class*="column"]:last-child {
@@ -855,6 +855,9 @@ h6.subheader {
 
 .user-search-result {
     padding: 0;
+    width: 100%;
+    position: absolute;
+    z-index: 3;
     .collaborator-delete:last-child{
         float: left;
     }
