@@ -1,4 +1,3 @@
-import signals
 from django.contrib.auth.models import User
 from actstream import registry
 from dnstorm.app import models

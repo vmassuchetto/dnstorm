@@ -22,7 +22,8 @@ from django.views.generic.base import TemplateView, View, TemplateResponseMixin
 from django.views.generic.edit import FormView, UpdateView
 
 from actstream.actions import follow
-from actstream.models import user_stream, Action
+from actstream.models import Action
+
 from registration.backends.default.views import RegistrationView as BaseRegistrationView
 from registration import signals as registration_signals
 
@@ -64,17 +65,19 @@ class HomeView(TemplateView):
         elif authenticated and self.request.resolver_match.url_name == 'problems_drafts':
             q_problems = (Q(published=False) & Q(author=self.request.user))
         elif authenticated and self.request.resolver_match.url_name == 'problems_contribute':
-            q_problems = (Q(contributor__in=[self.request.user]) & ~Q(author=self.request.user))
+            q_problems = (Q(collaborator__in=[self.request.user]) & ~Q(author=self.request.user))
         elif self.request.user.is_superuser:
-            q_problems = (~Q(contributor__in=[self.request.user]) & ~Q(author=self.request.user))
+            q_problems = (~Q(collaborator__in=[self.request.user]) & ~Q(author=self.request.user))
         else:
             q_problems = (Q(published=True, public=True))
 
-        context['info'] = self.get_info()
         if authenticated:
             context['tabs'] = self.get_tabs()
         problems = Paginator(Problem.objects.filter(q_problems).distinct().order_by('-last_activity'), 25)
         context['problems'] = problems.page(self.request.GET.get('page', 1))
+        context['info'] = self.get_info()
+        if not problems.count and self.request.resolver_match.url_name == 'home':
+            context['body_class'] = 'show-help'
         return context
 
     def get_info(self):
@@ -105,7 +108,7 @@ class HomeView(TemplateView):
                     'marked': self.request.resolver_match.url_name == 'problems_drafts',
                     'show': True
                 },{
-                    'icon': 'lightbulb', 'name': _('Contributed to'),
+                    'icon': 'lightbulb', 'name': _('Contributing'),
                     'classes': 'small-12 medium-2 medium-pull-2',
                     'url': reverse('problems_collaborating'),
                     'marked': self.request.resolver_match.url_name == 'problems_collaborating',
@@ -281,6 +284,7 @@ class OptionsView(SuperUserRequiredMixin, FormView):
         s.domain = url.netloc
         s.save()
 
+        messages.success(self.request, mark_safe(_('Options saved.')))
         return HttpResponseRedirect(reverse('options'))
 
 class CommentView(RedirectView):
@@ -301,7 +305,7 @@ class ActivityView(LoginRequiredMixin, TemplateView):
         context = super(ActivityView, self).get_context_data(**kwargs)
         self.url_name = self.request.resolver_match.url_name
 
-        # Content type
+        # Set content type
         _c = {
             'problems': 'problem', 'description': 'problem', 'problem': 'problem',
             'criteria': 'criteria',
@@ -316,17 +320,17 @@ class ActivityView(LoginRequiredMixin, TemplateView):
 
         # Activities
         if self.url_name in ['activity', 'activity_short']:
-            activities = user_stream(self.request.user)
+            activities = Action.objects.actor(self.request.user)
             context['tabs'] = self.get_tabs()
         elif self.url_name == 'activity_objects':
-            activities = Action.objects.global_stream(self.request.user, content_type=_content_type)
+            activities = Action.objects.public(action_object_content_type=_content_type)
             context['tabs'] = self.get_tabs()
         elif self.url_name == 'activity_problem':
             activities = Action.objects.target(self.problem)
             context['tabs'] = self.get_problem_tabs()
             context['problem'] = self.problem
         elif self.url_name == 'activity_problem_objects':
-            activities = Action.objects.problem_objects_stream(user=self.request.user, problem=self.problem, content_type=_content_type)
+            activities = Action.objects.public(action_object_content_type=_content_type, target_object_id=self.problem.id)
             context['tabs'] = self.get_problem_tabs()
             context['problem'] = self.problem
         activities = Paginator(activities, 25)
@@ -372,7 +376,7 @@ class ActivityView(LoginRequiredMixin, TemplateView):
             'classes': 'activity-tabs',
             'items': [{
                     'icon': 'asterisk', 'name': _('All'),
-                    'classes': 'small-12 medium-2 medium-offset-1',
+                    'classes': 'small-12 medium-2',
                     'url': reverse('activity'),
                     'marked': self.url_name == 'activity',
                     'show': True
@@ -381,6 +385,12 @@ class ActivityView(LoginRequiredMixin, TemplateView):
                     'classes': 'small-12 medium-2',
                     'url': reverse('activity_objects', kwargs={'content_type': 'problems'}),
                     'marked': self.url_name == 'activity_objects' and self.content_type.name == 'problem',
+                    'show': True
+                },{
+                    'icon': 'cloud', 'name': _('Criteria'),
+                    'classes': 'small-12 medium-2',
+                    'url': reverse('activity_objects', kwargs={'content_type': 'criteria'}),
+                    'marked': self.url_name == 'activity_objects' and self.content_type.name == 'criteria',
                     'show': True
                 },{
                     'icon': 'lightbulb', 'name': _('Ideas'),
@@ -396,7 +406,7 @@ class ActivityView(LoginRequiredMixin, TemplateView):
                     'show': True
                 },{
                     'icon': 'list', 'name': _('Comments'),
-                    'classes': 'small-12 medium-2 medium-pull-1',
+                    'classes': 'small-12 medium-2',
                     'url': reverse('activity_objects', kwargs={'content_type': 'comments'}),
                     'marked': self.content_type.name == 'comment',
                     'show': True

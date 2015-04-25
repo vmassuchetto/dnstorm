@@ -21,9 +21,8 @@
     {# Draft mode #}
 
     {% if not problem.published %}
-        {% url "problem_update" problem.id problem.slug as problem_update_url %}
         {% captureas message %}
-            {% blocktrans %}This is a preview mode from an unpublished draft. The problem is not available for user contribution until it is published. <a class="left-1em button secondary tiny radius" href="{{ problem_update_url }}">Edit problem</a>{% endblocktrans %}
+            {% blocktrans %}This is a preview mode from an unpublished draft. The problem is not available for user contribution until it is published.{% endblocktrans %}
         {% endcaptureas %}
         {% include "part_message.html" with icon="page-edit" message=message %}
     {% endif %}
@@ -64,7 +63,14 @@
 
         <div class="problem-tab problem-ideas">
 
-            {% if problem.criteria_set.all|length > 0 %}
+            {% if ideas_drafts %}
+                <h4>{% trans "Your idea drafts" %}</h4>
+                {% for idea in ideas_drafts %}
+                    {% include "item_idea.html" with show_likes=True show_actions=True show_comments=True %}
+                {% endfor %}
+            {% endif %}
+
+            {% if ideas %}
 
                 {% if problem_perm_contribute %}
                     <a class="button radius large-icon large-button text-left expand" href="{% url "idea_create" problem.id %}"><i class="fi-plus"></i>{% trans "Click here to insert a new idea." %}</a>

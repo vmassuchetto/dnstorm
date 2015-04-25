@@ -53,12 +53,13 @@
         {% if user.is_authenticated %}
             {% url "problem_create" as item_url %}
             {% captureas message %}
-                {% blocktrans %}Welcome to DNStorm. You can start by <a href="{{ item_url }}">creating a problem</a>.{% endblocktrans %}
+                {% blocktrans %}There's no problem available. <a class="button radius tiny" !Y!P href="{{ item_url }}">Why not create one?</a>{% endblocktrans %}
             {% endcaptureas %}
         {% else %}
-            {% url "auth_login" as item_url %}
+            {% url "auth_register" as register_url %}
+            {% url "auth_login" as login_url %}
             {% captureas message %}
-                {% blocktrans %}Welcome to DNStorm. There's no problem here. You can <a href="{{ item_url }}">log in</a> to create one.{% endblocktrans %}
+                {% blocktrans %}There's no public problems available. You can <a class="button radius small" href="{{ login_url }}">log in</a> or <a class="button radius small" href="{{ register_url }}">create an account</a> to start!{% endblocktrans %}
             {% endcaptureas %}
         {% endif %}
         {% include "part_panel.html" with message=message icon="prohibited" %}

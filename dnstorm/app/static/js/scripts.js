@@ -230,7 +230,7 @@ $(document).on('click', '.login-icon', function(e){
     }
 });
 
-$(document).on('click', '.theory-help a.toggle', function(e){
+function toggle_help_panel() {
     /***
     Show the help panel.
     ***/
@@ -257,30 +257,46 @@ $(document).on('click', '.theory-help a.toggle', function(e){
                 response = $.parseJSON(xhr.responseText);
                 target = $('.help');
                 target.html(response.html);
-                target.slideDown(function(){
-                    $(document).foundation({'orbit': {
-                        'next_on_click': false,
-                        'navigation_arrows': false,
-                        'slide_number': false,
-                    }});
-                    var data = [
-                        { value: 1/5, color: "#666666", highlight: "#a1a1a1" },
-                        { value: 1/5, color: "#666666", highlight: "#a1a1a1" },
-                        { value: 1/5, color: "#666666", highlight: "#a1a1a1" },
-                        { value: 1/5, color: "#a1a1a1", highlight: "#666666" },
-                        { value: 1/5, color: "#a1a1a1", highlight: "#666666" },
-                    ];
-                    var options = {
-                        'showLabels': false,
-                        'showTooltips': false,
-                        'showScale': false
-                    };
-                    var chart = new Chart(document.getElementById("pie").getContext("2d")).Doughnut(data, options);
-                });
+                target.height(400);
+                target.slideDown();
+                target.height('auto');
+                $(document).foundation({'orbit': {
+                    'next_on_click': false,
+                    'navigation_arrows': false,
+                    'slide_number': false,
+                }});
+                var data = [
+                    { value: 1/5, color: "#666666", highlight: "#a1a1a1" },
+                    { value: 1/5, color: "#666666", highlight: "#a1a1a1" },
+                    { value: 1/5, color: "#666666", highlight: "#a1a1a1" },
+                    { value: 1/5, color: "#a1a1a1", highlight: "#666666" },
+                    { value: 1/5, color: "#a1a1a1", highlight: "#666666" },
+                ];
+                var options = {
+                    'showLabels': false,
+                    'showTooltips': false,
+                    'showScale': false
+                };
+                var chart = new Chart(document.getElementById("pie").getContext("2d")).Doughnut(data, options);
             }
         }
     });
+}
+
+$(document).on('click', '.theory-help a.toggle', toggle_help_panel);
+
+$(document).ready(function(){
+    /***
+    Trigger the help panel on page load.
+    ***/
+    if ($('body').hasClass('show-help')) {
+        setTimeout(function(){
+            console.log('trigger');
+            toggle_help_panel();
+        }, 200);
+    }
 });
+
 
 function criteria_value() {
     /***

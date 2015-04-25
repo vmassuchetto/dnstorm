@@ -3,9 +3,7 @@
 @import "settings";
 @import "foundation/scss/foundation";
 
-// }}}
-
-// Fonts {{{
+// }}} Fonts {{{
 
 @font-face {
     font-family: 'Montserrat Subrayada';
@@ -14,9 +12,7 @@
     src: local('MontserratSubrayada-Bold'), url(../fonts/MontserratSubrayada-Bold.woff) format('woff');
 }
 
-// }}}
-
-// General {{{
+// }}} General {{{
 
 .expand {
     width: 100%;
@@ -87,51 +83,7 @@ hr {
     top: 0 !important;
 }
 
-/* }}} Forms {{{ */
-
-fieldset {
-    margin: 0 0 emCalc(20px) 0;
-}
-
-input[type="text"],
-input[type="password"],
-input[type="date"],
-input[type="datetime"],
-input[type="datetime-local"],
-input[type="month"],
-input[type="week"],
-input[type="email"],
-input[type="number"],
-input[type="search"],
-input[type="tel"],
-input[type="time"],
-input[type="url"],
-input[type="color"],
-textarea {
-    margin:0;
-}
-
-// }}}
-
-// CKEditor {{{
-
-.cke_ltr {
-    width: 100% !important;
-}
-
-.cke_combopanel__format {
-    width: 200px !important;
-}
-
-table.cke_dialog {
-    width: 250px !important;
-    left: 35% !important;
-    top: 100px !important;
-}
-
-// }}}
-
-// Buttons {{{
+// }}} Buttons {{{
 
 .button {
     i {
@@ -209,7 +161,43 @@ a.action-button {
 }
 // }}}
 
-// Forms {{{
+/* }}} Forms {{{ */
+
+fieldset {
+    margin: 0 0 emCalc(20px) 0;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="date"],
+input[type="datetime"],
+input[type="datetime-local"],
+input[type="month"],
+input[type="week"],
+input[type="email"],
+input[type="number"],
+input[type="search"],
+input[type="tel"],
+input[type="time"],
+input[type="url"],
+input[type="color"],
+textarea {
+    margin:0;
+}
+
+.cke_ltr {
+    width: 100% !important;
+}
+
+.cke_combopanel__format {
+    width: 200px !important;
+}
+
+table.cke_dialog {
+    width: 250px !important;
+    left: 35% !important;
+    top: 100px !important;
+}
 
 form {
     &.auth-form {
@@ -268,9 +256,25 @@ form.auth-form {
     }
 }
 
-// }}}
+// }}} Tooltip {{{
 
-// Panel {{{
+.tooltip {
+    p {
+        &.description {
+            border-bottom: 1px solid $dark-grey;
+            padding-bottom: emCalc(5px);
+            margin-bottom: emCalc(5px);
+        }
+        margin: 0;
+        padding: 0;
+        line-height: 1.3;
+        span i {
+            margin-right: emCalc(5px);
+        }
+    }
+}
+
+// }}} Panel {{{
 
 .panel {
     position: relative;
@@ -300,6 +304,9 @@ form.auth-form {
         a {
             color: black;
         }
+    }
+    .button {
+        color: white;
     }
 }
 .panel-inline {
@@ -512,10 +519,6 @@ a.logo-faded {
     font-size: emCalc(25px);
     color: lighten($black, 30%);
     letter-spacing: emCalc(-1px);
-    //@include text-shadow(
-        //lighten($black, 60%) 1px 1px 0,
-        //lighten($black, 80%) 2px 2px 0
-    //);
     &:hover {
         color: darken($black, 40%);
     }
@@ -1063,23 +1066,13 @@ h6.subheader {
         color: lighten($base-font-color, 10%);
         margin-bottom: emCalc(3px);
     }
+    &:hover {
+        background-color: $light-grey;
+    }
 }
 
 
 // Idea {{{
-
-.idea-row {
-    h4 {
-        font-size: emCalc(18px);
-    }
-    .idea-actions {
-        margin: emCalc(15px) 0;
-        a {
-            margin: 0;
-            padding: 2px 4px;
-        }
-    }
-}
 
 .idea-edit {
     textarea {
@@ -1311,15 +1304,26 @@ h6.subheader {
 
 .idea-row,
 .alternative-row {
-    position: relative;
-    margin: 0;
-    padding: emCalc(20px) 0 0 0;
+    margin: emCalc(15px) 0;
+    padding: emCalc(15px) 0;
+    border-bottom: 1px solid $grey;
+    &.draft {
+        background-color: $light-grey;
+        border: 1px solid $grey;
+    }
     h4 {
         font-size: emCalc(18px);
     }
     .number {
         font-weight: bold;
         font-size: emCalc(16px);
+    }
+   .actions {
+        margin: emCalc(15px) 0;
+        a {
+            margin: 0;
+            padding: 2px 4px;
+        }
     }
 }
 .alternative-result {
@@ -1341,6 +1345,7 @@ h6.subheader {
 // Theory help
 
 .theory-help {
+    @include single-transition(all, 200ms, ease-out);
     overflow: hidden;
     .help {
         display: none;

@@ -66,9 +66,9 @@ urlpatterns = patterns('',
 
     # Activity
     (r'^activity/$', base.ActivityView.as_view(), {}, 'activity'),
-    (r'^activity/(?P<content_type>problems|ideas|alternatives|comments)/$', base.ActivityView.as_view(), {}, 'activity_objects'),
+    (r'^activity/(?P<content_type>problems|criteria|ideas|alternatives|comments)/$', base.ActivityView.as_view(), {}, 'activity_objects'),
     (r'^activity/problem/(?P<pk>\d+)/$', base.ActivityView.as_view(), {}, 'activity_problem'),
-    (r'^activity/problem/(?P<pk>\d+)/(?P<content_type>description|ideas|alternatives|comments)/$', base.ActivityView.as_view(), {}, 'activity_problem_objects'),
+    (r'^activity/problem/(?P<pk>\d+)/(?P<content_type>description|criteria|ideas|alternatives|comments)/$', base.ActivityView.as_view(), {}, 'activity_problem_objects'),
 
     # Options
     (r'^options/$', base.OptionsView.as_view(), {}, 'options'),

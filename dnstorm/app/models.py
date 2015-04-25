@@ -224,6 +224,11 @@ class Criteria(models.Model):
         }
         return icons[self.fmt]
 
+    def tooltip(self):
+        return '<div class="criteria-tooltip"><p class="description">%s</p>%s</div>' % (self.description,
+            re.sub('\n', '', re.sub(' {2,}', '', render_to_string('item_criteria_parameters.html',
+                {'criteria': self, 'show_paragraphs': True, 'show_icons': True}))))
+
     def fill_data(self, user=False):
         self.comments = Comment.objects.filter(criteria=self).order_by('created')
         self.perm_manage = permissions.criteria(obj=self, user=user, mode='manage')

@@ -14,9 +14,10 @@
     <script type="text/javascript" src="{% static "components/jscrollpane/script/jquery.jscrollpane.min.js" %}"></script>
     <script type="text/javascript" src="{% static "components/Chart.js/Chart.js" %}"></script>
     <script type="text/javascript" src="{% url "jsi18n" %}"></script>
+    {% if show_help %}<script type="text/javascript">var show_help = true;</script>{% endif %}
     {% block head %}{% endblock %}
 </head>
-<body class="{% block bodyclass %}{% endblock %}">
+<body class="{% block bodyclass %}{% endblock %}{% if body_class %} {{ body_class }}{% endif %}">
 
 {# Modals #}
 {% include "modal_error.html" %}

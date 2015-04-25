@@ -192,7 +192,10 @@ class IdeaUpdateView(UpdateView):
         # Response
         if self.object.published == True:
             activity_register(self.request.user, self.object)
-        messages.success(self.request, _('Your idea was successfully saved.'))
+        if not self.object.published:
+            messages.success(self.request, _('Your idea was saved as a draft and will be available only for you until it is published.'))
+        else:
+            messages.success(self.request, _('Your idea was successfully saved.'))
         return HttpResponseRedirect(return_url)
 
 class IdeaDeleteView(DeleteView):

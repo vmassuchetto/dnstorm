@@ -1,13 +1,20 @@
 {% load crispy_forms_tags humanize i18n paragraphs %}
 
-<div id="idea-{{ idea.id }}" class="idea-row" data-id="{{ idea.id }}">
+<div id="idea-{{ idea.id }}" class="idea-row{% if not idea.published %} draft{% endif %}" data-id="{{ idea.id }}">
 
     <div class="row">
 
-        {% if show_likes %}
-            <div class="columns large-1 medium-2 small-3 idea-like like{% if not user.is_authenticated %} like-disabled{% endif %}{% if idea.voted %} voted{% endif %}" data-idea="{{ idea.id }}" data-counter="{{ idea.vote_count }}">
-                <a class="like"><i class="fi-like"></i></a>
-                <span class="like-counter idea-like-counter">{{ idea.vote_count }}</span>
+        {% if show_likes or not idea.published %}
+            <div class="columns large-1 medium-2 small-3 {% if idea.published %} idea-like like{% if idea.voted %} voted{% endif %}{% endif %}{% if not user.is_authenticated or not idea.published %} like-disabled{% endif %}" data-idea="{{ idea.id }}" data-counter="{{ idea.vote_count }}">
+                {% if not idea.published %}
+                    <div data-tooltip title="{% trans "This idea is not available for other users" %}">
+                        <a class="like"><i class="fi-page-edit"></i></a>
+                        <span class="label radius small secondary">{% trans "Draft" %}</span>
+                    </div>
+                {% else %}
+                    <a class="like"><i class="fi-like"></i></a>
+                    <span class="like-counter idea-like-counter">{{ idea.vote_count }}</span>
+                {% endif %}
             </div>
         {% endif %}
 
@@ -19,7 +26,7 @@
 
             {% for criteria in idea.criteria %}
 
-                <div class="row ideacriteria-row">
+                <div class="row ideacriteria-row" data-width="30%" data-tooltip title="{{ criteria.tooltip }}">
                     <div class="columns large-3">
                         <i class="fi-{{ criteria.icon }}"></i>
                         <h5 class="criteria-name">{{ criteria.name }}</h5>
@@ -40,13 +47,14 @@
 
             {% endfor %}
 
+
             {# Action mini bar #}
 
             <div class="row top-1em">
 
                 <div class="columns large-6">
                     <div class="row collapse">
-                        <div class="columns large-12 right idea-actions">
+                        <div class="columns large-12 right actions">
                             {% if show_actions %}
                                 {% if problem_perm_manage or problem_perm_edit %}
                                     <a class="action-button problem-idea-edit" href="{% url "idea_update" idea.id %}"><i class="fi-pencil"></i>&nbsp;{% trans "Edit" %}</a>
@@ -56,62 +64,68 @@
                     </div>
                 </div>
 
-                {% if idea.coauthor.all %}
-                    <div class="columns medium-3 large-6">
-                        <h6 class="subheader">{% trans "Idea coauthors" %}</h6>
-                        {% for coauthor in idea.coauthor.all %}
-                            {% include "item_user.html" with user=coauthor link=idea.get_absolute_url show_badges=True %}
-                        {% endfor %}
-                    </div>
-                {% endif %}
+                {% if idea.published %}
 
-                <div class="columns medium-3 large-3">
-                    <h6 class="subheader">{% trans "Idea author" %}</h6>
-                    {% include "item_user.html" with user=idea.author date=idea.created link=idea.get_absolute_url show_badges=True %}
-                </div>
+                    {% if idea.coauthor.all %}
+                        <div class="columns medium-3 large-6">
+                            <h6 class="subheader">{% trans "Idea coauthors" %}</h6>
+                            {% for coauthor in idea.coauthor.all %}
+                                {% include "item_user.html" with user=coauthor link=idea.get_absolute_url show_actions=False show_badges=True %}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    <div class="columns medium-3 large-3">
+                        <h6 class="subheader">{% trans "Idea author" %}</h6>
+                        {% include "item_user.html" with user=idea.author date=idea.created link=idea.get_absolute_url show_actions=False show_badges=True %}
+                    </div>
+
+                {% endif %}
 
             </div>
 
-            {# Comments #}
+            {% if idea.published %}
 
-            {% if show_comments %}
+                {# Comments #}
 
-                <div class="comments" id="comments-idea-{{ idea.id }}">
-                    {% if idea.comments %}
-                        {% for comment in idea.comments %}
-                            {% if forloop.counter > 3 %}
-                                {% include "item_comment.html" with hidden=True %}
-                            {% else %}
-                                {% include "item_comment.html" %}
-                            {% endif %}
-                        {% endfor %}
-                        {% if idea.comments|length > 3 %}
-                            <div class="row">
-                                <div class="columns large-12">
-                                    <div class="comment-content">
-                                        <a class="action-button display-more" href="javascript:void(0)"><i class="fi-arrow-down"></i>&nbsp;{% blocktrans with count=idea.comments|length|add:"-3" %}Display the other <b>{{ count }}</b> comments.{% endblocktrans %}</a>
+                {% if show_comments %}
+
+                    <div class="comments" id="comments-idea-{{ idea.id }}">
+                        {% if idea.comments %}
+                            {% for comment in idea.comments %}
+                                {% if forloop.counter > 3 %}
+                                    {% include "item_comment.html" with hidden=True %}
+                                {% else %}
+                                    {% include "item_comment.html" %}
+                                {% endif %}
+                            {% endfor %}
+                            {% if idea.comments|length > 3 %}
+                                <div class="row">
+                                    <div class="columns large-12">
+                                        <div class="comment-content">
+                                            <a class="action-button display-more" href="javascript:void(0)"><i class="fi-arrow-down"></i>&nbsp;{% blocktrans with count=idea.comments|length|add:"-3" %}Display the other <b>{{ count }}</b> comments.{% endblocktrans %}</a>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            {% endif %}
                         {% endif %}
-                    {% endif %}
-                </div>
-
-                {% if problem_perm_contribute %}
-
-                    {# Comment form #}
+                    </div>
 
                     {% if problem_perm_contribute %}
+
+                        {# Comment form #}
+
                         <div class="comment-form hide" id="comment-form-idea-{{ idea.id }}" data-idea="{{ idea.id }}"></div>
-                    {% endif %}
 
-                    {# Comment button #}
+                        {# Comment button #}
 
-                    <div class="row collapse">
-                        <div class="columns large-12">
-                            <a class="action-button comment-button" data-idea="{{ idea.id }}" href="javascript:void(0);"><i class="fi-comments"></i>&nbsp;{% trans "Comment" context "verb" %}</a>
+                        <div class="row collapse">
+                            <div class="columns large-12">
+                                <a class="action-button comment-button" data-idea="{{ idea.id }}" href="javascript:void(0);"><i class="fi-comments"></i>&nbsp;{% trans "Comment" context "verb" %}</a>
+                            </div>
                         </div>
-                    </div>
+
+                    {% endif %}
 
                 {% endif %}
 
@@ -119,5 +133,4 @@
 
         </div>
     </div>
-    <hr/>
 </div>

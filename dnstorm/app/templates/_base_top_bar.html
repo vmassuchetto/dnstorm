@@ -54,7 +54,7 @@
 {% if info %}
     <div class="title-bar-wrap show-for-medium-up">
         <div class="row">
-            <div class="columns medium-8">
+            <div class="columns medium-7">
                 <nav class="title-bar-inner">
                     <div class="title-bar-icon">
                         <a href="{{ info.icon_url }}" class="icon"><i class="fi-{{ info.icon }}"></i></a>
@@ -74,7 +74,7 @@
                 </nav>
             </div>
             {% if problem %}
-                <div class="columns medium-4 info-status">
+                <div class="columns medium-5 info-status">
                     <ul class="button-group status right">
                         <li>
                         {% if not problem.published %}
@@ -93,15 +93,18 @@
                             <a class="button small secondary" href="{% url "problem_update" problem.id %}" data-tooltip title="{% trans "Only managers collaborate." %}{% if problem_perm_manage %}<br/><small>{% trans "Click here to edit the problem permissions." %}</small>{% endif %}"><i class="fi-lock"></i>&nbsp;<b>{% trans "Closed" %}</b></a>
                         {% endif %}
                         </li>
-                        <li>
-                            <a class="button small secondary" data-tooltip title="{% if user|is_following:problem %}{% trans "You are receiving updates via e-mail for this problem. Click to unsubscribe." %}{% else %}{% trans "You are currently not receiving updates via e-mail about this problem. Click to subscribe." %}{% endif %}" href="{% follow_url problem %}?next={% url "problem" problem.id problem.slug %}"><b>
-                                {% if user|is_following:problem %}
-                                    <i class="fi-check"></i>Following<br/>
-                                {% else %}
-                                    <i class="fi-x"></i>Not following<br/>
-                                {% endif %}
-                            </b></a>
-                        </li>
+
+                        {% if not is_update %}
+                            <li>
+                                <a class="button small secondary" data-tooltip title="{% if user|is_following:problem %}{% trans "You are receiving updates via e-mail for this problem. Click to unsubscribe." %}{% else %}{% trans "You are currently not receiving updates via e-mail about this problem. Click to subscribe." %}{% endif %}" href="{% follow_url problem %}?next={% url "problem" problem.id problem.slug %}"><b>
+                                    {% if user|is_following:problem %}
+                                        <i class="fi-check"></i>Following<br/>
+                                    {% else %}
+                                        <i class="fi-x"></i>Not following<br/>
+                                    {% endif %}
+                                </b></a>
+                            </li>
+                        {% endif %}
                     </ul>
                 </div>
             {% endif %}
@@ -112,46 +115,46 @@
 {# Activity stream #}
 
 {% if user.is_authenticated %}
-<div id="activity" class="scroll-box">
-    <div class="row collapse">
-        <div id="activity-box" class="columns large-12 scroll-box-inner">
-            {% if user_activity %}
-                {% for action in user_activity %}
+    <div id="activity" class="scroll-box">
+        <div class="row collapse">
+            <div id="activity-box" class="columns large-12 scroll-box-inner">
+                {% if user_activity %}
+                    {% for action in user_activity %}
+                        <div class="row collapse">
+                            <div class="columns large-12 activity-item scroll-box-item">
+                                <div class="left avatar">{% avatar action.actor 32 %}</div>
+                                <div class="info">{% display_action action %}<span class="subheader"> &diams; {{ action.timestamp|naturaltime }}</span></div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
                     <div class="row collapse">
-                        <div class="columns large-12 activity-item scroll-box-item">
-                            <div class="left avatar">{% avatar action.actor 32 %}</div>
-                            <div class="info">{% display_action action %}<span class="subheader"> &diams; {{ action.timestamp|naturaltime }}</span></div>
+                        <div class="columns large-12">
+                            <p class="button expand secondary" disabled="disabled">{% trans "No activity so far." %}</p>
                         </div>
                     </div>
-                {% endfor %}
-            {% else %}
+                {% endif %}
+            </div>
+            {% if user_activity %}
                 <div class="row collapse">
                     <div class="columns large-12">
-                        <p class="button expand secondary" disabled="disabled">{% trans "No activity so far." %}</p>
+                        <a class="button small radius expand no-margin-bottom" href="{% url "activity" %}">{% trans "View all activities" %}</a>
                     </div>
                 </div>
             {% endif %}
         </div>
-        {% if user_activity %}
-            <div class="row collapse">
-                <div class="columns large-12">
-                    <a class="button small radius expand no-margin-bottom" href="{% url "activity" %}">{% trans "View all activities" %}</a>
-                </div>
-            </div>
-        {% endif %}
     </div>
-</div>
 {% endif %}
 
 {# Login form #}
 
 {% if not user.is_authenticated %}
-<div id="login" class="scroll-box">
-    <div class="row collapse">
-        <div class="columns large-12">
-            {% include "registration/login_form.html" with form=login_form %}
+    <div id="login" class="scroll-box">
+        <div class="row collapse">
+            <div class="columns large-12">
+                {% include "registration/login_form.html" with form=login_form %}
+            </div>
         </div>
     </div>
-</div>
 {% endif %}
 

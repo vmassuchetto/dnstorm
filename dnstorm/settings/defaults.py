@@ -123,7 +123,6 @@ ACCOUNT_ACTIVATION_DAYS = 3
 # Activity stream
 
 ACTSTREAM_SETTINGS = {
-    'MANAGER': 'dnstorm.app.managers.ActionManager',
     'USE_JSONFIELD': True
 }
 

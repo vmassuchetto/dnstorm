@@ -90,24 +90,6 @@ class ProblemUpdateView(UpdateView):
         self.problem = obj
         return super(ProblemUpdateView, self).dispatch(*args, **kwargs)
 
-    def post(self, *args, **kwargs):
-        """
-        Checks for a delete action from forms.DeleteForm.
-        """
-        yes = args[0].POST.get('yes', None)
-        try:
-            delete_problem = int(args[0].POST.get('delete_problem', ''))
-        except ValueError:
-            delete_problem = False
-        if delete_problem and yes and delete_problem == self.problem.id and \
-            permissions.problem(obj=self.problem, user=args[0].user, mode='manage'):
-            self.problem.delete()
-            messages.success(args[0], _('The problem was deleted.'))
-            return HttpResponseRedirect(reverse('home'))
-        elif not yes:
-            messages.warning(args[0], _('You need to mark the confirmation checkbox if you want to delete the form.'))
-        return super(ProblemUpdateView, self).post(*args, **kwargs)
-
     def get_context_data(self, *args, **kwargs):
         context = super(ProblemUpdateView, self).get_context_data(**kwargs)
         context['site_title'] = '%s | %s' % (self.object.title, _('Edit'))
@@ -167,7 +149,7 @@ class ProblemUpdateView(UpdateView):
             'title': _('Edit problem: %s' % self.object.title),
             'title_url': self.object.get_absolute_url(),
             'buttons': problem_buttons(self.request, self.object),
-            # TODO 'show': permissions.problem(obj=self.object, user=self.request.user, mode='edit')
+            'show': permissions.problem(obj=self.object, user=self.request.user, mode='edit')
         }
 
 class ProblemCollaboratorsView(FormView):
@@ -275,6 +257,12 @@ class ProblemView(TemplateView):
             c.fill_data(user)
             context['criteria'].append(c)
         context['criteria'] = sorted(context['criteria'], key=lambda x: (x.weight))
+
+        # Ideas drafts
+        context['ideas_drafts'] = models.Idea.objects.filter(problem=self.object.id, published=False)
+        for idea in context['ideas_drafts']:
+            idea.fill_data(user)
+        context['ideas_drafts'] = sorted(context['ideas_drafts'], key=lambda x: (x.votes, x.updated, x.created), reverse=True)
 
         # Ideas
         context['ideas'] = models.Idea.objects.filter(problem=self.object.id, published=True)

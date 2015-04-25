@@ -63,16 +63,20 @@ def activity_count(obj):
 
 def activity_register(_user, _action_object):
     """
-    Registers and activity when an object is saved.
+    Registers and activity when an object is saved. Takes a diff with a
+    previous version of edited objects, put it as message content in a
+    timeline, uses the verbs 'created' or 'edited' for actions on actstream.
     """
     from lxml.html.diff import htmldiff
-    from actstream import action
-    from actstream.actions import follow, is_following
-    from actstream.models import action_object_stream
+
     from django.db.models.loading import get_model
     from django.forms import ValidationError
     from django.forms.models import model_to_dict
     from django.template.loader import render_to_string
+
+    from actstream import action
+    from actstream.actions import follow, is_following
+    from actstream.models import action_object_stream
 
     klass = _action_object.__class__.__name__.lower()
     if klass not in ['problem', 'criteria', 'idea', 'alternative', 'comment']:
@@ -80,15 +84,12 @@ def activity_register(_user, _action_object):
 
     # Last activity
     last = (action_object_stream(_action_object)[:1] or [None])[0]
-    content_old = last.data['content'] if hasattr(last, 'data') and 'content' in last.data else ''
-    _notification = False
+    _content_old = render_to_string('diffbase_' + klass + '.html', {klass: last}) if last else ''
     _content = render_to_string('diffbase_' + klass + '.html', {klass: _action_object})
     _emsg = _action_object.edit_message if hasattr(_action_object, 'edit_message') else ''
-    _diff = htmldiff(content_old, _content)
-    _obj = _action_object
+    _diff = htmldiff(_content_old, _content)
 
     # Set target problem
-    _target = False
     if klass in ['comment']:
         if getattr(_action_object, 'problem'):
             _target = getattr(_action_object, 'problem')
@@ -103,35 +104,34 @@ def activity_register(_user, _action_object):
     elif klass in ['problem']:
         _target = _action_object
 
-    # Don't do anything if problem is a draft
-    if not _target.public:
+    # Don't do anything if the problem or the action object is a draft
+    # TODO: alternative
+    if hasattr(_action_object, 'published') and not getattr(_action_object, 'published'):
         return None
 
     # Set verb
     _verb = 'edited'
     if klass == 'comment':
         _verb = 'commented'
-    elif not content_old:
+        _notification = True
+    elif not last:
         _verb = 'created'
         _notification = True
 
     # Add user as collaborator
-    _target.collaborators.add(_user)
+    _target.collaborator.add(_user)
     _follow = _target
 
     # Action
     a = action.send(_user, verb=_verb, action_object=_action_object, target=_target)
-    a[0][1].data = {
-        'diff': _diff,
-        'content': _content,
-        'edit_message': _emsg,
-        'object': model_to_dict(_obj) if _obj else ''
-    }
+    a[0][1].data = { 'diff': _diff, 'content': _content,
+        'edit_message': _emsg, 'object': model_to_dict(_action_object)}
     a[0][1].save()
     activity_count(_target)
     follow(_user, _follow, actor_only=False) if not is_following(_user, _follow) else None
-    if _notification:
-        notification.send([_follow], 'problem', email_context({ 'action': a }))
+    # TODO send e-mail
+    #if _notification:
+        #notification.send([_follow], 'problem', email_context({ 'action': a }))
 
 email_regex = '[^@]+@[^@]+\.[^@]+'
 

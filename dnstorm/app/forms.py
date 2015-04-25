@@ -399,7 +399,7 @@ class AlternativeForm(forms.ModelForm):
         for i in kwargs.get('instance', None).problem.idea_set.all():
             i.fill_data()
             layout_args += (Row(
-                Column(HTML(render_to_string('item_idea.html', {'idea': i, 'show_likes': True, 'show_actions': perms.alternative(obj=i.problem, user=self.request.user)})), css_class='large-6')
+                Column(HTML(render_to_string('item_idea.html', {'idea': i, 'show_likes': True, 'show_actions': False})), css_class='large-12')
                 , css_class='collapse'),)
         self.helper.layout = Layout(*layout_args)
         super(AlternativeForm, self).__init__(*args, **kwargs)

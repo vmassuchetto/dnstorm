@@ -40,6 +40,7 @@
                 {% endif %}
 
                 {# Inactivation and activation link #}
+                {{ show_actions }}
                 {% if show_actions and user.is_active %}
                     <a class="action inactivate button radius alert tiny" href="{% url "user_inactivate" user.username %}"><i class="fi-prohibited"></i>{% if user.is_active and not user.is_staff %}{% trans "cancel invitation" %}{% else %}{% trans "inactivate user" %}{% endif %}</a>
                 {% else %} {% if show_actions and not user.is_active %}
