@@ -8,10 +8,6 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Adding field 'Alternative.published'
-        db.add_column('dnstorm_alternative', 'published',
-                      self.gf('django.db.models.fields.BooleanField')(default=False),
-                      keep_default=False)
 
         # Adding M2M table for field coauthor on 'Alternative'
         m2m_table_name = db.shorten_name('dnstorm_alternative_coauthor')
@@ -44,8 +40,6 @@ class Migration(SchemaMigration):
         db.rename_table('dnstorm_problem_contributor', 'dnstorm_problem_collaborator')
 
     def backwards(self, orm):
-        # Deleting field 'Alternative.published'
-        db.delete_column('dnstorm_alternative', 'published')
 
         # Removing M2M table for field coauthor on 'Alternative'
         db.delete_table(db.shorten_name('dnstorm_alternative_coauthor'))
@@ -85,7 +79,6 @@ class Migration(SchemaMigration):
             'name': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
             'order': ('django.db.models.fields.PositiveSmallIntegerField', [], {'default': '0'}),
             'problem': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['app.Problem']"}),
-            'published': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'updated': ('django.db.models.fields.DateTimeField', [], {'default': "'2000-01-01'", 'auto_now': 'True', 'blank': 'True'})
         },
         u'app.comment': {
