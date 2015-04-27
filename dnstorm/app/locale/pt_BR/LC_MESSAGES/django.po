@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DNStorm\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-04-27 04:40-0300\n"
-"PO-Revision-Date: 2015-04-27 04:40-0300\n"
+"POT-Creation-Date: 2015-04-27 04:42-0300\n"
+"PO-Revision-Date: 2015-04-27 04:42-0300\n"
 "Last-Translator: Vinicius Massuchetto <vmassuchetto@gmail.com>\n"
 "Language-Team: \n"
 "Language: pt_BR\n"
@@ -1478,8 +1478,8 @@ msgid "Activate your account on %(site)s"
 msgstr "Ative sua conta em %(site)s"
 
 #: templates/registration/login.html:9
-msgid "Você requisitou uma operação inválida."
-msgstr ""
+msgid "Invalid request."
+msgstr "Requisição inválida."
 
 #: templates/registration/login_form.html:24
 #: templates/registration/password_reset_form.html:5
@@ -2569,9 +2569,6 @@ msgstr ""
 
 #~ msgid "Language"
 #~ msgstr "Idioma"
-
-#~ msgid "Invalid request"
-#~ msgstr "Requisição inválida"
 
 #~ msgid "Comma separated list of tags."
 #~ msgstr "Tags separadas por vírgulas."

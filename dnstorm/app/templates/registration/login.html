@@ -6,7 +6,7 @@
 {% block content %}
 
     {% if user.is_authenticated %}
-        {% trans "Você requisitou uma operação inválida." as message %}</p>
+        {% trans "Invalid request." as message %}</p>
         {% include "part_panel.html" with icon="prohibited" message=message %}
     {% else %}
 
