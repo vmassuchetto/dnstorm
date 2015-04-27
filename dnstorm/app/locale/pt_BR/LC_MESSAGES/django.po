@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DNStorm\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-04-27 04:33-0300\n"
-"PO-Revision-Date: 2015-04-27 04:35-0300\n"
+"POT-Creation-Date: 2015-04-27 04:40-0300\n"
+"PO-Revision-Date: 2015-04-27 04:40-0300\n"
 "Last-Translator: Vinicius Massuchetto <vmassuchetto@gmail.com>\n"
 "Language-Team: \n"
 "Language: pt_BR\n"
@@ -805,6 +805,14 @@ msgid ""
 msgstr ""
 "Você não está recebendo atualizações via e-mail para este problema. Clique "
 "para começar a receber."
+
+#: templates/_base_top_bar.html:101
+msgid "Following"
+msgstr "Seguindo"
+
+#: templates/_base_top_bar.html:103
+msgid "Not following"
+msgstr "Não seguindo"
 
 #: templates/_base_top_bar.html:133 templates/_single_activity.html:104
 msgid "No activity so far."

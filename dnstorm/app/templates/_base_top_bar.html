@@ -98,9 +98,9 @@
                             <li>
                                 <a class="button small secondary" data-tooltip title="{% if user|is_following:problem %}{% trans "You are receiving updates via e-mail for this problem. Click to unsubscribe." %}{% else %}{% trans "You are currently not receiving updates via e-mail about this problem. Click to subscribe." %}{% endif %}" href="{% follow_url problem %}?next={% url "problem" problem.id problem.slug %}"><b>
                                     {% if user|is_following:problem %}
-                                        <i class="fi-check"></i>Following<br/>
+                                        <i class="fi-check"></i>{% trans "Following" %}
                                     {% else %}
-                                        <i class="fi-x"></i>Not following<br/>
+                                        <i class="fi-x"></i>{% trans "Not following" %}
                                     {% endif %}
                                 </b></a>
                             </li>
