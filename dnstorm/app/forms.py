@@ -20,7 +20,7 @@ from crispy_forms_foundation.layout import *
 from crispy_forms.utils import render_crispy_form
 from registration.forms import RegistrationFormUniqueEmail
 
-from dnstorm.app import models, permissions
+from dnstorm.app import models, perms
 from dnstorm.app.utils import get_object_or_none, get_option
 from dnstorm.settings import LANGUAGES
 
