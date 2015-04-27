@@ -20,7 +20,7 @@ from crispy_forms_foundation.layout import *
 from crispy_forms.utils import render_crispy_form
 from registration.forms import RegistrationFormUniqueEmail
 
-from dnstorm.app import models, perms
+from dnstorm.app import models
 from dnstorm.app.utils import get_object_or_none, get_option
 from dnstorm.settings import LANGUAGES
 
@@ -221,7 +221,7 @@ class ProblemForm(forms.ModelForm):
 class ProblemCollaboratorsForm(forms.Form):
     user_search = forms.CharField(_('Search and add collaborators'), required=False, widget=forms.TextInput(attrs={'autocomplete':'off'}))
     public = forms.BooleanField(label=_('Public'), help_text=_('Anyone is able to view and contribute to this problem. If not public, you\'ll need to choose the collaborators that will have access to it.'), required=False)
-    open = forms.BooleanField(label=_('Open edit'), help_text=_('Let users change the title and description of problems and ideas as coauthors.'), required=False)
+    open = forms.BooleanField(label=_('Open edit'), help_text=_('In open contribution mode any user will be able to edit other users contents as coauthors.'), required=False)
 
     def __init__(self, *args, **kwargs):
         self.problem = kwargs.pop('problem')

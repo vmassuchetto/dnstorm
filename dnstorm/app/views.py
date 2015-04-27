@@ -669,12 +669,12 @@ class OptionsView(SuperUserRequiredMixin, FormView):
         # Options
 
         for name in form.cleaned_data:
-            update_option(name, form.cleaned_data[name])
+            utils.update_option(name, form.cleaned_data[name])
 
         # Update Django site framework
 
         url = urlparse.urlparse(form.cleaned_data['site_url'])
-        update_option('scheme', url.scheme)
+        utils.update_option('scheme', url.scheme)
         s = Site.objects.get(id=1)
         s.name = form.cleaned_data['site_title']
         s.domain = url.netloc
