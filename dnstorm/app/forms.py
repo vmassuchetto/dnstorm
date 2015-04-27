@@ -220,8 +220,8 @@ class ProblemForm(forms.ModelForm):
 
 class ProblemCollaboratorsForm(forms.Form):
     user_search = forms.CharField(_('Search and add collaborators'), required=False, widget=forms.TextInput(attrs={'autocomplete':'off'}))
-    public = forms.BooleanField(label=_('Public'), help_text=_('Anyone is able to view and contribute to this problem. If not public, you\'ll need to choose the collaborators that will have access to it.'), required=False)
-    open = forms.BooleanField(label=_('Open edit'), help_text=_('In open contribution mode any user will be able to edit other users contents as coauthors.'), required=False)
+    public = forms.BooleanField(label=_('Public'), help_text=_('In public mode anyone can view this problem. You\'ll need to manually choose the collaborators with access if you leave unchecked.'), required=False)
+    open = forms.BooleanField(label=_('Open edit'), help_text=_('In open contribution mode any user will be able to edit other users contents as coauthors. Leave unchecked if you want users to only modify their own content.'), required=False)
 
     def __init__(self, *args, **kwargs):
         self.problem = kwargs.pop('problem')

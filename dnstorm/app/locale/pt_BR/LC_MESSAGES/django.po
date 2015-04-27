@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DNStorm\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-04-02 06:13-0300\n"
-"PO-Revision-Date: 2015-02-14 15:51-0300\n"
+"POT-Creation-Date: 2015-04-27 03:28-0300\n"
+"PO-Revision-Date: 2015-04-27 03:42-0300\n"
 "Last-Translator: Vinicius Massuchetto <vmassuchetto@gmail.com>\n"
 "Language-Team: \n"
 "Language: pt_BR\n"
@@ -16,39 +16,37 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Poedit 1.5.4\n"
+"X-Generator: Poedit 1.7.5\n"
 
-#: forms.py:47 templates/_base_top_bar.html:54
-#: templates/registration/login.html:32 views/base.py:105
+#: forms.py:47 views.py:105 templates/_base_top_bar.html:43
+#: templates/registration/login_form.html:23
 msgid "Register"
 msgstr "Criar conta"
 
 #: forms.py:67
 msgid "You need to use the same e-mail the invitation was sent."
-msgstr ""
+msgstr "Você precisa usar o mesmo e-mail que o convite foi enviado."
 
 #: forms.py:71
 msgid ""
 "This email address is already in use. Please enter a different email address."
-msgstr ""
+msgstr "Este endereço de e-mail já está em uso. Entre com um outro diferente."
 
 #: forms.py:75
 msgid "Site title"
 msgstr "Título do site"
 
 #: forms.py:75
-#, fuzzy
 msgid "Page title for browser windows and e-mail subjects."
-msgstr "Título da página para os navegadores"
+msgstr "Título da página para os navegadores e assuntos dos e-mails."
 
 #: forms.py:76
 msgid "Site description"
 msgstr "Descrição do site"
 
 #: forms.py:76
-#, fuzzy
 msgid "Page description for browser windows."
-msgstr "Título da página para os navegadores"
+msgstr "Título da página para as janelas dos navegadores"
 
 #: forms.py:77
 msgid "Site URL"
@@ -66,8 +64,8 @@ msgstr ""
 msgid "Site"
 msgstr "Site"
 
-#: forms.py:89 forms.py:126 forms.py:152 forms.py:187 forms.py:262
-#: templates/_single_problem.html:58
+#: forms.py:89 forms.py:125 forms.py:151 forms.py:185 forms.py:248
+#: forms.py:362
 msgid "Save"
 msgstr "Salvar"
 
@@ -79,129 +77,113 @@ msgstr "Formato de domínio inválido."
 msgid "Wrong form kwargs."
 msgstr "Argumentos 'kwargs' inválidos para o formulários"
 
-#: forms.py:119
-#, python-format
-msgid "Edit user '%s'"
-msgstr "Editar o usuário \"%s\""
-
-#: forms.py:127 forms.py:147
+#: forms.py:126 forms.py:146 views.py:700
 msgid "Change password"
 msgstr "Trocar senha"
 
-#: forms.py:133
+#: forms.py:132
 msgid "Display name"
 msgstr "Nome de exibição"
 
-#: forms.py:139
+#: forms.py:138
 msgid "Type your current password"
 msgstr "Digite a sua senha atual"
 
-#: forms.py:140
+#: forms.py:139
 msgid "Type your new password"
 msgstr "Digite a sua nova senha"
 
-#: forms.py:141
+#: forms.py:140
 msgid "Type your new password again."
 msgstr "Digite a sua nova senha novamente."
 
-#: forms.py:160
+#: forms.py:159
 msgid "Passwords don't match."
 msgstr "As senhas não são as mesmas."
 
-#: forms.py:172
-#, fuzzy
+#: forms.py:171
 msgid "Information"
-msgstr "As informações do usuário foram salvas"
+msgstr "Informação"
 
-#: forms.py:175
-#, fuzzy
+#: forms.py:174
 msgid "Values"
 msgstr "Valor"
 
-#: forms.py:186 forms.py:288 templates/item_alternative.html:57
-msgid "Delete"
-msgstr "Remover"
+#: forms.py:196
+msgid "Minimum scale required for this format."
+msgstr "É necessário selecionar um valor mínimo de escala para este formato."
 
 #: forms.py:198
-msgid "Minimum scale required for this format."
-msgstr ""
-
-#: forms.py:200
 msgid "Maximum scale required for this format."
-msgstr ""
+msgstr "É necessário selecionar um valor máximo de escala para este formato."
 
-#: forms.py:223
-msgid "Delete problem"
-msgstr "Deletar problema"
-
-#: forms.py:227 forms.py:351
+#: forms.py:214 forms.py:303
 msgid "Publish"
 msgstr "Publicar"
 
-#: forms.py:228 forms.py:352
+#: forms.py:215 forms.py:304
 msgid "Save as draft"
 msgstr "Salvar como rascunho"
 
-#: forms.py:230 forms.py:354
+#: forms.py:217 forms.py:306
 msgid "Save edits"
 msgstr "Salvar edições"
 
-#: forms.py:236 forms.py:250
-msgid "Search and add contributors"
-msgstr "Buscar e adicionar colaboradores"
+#: forms.py:222 forms.py:235
+msgid "Search and add collaborators"
+msgstr "Buscar e adicionar colaboratores"
 
-#: forms.py:237 templates/diffbase_problem.html:9
+#: forms.py:223 templates/_base_top_bar.html:84
+#: templates/diffbase_problem.html:9
 msgid "Public"
 msgstr "Público"
 
-#: forms.py:237
+#: forms.py:223
 msgid ""
-"Anyone is able to view and contribute to this problem. If not public, you'll "
-"need to choose the contributors that will have access to it."
+"In public mode anyone can view this problem. You'll need to manually choose "
+"the collaborators with access if you leave unchecked."
 msgstr ""
-"Qualquer um é capaz de ver e contribuir com o problema. Se não for público, "
-"você terá que escolher os contribuidores que podem acessar."
+"Em modo público qualquer um poderá ver este problema. Você precisará "
+"selecionar manualmente os colaboradores que terão acesso se não checar esta "
+"opção."
 
-#: forms.py:238
+#: forms.py:224
 msgid "Open edit"
 msgstr "Edição aberta"
 
-#: forms.py:238
+#: forms.py:224
 msgid ""
-"Let users change the title and description of problems and ideas as "
-"coauthors."
+"In open contribution mode any user will be able to edit other users contents "
+"as coauthors. Leave unchecked if you want users to only modify their own "
+"content."
 msgstr ""
-"Permitir que os usuários mudem o título e descrição do problema e das ideias "
-"como co-autores."
+"Em modo de contribuição aberto qualquer usuário pode modificar o conteúdo de "
+"outros usuários como co-authores. Deixe desmarcado se você quer que os "
+"usuários só possam modificar o conteúdo deles próprio."
 
-#: forms.py:246 models.py:113 views/problem.py:63 views/problem.py:201
-msgid "Contributors"
+#: forms.py:232 models.py:117
+msgid "Collaborators"
 msgstr "Colaboradores"
 
-#: forms.py:249
+#: forms.py:234
 msgid ""
 "Type to search for users. Click on them to insert or remove from the "
 "selected list. Go to the sitewide user section to resend an invitation for "
 "non-confirmed users."
 msgstr ""
+"Digite para buscar os usuários. Clique lista suspensa para selecioná-los e "
+"no quadro abaixo para desmarcá-los. Vá para a listagem de todos os usuários "
+"do sistema para reenviar solicitação não confirmadas."
 
-#: forms.py:254
+#: forms.py:240
 msgid "Permissions"
 msgstr "Permissões"
 
-#: forms.py:270
-msgid "Yes. I know what I'm doing. Delete this!"
-msgstr "Sim. Sei o que estou fazendo. Pode remover!"
-
-#: forms.py:287 templates/_single_problem.html:26
-msgid "Cancel"
-msgstr "Cancelar"
-
-#: forms.py:324
+#: forms.py:278
 msgid "Give an integer value higher than zero."
 msgstr "Forneça um valor inteiro maior do que zero."
 
-#: forms.py:327
+#: forms.py:281
 msgid ""
 "Give a currency value higher than 0. Use dots to separate cents. e.g.: 1.23; "
 "12.34 123.45; 12345.12"
@@ -209,7 +191,7 @@ msgstr ""
 "Forneça um valor em moeda maior do que 0. Use pontos para separar centavos. "
 "ex.: 1.23; 12.34 123.45; 12345.12"
 
-#: forms.py:330
+#: forms.py:284
 msgid ""
 "Mark the checkbox to represent the 'True' value or leave unchecked for "
 "'False'."
@@ -217,52 +199,52 @@ msgstr ""
 "Marque o checkbox para representar um valor de 'Verdadeiro', ou deixe "
 "desmarcado para 'Falso'."
 
-#: forms.py:332
+#: forms.py:286
 msgid "Describe why you gave the above value for this criteria in this idea."
 msgstr "Descreve porquê você deu o valor acima para este critério nesta ideia."
 
-#: forms.py:347
-msgid "Delete idea"
-msgstr "Deletar ideia"
-
-#: forms.py:383 templates/registration/password_change_form.html:9
+#: forms.py:334 templates/registration/password_change_form.html:9
 #: templates/registration/password_reset_confirm.html:10
 #: templates/registration/password_reset_form.html:9
 msgid "Submit"
 msgstr "Enviar"
 
-#: forms.py:391 models.py:35 models.py:179
+#: forms.py:351
+msgid "Select the ideas for this alternative"
+msgstr "Selecione as ideias para esta alternativa"
+
+#: models.py:34 models.py:179
 msgid "Name"
 msgstr "Nome"
 
-#: models.py:36
+#: models.py:35
 msgid "Value"
 msgstr "Valor"
 
-#: models.py:42
+#: models.py:41
 msgid "option"
 msgstr "opção"
 
-#: models.py:85
+#: models.py:84
 msgid "An idea-generation platform"
 msgstr "Uma plataforma para geração de ideias"
 
-#: models.py:108
+#: models.py:112
 msgid "Title"
 msgstr "Título"
 
-#: models.py:108
+#: models.py:112
 msgid ""
 "Give your problem a compreensive title, this will be the main call for users."
 msgstr ""
 "Dê um título consistente, esta será a principal chamada para que os usuários "
 "contribuam no problema."
 
-#: models.py:110 views/base.py:388
+#: models.py:114 models.py:249 views.py:1098 templates/help.html:12
 msgid "Description"
 msgstr "Descrição"
 
-#: models.py:110
+#: models.py:114
 msgid ""
 "The description needs to be complete and address all the variables of the "
 "problem, giving users the correct parameters to give ideas according to the "
@@ -272,32 +254,20 @@ msgstr ""
 "dando aos usuários os parâmetros corretos para que as ideias sejam dadas de "
 "acordo com os critérios especificados."
 
-#: models.py:117
-msgid "Publish status"
-msgstr "Status de publicação"
-
-#: models.py:118 views/problem.py:45
-msgid "Draft"
-msgstr "Rascunho"
-
-#: models.py:119 views/problem.py:45
-msgid "Published"
-msgstr "Publicado"
-
-#: models.py:129 templates/_single_activity.html:54
-#: templates/_single_activity.html.py:81
+#: models.py:129 templates/_single_activity.html:42
+#: templates/_single_activity.html.py:69
 msgid "problem"
 msgstr "Problema"
 
-#: models.py:167
+#: models.py:168
 #, python-format
 msgid "The invitation to %s was sent."
-msgstr ""
+msgstr "O convite para %s foi enviado."
 
-#: models.py:169
+#: models.py:170
 #, python-format
 msgid "Wront request information for %s."
-msgstr ""
+msgstr "Informações de requisição incorretas para %s."
 
 #: models.py:181
 msgid "Description for the criteria"
@@ -308,6 +278,9 @@ msgid ""
 "This description should give users the information needed to fill the "
 "required values in ideas. Try to be specific about the needs and limits."
 msgstr ""
+"Esta descrição deve dar aos usuários as informações necessárias para que "
+"eles preencher os valores nas ideias. Tente ser específico a respeito nas "
+"necessidades e limites."
 
 #: models.py:183
 msgid "Number"
@@ -331,7 +304,7 @@ msgstr "Sim ou não"
 
 #: models.py:188
 msgid "What format of data will be used to quantify the ideas."
-msgstr ""
+msgstr "Qual o formato de data que será usado para quantificar as ideias."
 
 #: models.py:189
 msgid "Minimum scale value"
@@ -339,7 +312,7 @@ msgstr "Valor mínimo da escala"
 
 #: models.py:189
 msgid "Minimum value for the ideas."
-msgstr ""
+msgstr "Valor mínimo para ideias."
 
 #: models.py:190
 msgid "Maximum scale value"
@@ -347,7 +320,7 @@ msgstr "Valor máximo da escala"
 
 #: models.py:190
 msgid "Maximum value for the ideas."
-msgstr ""
+msgstr "Valor máximo para as ideias."
 
 #: models.py:191
 msgid "Comparison order"
@@ -365,6 +338,7 @@ msgstr "Quanto menor melhor."
 msgid ""
 "Ordering that will be respected to present the results about this criteria."
 msgstr ""
+"Ordenação que será respeitada para apresentar os resultados deste critério."
 
 #: models.py:195
 msgid "Weight"
@@ -375,6 +349,8 @@ msgid ""
 "How important this criteria is over the rest. This value will multiply over "
 "the results when presenting the alterantives."
 msgstr ""
+"Qual a importância que este critério possui sobre os demais. Este valor será "
+"usado para multiplicar os resultados na apresentação das alternativas."
 
 #: models.py:196
 msgid "Result presenting mode"
@@ -394,64 +370,324 @@ msgstr "Absoluto"
 
 #: models.py:200
 msgid "How the results will be calculated across the given ideas."
-msgstr ""
+msgstr "Como os resultados serão calculados através das ideias fornecidas."
 
-#: models.py:207
+#: models.py:210
 msgid "criteria"
 msgstr "critério"
 
-#: models.py:236
+#: models.py:248
 msgid "title"
 msgstr "título"
 
-#: models.py:236
+#: models.py:248
 msgid ""
 "Describe in a general basis what is the idea you're given to address the "
 "problem."
 msgstr ""
+"Descreva de maneira geral como a ideia que você está fornecendo aborda este "
+"problema."
 
-#: models.py:246 templates/_single_activity.html:60
-#: templates/_single_activity.html.py:88 templates/part_counter.html:14
+#: models.py:260 templates/_single_activity.html:48
+#: templates/_single_activity.html.py:76 templates/part_counter.html:14
 msgid "idea"
 msgstr "ideia"
 
-#: models.py:296
+#: models.py:323
 msgid "idea_criteria"
 msgstr "ideia_criterio"
 
-#: models.py:320
-msgid "invitation"
-msgstr "convite"
-
-#: models.py:341 templates/_single_activity.html:95
+#: models.py:352 templates/_single_activity.html:83
 #: templates/part_counter.html:20
 msgid "alternative"
 msgstr "alternativa"
 
-#: models.py:392
+#: models.py:412
 msgid "Comment"
 msgstr "Comentário"
 
-#: models.py:401 templates/_single_activity.html:66
-#: templates/_single_activity.html:102 templates/item_criteria.html:64
+#: models.py:421 templates/_single_activity.html:54
+#: templates/_single_activity.html.py:90
 msgid "comment"
 msgstr "comentário"
 
-#: models.py:418
+#: models.py:438
 msgid "vote"
 msgstr "voto"
+
+#: models.py:452
+msgid "invitation"
+msgstr "convite"
 
 #: signals.py:27
 msgid "Invitation received"
 msgstr "Convite recebido"
 
 #: signals.py:28
-msgid "you have received an invitation to collaborate in problem"
-msgstr "Você recebeu um convite para colaborar em um problema"
+msgid "you have received an invitation to collaborate in a problem"
+msgstr "você recebeu um convite para colaborar em um problema"
 
-#: utils.py:79
+#: signals.py:31
+msgid "Problem updated"
+msgstr "Problema atualizado"
+
+#: signals.py:32
+msgid "a problem you're contributing was updated"
+msgstr "um problema que você está contribuindo foi atualizado"
+
+#: utils.py:83
 msgid "Wrong object type"
+msgstr "Tipo de objeto inválido"
+
+#: views.py:73
+#, python-format
+msgid "The %s was deleted successfully"
+msgstr "O %s foi apagado com sucesso"
+
+#: views.py:133
+msgid "Registration"
+msgstr "Criar conta"
+
+#: views.py:602 views.py:610 views.py:1057
+msgid "Problems"
+msgstr "Problemas"
+
+#: views.py:610 views.py:1051 views.py:1092
+msgid "All"
+msgstr "Todos"
+
+#: views.py:616
+msgid "Collaborating"
+msgstr "Colaborando"
+
+#: views.py:622
+msgid "Drafts"
+msgstr "Rascunhos"
+
+#: views.py:641
+msgid "Site options"
+msgstr "Opções do site"
+
+#: views.py:643 views.py:650
+msgid "Options"
+msgstr "Opções"
+
+#: views.py:670
+msgid "Options saved."
+msgstr "Opções salvas."
+
+#: views.py:694
+msgid "Edit info"
+msgstr "Editar informações"
+
+#: views.py:706
+msgid "Inactivate"
+msgstr "Desativar"
+
+#: views.py:720
+msgid "User profile"
+msgstr "Perfil do usuário"
+
+#: views.py:731 views.py:967
+msgid "User activity"
+msgstr "Atividade do usário"
+
+#: views.py:752 views.py:762 templates/_base_top_bar.html:23
+msgid "Users"
+msgstr "Usuários"
+
+#: views.py:769
+msgid "Active"
+msgstr "Ativo"
+
+#: views.py:774
+msgid "Invitations"
+msgstr "Convites"
+
+#: views.py:780
+msgid "Inactive"
+msgstr "Inativo"
+
+#: views.py:811
+msgid "Update user"
+msgstr "Atualizar usuário"
+
+#: views.py:831
+#, python-format
+msgid "User information for %s was updated."
+msgstr "As informações de %s foram atualizadas."
+
+#: views.py:838 views.py:876
+#, python-format
+msgid "Update user: %s"
+msgstr "Atualizar usuário: %s"
+
+#: views.py:853
+msgid "Update user password"
+msgstr "Atualizar a senha do usuário"
+
+#: views.py:864
+msgid "Wrong password."
+msgstr "Senha errada."
+
+#: views.py:869
+#, python-format
+msgid "The password for %s was updated."
+msgstr "A senha para %s foi atualizada."
+
+#: views.py:927
+#, python-format
+msgid "The user %s was inactivated."
+msgstr "O usuário %s foi desativado."
+
+#: views.py:951
+#, python-format
+msgid "The user %s was activated."
+msgstr "O usuário %s foi ativado."
+
+#: views.py:961 views.py:1042
+msgid "Sitewide activity"
+msgstr "Atividade do site"
+
+#: views.py:1017 views.py:1198 templates/_base_top_bar.html:24
+msgid "Activity"
+msgstr "Atividade"
+
+#: views.py:1063 views.py:1151 templates/help.html:13
+#: templates/part_counter.html:8
+msgid "Criteria"
+msgstr "Critérios"
+
+#: views.py:1069 views.py:1104 views.py:1156 templates/help.html:14
+msgid "Ideas"
+msgstr "Ideias"
+
+#: views.py:1075 views.py:1110 views.py:1161
+#: templates/_single_problem.html:139 templates/help.html:15
+msgid "Alternatives"
+msgstr "Alternativas"
+
+#: views.py:1081 views.py:1116 templates/item_problem.html:72
+msgid "Comments"
+msgstr "Comentários"
+
+#: views.py:1146 views.py:1321
+msgid "Problem"
+msgstr "Problema"
+
+#: views.py:1166
+msgid "Results"
+msgstr "Resultados"
+
+#: views.py:1187
+#, python-format
+msgid "Edit problem: %s"
+msgstr "Editar problema: %s"
+
+#: views.py:1192
+msgid "Discussion"
+msgstr "Discussão"
+
+#: views.py:1192 templates/_base_top_bar.html:81 templates/item_idea.html:18
+msgid "Draft"
+msgstr "Rascunho"
+
+#: views.py:1204
+msgid "Contributors and permissions"
+msgstr "Colaboradores e permissões"
+
+#: views.py:1204
+msgid "Contributors"
+msgstr "Colaboradores"
+
+#: views.py:1229
+msgid "Edit problem"
+msgstr "Editar problema"
+
+#: views.py:1274
+#, python-format
+msgid ""
+"The problem was successfully saved as a draft. <a class=\"left-1em button "
+"success tiny radius\" target=\"_blank\" href=\"%s\">Preview</a>"
 msgstr ""
+"O problema foi salvo como um rascunho.<a class=\"left-1em button success "
+"tiny radius\" target=\"_blank\" href=\"%s\">Pré-visualizar</a>"
+
+#: views.py:1278
+msgid "The problem was successfuly saved."
+msgstr "O problema foi salvo."
+
+#: views.py:1284
+msgid "Problem collaborators"
+msgstr "Colaboradores do problema"
+
+#: views.py:1317
+msgid "Permission options in the problem was successfully saved."
+msgstr ""
+
+#: views.py:1402
+msgid "The problem was deleted."
+msgstr "O problema foi removido."
+
+#: views.py:1426 views.py:1435
+msgid "Create criteria"
+msgstr "Criar critério"
+
+#: views.py:1428
+#, python-format
+msgid "Create criteria for problem: %s"
+msgstr "Criar critério para o problema: %s"
+
+#: views.py:1445
+msgid "Criteria created."
+msgstr "Critério criado."
+
+#: views.py:1454
+msgid "Criteria deleted."
+msgstr "Critério apagado."
+
+#: views.py:1477 views.py:1494
+msgid "Edit criteria"
+msgstr "Editar critério"
+
+#: views.py:1479
+#, python-format
+msgid "Edit criteria for problem: %s"
+msgstr "Editar critério para o problema: %s"
+
+#: views.py:1486
+msgid "Criteria saved."
+msgstr "Critério salvo."
+
+#: views.py:1560
+#, python-format
+msgid "Post idea to problem: %s"
+msgstr "Postar ideia no problema: %s"
+
+#: views.py:1611
+msgid "Provide a value within the specified range."
+msgstr "Forneça um valor dentro da faixa especificada."
+
+#: views.py:1640
+msgid ""
+"Your idea was saved as a draft and will be available only for you until it "
+"is published."
+msgstr ""
+"A sua ideia foi salva como um rascunho e estará disponível somente para você "
+"até que seja publicada."
+
+#: views.py:1642
+msgid "Your idea was successfully saved."
+msgstr "A sua ideia foi salva."
+
+#: views.py:1705
+#, python-format
+msgid "Post alternative to problem: %s"
+msgstr "Postar alternativa no problema: %s"
+
+#: views.py:1728
+msgid "The alternative was successfully saved."
+msgstr "A alternativa foi salva."
 
 #: templates/_403.html:7
 msgid "Permission denied"
@@ -473,7 +709,11 @@ msgstr ""
 "Um erro inesperado ocorreu com a aplicação. Reporte este problema para o "
 "administrador do sistema."
 
-#: templates/_base.html:57
+#: templates/_base.html:37
+msgid "Theory help"
+msgstr "Ajuda teórica"
+
+#: templates/_base.html:65
 #, python-format
 msgid ""
 "<a href=\"%(dnstorm_url)s\">DNStorm</a> is a free softwares licensed under "
@@ -488,86 +728,93 @@ msgid ""
 "form."
 msgstr "Algo de errado aconteceu. Revise os avisos no formulário."
 
-#: templates/_base_scroll_boxes.html:21 templates/_single_activity.html:116
-msgid "No activity so far."
-msgstr "Nenhuma atividade até agora."
-
-#: templates/_base_scroll_boxes.html:29
-msgid "View all activities"
-msgstr "Ver todas as atividades"
-
-#: templates/_base_top_bar.html:24 views/user.py:45 views/user.py:66
-#: views/user.py:77 views/user.py:130 views/user.py:172
-msgid "Users"
-msgstr "Usuários"
-
-#: templates/_base_top_bar.html:26 views/base.py:316 views/problem.py:57
-msgid "Activity"
-msgstr "Atividade"
-
-#: templates/_base_top_bar.html:29
+#: templates/_base_top_bar.html:25
 msgid "Post problem"
 msgstr "Postar problema"
 
-#: templates/_base_top_bar.html:46
-#, fuzzy
+#: templates/_base_top_bar.html:37
 msgid "Superuser"
-msgstr "Buscar usuários"
+msgstr "Superusuário"
 
-#: templates/_base_top_bar.html:49
+#: templates/_base_top_bar.html:40
 msgid "Logout"
 msgstr "Sair"
 
-#: templates/_base_top_bar.html:52 templates/registration/login.html:17
-#: templates/registration/login.html:26
+#: templates/_base_top_bar.html:42 templates/registration/login_form.html:3
+#: templates/registration/login_form.html:14
 msgid "Login"
 msgstr "Login"
 
-#: templates/_base_top_bar.html:74
-#, fuzzy
+#: templates/_base_top_bar.html:63
 msgid "Problem draft"
-msgstr "Problema"
+msgstr "Rascunho de problema"
 
-#: templates/_base_top_bar.html:90
+#: templates/_base_top_bar.html:81
+msgid "Problem is not available for user contribution until it is published."
+msgstr ""
+"O problema permanecerá indisponível para contribuições até que seja publicado"
+
+#: templates/_base_top_bar.html:81
+msgid "Edit the problem to change this permission."
+msgstr "Edite as permissões do problema para modificar esta permissão."
+
+#: templates/_base_top_bar.html:84
 msgid "Anyone can view"
-msgstr ""
+msgstr "Qualquer um pode ver"
 
-#: templates/_base_top_bar.html:90
-#, fuzzy
-msgid "Public problem"
-msgstr "Postar problema"
+#: templates/_base_top_bar.html:84 templates/_base_top_bar.html.py:86
+#: templates/_base_top_bar.html:91 templates/_base_top_bar.html.py:93
+msgid "Click here to edit the problem permissions."
+msgstr "Clique aqui para editar as permissões do problema."
 
-#: templates/_base_top_bar.html:92
+#: templates/_base_top_bar.html:86
 msgid "Only invited people can view"
+msgstr "Somente usuários convidados podem ver"
+
+#: templates/_base_top_bar.html:86 templates/diffbase_problem.html:9
+msgid "Private"
+msgstr "Privado"
+
+#: templates/_base_top_bar.html:91
+msgid "Anyone can collaborate."
+msgstr "Qualquer um pode colaborar."
+
+#: templates/_base_top_bar.html:91
+msgid "Open"
+msgstr "Aberto"
+
+#: templates/_base_top_bar.html:93
+msgid "Only managers collaborate."
+msgstr "Somente gerentes colaboram."
+
+#: templates/_base_top_bar.html:93
+msgid "Closed"
+msgstr "Fechado"
+
+#: templates/_base_top_bar.html:99
+msgid ""
+"You are receiving updates via e-mail for this problem. Click to unsubscribe."
 msgstr ""
 
-#: templates/_base_top_bar.html:92
-#, fuzzy
-msgid "Private problem"
-msgstr "Critérios do problema"
-
-#: templates/_base_top_bar.html:95
-msgid "Anyone can collaborate"
+#: templates/_base_top_bar.html:99
+msgid ""
+"You are currently not receiving updates via e-mail about this problem. Click "
+"to subscribe."
 msgstr ""
 
-#: templates/_base_top_bar.html:95
-#, fuzzy
-msgid "Open collaboration"
-msgstr "Participação aberta"
+#: templates/_base_top_bar.html:133 templates/_single_activity.html:104
+msgid "No activity so far."
+msgstr "Nenhuma atividade até agora."
 
-#: templates/_base_top_bar.html:97
-msgid "Only managers collaborate"
-msgstr ""
-
-#: templates/_base_top_bar.html:97
-msgid "Closed collaboration"
-msgstr ""
+#: templates/_base_top_bar.html:141
+msgid "View all activities"
+msgstr "Ver todas as atividades"
 
 #: templates/_home.html:8
 msgid "Create new problem"
 msgstr "Criar novo problema"
 
-#: templates/_home.html:34
+#: templates/_home.html:32 templates/_home.html.py:34
 msgid "No title"
 msgstr "Sem título"
 
@@ -577,176 +824,142 @@ msgid "last modified %(time)s"
 msgstr "última modificação em %(time)s"
 
 #: templates/_home.html:56
-#, fuzzy
-msgid "No problem around here."
-msgstr "Nenhum problema aqui. Você pode começar"
-
-#: templates/_home.html:61
 #, fuzzy, python-format
 msgid ""
-"Hi! There's no problem around for you. Try <a href=\"%(item_url)s\">loggin "
-"in</a>."
+"There's no problem available. <a class=\"button radius tiny\" !Y!P href="
+"\"%(item_url)s\">Why not create one?</a>"
 msgstr ""
-"Oi! Não tem nenhum problema por aqui. Você precisa <a href=\"%(item_url)s"
-"\">se logar</a> para criar um."
+"Nenhum problema aqui. Você pode começar <a href=\"%(item_url)s\">criando um</"
+"a>."
+
+#: templates/_home.html:62
+#, python-format
+msgid ""
+"There's no public problems available. You can <a class=\"button radius small"
+"\" href=\"%(login_url)s\">log in</a> or <a class=\"button radius small\" "
+"href=\"%(register_url)s\">create an account</a> to start!"
+msgstr ""
 
 #: templates/_single_activity.html:9
 #, fuzzy, python-format
 msgid "Page %(number)s"
 msgstr "Página %(number)s de %(total)s"
 
-#: templates/_single_activity.html:17
-#, fuzzy
-msgid "Edit user info"
-msgstr "Atualizar as informações do usuário"
-
-#: templates/_single_activity.html:18
-#, fuzzy
-msgid "Inactivate user"
-msgstr "Sim! Reative este usuário!"
-
-#: templates/_single_activity.html:32
+#: templates/_single_activity.html:20
 #, fuzzy, python-format
 msgid "Created at %(created)s"
 msgstr "Critério salvo."
 
-#: templates/_single_activity.html:38
+#: templates/_single_activity.html:26
 #, fuzzy
 msgid "No criteria defined."
 msgstr "Nenhum critério ainda!"
 
-#: templates/_single_activity.html:54 templates/_single_activity.html.py:81
+#: templates/_single_activity.html:42 templates/_single_activity.html.py:69
 msgid "problems"
 msgstr "Problemas"
 
-#: templates/_single_activity.html:60 templates/_single_activity.html.py:88
+#: templates/_single_activity.html:48 templates/_single_activity.html.py:76
 #: templates/part_counter.html:14
 msgid "ideas"
 msgstr "ideias"
 
-#: templates/_single_activity.html:66 templates/_single_activity.html:102
+#: templates/_single_activity.html:54 templates/_single_activity.html.py:90
 msgid "comments"
 msgstr "comentários"
 
-#: templates/_single_activity.html:70
+#: templates/_single_activity.html:58
 #, python-format
 msgid "Joined in %(date_joined)s"
 msgstr ""
 
 #: templates/_single_problem.html:21
-msgid "Really remove this alternative?"
-msgstr "Realmente remover esta alternativa?"
-
-#: templates/_single_problem.html:29
-msgid "Remove!"
-msgstr "Remover!"
-
-#: templates/_single_problem.html:38
-#, fuzzy
-msgid "Edit alternative"
-msgstr "alternativa"
-
-#: templates/_single_problem.html:79
-#, python-format
 msgid ""
 "This is a preview mode from an unpublished draft. The problem is not "
-"available for user contribution until it is published. <a class=\"left-1em "
-"button secondary tiny radius\" href=\"%(problem_update_url)s\">Edit problem</"
-"a>"
+"available for user contribution until it is published."
 msgstr ""
 
-#: templates/_single_problem.html:97
-msgid ""
-"This description is open for improvements. Click here to edit the problem "
-"description."
-msgstr ""
-
-#: templates/_single_problem.html:101
-msgid "Click here to edit the problem description."
-msgstr ""
-
-#: templates/_single_problem.html:104
-msgid ""
-"The description is editable only by managers. Leave a comment with your "
-"improvement suggestions."
-msgstr ""
-
-#: templates/_single_problem.html:116
-#, fuzzy
-msgid "Problem author"
-msgstr "Atividade do problema"
-
-#: templates/_single_problem.html:128 views/base.py:373 views/base.py:403
-msgid "Comments"
-msgstr "Comentários"
-
-#: templates/_single_problem.html:148 templates/item_idea.html:97
-msgctxt "verb"
-msgid "Comment"
-msgstr "Comentar"
-
-#: templates/_single_problem.html:162
-msgid ""
-"Anyone can give a criteria to this problem. Click here to insert a new "
-"criteria."
-msgstr ""
-
-#: templates/_single_problem.html:166
+#: templates/_single_problem.html:44
 #, fuzzy
 msgid "Click here to insert a new criteria."
 msgstr "Criar novo critério"
 
-#: templates/_single_problem.html:169
-msgid ""
-"Only managers can give criteria to this problem. Leave a comment with your "
-"improvement suggestions."
-msgstr ""
-
-#: templates/_single_problem.html:178
+#: templates/_single_problem.html:52
 msgid "There's no criteria defined for this problem yet."
 msgstr "Não há critério definido para este problema ainda."
 
-#: templates/_single_problem.html:191
+#: templates/_single_problem.html:63
+#, fuzzy
+msgid "Your idea drafts"
+msgstr "Sua ideia"
+
+#: templates/_single_problem.html:70
 msgid "Click here to insert a new idea."
 msgstr ""
 
-#: templates/_single_problem.html:202
+#: templates/_single_problem.html:80
 msgid "Ideas submission will be available when criteria are defined."
 msgstr ""
 
-#: templates/_single_problem.html:214
+#: templates/_single_problem.html:92
 #, fuzzy
 msgid "Click here to insert a new alternative."
 msgstr "Adicionar nova alternativa"
 
-#: templates/_single_problem.html:223
+#: templates/_single_problem.html:100
 msgid "There's no alternative created yet."
 msgstr "Não há nenhuma alternativa criada ainda."
 
-#: templates/_single_problem.html:228
+#: templates/_single_problem.html:105
 msgid "Alternatives will be available when there's criteria and ideas."
 msgstr ""
 
-#: templates/_single_problem.html:251 views/base.py:368 views/base.py:398
-#: views/problem.py:333
-msgid "Alternatives"
-msgstr "Alternativas"
+#: templates/_single_problem.html:118
+msgid "Alternative preference from users"
+msgstr ""
 
-#: templates/_single_problem.html:267
-msgid "There's not enough data to show results."
+#: templates/_single_problem.html:124
+#, fuzzy
+msgid "There's no alternative to render data yet."
+msgstr "Não há nenhuma alternativa criada ainda."
+
+#: templates/_single_problem.html:127
+msgid "Criteria attendance from alternatives"
+msgstr ""
+
+#: templates/_single_problem.html:155
+msgid "There's not enough data to show criteria results."
 msgstr ""
 
 #: templates/_single_users.html:22
 msgid "No users around here."
 msgstr ""
 
-#: templates/_update_idea.html:16
+#: templates/_update_alternative.html:10
+#, fuzzy
+msgid "Click on the ideas to select them for this alternative."
+msgstr "Clique nas células"
+
+#: templates/_update_alternative.html:12
+#, fuzzy
+msgid "Add an alternative"
+msgstr "Adicionar nova alternativa"
+
+#: templates/_update_idea.html:12
 msgid "Your idea"
 msgstr "Sua ideia"
 
-#: templates/diffbase_problem.html:9
-msgid "Private"
-msgstr "Privado"
+#: templates/confirm_delete.html:7
+msgid "Really delete?"
+msgstr "Remover de verdade?"
+
+#: templates/confirm_delete.html:8
+msgid "This action cannot be undone."
+msgstr ""
+
+#: templates/confirm_delete.html:11
+msgid "Remove"
+msgstr "Remover"
 
 #: templates/diffbase_problem.html:10
 #, fuzzy
@@ -757,30 +970,169 @@ msgstr "Edição aberta"
 msgid "Closed for edition"
 msgstr ""
 
+#: templates/help.html:11
+msgid "About"
+msgstr ""
+
+#: templates/help.html:25
+msgid "About DNStorm"
+msgstr ""
+
+#: templates/help.html:26
+msgid ""
+"DNStorm is an experiment in decision-theory that proposes a different way of "
+"discussing problems by making them measurable and votable. The whole process "
+"is oriented on information structure, user collaboration and scientific "
+"proved decision-making practices."
+msgstr ""
+
+#: templates/help.html:32
+#, python-format
+msgid ""
+"%(left)sDecisions can be measured in better or worse, involving the key idea "
+"of the 5 components of <i>decision quality</i>. To identify a good decision "
+"we certainly have to %(label)s1%(_label)s do a good problem definition, "
+"%(label)s2%(_label)s generate a good set of alternatives, "
+"%(label)s3%(_label)s get good information, %(label)s4%(_label)s know the "
+"consequences very well,%(label)s5%(_label)s make sure we're always thinking "
+"in a logically correct way."
+msgstr ""
+
+#: templates/help.html:33
+#, python-format
+msgid ""
+"We're confident that even small improvements in structuring the problems and "
+"alternatives are capable of highly contribute to better decision results, "
+"that's why DNStorm is meant to look only if the items %(label)s1%(_label)s, "
+"%(label)s2%(_label)s, and %(label)s3%(_label)s are not developed in the "
+"decision process."
+msgstr ""
+
+#: templates/help.html:34
+msgid "See how it works &raquo;"
+msgstr ""
+
+#: templates/help.html:38
+#, fuzzy
+msgid "Writing a good problem description"
+msgstr "Descrição do problema"
+
+#: templates/help.html:42
+#, python-format
+msgid ""
+"%(left)sEverything starts with a description or the problem. If you're "
+"invited to contribute in a problem, that's why a description was alredy "
+"started and now you can help improving it.."
+msgstr ""
+
+#: templates/help.html:44
+msgid ""
+"A good problem description is objective, properly introduced, summarized, "
+"with the relevant points cleared and well specified. There's no magic "
+"formula, but we can give you some tips about writing problems:"
+msgstr ""
+
+#: templates/help.html:46
+msgid ""
+"Research before writing. And research serious. You have to understand the "
+"problem."
+msgstr ""
+
+#: templates/help.html:47
+msgid ""
+"Try to use well the web editor while writing. People will understand better "
+"the text if it uses headings, references, citations, lists, paragraphs "
+"separated properly, links, images, and so."
+msgstr ""
+
+#: templates/help.html:48
+msgid "Proof-read before posting. Grammar is important."
+msgstr ""
+
+#: templates/help.html:49
+msgid ""
+"Be open for questioning when the problem is published. Reply the comments "
+"and analyze each of the collaborator's considerations."
+msgstr ""
+
+#: templates/help.html:54
+#, fuzzy
+msgid "Define criteria to clarify the problem boundaries"
+msgstr "Critérios do problema"
+
+#: templates/help.html:56
+#, python-format
+msgid ""
+"%(left)sThere's a need to be very specific when measuring problems, pushing "
+"values and situations that will make the problem <i>limited</i>. We call "
+"these parameters the problem's criteria, and each one of them have special "
+"parameters to define what we should look while analyzing how we can solve "
+"the problem.</p>"
+msgstr ""
+
+#: templates/help.html:60
+msgid "Brainstorm and generate a lot of possibilities"
+msgstr ""
+
+#: templates/help.html:62 templates/help.html.py:68
+#, python-format
+msgid "%(left)s</p>"
+msgstr ""
+
+#: templates/help.html:66
+msgid "Combine ideas to get good alternatives"
+msgstr ""
+
 #: templates/item_activity.html:43
 #, fuzzy, python-format
 msgid "Display the other <b>%(count)s</b> comments"
 msgstr "Mostrar os outros <b>%(count)s</b> comentários"
 
-#: templates/item_alternative.html:56 templates/item_idea.html:46
-#: views/problem.py:51 views/problem.py:121
+#: templates/item_alternative.html:65 templates/item_criteria.html:32
+#: templates/item_idea.html:63 templates/item_problem.html:37
 msgid "Edit"
 msgstr "Editar"
 
-#: templates/item_alternative.html:76 templates/item_criteria.html:46
-#: templates/item_idea.html:77
+#: templates/item_alternative.html:68 templates/item_criteria.html:35
+#: templates/item_idea.html:66 templates/item_problem.html:40
+msgid "Delete"
+msgstr "Remover"
+
+#: templates/item_alternative.html:74
+#, fuzzy
+msgid "Alternative coauthors"
+msgstr "Alternativas"
+
+#: templates/item_alternative.html:82
+#, fuzzy
+msgid "Alternative author"
+msgstr "Qualidade da alternativa"
+
+#: templates/item_alternative.html:103 templates/item_criteria.html:86
+#: templates/item_idea.html:110
 #, python-format
 msgid "Display the other <b>%(count)s</b> comments."
 msgstr "Mostrar os outros <b>%(count)s</b> comentários"
 
-#: templates/item_alternative.html:91
+#: templates/item_alternative.html:125
 msgid "comment this alternative"
 msgstr "comentar esta alternativa"
 
-#: templates/item_criteria.html:62
+#: templates/item_criteria.html:45
 #, fuzzy
-msgid "edit"
-msgstr "editado"
+msgid "Criteria coauthors"
+msgstr "Critério salvo."
+
+#: templates/item_criteria.html:57
+#, fuzzy
+msgid "Criteria author"
+msgstr "Critérios"
+
+#: templates/item_criteria.html:109 templates/item_idea.html:128
+#: templates/item_problem.html:92
+msgctxt "verb"
+msgid "Comment"
+msgstr "Comentar"
 
 #: templates/item_criteria_parameters.html:5
 #, python-format
@@ -822,15 +1174,47 @@ msgstr "Resulta na média dos valores das ideias."
 msgid "Results the absolute value of ideas."
 msgstr "Resulta no valor absoluto das ideias."
 
-#: templates/item_idea.html:54
+#: templates/item_idea.html:16
+msgid "This idea is not available for other users"
+msgstr ""
+
+#: templates/item_idea.html:50
+msgid "Warning: No value for this criteria."
+msgstr ""
+
+#: templates/item_idea.html:75
+#, fuzzy
+msgid "Idea coauthors"
+msgstr "contribuições de ideias"
+
+#: templates/item_idea.html:83
 msgid "Idea author"
 msgstr ""
+
+#: templates/item_problem.html:12
+msgid ""
+"You can improve this description by editing it. Click here to contribute."
+msgstr ""
+
+#: templates/item_problem.html:15
+msgid "Start by giving the problem a good and detailed description."
+msgstr ""
+
+#: templates/item_problem.html:46
+#, fuzzy
+msgid "Problem coauthors"
+msgstr "Atividade do problema"
+
+#: templates/item_problem.html:58
+#, fuzzy
+msgid "Problem author"
+msgstr "Atividade do problema"
 
 #: templates/item_user.html:16
 msgid "Send invitation"
 msgstr "Enviar convite"
 
-#: templates/item_user.html:22
+#: templates/item_user.html:23
 #, python-format
 msgid "%(day)s at %(hour)s"
 msgstr "%(day)s às %(hour)s"
@@ -840,28 +1224,20 @@ msgstr "%(day)s às %(hour)s"
 msgid "Pending invitation"
 msgstr "Convites em aberto"
 
-#: templates/item_user.html:46
+#: templates/item_user.html:45
 #, fuzzy
 msgid "cancel invitation"
 msgstr "Enviar convite"
 
-#: templates/item_user.html:46
+#: templates/item_user.html:45
 #, fuzzy
 msgid "inactivate user"
 msgstr "Sim! Reative este usuário!"
 
-#: templates/item_user.html:48
+#: templates/item_user.html:47
 #, fuzzy
 msgid "activate user"
 msgstr "Sim! Reative este usuário!"
-
-#: templates/modal_delete.html:6
-msgid "Really delete?"
-msgstr "Remover de verdade?"
-
-#: templates/modal_delete.html:8
-msgid "The information will be lost! You won't be able to undo this!"
-msgstr "A informação será perdida para sempre. Você não poderá desfazer isto!"
 
 #: templates/modal_error.html:6
 msgid "Ooops... server error. Sorry."
@@ -878,10 +1254,6 @@ msgstr ""
 #: templates/modal_error.html:10
 msgid "OK"
 msgstr "OK"
-
-#: templates/part_counter.html:8 views/problem.py:325
-msgid "Criteria"
-msgstr "Critérios"
 
 #: templates/part_counter.html:20
 msgid "alternatives"
@@ -902,9 +1274,9 @@ msgid "Page %(number)s of %(total)s"
 msgstr "Página %(number)s de %(total)s"
 
 #: templates/actstream/action.html:10
-#, python-format
+#, fuzzy, python-format
 msgid ""
-"<a href=\"%(actor_url)s\">%(actor_name)s</a> is now is a contributor of the "
+"<a href=\"%(actor_url)s\">%(actor_name)s</a> is now is a collaborator of the "
 "problem <a href=\"%(problem_url)s\">%(problem_title)s</a>"
 msgstr ""
 "<a href=\"%(actor_url)s\">%(actor_name)s</a> é agora um colaborador do "
@@ -984,6 +1356,17 @@ msgstr ""
 "%(problem_title)s</a>"
 
 #: templates/actstream/action.html:80
+#, fuzzy, python-format
+msgid ""
+"<a href=\"%(actor_url)s\">%(actor_name)s</a> edited the alternative <a href="
+"\"%(alternative_url)s\">%(alternative_name)s</a> on the problem <a href="
+"\"%(problem_url)s\">%(problem_title)s</a>"
+msgstr ""
+"<a href=\"%(actor_url)s\">%(actor_name)s</a> criou a ideia <a href="
+"\"%(idea_url)s\">%(idea_title)s</a> no problema <a href=\"%(problem_url)s\">"
+"%(problem_title)s</a>"
+
+#: templates/actstream/action.html:89
 #, python-format
 msgid ""
 "<a href=\"%(actor_url)s\">%(actor_name)s</a> <a href=\"%(comment_url)s"
@@ -993,7 +1376,7 @@ msgstr ""
 "<a href=\"%(actor_url)s\">%(actor_name)s</a> <a href=\"%(comment_url)s"
 "\">comentou</a> o problema <a href=\"%(problem_url)s\">%(problem_title)s</a>"
 
-#: templates/actstream/action.html:90
+#: templates/actstream/action.html:99
 #, python-format
 msgid ""
 "<a href=\"%(actor_url)s\">%(actor_name)s</a> <a href=\"%(comment_url)s"
@@ -1005,7 +1388,7 @@ msgstr ""
 "\">comentou</a> o criterio <a href=\"%(criteria_url)s\">%(criteria_title)s</"
 "a> no problema <a href=\"%(problem_url)s\">%(problem_title)s</a>"
 
-#: templates/actstream/action.html:100
+#: templates/actstream/action.html:109
 #, python-format
 msgid ""
 "<a href=\"%(actor_url)s\">%(actor_name)s</a> <a href=\"%(comment_url)s"
@@ -1016,7 +1399,7 @@ msgstr ""
 "\">comentou</a> a ideia <a href=\"%(idea_url)s\">%(idea_title)s</a> no "
 "problema <a href=\"%(problem_url)s\">%(problem_title)s</a>"
 
-#: templates/actstream/action.html:110
+#: templates/actstream/action.html:119
 #, fuzzy, python-format
 msgid ""
 "<a href=\"%(actor_url)s\">%(actor_name)s</a> <a href=\"%(comment_url)s"
@@ -1062,6 +1445,10 @@ msgstr ""
 msgid "You were invited by %(problem_author)s to discuss a problem"
 msgstr "Você foi convidado por %(problem_author)s para discutir um problema"
 
+#: templates/notification/problem/short.txt:1
+msgid "A problem you're contributing to was updated"
+msgstr ""
+
 #: templates/registration/activate.html:5
 msgid "Account activation"
 msgstr "Ativação de conta"
@@ -1093,15 +1480,10 @@ msgid "Activate your account on %(site)s"
 msgstr "Ative sua conta em %(site)s"
 
 #: templates/registration/login.html:9
-msgid "Nothing to do here"
-msgstr "Nada a se fazer por aqui."
+msgid "Você requisitou uma operação inválida."
+msgstr ""
 
-#: templates/registration/login.html:10
-#: templates/registration/registration_form.html:9
-msgid "You are already logged in."
-msgstr "Você já está logado."
-
-#: templates/registration/login.html:36
+#: templates/registration/login_form.html:24
 #: templates/registration/password_reset_form.html:5
 msgid "Reset password"
 msgstr "Recuperar senha"
@@ -1174,247 +1556,124 @@ msgstr "A criação de contas está fechada neste site."
 msgid "Authentication error"
 msgstr "Erro de autenticação"
 
-#: templates/registration/registration_form.html:12
-msgid "Registration"
-msgstr "Criar conta"
+#: templates/registration/registration_form.html:9
+msgid "You are already logged in."
+msgstr "Você já está logado."
 
-#: views/ajax.py:274
-#, fuzzy, python-format
-msgid "Alternative %d"
-msgstr "Alternativa"
-
-#: views/ajax.py:420
-#, fuzzy
-msgid "You need to fill a title for the alternative."
-msgstr "Selecione ideias para esta alternativa"
-
-#: views/ajax.py:427
-msgid "You need to select at least one idea."
+#: templates/registration/registration_form.html:14
+msgid "By filling the form you will receive an e-mail with an activation link."
 msgstr ""
 
-#: views/base.py:68 views/base.py:358
-msgid "Problems"
-msgstr "Problemas"
+#~ msgid "Welcome to DNStorm. "
+#~ msgstr "Bem-vindo ao DNStorm."
 
-#: views/base.py:74 views/base.py:353 views/base.py:383
-msgid "All"
-msgstr ""
-
-#: views/base.py:79
 #, fuzzy
-msgid "Managed by me"
-msgstr "Gerenciar"
+#~ msgid ""
+#~ "You can start by creating a new problem or contrubuting to existing ones."
+#~ msgstr "Você pode criar um novo problema clicando aqui."
 
-#: views/base.py:84
+#~ msgid "Edit user '%s'"
+#~ msgstr "Editar o usuário \"%s\""
+
+#~ msgid "Delete problem"
+#~ msgstr "Deletar problema"
+
+#~ msgid ""
+#~ "Let users change the title and description of problems and ideas as "
+#~ "coauthors."
+#~ msgstr ""
+#~ "Permitir que os usuários mudem o título e descrição do problema e das "
+#~ "ideias como co-autores."
+
+#~ msgid "Yes. I know what I'm doing. Delete this!"
+#~ msgstr "Sim. Sei o que estou fazendo. Pode remover!"
+
+#~ msgid "Cancel"
+#~ msgstr "Cancelar"
+
+#~ msgid "Delete idea"
+#~ msgstr "Deletar ideia"
+
+#~ msgid "Publish status"
+#~ msgstr "Status de publicação"
+
+#~ msgid "Published"
+#~ msgstr "Publicado"
+
 #, fuzzy
-msgid "Drafts"
-msgstr "Rascunho"
+#~ msgid "Public problem"
+#~ msgstr "Postar problema"
 
-#: views/base.py:89
 #, fuzzy
-msgid "Contributed to"
-msgstr "contribuiu"
+#~ msgid "Private problem"
+#~ msgstr "Critérios do problema"
 
-#: views/base.py:179
-msgid "Welcome to DNStorm. "
-msgstr ""
-
-#: views/base.py:181
 #, fuzzy
-msgid "You are already a contributor of a problem:&nbsp;"
-msgstr "Qualquer usuário registrado poderá contribuir para este problema."
+#~ msgid "No problem around here."
+#~ msgstr "Nenhum problema aqui. Você pode começar"
 
-#: views/base.py:186
 #, fuzzy
-msgid ""
-"You can start by creating a new problem or contrubuting to existing ones."
-msgstr "Você pode criar um novo problema clicando aqui."
+#~ msgid ""
+#~ "Hi! There's no problem around for you. Try <a href=\"%(item_url)s"
+#~ "\">loggin in</a>."
+#~ msgstr ""
+#~ "Oi! Não tem nenhum problema por aqui. Você precisa <a href=\"%(item_url)s"
+#~ "\">se logar</a> para criar um."
 
-#: views/base.py:229
-msgid "Site options"
-msgstr "Opções do site"
-
-#: views/base.py:231 views/base.py:238
-msgid "Options"
-msgstr "Opções"
-
-#: views/base.py:346
 #, fuzzy
-msgid "Sitewide activity"
-msgstr "ver log de atividades"
+#~ msgid "Inactivate user"
+#~ msgstr "Sim! Reative este usuário!"
 
-#: views/base.py:363 views/base.py:393 views/problem.py:329
-msgid "Ideas"
-msgstr "Ideias"
+#~ msgid "Remove!"
+#~ msgstr "Remover!"
 
-#: views/criteria.py:35 views/criteria.py:44
 #, fuzzy
-msgid "Create criteria"
-msgstr "Criar novo critério"
+#~ msgid "Edit alternative"
+#~ msgstr "alternativa"
 
-#: views/criteria.py:37
-#, fuzzy, python-format
-msgid "Create criteria for problem: %s"
-msgstr "Critérios do problema"
-
-#: views/criteria.py:54
-msgid "Criteria created."
-msgstr "Critério salvo."
-
-#: views/criteria.py:85 views/criteria.py:100
 #, fuzzy
-msgid "Edit criteria"
-msgstr "Adicionar critério"
+#~ msgid "edit"
+#~ msgstr "editado"
 
-#: views/criteria.py:87
-#, fuzzy, python-format
-msgid "Edit criteria for problem: %s"
-msgstr "Critérios do problema"
+#~ msgid "The information will be lost! You won't be able to undo this!"
+#~ msgstr ""
+#~ "A informação será perdida para sempre. Você não poderá desfazer isto!"
 
-#: views/criteria.py:92
-msgid "Criteria saved."
-msgstr "Critério salvo."
+#~ msgid "Nothing to do here"
+#~ msgstr "Nada a se fazer por aqui."
 
-#: views/idea.py:96
-msgid "The idea was deleted."
-msgstr "A ideia foi removida."
-
-#: views/idea.py:100
-msgid "You need to mark the checkbox to really delete."
-msgstr "Você precisa marcar o checkbox para remover de verdade."
-
-#: views/idea.py:116
-#, fuzzy, python-format
-msgid "Post idea to problem: %s"
-msgstr "Voltar ao problema\t"
-
-#: views/idea.py:167
-msgid "Provide a value within the specified range."
-msgstr "Forneça um valor dentro da faixa especificada."
-
-#: views/idea.py:195
-msgid "Your idea was successfully saved."
-msgstr "A sua ideia foi salva."
-
-#: views/problem.py:63
 #, fuzzy
-msgid "Contributors and permissions"
-msgstr "Colaboradores"
+#~ msgid "Alternative %d"
+#~ msgstr "Alternativa"
 
-#: views/problem.py:112
-msgid "The problem was deleted."
-msgstr "O problema foi removido."
-
-#: views/problem.py:115
-msgid ""
-"You need to mark the confirmation checkbox if you want to delete the form."
-msgstr "Você precisa marcar o checkbox para remover de verdade."
-
-#: views/problem.py:124
-msgid "Edit problem"
-msgstr "Editar problema"
-
-#: views/problem.py:164
-#, python-format
-msgid ""
-"The problem was successfully saved as a draft. <a class=\"left-1em button "
-"success tiny radius\" target=\"_blank\" href=\"%s\">Preview</a>"
-msgstr ""
-
-#: views/problem.py:168
 #, fuzzy
-msgid "The problem was successfuly saved."
-msgstr "O problema foi salvo."
+#~ msgid "You need to fill a title for the alternative."
+#~ msgstr "Selecione ideias para esta alternativa"
 
-#: views/problem.py:176
-#, fuzzy, python-format
-msgid "Edit problem: %s"
-msgstr "Editar problema"
-
-#: views/problem.py:203
 #, fuzzy
-msgid "Problem contributors"
-msgstr "colaboradores"
+#~ msgid "Managed by me"
+#~ msgstr "Gerenciar"
 
-#: views/problem.py:221
 #, fuzzy
-msgid "Permission options in the problem was successfully saved."
-msgstr "O problema foi salvo."
+#~ msgid "Contributed to"
+#~ msgstr "contribuiu"
 
-#: views/problem.py:228
-#, fuzzy, python-format
-msgid "Problem contributors: %s"
-msgstr "colaboradores"
+#~ msgid "The idea was deleted."
+#~ msgstr "A ideia foi removida."
 
-#: views/problem.py:321
-msgid "Problem"
-msgstr "Problema"
+#~ msgid "You need to mark the checkbox to really delete."
+#~ msgstr "Você precisa marcar o checkbox para remover de verdade."
 
-#: views/problem.py:337
-msgid "Results"
-msgstr "Resultados"
+#~ msgid ""
+#~ "You need to mark the confirmation checkbox if you want to delete the form."
+#~ msgstr "Você precisa marcar o checkbox para remover de verdade."
 
-#: views/user.py:32
-msgid "User profile"
-msgstr "Perfil do usuário"
-
-#: views/user.py:84
 #, fuzzy
-msgid "Active"
-msgstr "Atividade"
-
-#: views/user.py:89
-#, fuzzy
-msgid "Invitations"
-msgstr "convite"
-
-#: views/user.py:94
-#, fuzzy
-msgid "Inactive"
-msgstr "alternativa"
-
-#: views/user.py:124
-msgid "Update user"
-msgstr "Atualizar usuário"
-
-#: views/user.py:148
-#, fuzzy, python-format
-msgid "User information for %s was updated."
-msgstr "As informações do usuário foram salvas"
-
-#: views/user.py:167
-msgid "Update user password"
-msgstr "Atualizar a senha do usuário"
-
-#: views/user.py:182
-msgid "Wrong password."
-msgstr "Senha errada."
-
-#: views/user.py:188
-#, fuzzy, python-format
-msgid "The password for %s was updated."
-msgstr "Senha atualizada"
-
-#: views/user.py:229
-#, python-format
-msgid "The invitation to %s was cancelled."
-msgstr ""
-
-#: views/user.py:239
-#, fuzzy, python-format
-msgid "The user %s was inactivated."
-msgstr "Usuário ativado"
-
-#: views/user.py:263
-#, fuzzy, python-format
-msgid "The user %s was activated."
-msgstr "Usuário ativado"
+#~ msgid "Problem contributors: %s"
+#~ msgstr "colaboradores"
 
 #~ msgid "Save criteria"
 #~ msgstr "Salvar critério"
-
-#~ msgid "Problem description"
-#~ msgstr "Descrição do problema"
 
 #~ msgid "Criterias"
 #~ msgstr "Critérios"
@@ -1425,9 +1684,6 @@ msgstr "Usuário ativado"
 #~ msgstr ""
 #~ "Usuário com permissão para contribuir com este problema. Clique em uma "
 #~ "caixa de usuário para removê-lo da seleção."
-
-#~ msgid "General activity"
-#~ msgstr "Atividade do site"
 
 #~ msgid "Delete alternative"
 #~ msgstr "Deletar alternativa"
@@ -1447,13 +1703,6 @@ msgstr "Usuário ativado"
 #~ msgid "comment this criteria"
 #~ msgstr "comente este critério"
 
-#~ msgid ""
-#~ "No problem here. You can start by <a href=\"%(item_url)s\">creating a new "
-#~ "one</a>."
-#~ msgstr ""
-#~ "Nenhum problema aqui. Você pode começar <a href=\"%(item_url)s\">criando "
-#~ "um</a>."
-
 #~ msgid "Select ideas"
 #~ msgstr "Selecionar ideias"
 
@@ -1472,15 +1721,6 @@ msgstr "Usuário ativado"
 
 #~ msgid "Add new idea"
 #~ msgstr "Adicionar nova ideia"
-
-#~ msgid "Add new alternative"
-#~ msgstr "Adicionar nova alternativa"
-
-#~ msgid "Open"
-#~ msgstr "Aberto"
-
-#~ msgid "Closed"
-#~ msgstr "Fechado"
 
 #~ msgid "View published problem"
 #~ msgstr "Ver o problema publicado"
@@ -1606,14 +1846,8 @@ msgstr "Usuário ativado"
 #~ msgid "Strategy table"
 #~ msgstr "Tabela de estratégias"
 
-#~ msgid "Remove"
-#~ msgstr "Remover"
-
 #~ msgid "Manage contributors"
 #~ msgstr "Gerenciar colaboradores"
-
-#~ msgid "Alternative quality"
-#~ msgstr "Qualidade da alternativa"
 
 #~ msgid "Log in"
 #~ msgstr "Login"
@@ -1809,9 +2043,6 @@ msgstr "Usuário ativado"
 
 #~ msgid "problems created"
 #~ msgstr "problemas criados"
-
-#~ msgid "idea contributions"
-#~ msgstr "contribuições de ideias"
 
 #~ msgid "comments made"
 #~ msgstr "comentários feitos"
@@ -2019,9 +2250,6 @@ msgstr "Usuário ativado"
 
 #~ msgid "Advanced options"
 #~ msgstr "Opções avançadas"
-
-#~ msgid "Click on the ideas cell of each alternative to link ideas"
-#~ msgstr "Clique nas células"
 
 #~ msgid "Help text"
 #~ msgstr "Texto de ajuda"

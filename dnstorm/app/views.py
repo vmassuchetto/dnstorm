@@ -186,19 +186,6 @@ class RegistrationView(BaseRegistrationView):
         for i in Invitation.objects.filter(user=user):
             i.delete()
 
-        # Welcome message
-        pcs = Problem.objects.filter(collaborator__in=[user])
-        msg = _('Welcome to DNStorm. ')
-        if pcs:
-            msg += _('You are already a collaborator of a problem:&nbsp;')
-            for p in pcs:
-                msg += '<a class="label success radius" href="%s">%s</a>&nbsp;' % (reverse('problem', kwargs={'pk': p.id, 'slug': p.slug}), p.title)
-            _return = reverse('problems_collaborating')
-        else:
-            msg += _('You can start by creating a new problem or contrubuting to existing ones.')
-            _return = reverse('home')
-        messages.success(self.request, mark_safe(msg))
-
         # Log in
         _user = authenticate(username=cleaned_data['username'], password=cleaned_data['password1'])
         login(self.request, _user)
