@@ -36,6 +36,7 @@ from django.views.decorators.csrf import csrf_protect
 from django.views.generic import DetailView, RedirectView
 from django.views.generic import View
 from django.views.generic.base import TemplateView, RedirectView, View, TemplateResponseMixin
+from django.views.generic.detail import SingleObjectTemplateResponseMixin
 from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormView, UpdateView
 
 from actstream import action
@@ -287,7 +288,7 @@ class AjaxView(View):
 
         # Response
         result = ''
-        if is_email(q):
+        if utils.is_email(q):
             if User.objects.filter(email=q).exists():
                 result = loader.render_to_string('item_user.html', {'user': User.objects.filter(email=q)[0], 'enclosed': True})
             else:
@@ -312,7 +313,7 @@ class AjaxView(View):
 
         # Commit
         # invitation
-        if not user and is_email(self.request.GET['collaborator_add']):
+        if not user and utils.is_email(self.request.GET['collaborator_add']):
             return self.invitation_add()
         # collaborator
         problem.collaborator.add(user)
@@ -354,7 +355,7 @@ class AjaxView(View):
         if not perms.problem(self.request.user, 'manage', problem):
             raise PermissionDenied
         if 'collaborator_add' not in self.request.GET \
-            or not is_email(self.request.GET['collaborator_add']):
+            or not utils.is_email(self.request.GET['collaborator_add']):
             raise PermissionDenied
 
         # Commit
@@ -372,7 +373,7 @@ class AjaxView(View):
             hash = '%032x' % random.getrandbits(128)
         invitation = models.Invitation.objects.create(user=user, hash=hash)
         # notification
-        notification.send([user], 'invitation', email_context({ 'invitation': invitation }))
+        notification.send([user], 'invitation', utils.email_context({ 'invitation': invitation }))
 
         # Response
         result = loader.render_to_string('_update_problem_collaborators.html', {'users': problem.collaborator.order_by('first_name')})
@@ -973,12 +974,13 @@ def activity_buttons(request):
 class ActivityView(LoginRequiredMixin, TemplateView):
     template_name = '_single_activity.html'
 
-    def dispatch(self, request, *args, **kwargs):
-        if kwargs.get('pk', None):
-            self.problem = get_object_or_404(models.Problem, id=kwargs['pk'])
-            if not perms.problem(request.user, 'view', self.problem):
+    def dispatch(self, *args, **kwargs):
+        pk = self.kwargs.get('pk', None)
+        if pk:
+            self.problem = get_object_or_404(models.Problem, id=pk) if pk else None
+            if not perms.problem(self.request.user, 'view', self.problem):
                 raise PermissionDenied
-        return super(ActivityView, self).dispatch(request, *args, **kwargs)
+        return super(ActivityView, self).dispatch(*args, **kwargs)
 
     def get_context_data(self, *args, **kwargs):
         context = super(ActivityView, self).get_context_data(**kwargs)
@@ -997,16 +999,20 @@ class ActivityView(LoginRequiredMixin, TemplateView):
 
         # Activities
         if self.url_name in ['activity', 'activity_short']:
+            self.title = _('Activity')
             activities = Action.objects.actor(self.request.user)
             context['tabs'] = self.get_tabs()
         elif self.url_name == 'activity_objects':
+            self.title = _('Activity')
             activities = Action.objects.public(action_object_content_type=_content_type)
             context['tabs'] = self.get_tabs()
         elif self.url_name == 'activity_problem':
+            self.title = _('Problem activity: %s' % self.problem.title)
             activities = Action.objects.target(self.problem)
             context['tabs'] = self.get_problem_tabs()
             context['problem'] = self.problem
         elif self.url_name == 'activity_problem_objects':
+            self.title = _('Problem activity: %s' % self.problem.title)
             activities = Action.objects.public(action_object_content_type=_content_type, target_object_id=self.problem.id)
             context['tabs'] = self.get_problem_tabs()
             context['problem'] = self.problem
@@ -1031,9 +1037,10 @@ class ActivityView(LoginRequiredMixin, TemplateView):
 
     def get_info(self):
         if self.url_name in ['activity_problem', 'activity_problem_objects']:
-            p = ProblemInfoMixin()
+            p = ProblemMixin()
             p.request = self.request
-            p.object = self.problem
+            p.problem = self.problem
+            p.title = self.title
             return p.get_info()
         else:
             return {
@@ -1125,15 +1132,41 @@ class ActivityView(LoginRequiredMixin, TemplateView):
 # }}} Problem {{{
 #
 
-class ProblemBaseMixin(object):
+class ProblemMixin(SingleObjectTemplateResponseMixin):
+
+    def get_object(self):
+        """
+        Object caching.
+        """
+        if not hasattr(self, '_object'):
+            self._object = super(ProblemMixin, self).get_object()
+        if not hasattr(self, 'problem'):
+            if self._object.__class__.__name__ == 'Problem':
+                self.problem = self._object
+            else:
+                self.problem = self._object.problem
+        return self._object
+
+    def get_success_url(self, *args, **kwargs):
+        return reverse('problem', kwargs={'pk': self.problem.id, 'slug': self.problem.slug})
+
+    def dispatch(self, *args, **kwargs):
+        """
+        Problem permission check.
+        """
+        self.object = self.get_object() # cached
+        if getattr(perms, self.object.__class__.__name__.lower())(self.request.user, getattr(self, 'permission', 'view'), self.object):
+            return super(ProblemMixin, self).dispatch(*args, **kwargs)
+        raise PermissionDenied
 
     def get_context_data(self, *args, **kwargs):
-        context = super(ProblemBaseMixin, self).get_context_data(*args, **kwargs)
-        context['site_title'] = '%s | %s' % (self.object.title, self.title)
+        context = super(ProblemMixin, self).get_context_data(*args, **kwargs)
+        context['site_title'] = '%s | %s' % (self.problem.title, self.title)
         context['title'] = self.title
         context['bodyclass'] = slugify(self.title)
-        context['tabs'] = self.get_tabs()
-        context['problem'] = self.object
+        context['tabs'] = self.get_tabs() if getattr(self, 'tabs', None) else None
+        context['info'] = self.get_info()
+        context['problem'] = self.problem
         return context
 
     def get_tabs(self):
@@ -1170,39 +1203,32 @@ class ProblemBaseMixin(object):
             }]
         }
 
-class ProblemInfoMixin(object):
-
-    def get_context_data(self, *args, **kwargs):
-        context = super(ProblemInfoMixin, self).get_context_data(*args, **kwargs)
-        context['info'] = self.get_info()
-        return context
-
     def get_info(self):
         """
         Information for the title bar.
         """
         return {
-            'icon': 'info',
-            'icon_url': reverse('problem', kwargs={'pk': self.object.id, 'slug': self.object.slug}),
-            'title': _('Edit problem: %s' % self.object.title),
-            'title_url': self.object.get_absolute_url(),
-            'show': perms.problem(self.request.user, 'view', self.object),
+            'icon': getattr(self, 'icon', 'info'),
+            'icon_url': reverse('problem', kwargs={'pk': self.problem.id, 'slug': self.problem.slug}),
+            'title': self.title,
+            'title_url': self.problem.get_absolute_url(),
+            'show': perms.problem(self.request.user, 'view', self.problem),
             'buttons': [{
                 'icon': 'comments',
-                'title': _('Discussion') if self.object.published else _('Draft'),
-                'url': reverse('problem', kwargs={'pk': self.object.id, 'slug':self.object.slug}),
+                'title': _('Discussion') if self.problem.published else _('Draft'),
+                'url': reverse('problem', kwargs={'pk': self.problem.id, 'slug':self.problem.slug}),
                 'marked': self.request.resolver_match.url_name == 'problem',
                 'show': True
             },{
                 'icon': 'list',
                 'title': _('Activity'),
-                'url': reverse('activity_problem', kwargs={'pk': self.object.id }),
+                'url': reverse('activity_problem', kwargs={'pk': self.problem.id }),
                 'marked': self.request.resolver_match.url_name in ['activity_problem', 'activity_problem_objects', 'activity_problem_object'],
                 'show': self.request.user.is_authenticated(),
             },{
                 'icon': 'torso',
-                'title': _('Contributors and permissions') if perms.problem(self.request.user, 'manage', self.object) else _('Contributors'),
-                'url': reverse('problem_collaborators', kwargs={'pk': self.object.id}),
+                'title': _('Contributors and permissions') if perms.problem(self.request.user, 'manage', self.problem) else _('Contributors'),
+                'url': reverse('problem_collaborators', kwargs={'pk': self.problem.id}),
                 'marked': self.request.resolver_match.url_name == 'problem_collaborators',
                 'show': True
             }]
@@ -1225,24 +1251,12 @@ class ProblemCreateView(RedirectView):
             return reverse('problem_update', kwargs={'pk': problem.id})
         raise PermissionDenied
 
-class ProblemUpdateView(ProblemBaseMixin, ProblemInfoMixin, UpdateView):
+class ProblemUpdateView(ProblemMixin, UpdateView):
     title = _('Edit problem')
     template_name = '_update_problem.html'
     form_class = forms.ProblemForm
     model = models.Problem
-
-    def get_object(self):
-        if not hasattr(self, '_object'):
-            self._object = super(ProblemUpdateView, self).get_object()
-        return self._object
-
-    @method_decorator(csrf_protect)
-    @method_decorator(login_required)
-    def dispatch(self, *args, **kwargs):
-        self.object = self.get_object()
-        if perms.problem(self.request.user, 'update', self.object):
-            return super(ProblemUpdateView, self).dispatch(*args, **kwargs)
-        raise PermissionDenied
+    permission = 'update'
 
     def form_valid(self, form):
         """
@@ -1280,26 +1294,26 @@ class ProblemUpdateView(ProblemBaseMixin, ProblemInfoMixin, UpdateView):
         return HttpResponseRedirect(reverse(view, kwargs=kwargs))
 
 
-class ProblemCollaboratorsView(ProblemBaseMixin, ProblemInfoMixin, FormView):
+class ProblemCollaboratorsView(ProblemMixin, FormView):
     title = _('Problem collaborators')
     template_name = '_update_problem_collaborators.html'
     form_class = forms.ProblemCollaboratorsForm
     model = models.Problem
+    permission = 'manage'
 
-    def dispatch(self, request, *args, **kwargs):
-        self.object = get_object_or_404(models.Problem, id=kwargs['pk'])
-        if not perms.problem(request.user, 'view', self.object):
-            raise PermissionDenied
-        return super(ProblemCollaboratorsView, self).dispatch(request, *args, **kwargs)
+    def get_object(self):
+        if not hasattr(self, '_object'):
+            self._object = get_object_or_404(models.Problem, id=self.kwargs['pk'])
+            self.problem = self._object
+        return self._object
 
-    def get_form_kwargs(self):
-        kwargs = super(ProblemCollaboratorsView, self).get_form_kwargs()
-        kwargs['problem'] = self.object
+    def get_form_kwargs(self, *args, **kwargs):
+        kwargs = super(ProblemCollaboratorsView, self).get_form_kwargs(*args, **kwargs)
+        kwargs['problem'] = self.get_object()
         return kwargs
 
     def get_context_data(self, *args, **kwargs):
         context = super(ProblemCollaboratorsView, self).get_context_data(**kwargs)
-        context['tabs'] = None
         context['users'] = self.object.collaborator.all()
         return context
 
@@ -1317,15 +1331,11 @@ class ProblemCollaboratorsView(ProblemBaseMixin, ProblemInfoMixin, FormView):
         messages.success(self.request, mark_safe(_('Permission options in the problem was successfully saved.')))
         return HttpResponseRedirect(reverse('problem', kwargs={'pk': form.problem.id, 'slug': form.problem.slug}))
 
-class ProblemView(ProblemBaseMixin, ProblemInfoMixin, TemplateView):
+class ProblemView(ProblemMixin, DetailView):
     title = _('Problem')
     template_name = '_single_problem.html'
     model = models.Problem
-
-    def get_object(self):
-        if not hasattr(self, '_object'):
-            self._object = get_object_or_404(models.Problem, pk=self.kwargs.get('pk', None))
-        return self._object
+    tabs = True
 
     def dispatch(self, *args, **kwargs):
         self.object = self.get_object()
@@ -1400,50 +1410,31 @@ class ProblemDeleteView(DeleteMixin, DeleteView):
 # }}} Criteria {{{
 #
 
-class CriteriaCreateView(CreateView):
-    template_name = '_update_criteria.html'
-    form_class = forms.CriteriaForm
-    model = models.Criteria
+class CriteriaCreateView(RedirectView):
+    permanent = False
 
-    @method_decorator(login_required)
-    def dispatch(self, *args, **kwargs):
-        self.problem = get_object_or_404(models.Problem, id=kwargs.get('problem', None))
-        if not perms.criteria(self.request.user, 'create', self.problem):
+    def get_redirect_url(self, *args, **kwargs):
+        # Validation
+        problem = get_object_or_404(models.Problem, id=kwargs['problem'])
+        if not perms.criteria(self.request.user, 'create', problem):
             raise PermissionDenied
-        return super(CriteriaCreateView, self).dispatch(*args, **kwargs)
 
-    def get_context_data(self, *args, **kwargs):
-        context = super(CriteriaCreateView, self).get_context_data(**kwargs)
-        context['site_title'] = '%s' % (_('Create criteria'))
-        context['info'] = self.get_info()
-        context['title'] = _('Create criteria for problem: %s' % self.problem.title)
-        return context
-
-    def get_info(self):
-        return {
-            'icon': 'pencil',
-            'icon_url': reverse('problem_tab_criteria', kwargs={'pk': self.problem.id, 'slug': self.problem.slug}),
-            'title': _('Create criteria'),
-            'title_url': self.problem.get_absolute_url(),
-            'buttons': problem_buttons(self.request, self.problem),
-            'show': perms.problem(self.request.user, 'manage', self.problem)
-        }
-
-    def form_valid(self, form):
-        form.instance.problem = self.problem
-        form.instance.author = self.request.user
-        form.instance.save()
-        messages.success(self.request, mark_safe(_('Criteria created.')))
-        utils.activity_register(self.request.user, form.instance)
-        return HttpResponseRedirect(reverse('problem_tab_criteria', kwargs={'pk': self.problem.id, 'slug': self.problem.slug}))
+        # Commit
+        criteria = models.Criteria.objects.create(
+            problem=problem,
+            author=self.request.user)
+        return reverse('criteria_update', kwargs={'pk': criteria.id})
 
 class CriteriaDeleteView(DeleteMixin, DeleteView):
     model = models.Criteria
 
-class CriteriaUpdateView(UpdateView):
+class CriteriaUpdateView(ProblemMixin, UpdateView):
+    title = _('Update criteria')
     template_name = '_update_criteria.html'
     form_class = forms.CriteriaForm
     model = models.Criteria
+    permission = 'update'
+    icon = 'target-two'
 
     def get_object(self):
         if not hasattr(self, '_object'):
@@ -1472,16 +1463,6 @@ class CriteriaUpdateView(UpdateView):
         messages.success(self.request, mark_safe(_('Criteria saved.')))
         utils.activity_register(self.request.user, form.instance)
         return HttpResponseRedirect(reverse('problem_tab_criteria', kwargs={'pk': self.object.problem.id, 'slug': self.object.problem.slug}))
-
-    def get_info(self):
-        return {
-            'icon': 'pencil',
-            'icon_url': reverse('problem', kwargs={'pk': self.object.id, 'slug': self.object.problem.slug}),
-            'title': _('Edit criteria'),
-            'title_url': self.object.get_absolute_url(),
-            'buttons': problem_buttons(self.request, self.object.problem),
-            'show': perms.problem(self.request.user, 'update', self.object.problem)
-        }
 
 class CriteriaDeleteView(DeleteMixin, DeleteView):
     model = models.Criteria
@@ -1517,37 +1498,13 @@ class IdeaCreateView(RedirectView):
             author=self.request.user)
         return reverse('idea_update', kwargs={'pk': self.object.id})
 
-class IdeaUpdateView(UpdateView):
+class IdeaUpdateView(ProblemMixin, UpdateView):
+    title = _('Idea update')
     template_name = '_update_idea.html'
     form_class = forms.IdeaForm
     model = models.Idea
-
-    def get_object(self):
-        if not hasattr(self, '_object'):
-            self._object = super(IdeaUpdateView, self).get_object()
-        return self._object
-
-    def dispatch(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        if not perms.idea(self.request.user, 'update', self.object):
-            raise PermissionDenied
-        return super(IdeaUpdateView, self).dispatch(request, *args, **kwargs)
-
-    def get_context_data(self, *args, **kwargs):
-        context = super(IdeaUpdateView, self).get_context_data(**kwargs)
-        context['problem'] = self.object.problem
-        context['info'] = self.get_info()
-        return context
-
-    def get_info(self):
-        return {
-            'icon': 'lightbulb',
-            'icon_url': reverse('problem', kwargs={'pk': self.object.problem.id, 'slug': self.object.problem.slug}),
-            'title': _('Post idea to problem: %s' % self.object.problem.title),
-            'title_url': self.object.problem.get_absolute_url(),
-            'buttons': problem_buttons(self.request, self.object.problem),
-            'show': perms.problem(self.request.user, 'update', self.object.problem)
-        }
+    permission = 'update'
+    icon = 'lightbulb'
 
     def form_valid(self, form, *args, **kwargs):
         """
@@ -1657,42 +1614,13 @@ class AlternativeCreateView(RedirectView):
             author=self.request.user)
         return reverse('alternative_update', kwargs={'pk': alternative.id})
 
-class AlternativeUpdateView(UpdateView):
+class AlternativeUpdateView(ProblemMixin, UpdateView):
+    title = _('Alternative update')
     template_name = '_update_alternative.html'
     form_class = forms.AlternativeForm
     model = models.Alternative
-
-    def get_object(self):
-        if not hasattr(self, '_object'):
-            self._object = super(AlternativeUpdateView, self).get_object()
-        return self._object
-
-    @method_decorator(login_required)
-    @method_decorator(csrf_protect)
-    def dispatch(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        if not perms.alternative(self.request.user, 'update', self.object):
-            raise PermissionDenied
-        return super(AlternativeUpdateView, self).dispatch(request, *args, **kwargs)
-
-    def get_success_url(self, *args, **kwargs):
-        return reverse('problem', kwargs={'pk': self.object.problem.id, 'slug': self.object.problem.slug})
-
-    def get_context_data(self, *args, **kwargs):
-        context = super(AlternativeUpdateView, self).get_context_data(**kwargs)
-        context['problem'] = self.object.problem
-        context['info'] = self.get_info()
-        return context
-
-    def get_info(self):
-        return {
-            'icon': 'lightbulb',
-            'icon_url': reverse('problem', kwargs={'pk': self.object.problem.id, 'slug': self.object.problem.slug}),
-            'title': _('Post alternative to problem: %s' % self.object.problem.title),
-            'title_url': self.object.problem.get_absolute_url(),
-            'buttons': problem_buttons(self.request, self.object.problem),
-            'show': perms.problem(self.request.user, 'manage', self.object)
-        }
+    permission = 'update'
+    icon = 'list'
 
     def form_valid(self, form, *args, **kwargs):
         """

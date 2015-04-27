@@ -270,7 +270,6 @@ class IdeaForm(forms.ModelForm):
         for c in kwargs['instance'].criteria:
             # Custom fields
             _argfields = tuple()
-            self.initial = dict()
             if c.fmt == 'number' \
                 or c.fmt == 'scale' \
                 or c.fmt == 'time':
@@ -283,7 +282,7 @@ class IdeaForm(forms.ModelForm):
                 vk = '%d__value_%s' % (c.id, c.fmt)
                 self.fields[vk] = forms.BooleanField(initial=c.value, required=False, help_text=_('Mark the checkbox to represent the \'True\' value or leave unchecked for \'False\'.'))
             dk = '%d__description' % c.id
-            self.fields[dk] = forms.CharField(widget=forms.Textarea(), required=True, initial=c.description, help_text=_('Describe why you gave the above value for this criteria in this idea.'))
+            self.fields[dk] = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=True, initial=c.description, help_text=_('Describe why you gave the above value for this criteria in this idea.'))
 
             _argfields += (vk,dk)
             _kwargfields = {'css_class': 'large-6'}

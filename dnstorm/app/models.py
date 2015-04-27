@@ -179,13 +179,14 @@ class Criteria(models.Model):
     name = models.CharField(verbose_name=_('Name'), max_length=90, blank=False)
     slug = AutoSlugField(populate_from='name', max_length=60, editable=False, unique=True, always_update=True)
     description = models.TextField(verbose_name=_('Description for the criteria'), blank=False, help_text=_('This description should give users the information needed to fill the required values in ideas. Try to be specific about the needs and limits.'))
-    fmt = models.CharField(verbose_name=('Format'), max_length=10, choices=(
-        ('number', _('Number')),
-        ('currency', _('Currency')),
-        ('scale', _('Scale')),
-        ('time', _('Time')),
-        ('boolean', _('Yes or no'))
-    ), help_text=_('What format of data will be used to quantify the ideas.'))
+    fmt = models.CharField(verbose_name=('Format'), max_length=10,
+        help_text=_('What format of data will be used to quantify the ideas.'),
+        default='number', choices=(
+            ('number', _('Number')),
+            ('currency', _('Currency')),
+            ('scale', _('Scale')),
+            ('time', _('Time')),
+            ('boolean', _('Yes or no'))))
     min = models.IntegerField(verbose_name=_('Minimum scale value'), blank=True, null=True, help_text=_('Minimum value for the ideas.'))
     max = models.IntegerField(verbose_name=_('Maximum scale value'), blank=True, null=True, help_text=_('Maximum value for the ideas.'))
     order = models.CharField(verbose_name=_('Comparison order'), max_length=4, choices=(
