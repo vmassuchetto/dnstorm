@@ -53,7 +53,7 @@
         {% if user.is_authenticated %}
             {% url "problem_create" as item_url %}
             {% captureas message %}
-                {% blocktrans %}There's no problem available. <a class="button radius tiny" !Y!P href="{{ item_url }}">Why not create one?</a>{% endblocktrans %}
+                {% blocktrans %}There's no problem available. <a class="button radius tiny" href="{{ item_url }}">Why not create one?</a>{% endblocktrans %}
             {% endcaptureas %}
         {% else %}
             {% url "auth_register" as register_url %}

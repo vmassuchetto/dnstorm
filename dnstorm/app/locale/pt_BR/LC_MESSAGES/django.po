@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DNStorm\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-04-27 03:28-0300\n"
-"PO-Revision-Date: 2015-04-27 04:16-0300\n"
+"POT-Creation-Date: 2015-04-27 04:33-0300\n"
+"PO-Revision-Date: 2015-04-27 04:35-0300\n"
 "Last-Translator: Vinicius Massuchetto <vmassuchetto@gmail.com>\n"
 "Language-Team: \n"
 "Language: pt_BR\n"
@@ -830,9 +830,11 @@ msgstr "última modificação em %(time)s"
 #: templates/_home.html:56
 #, python-format
 msgid ""
-"There's no problem available. <a class=\"button radius tiny\" !Y!P href="
+"There's no problem available. <a class=\"button radius tiny\" href="
 "\"%(item_url)s\">Why not create one?</a>"
 msgstr ""
+"Não há nenhum problema disponível. <a class=\"button radius tiny\" href="
+"\"%(item_url)s\">Por que não criar um?</a>"
 
 #: templates/_home.html:62
 #, python-format
@@ -841,6 +843,9 @@ msgid ""
 "\" href=\"%(login_url)s\">log in</a> or <a class=\"button radius small\" "
 "href=\"%(register_url)s\">create an account</a> to start!"
 msgstr ""
+"Não há nenhum problema disponível. Você pode <a class=\"button radius small"
+"\" href=\"%(login_url)s\">se logar</a> ou <a class=\"button radius small\" "
+"href=\"%(register_url)s\">criar uma conta</a> para começar!"
 
 #: templates/_single_activity.html:9
 #, python-format
@@ -965,15 +970,15 @@ msgstr "Edição aberta"
 
 #: templates/diffbase_problem.html:10
 msgid "Closed for edition"
-msgstr ""
+msgstr "Fechado para edição"
 
 #: templates/help.html:11
 msgid "About"
-msgstr ""
+msgstr "Sobre"
 
 #: templates/help.html:25
 msgid "About DNStorm"
-msgstr ""
+msgstr "Sobre o DNStorm"
 
 #: templates/help.html:26
 msgid ""
@@ -1098,9 +1103,8 @@ msgid "Alternative coauthors"
 msgstr "Co-autores da alternativa"
 
 #: templates/item_alternative.html:82
-#, fuzzy
 msgid "Alternative author"
-msgstr "Qualidade da alternativa"
+msgstr "Autor da alternativa"
 
 #: templates/item_alternative.html:103 templates/item_criteria.html:86
 #: templates/item_idea.html:110
@@ -1113,14 +1117,12 @@ msgid "comment this alternative"
 msgstr "comentar esta alternativa"
 
 #: templates/item_criteria.html:45
-#, fuzzy
 msgid "Criteria coauthors"
-msgstr "Critério salvo."
+msgstr "Co-autores do critério"
 
 #: templates/item_criteria.html:57
-#, fuzzy
 msgid "Criteria author"
-msgstr "Critérios"
+msgstr "Autor do critério"
 
 #: templates/item_criteria.html:109 templates/item_idea.html:128
 #: templates/item_problem.html:92
@@ -1170,39 +1172,37 @@ msgstr "Resulta no valor absoluto das ideias."
 
 #: templates/item_idea.html:16
 msgid "This idea is not available for other users"
-msgstr ""
+msgstr "Esta ideia não está disponível para outros usuários"
 
 #: templates/item_idea.html:50
 msgid "Warning: No value for this criteria."
-msgstr ""
+msgstr "Aviso: Critério não tem valor preenchido."
 
 #: templates/item_idea.html:75
-#, fuzzy
 msgid "Idea coauthors"
-msgstr "contribuições de ideias"
+msgstr "Co-autores da ideia"
 
 #: templates/item_idea.html:83
 msgid "Idea author"
-msgstr ""
+msgstr "Autor da ideia"
 
 #: templates/item_problem.html:12
 msgid ""
 "You can improve this description by editing it. Click here to contribute."
 msgstr ""
+"Você pode modificar e melhorar esta descrição. Clique aqui para contribuir."
 
 #: templates/item_problem.html:15
 msgid "Start by giving the problem a good and detailed description."
-msgstr ""
+msgstr "Comece dando ao problema uma descrição boa e detalhada."
 
 #: templates/item_problem.html:46
-#, fuzzy
 msgid "Problem coauthors"
-msgstr "Atividade do problema"
+msgstr "Co-autores do problema"
 
 #: templates/item_problem.html:58
-#, fuzzy
 msgid "Problem author"
-msgstr "Atividade do problema"
+msgstr "Autor do problema"
 
 #: templates/item_user.html:16
 msgid "Send invitation"
@@ -1214,24 +1214,20 @@ msgid "%(day)s at %(hour)s"
 msgstr "%(day)s às %(hour)s"
 
 #: templates/item_user.html:28
-#, fuzzy
 msgid "Pending invitation"
-msgstr "Convites em aberto"
+msgstr "Convites em aberto "
 
 #: templates/item_user.html:45
-#, fuzzy
 msgid "cancel invitation"
-msgstr "Enviar convite"
+msgstr "cancelar convite"
 
 #: templates/item_user.html:45
-#, fuzzy
 msgid "inactivate user"
-msgstr "Sim! Reative este usuário!"
+msgstr "desativar usuário"
 
 #: templates/item_user.html:47
-#, fuzzy
 msgid "activate user"
-msgstr "Sim! Reative este usuário!"
+msgstr "ativar usuário"
 
 #: templates/modal_error.html:6
 msgid "Ooops... server error. Sorry."
@@ -1255,12 +1251,11 @@ msgstr "alternativas"
 
 #: templates/part_counter.html:27
 msgid "Preview"
-msgstr ""
+msgstr "Pré-visualização"
 
 #: templates/part_counter.html:33
-#, fuzzy
 msgid "Edit draft"
-msgstr "Editar ideia"
+msgstr "Editar rascunho"
 
 #: templates/part_pagination.html:7
 #, python-format
@@ -1268,7 +1263,7 @@ msgid "Page %(number)s of %(total)s"
 msgstr "Página %(number)s de %(total)s"
 
 #: templates/actstream/action.html:10
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "<a href=\"%(actor_url)s\">%(actor_name)s</a> is now is a collaborator of the "
 "problem <a href=\"%(problem_url)s\">%(problem_title)s</a>"
@@ -1295,26 +1290,26 @@ msgstr ""
 "\"%(problem_url)s\">%(problem_title)s</a>"
 
 #: templates/actstream/action.html:35
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "<a href=\"%(actor_url)s\">%(actor_name)s</a> created the criteria <a href="
 "\"%(criteria_url)s\">%(criteria_title)s</a> on the problem <a href="
 "\"%(problem_url)s\">%(problem_title)s</a>"
 msgstr ""
-"<a href=\"%(actor_url)s\">%(actor_name)s</a> criou a ideia <a href="
-"\"%(idea_url)s\">%(idea_title)s</a> no problema <a href=\"%(problem_url)s\">"
-"%(problem_title)s</a>"
+"<a href=\"%(actor_url)s\">%(actor_name)s</a> criou o critério <a href="
+"\"%(criteria_url)s\">%(criteria_title)s</a> no problema <a href="
+"\"%(problem_url)s\">%(problem_title)s</a>"
 
 #: templates/actstream/action.html:44
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "<a href=\"%(actor_url)s\">%(actor_name)s</a> edited the criteria <a href="
 "\"%(criteria_url)s\">%(criteria_title)s</a> on the problem <a href="
 "\"%(problem_url)s\">%(problem_title)s</a>"
 msgstr ""
-"<a href=\"%(actor_url)s\">%(actor_name)s</a> editou a ideia <a href="
-"\"%(idea_url)s\">%(idea_title)s</a> no problema <a href=\"%(problem_url)s\">"
-"%(problem_title)s</a>"
+"<a href=\"%(actor_url)s\">%(actor_name)s</a> editou o critério <a href="
+"\"%(criteria_url)s\">%(criteria_title)s</a> no problema <a href="
+"\"%(problem_url)s\">%(problem_title)s</a>"
 
 #: templates/actstream/action.html:53
 #, python-format
@@ -1339,26 +1334,26 @@ msgstr ""
 "%(problem_title)s</a>"
 
 #: templates/actstream/action.html:71
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "<a href=\"%(actor_url)s\">%(actor_name)s</a> created the alternative <a href="
 "\"%(alternative_url)s\">%(alternative_name)s</a> on the problem <a href="
 "\"%(problem_url)s\">%(problem_title)s</a>"
 msgstr ""
-"<a href=\"%(actor_url)s\">%(actor_name)s</a> criou a ideia <a href="
-"\"%(idea_url)s\">%(idea_title)s</a> no problema <a href=\"%(problem_url)s\">"
-"%(problem_title)s</a>"
+"<a href=\"%(actor_url)s\">%(actor_name)s</a> criou a alternativa <a href="
+"\"%(alternative_url)s\">%(alternative_name)s</a> no problema <a href="
+"\"%(problem_url)s\">%(problem_title)s</a>"
 
 #: templates/actstream/action.html:80
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "<a href=\"%(actor_url)s\">%(actor_name)s</a> edited the alternative <a href="
 "\"%(alternative_url)s\">%(alternative_name)s</a> on the problem <a href="
 "\"%(problem_url)s\">%(problem_title)s</a>"
 msgstr ""
-"<a href=\"%(actor_url)s\">%(actor_name)s</a> criou a ideia <a href="
-"\"%(idea_url)s\">%(idea_title)s</a> no problema <a href=\"%(problem_url)s\">"
-"%(problem_title)s</a>"
+"<a href=\"%(actor_url)s\">%(actor_name)s</a> editou a alternativa <a href="
+"\"%(alternative_url)s\">%(alternative_name)s</a> no problema <a href="
+"\"%(problem_url)s\">%(problem_title)s</a>"
 
 #: templates/actstream/action.html:89
 #, python-format
@@ -1394,7 +1389,7 @@ msgstr ""
 "problema <a href=\"%(problem_url)s\">%(problem_title)s</a>"
 
 #: templates/actstream/action.html:119
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "<a href=\"%(actor_url)s\">%(actor_name)s</a> <a href=\"%(comment_url)s"
 "\">commented</a> the alternative <a href=\"%(alternative_url)s\">"
@@ -1402,8 +1397,9 @@ msgid ""
 "%(problem_title)s</a>"
 msgstr ""
 "<a href=\"%(actor_url)s\">%(actor_name)s</a> <a href=\"%(comment_url)s"
-"\">comentou</a> uma <a href=\"%(alternative_url)s\">alternativa</a> no "
-"problema <a href=\"%(problem_url)s\">%(problem_title)s</a>"
+"\">comentou</a> a alternativa <a href=\"%(alternative_url)s\">"
+"%(alternative_title)s</a> no problema <a href=\"%(problem_url)s\">"
+"%(problem_title)s</a>"
 
 #: templates/notification/email_body.txt:2
 #, python-format
@@ -1441,7 +1437,7 @@ msgstr "Você foi convidado por %(problem_author)s para discutir um problema"
 
 #: templates/notification/problem/short.txt:1
 msgid "A problem you're contributing to was updated"
-msgstr ""
+msgstr "Um problema que você está contribuindo foi atualizado"
 
 #: templates/registration/activate.html:5
 msgid "Account activation"
@@ -1557,6 +1553,7 @@ msgstr "Você já está logado."
 #: templates/registration/registration_form.html:14
 msgid "By filling the form you will receive an e-mail with an activation link."
 msgstr ""
+"Ao preencher o formulário você receberá um link de ativação via e-mail."
 
 #~ msgid "Welcome to DNStorm. "
 #~ msgstr "Bem-vindo ao DNStorm."
