@@ -1,5 +1,5 @@
 {% extends "_base.html" %}
-{% load i18n crispy_forms_tags %}
+{% load i18n crispy_forms_tags user_tags %}
 
 {% block head %}
     {{ form.media }}
@@ -8,13 +8,11 @@
     </script>
 {% endblock %}
 
-{% block bodyclass %}problem-collaborators{% endblock %}
-
 {% block content %}
 
     <div class="row">
         <div class="columns large-12">
-            {% if problem_perm_manage %}
+            {% if user|problem_manage:problem %}
                 {% crispy form %}
             {% else %}
                 {% include "item_user_collaborator.html" %}

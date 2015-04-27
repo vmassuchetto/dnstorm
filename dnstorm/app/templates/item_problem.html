@@ -1,4 +1,4 @@
-{% load crispy_forms_tags humanize i18n paragraphs %}
+{% load crispy_forms_tags humanize i18n paragraphs user_tags %}
 
 <div class="row collapse">
 
@@ -6,7 +6,7 @@
 
     <div class="columns large-12">
 
-        {% if problem_perm_edit %}
+        {% if user|problem_update:problem %}
             {% url "problem_update" problem.id as problem_link %}
             {% if problem.description|length > 4 %}
                 {% trans "You can improve this description by editing it. Click here to contribute." as message %}
@@ -28,11 +28,20 @@
 </div>
 </div>
 
-<div class="row">
+<div class="row collapse">
 
     {# User lists #}
 
-    <div class="columns large-9">
+    <div class="columns large-3">
+        {% if user|problem_update:problem %}
+            <a class="action-button" href="{% url "problem_update" problem.id %}"><i class="fi-pencil"></i>&nbsp;{% trans "Edit" %}</a>
+        {% endif %}
+        {% if user|problem_delete:problem %}
+            <a class="action-button delete" href="{% url "problem_delete" problem.id %}"><i class="fi-x"></i>&nbsp;{% trans "Delete" %}</a>
+        {% endif %}
+    </div>
+
+    <div class="columns large-6">
         {% if problem.coauthor.all %}
             <h6 class="subheader text-right">{% trans "Problem coauthors" %}</h6>
             <div class="row">
@@ -55,11 +64,9 @@
     </div>
     </div>
 
-    {% if problem_perm_contribute %}
+    {# Comments #}
 
-        {# Comments #}
-
-        <div class="row">
+    <div class="row">
         <div class="columns large-12 comments" id="comments-problem-{{ problem.id }}">
             {% if comments %}
                 <h5 class="top-1em">{% trans "Comments" %}</h5>
@@ -68,22 +75,20 @@
                 {% endfor %}
             {% endif %}
         </div>
-        </div>
+    </div>
 
-        {# Comment form for the problem description #}
+    {# Comment form #}
 
-        {% if problem_perm_contribute %}
-            <div class="row">
+    {% if user|problem_comment:problem %}
+        <div class="row">
             <div class="columns large-12 comment-form hide" id="comment-form-problem-{{ problem.id }}" data-problem="{{ problem.id }}"></div>
-            </div>
-        {% endif %}
-
-        {# Comment button #}
-
-        <div class="row top-1em">
-            <div class="columns large-12">
-                <a class="action-button comment-button" data-problem="{{ problem.id }}" href="javascript:void(0);"><i class="fi-comments"></i>&nbsp;{% trans "Comment" context "verb" %}</a>
-            </div>
         </div>
-
     {% endif %}
+
+    {# Comment button #}
+
+    <div class="row top-1em">
+        <div class="columns large-12">
+            <a class="action-button comment-button" data-problem="{{ problem.id }}" href="javascript:void(0);"><i class="fi-comments"></i>&nbsp;{% trans "Comment" context "verb" %}</a>
+        </div>
+    </div>

@@ -5,12 +5,9 @@
 
 {% block head %}{{ form.media }}{% endblock %}
 
-{% block modals %}
-    {% include "modal_delete.html" %}
-{% endblock %}
-
 {% block content %}
     <h3>{{ problem.title }}</h3>
+    <p>{% trans "Click on the ideas to select them for this alternative." %}</p>
     <fieldset>
         <legend><i class="fi-lightbulb"></i> {% trans "Add an alternative" %}</legend>
         {% crispy form %}

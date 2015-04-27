@@ -1,8 +1,14 @@
-{% load crispy_forms_tags humanize i18n paragraphs %}
+{% load crispy_forms_tags humanize i18n paragraphs user_tags %}
 
 <div id="idea-{{ idea.id }}" class="idea-row{% if not idea.published %} draft{% endif %}" data-id="{{ idea.id }}">
 
     <div class="row">
+
+        {% if show_check %}
+            <div class="columns large-1 medium-2 small-3 text-center">
+                <i class="fi-check idea-status{% if checked %} checked{% endif %}"></i>
+            </div>
+        {% endif %}
 
         {% if show_likes or not idea.published %}
             <div class="columns large-1 medium-2 small-3 {% if idea.published %} idea-like like{% if idea.voted %} voted{% endif %}{% endif %}{% if not user.is_authenticated or not idea.published %} like-disabled{% endif %}" data-idea="{{ idea.id }}" data-counter="{{ idea.vote_count }}">
@@ -18,14 +24,15 @@
             </div>
         {% endif %}
 
-        <div class="idea-content columns{% if show_likes %} large-11 medium-10 small-9{% else %} large-12{% endif %}">
+        <div class="idea-content columns{% if show_likes or show_check %} large-11 medium-10 small-9{% else %} large-12{% endif %}">
 
             <h4><a href="{{ idea.get_absolute_url }}">{{ idea.title }}</a></h4>
+
+            {{ idea.description|safe }}
 
             {# Criteria #}
 
             {% for criteria in idea.criteria %}
-
                 <div class="row ideacriteria-row" data-width="30%" data-tooltip title="{{ criteria.tooltip }}">
                     <div class="columns large-3">
                         <i class="fi-{{ criteria.icon }}"></i>
@@ -44,33 +51,30 @@
                         </div>
                     {% endif %}
                 </div>
-
-            {% endfor %}
-
+           {% endfor %}
 
             {# Action mini bar #}
 
-            <div class="row top-1em">
+            <div class="row collapse top-1em">
 
-                <div class="columns large-6">
-                    <div class="row collapse">
-                        <div class="columns large-12 right actions">
-                            {% if show_actions %}
-                                {% if problem_perm_manage or problem_perm_edit %}
-                                    <a class="action-button problem-idea-edit" href="{% url "idea_update" idea.id %}"><i class="fi-pencil"></i>&nbsp;{% trans "Edit" %}</a>
-                                {% endif %}
-                            {% endif %}
-                        </div>
-                    </div>
+                <div class="columns large-3">
+                    {% if show_actions %}
+                        {% if user|idea_update:idea %}
+                            <a class="action-button" href="{% url "idea_update" idea.id %}"><i class="fi-pencil"></i>&nbsp;{% trans "Edit" %}</a>
+                        {% endif %}
+                        {% if user|idea_delete:idea %}
+                            <a class="action-button delete" href="{% url "idea_delete" idea.id %}"><i class="fi-x"></i>&nbsp;{% trans "Delete" %}</a>
+                        {% endif %}
+                    {% endif %}
                 </div>
 
                 {% if idea.published %}
 
                     {% if idea.coauthor.all %}
                         <div class="columns medium-3 large-6">
-                            <h6 class="subheader">{% trans "Idea coauthors" %}</h6>
+                            <h6 class="subheader text-right">{% trans "Idea coauthors" %}</h6>
                             {% for coauthor in idea.coauthor.all %}
-                                {% include "item_user.html" with user=coauthor link=idea.get_absolute_url show_actions=False show_badges=True %}
+                                {% include "item_user.html" with class="right" user=coauthor link=idea.get_absolute_url show_actions=False show_badges=True %}
                             {% endfor %}
                         </div>
                     {% endif %}
@@ -100,7 +104,7 @@
                                 {% endif %}
                             {% endfor %}
                             {% if idea.comments|length > 3 %}
-                                <div class="row">
+                                <div class="row top-1em">
                                     <div class="columns large-12">
                                         <div class="comment-content">
                                             <a class="action-button display-more" href="javascript:void(0)"><i class="fi-arrow-down"></i>&nbsp;{% blocktrans with count=idea.comments|length|add:"-3" %}Display the other <b>{{ count }}</b> comments.{% endblocktrans %}</a>
@@ -111,15 +115,15 @@
                         {% endif %}
                     </div>
 
-                    {% if problem_perm_contribute %}
+                    {% if user|problem_comment:idea.problem %}
 
                         {# Comment form #}
 
-                        <div class="comment-form hide" id="comment-form-idea-{{ idea.id }}" data-idea="{{ idea.id }}"></div>
+                        <div class="comment-form hide top-1em" id="comment-form-idea-{{ idea.id }}" data-idea="{{ idea.id }}"></div>
 
                         {# Comment button #}
 
-                        <div class="row collapse">
+                        <div class="row collapse top-1em">
                             <div class="columns large-12">
                                 <a class="action-button comment-button" data-idea="{{ idea.id }}" href="javascript:void(0);"><i class="fi-comments"></i>&nbsp;{% trans "Comment" context "verb" %}</a>
                             </div>

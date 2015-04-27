@@ -1,35 +1,75 @@
-{% load i18n crispy_forms_tags paragraphs %}
+{% load i18n crispy_forms_tags paragraphs user_tags %}
 
-<div class="criteria-row criteria-{% if not criteria.id %}new"{% else %}{{ criteria.id }}" data-id="{{ criteria.id }}"{% endif %}>
+<div class="criteria-row" data-id="{{ criteria.id }}">
 
-    <div class="row frontend">
-        <div class="columns large-{% if not show_actions %}12{% else %}10{% endif %} criteria-info">
+    {# Parameters #}
 
+    <div class="row">
+        <div class="columns large-12 criteria-info">
             <i class="criteria-format fi-{{ criteria.icon }}"></i>
             <h5 class="criteria-name">{{ criteria.name }}</h5>
-
             {% if show_parameters %}
-                <div class="criteria-description">
-                    {% if show_description %}
-                        {{ criteria.description|paragraphs|safe }}
+                <div class="row">
+                    <div class="columns large-12 criteria-description">
+                        {% if show_description %}
+                            {{ criteria.description|paragraphs|safe }}
+                        {% endif %}
+                        {% include "item_criteria_parameters.html" with show_paragraphs=True %}
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if show_actions or show_users %}
+        <div class="row top-1em">
+
+            {# Actions #}
+
+            {% if show_actions %}
+                <div class="columns large-3">
+                    {% if user|criteria_update:criteria %}
+                        <a href="{% url "criteria_update" criteria.id %}" class="action-button"><i class="fi-pencil"></i>&nbsp;{% trans "Edit" %}</a>&nbsp;
                     {% endif %}
-                    {% include "item_criteria_parameters.html" with show_paragraphs=True %}
+                    {% if user|criteria_delete:criteria %}
+                        <a href="{% url "criteria_delete" criteria.id %}" class="action-button delete"><i class="fi-x"></i>&nbsp;{% trans "Delete" %}</a>&nbsp;
+                    {% endif %}
                 </div>
             {% endif %}
 
+            {# Users #}
+
+            {% if show_users %}
+                <div class="columns large-6">
+                    {% if criteria.coauthor.all %}
+                        <h6 class="subheader text-right">{% trans "Criteria coauthors" %}</h6>
+                        <div class="row">
+                            {% for user in criteria.coauthor.all %}
+                                <div class="columns large-3 right">
+                                    {% include "item_user.html" with class="right" user=user show_links=False show_date=False show_badges=True %}
+                                </div>
+                                {% if forloop.counter|divisibleby:"3" and not forloop.last %}<div class="row"></div>{% endif %}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="columns large-3">
+                    <h6 class="subheader">{% trans "Criteria author" %}</h6>
+                    <div class="row">
+                        <div class="large-12">
+                            {% include "item_user.html" with user=criteria.author show_links=False show_date=False show_badges=True %}
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
         </div>
-
-        {% if show_actions %}
-            <div class="columns large-2 text-right criteria-actions">
-                <a class="button success tiny radius action-icon criteria-edit"><i class="fi-pencil"></i></a>
-                <a class="button alert tiny radius action-icon criteria-delete"><i class="fi-x"></i></a>
-            </div>
-        {% endif %}
-
-    </div>
+    {% endif %}
 
     {% if show_comments %}
-        <div class="row">
+
+        {# Comments #}
+
+        <div class="row top-1em">
             <div class="columns large-12">
                 <div class="comments comments-criteria" id="comments-criteria-{{ criteria.id }}">
                     {% for comment in criteria.comments %}
@@ -51,25 +91,27 @@
                 </div>
             </div>
         </div>
-        <div class="row">
-            <div class="columns large-12">
-                <div class="comment-form hide" id="comment-form-criteria-{{ criteria.id }}"></div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="columns large-12 top-1em">
-                {% if criteria.perm_manage %}
-                    <a href="{% url "criteria_update" criteria.id %}" class="action-button"><i class="fi-pencil"></i>&nbsp;{% trans "edit" %}</a>&nbsp;
-                {% endif %}
-                <a href="javascript:void(0)" class="action-button comment-button" data-criteria="{{ criteria.id }}"><i class="fi-comments"></i>&nbsp;{% trans "comment" %}</a>
-            </div>
-        </div>
-    {% endif %}
 
-    {% if criteria_form %}
-        <div class="row backend hidden">
-            <div class="columns large-12">{% crispy criteria_form %}</div>
-        </div>
+        {% if user|problem_comment:idea.problem %}
+
+            {# Comment form #}
+
+            <div class="row top-1em">
+                <div class="columns large-12">
+                    <div class="comment-form hide" id="comment-form-criteria-{{ criteria.id }}"></div>
+                </div>
+            </div>
+
+            {# Comment button #}
+
+            <div class="row top-1em">
+                <div class="columns large-12">
+                    <a href="javascript:void(0)" class="action-button comment-button" data-criteria="{{ criteria.id }}"><i class="fi-comments"></i>&nbsp;{% trans "Comment" context "verb" %}</a>
+                </div>
+            </div>
+
+        {% endif %}
+
     {% endif %}
 
 </div>

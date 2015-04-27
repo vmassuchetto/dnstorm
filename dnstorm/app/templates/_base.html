@@ -17,7 +17,7 @@
     {% if show_help %}<script type="text/javascript">var show_help = true;</script>{% endif %}
     {% block head %}{% endblock %}
 </head>
-<body class="{% block bodyclass %}{% endblock %}{% if body_class %} {{ body_class }}{% endif %}">
+<body class="{% block bodyclass %}{% endblock %}{% if bodyclass %}{{ bodyclass }}{% endif %}">
 
 {# Modals #}
 {% include "modal_error.html" %}

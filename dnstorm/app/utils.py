@@ -105,7 +105,6 @@ def activity_register(_user, _action_object):
         _target = _action_object
 
     # Don't do anything if the problem or the action object is a draft
-    # TODO: alternative
     if hasattr(_action_object, 'published') and not getattr(_action_object, 'published'):
         return None
 

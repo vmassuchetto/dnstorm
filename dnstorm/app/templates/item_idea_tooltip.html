@@ -1,0 +1,12 @@
+{% load i18n %}
+<div class="ideacriteria-row-tooltip row collapse">
+    <div class="columns large-2 text-center"><i class="fi-{{ criteria.icon }}"></i></div>
+    <div class="columns large-8">{{ criteria.name }}</div>
+    <div class="columns large-2 text-left">
+        {% if criteria.value %}
+            {% if criteria.fmt == "currency" %}${% endif %}{{ criteria.value }}
+        {% else %}
+            <i class="fi-alert"></i>
+        {% endif %}
+    </div>
+</div>

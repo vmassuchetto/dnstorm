@@ -1,5 +1,5 @@
 {% extends "_base.html" %}
-{% load crispy_forms_tags i18n captureas %}
+{% load crispy_forms_tags i18n captureas user_tags %}
 
 {% block head %}
     {{ form.media }}
@@ -8,12 +8,8 @@
     </script>
 {% endblock %}
 
-{% block bodyclass %}problem{% endblock %}
-
 {% block modals %}
-    {% if problem_perm_contribute %}
-        <div class="hide" id="comment-form">{% crispy comment_form %}</div>
-    {% endif %}
+    <div class="hide" id="comment-form">{% crispy comment_form %}</div>
 {% endblock %}
 
 {% block messages %}
@@ -44,13 +40,13 @@
 
         <div class="problem-tab problem-criteria">
 
-            {% if problem_perm_contribute %}
+            {% if user|criteria_create:problem %}
                 <a class="button radius large-icon large-button text-left expand" href="{% url "criteria_create" problem.id %}"><i class="fi-plus"></i>{% trans "Click here to insert a new criteria." %}</a>
             {% endif %}
 
             {% if criteria %}
                 {% for c in criteria %}
-                    {% include "item_criteria.html" with criteria=c show_actions=False show_parameters=True show_icons=True show_description=True show_comments=True %}
+                    {% include "item_criteria.html" with criteria=c show_actions=True show_parameters=True show_users=True show_icons=True show_description=True show_comments=True %}
                 {% endfor %}
             {% else %}
                 {% trans "There's no criteria defined for this problem yet." as message %}
@@ -70,18 +66,16 @@
                 {% endfor %}
             {% endif %}
 
+            {% if user|problem_create %}
+                <a class="button radius large-icon large-button text-left expand" href="{% url "idea_create" problem.id %}"><i class="fi-plus"></i>{% trans "Click here to insert a new idea." %}</a>
+            {% endif %}
+
             {% if ideas %}
-
-                {% if problem_perm_contribute %}
-                    <a class="button radius large-icon large-button text-left expand" href="{% url "idea_create" problem.id %}"><i class="fi-plus"></i>{% trans "Click here to insert a new idea." %}</a>
-                {% endif %}
-
                 {% if ideas %}
                     {% for idea in ideas %}
                         {% include "item_idea.html" with show_likes=True show_actions=True show_comments=True %}
                     {% endfor %}
                 {% endif %}
-
             {% else %}
                 {% trans "Ideas submission will be available when criteria are defined." as message %}
                 {% include "part_panel.html" with icon="prohibited" message=message %}
@@ -92,9 +86,9 @@
 
         <div class="problem-tab problem-alternatives">
 
-            {% if problem.criteria_set.all|length > 0 and ideas %}
+            {% if criteria and ideas %}
 
-                {% if problem_perm_contribute %}
+                {% if user|idea_create:problem %}
                     <a class="button radius large-icon large-button text-left expand" href="{% url "alternative_create" problem.id %}"><i class="fi-plus"></i>{% trans "Click here to insert a new alternative." %}</a>
                 {% endif %}
 
@@ -120,11 +114,11 @@
             <script type="text/javascript">
                 Chart.defaults.global.scaleIntegersOnly = false;
             </script>
-            <div class="inner-tab text-center">
+            <div class="inner-tab">
                 <h3>{% trans "Alternative preference from users" %}</h3>
                 {% if alternatives %}
                     {% for alternative in alternatives %}
-                        {% include "item_alternative.html" with mode="result" %}
+                        {% include "item_alternative_result.html" with mode="result" %}
                     {% endfor %}
                 {% else %}
                     {% trans "There's no alternative to render data yet." as message %}

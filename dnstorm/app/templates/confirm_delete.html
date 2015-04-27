@@ -1,0 +1,15 @@
+{% extends "_base.html" %}
+{% load i18n %}
+
+{% block content %}
+    <div class="row">
+        <div class="columns large-6 large-offset-3">
+            <h3>{% trans "Really delete?" %}</h3>
+            <p>{% if object.message %}{{ object.message }}{% else %}{% trans "This action cannot be undone." %}{% endif %}</p>
+            <form action="" method="post">
+                {% csrf_token %}
+                <input class="right button alert radius" type="submit" value="{% trans "Remove" %}" name="delete" />
+            </form>
+        </div>
+    </div>
+{% endblock %}

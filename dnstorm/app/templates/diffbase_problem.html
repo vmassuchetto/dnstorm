@@ -3,7 +3,7 @@
 {{ problem.description|remove_tags|paragraphs|safe }}
 
 {% for criteria in problem.criteria_set.all %}
-<p><i class="fi-target-two"></i>&nbsp;{{ criteria.name }}</p>
+<p><i class="fi-info"></i>&nbsp;{{ criteria.name }}</p>
 {% endfor %}
 
 <p>{% if problem.public %}<i class="fi-unlock"></i>&nbsp;{% trans "Public" %}{% else %}<i class="fi-lock"></i>&nbsp;{% trans "Private" %}{% endif %}</p>

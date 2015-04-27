@@ -5725,7 +5725,7 @@ hr {
 .button.large-button {
   margin: 0.9375rem 0; }
 .button.large-icon {
-  margin: 0.3125rem 0;
+  margin: 0.3125rem 0 1.5625rem 0;
   padding: 0.625rem 3.125rem;
   line-height: 1.2;
   position: relative; }
@@ -5742,7 +5742,7 @@ hr {
     float: left; }
 
 a.action-button {
-  transition: background-color 200ms ease-out 0s;
+  transition: all 200ms ease-out;
   font-size: 0.875rem;
   padding: 0.25rem 0.5rem;
   text-transform: lowercase;
@@ -5750,6 +5750,8 @@ a.action-button {
   a.action-button:hover, a.action-button.marked {
     color: #FFF;
     background-color: #444; }
+  a.action-button:hover.delete, a.action-button.marked.delete {
+    background-color: #AE0000; }
 
 .action-tabs {
   transition: all 200ms ease-out;
@@ -5834,6 +5836,8 @@ form.auth-form a.button, form.auth-form input[type='button'], form.auth-form inp
   font-weight: bold;
   font-size: 1.375rem; }
 
+.tooltip small {
+  font-size: 0.6875rem; }
 .tooltip p {
   margin: 0;
   padding: 0;
@@ -6421,7 +6425,7 @@ h6.subheader {
 
 .ideacriteria-row {
   position: relative;
-  padding: 0.625rem 0;
+  padding: 0.375rem 0;
   border-bottom: 1px solid #eee; }
   .ideacriteria-row i {
     position: absolute;
@@ -6448,6 +6452,8 @@ h6.subheader {
     margin-bottom: 0.1875rem; }
   .ideacriteria-row:hover {
     background-color: #F7F7F7; }
+  .ideacriteria-row a.button.large-icon {
+    margin: 0; }
 
 .idea-edit textarea {
   height: 3.75rem; }
@@ -6478,7 +6484,8 @@ h6.subheader {
   padding: 0.625rem;
   margin: 0.625rem 0;
   border: 1px solid #EAEAEA;
-  position: relative; }
+  position: relative;
+  text-align: left; }
   .criteria-row .criteria-info h5.criteria-name {
     margin: 0;
     line-height: 3.125rem;
@@ -6598,8 +6605,8 @@ h6.subheader {
   margin-bottom: 1em; }
 
 .idea-row, .alternative-row {
-  margin: 0.9375rem 0;
-  padding: 0.9375rem 0;
+  margin: 0.375rem 0;
+  padding: 0.375rem 0;
   border-bottom: 1px solid #B7B7B7; }
   .idea-row.draft, .alternative-row.draft {
     background-color: #F7F7F7;
@@ -6615,17 +6622,20 @@ h6.subheader {
       margin: 0;
       padding: 2px 4px; }
 
-.alternative-result .number {
-  padding: 0.625rem 0; }
-.alternative-result .user-box {
-  margin: 0 0 0.625rem 0.625rem; }
-.alternative-result hr {
-  display: block;
-  height: 1px;
-  border: 0;
-  border-top: 1px solid #ccc;
-  margin: 1em 0;
-  padding: 0; }
+.alternative-result {
+  padding: 0.9375rem 0;
+  margin: 0.9375rem 0; }
+  .alternative-result .number {
+    padding: 0.625rem 0; }
+  .alternative-result .user-box {
+    margin: 0 0 0.625rem 0.625rem; }
+  .alternative-result hr {
+    display: block;
+    height: 1px;
+    border: 0;
+    border-top: 1px solid #ccc;
+    margin: 1em 0;
+    padding: 0; }
 
 .theory-help {
   transition: all 200ms ease-out;
@@ -6676,34 +6686,21 @@ h6.subheader {
 .reveal-modal .row {
   max-width: 100%; }
 
-#alternative-edit {
-  top: 40px; }
-  #alternative-edit .ideas-selector {
-    height: 25em;
-    overflow-y: scroll;
-    border-bottom: 1px dotted #F7F7F7;
-    margin: 0.625rem 0; }
-    #alternative-edit .ideas-selector .problem-idea-modal {
-      transition: background-color 200ms ease-out 0s; }
-      #alternative-edit .ideas-selector .problem-idea-modal:hover {
-        cursor: pointer;
-        background-color: #F7F7F7; }
-      #alternative-edit .ideas-selector .problem-idea-modal i.idea-status {
-        font-size: 3em;
-        color: #d1d1d1;
-        display: block; }
-      #alternative-edit .ideas-selector .problem-idea-modal i.idea-status.checked {
-        color: #43AC6A; }
-
-#alternative-add-modal .buttonHolder {
-  padding: 0;
-  margin: 0;
-  border: 0;
-  background-color: transparent; }
-
-.alternative-ideas a.button {
-  font-size: 0.8125rem;
-  margin-bottom: 0.3125rem; }
+.alternative-edit {
+  transition: all 200ms ease-out; }
+  .alternative-edit .idea-row:hover, .alternative-edit .idea-row.hover {
+    background-color: #F7F7F7; }
+  .alternative-edit .idea-row i.idea-status {
+    transition: all 200ms ease-out;
+    font-size: 3.5em;
+    color: #d1d1d1;
+    display: block; }
+    .alternative-edit .idea-row i.idea-status:hover, .alternative-edit .idea-row i.idea-status.checked {
+      cursor: pointer;
+      color: #43AC6A; }
+  .alternative-edit .alternative-ideas a.button {
+    font-size: 0.8125rem;
+    margin-bottom: 0.3125rem; }
 
 .row-line {
   border-top: 1px solid #F7F7F7;

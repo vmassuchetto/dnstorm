@@ -5,13 +5,13 @@
         {% if action.verb|stringformat:"s" == "started following" %}
             <i class="fi-torsos"></i>
         {% else %} {% if action.action_object|stringformat:"s" == "Problem object" %}
-            <i class="fi-target-two"></i>
+            <i class="fi-info"></i>
         {% else %} {% if action.action_object|stringformat:"s" == "Criteria object" %}
-            <i class="fi-cloud"></i>
+            <i class="fi-target-two"></i>
         {% else %} {% if action.action_object|stringformat:"s" == "Idea object" %}
             <i class="fi-lightbulb"></i>
         {% else %} {% if action.action_object|stringformat:"s" == "Alternative object" %}
-            <i class="fi-list-thumbnails"></i>
+            <i class="fi-list"></i>
         {% else %} {% if action.verb|stringformat:"s" == "commented" %}
             <i class="fi-comments"></i>
         {% endif %} {% endif %} {% endif %} {% endif %} {% endif %} {% endif %}

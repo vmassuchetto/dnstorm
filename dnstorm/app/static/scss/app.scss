@@ -94,7 +94,7 @@ hr {
         margin: emCalc(15px) 0;
     }
     &.large-icon {
-        margin: emCalc(5px) 0;
+        margin: emCalc(5px) 0 emCalc(25px) 0;
         padding: emCalc(10px) emCalc(50px);
         line-height: 1.2;
         position: relative;
@@ -116,15 +116,21 @@ hr {
 }
 
 a.action-button {
-    transition: background-color 200ms ease-out 0s;
+    @include single-transition(all, 200ms, ease-out);
     font-size: emCalc(14px);
     padding: emCalc(4px) emCalc(8px);
     text-transform: lowercase;
     color: $light-black;
     &:hover,
-    &.marked {
+    &.marked,{
         color: $white;
         background-color: $black;
+    }
+    &:hover,
+    &.marked {
+        &.delete {
+            background-color: #AE0000;
+        }
     }
 }
 
@@ -259,6 +265,9 @@ form.auth-form {
 // }}} Tooltip {{{
 
 .tooltip {
+    small {
+        font-size: emCalc(11px);
+    }
     p {
         &.description {
             border-bottom: 1px solid $dark-grey;
@@ -1036,7 +1045,7 @@ h6.subheader {
 
 .ideacriteria-row {
     position: relative;
-    padding: emCalc(10px) 0;
+    padding: emCalc(6px) 0;
     border-bottom: 1px solid #eee;
     i {
         position: absolute;
@@ -1068,6 +1077,9 @@ h6.subheader {
     }
     &:hover {
         background-color: $light-grey;
+    }
+    a.button.large-icon {
+        margin: 0;
     }
 }
 
@@ -1125,6 +1137,7 @@ h6.subheader {
     margin: emCalc(10px) 0;
     border: 1px solid #EAEAEA;
     position: relative;
+    text-align: left;
     .criteria-info {
         h5.criteria-name {
             margin: 0;
@@ -1304,8 +1317,8 @@ h6.subheader {
 
 .idea-row,
 .alternative-row {
-    margin: emCalc(15px) 0;
-    padding: emCalc(15px) 0;
+    margin: emCalc(6px) 0;
+    padding: emCalc(6px) 0;
     border-bottom: 1px solid $grey;
     &.draft {
         background-color: $light-grey;
@@ -1327,6 +1340,8 @@ h6.subheader {
     }
 }
 .alternative-result {
+    padding: emCalc(15px) 0;
+    margin: emCalc(15px) 0;
     .number {
         padding: emCalc(10px) 0;
     }
@@ -1416,46 +1431,32 @@ h6.subheader {
     }
 }
 
-// Idea modal
+// Alternative
 
-#alternative-edit {
-    top: 40px;
-    .ideas-selector {
-        height: 25em;
-        overflow-y: scroll;
-        border-bottom: 1px dotted $light-grey;
-        margin: emCalc(10px) 0;
-        .problem-idea-modal {
-            transition: background-color 200ms ease-out 0s;
-            &:hover {
+.alternative-edit {
+    @include single-transition(all, 200ms, ease-out);
+    .idea-row {
+        &:hover,
+        &.hover {
+            background-color: $light-grey;
+        }
+        i.idea-status {
+            @include single-transition(all, 200ms, ease-out);
+            font-size: 3.5em;
+            color: darken($light-grey, 15%);
+            display: block;
+            &:hover,
+            &.checked {
                 cursor: pointer;
-                background-color: $light-grey;
-            }
-            i.idea-status {
-                font-size: 3em;
-                color: darken($light-grey, 15%);
-                display: block;
-            }
-            i.idea-status.checked {
                 color: $success-color;
             }
         }
     }
-}
-
-#alternative-add-modal {
-    .buttonHolder {
-        padding: 0;
-        margin: 0;
-        border: 0;
-        background-color: transparent;
-    }
-}
-
-.alternative-ideas {
-    a.button {
-        font-size: emCalc(13px);
-        margin-bottom: emCalc(5px);
+    .alternative-ideas {
+        a.button {
+            font-size: emCalc(13px);
+            margin-bottom: emCalc(5px);
+        }
     }
 }
 

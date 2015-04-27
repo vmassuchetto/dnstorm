@@ -1,1 +1,5 @@
+{% load i18n captureas %}<h5>{{ alternative.name }}</h5>
 
+{% captureas description %}
+<p>{% for idea in alternative.idea.all %}<a class="button tiny secondary radius disabled" data-idea="{{ idea.id }}" href="javascript:void(0);">{{ idea.title }}</a>{% if not forloop.last %}<i class="fi-plus"></i>{% endif %}{% endfor %}</p>
+{% endcaptureas %}

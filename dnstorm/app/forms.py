@@ -20,7 +20,7 @@ from crispy_forms_foundation.layout import *
 from crispy_forms.utils import render_crispy_form
 from registration.forms import RegistrationFormUniqueEmail
 
-from dnstorm.app import models
+from dnstorm.app import models, permissions
 from dnstorm.app.utils import get_object_or_none, get_option
 from dnstorm.settings import LANGUAGES
 
@@ -182,7 +182,6 @@ class CriteriaForm(forms.ModelForm):
                     Column('result', css_class='large-4')), css_class='criteria-values'),
                 Row(Column(
                     ButtonHolder(
-                        Button('delete', _('Delete'), css_class='alert small radius align-top left'),
                         Submit('submit', _('Save'), css_class='radius'), css_class='large-12 text-right')))
         )
         super(CriteriaForm, self).__init__(*args, **kwargs)
@@ -205,22 +204,11 @@ class ProblemForm(forms.ModelForm):
         model = models.Problem
 
     def __init__(self, *args, **kwargs):
-        problem_perm_edit = kwargs.pop('problem_perm_edit') if 'problem_perm_edit' in kwargs else False
-        problem_perm_manage = kwargs.pop('problem_perm_manage') if 'problem_perm_manage' in kwargs else False
-        user = kwargs.pop('user') if 'user' in kwargs else False
-        self.instance = kwargs['instance'] if 'instance' in kwargs and kwargs['instance'] else False
-        if self.instance:
-            self.instance.id = self.instance.id if hasattr(self.instance, 'id') else 0
-        else:
-            problem_perm_manage = True
+        super(ProblemForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_action = '.'
         self.helper.form_class = 'problem-form'
         layout_args = ('title', 'description',)
-
-        if user == self.instance.author:
-            layout_args += (Button('delete', _('Delete problem'), css_class='left small radius alert problem-delete', data_problem=self.instance.id),)
-
         if not self.instance.published:
             layout_args += (
                 Submit('publish', _('Publish'), css_class='right radius'),
@@ -229,7 +217,6 @@ class ProblemForm(forms.ModelForm):
             layout_args += (Submit('publish', _('Save edits'), css_class='right radius'),)
 
         self.helper.layout = Layout(*layout_args)
-        super(ProblemForm, self).__init__(*args, **kwargs)
 
 class ProblemCollaboratorsForm(forms.Form):
     user_search = forms.CharField(_('Search and add collaborators'), required=False, widget=forms.TextInput(attrs={'autocomplete':'off'}))
@@ -265,53 +252,21 @@ class ProblemCollaboratorsForm(forms.Form):
         self.fields['public'].initial = self.problem.public
         self.fields['open'].initial = self.problem.open
 
-class DeleteForm(forms.Form):
-    yes = forms.BooleanField(label=_("Yes. I know what I'm doing. Delete this!"))
-    delete_problem = forms.IntegerField(widget=forms.HiddenInput())
-    delete_idea = forms.IntegerField(widget=forms.HiddenInput())
-    delete_comment = forms.IntegerField(widget=forms.HiddenInput())
-    delete_criteria = forms.IntegerField(widget=forms.HiddenInput())
-
-    def __init__(self, *args, **kwargs):
-        self.helper = FormHelper()
-        self.helper.form_action = '.'
-        self.helper.form_class = 'delete-form'
-        self.helper.layout = Layout(
-            'delete_problem',
-            'delete_idea',
-            'delete_comment',
-            'delete_criteria',
-            Row(Column('yes', css_class='large-12')),
-            Row(Column(ButtonHolder(
-                HTML('<a class="button left radius secondary small close-reveal-modal-button">' + _('Cancel') + '</a>'),
-                Submit('submit', _('Delete'), css_class="right radius alert")
-            ), css_class='top-1em large-12'))
-        )
-        super(DeleteForm, self).__init__(*args, **kwargs)
-        self.fields['yes'].required = True
-
 class IdeaForm(forms.ModelForm):
     title = forms.CharField(required=True)
-    problem = forms.IntegerField(widget=forms.HiddenInput())
 
     class Meta:
         model = models.Idea
+        exlude = ['problem', 'author', 'coauthor']
 
     def __init__(self, *args, **kwargs):
         """
-        Dynamic form that validates according to the format of the give
+        Dynamic form that validates according to the format of the given
         criteria.
         """
-
-        p = kwargs.pop('problem', None)
-        layout_args = ('problem', 'title')
-
+        layout_args = ('title', 'description')
         super(IdeaForm, self).__init__(*args, **kwargs)
-        kwargs['instance'].fill_data()
-
-        self.fields['title'].initial = kwargs['instance'].title
-        self.fields['problem'].initial = kwargs['instance'].problem
-
+        kwargs['instance'].get_data()
         for c in kwargs['instance'].criteria:
             # Custom fields
             _argfields = tuple()
@@ -343,8 +298,6 @@ class IdeaForm(forms.ModelForm):
                 )
             )
 
-        layout_args += (Button('delete', _('Delete idea'), css_class='left small radius alert idea-delete', data_idea=self.instance.id),)
-
         if not self.instance.published:
             layout_args += (
                 Submit('publish', _('Publish'), css_class='right radius'),
@@ -357,7 +310,6 @@ class IdeaForm(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.form_action = '.'
         self.helper.layout = Layout(*layout_args)
-        self.fields['problem'].initial = p.id
 
 class CommentForm(forms.ModelForm):
     idea = forms.IntegerField()
@@ -394,12 +346,19 @@ class AlternativeForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.helper = FormHelper()
         self.helper.form_action = '.'
-        self.helper.form_class = 'delete-form'
-        layout_args = ('name',)
-        for i in kwargs.get('instance', None).problem.idea_set.all():
-            i.fill_data()
+        layout_args = (
+            'name',
+            HTML('<h4>' + _('Select the ideas for this alternative') + '</h4>'))
+        current_ideas = kwargs['instance'].idea.all()
+        for i in kwargs.get('instance', None).problem.idea_set.filter(published=True):
+            i.get_data()
             layout_args += (Row(
-                Column(HTML(render_to_string('item_idea.html', {'idea': i, 'show_likes': True, 'show_actions': False})), css_class='large-12')
-                , css_class='collapse'),)
+                Column(HTML(render_to_string('item_idea.html', {
+                    'idea': i, 'show_check': True, 'show_likes': False, 'show_actions': False,
+                    'show_comments': False, 'checked': i in current_ideas})),
+                    css_class='large-12'), css_class='collapse'),)
+        for i in current_ideas:
+            layout_args += (HTML('<input type="hidden" id="idea-' + str(i.id) + '" name="idea" value="' + str(i.id) + '" />'),)
+        layout_args += (Submit('save', _('Save'), css_class='right radius'),)
         self.helper.layout = Layout(*layout_args)
         super(AlternativeForm, self).__init__(*args, **kwargs)

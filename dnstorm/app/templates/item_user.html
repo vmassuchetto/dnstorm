@@ -17,6 +17,7 @@
                 {% endif %}
 
                 {# Date #}
+
                 {% if show_date %}
                     <span class="contributed">
                         {% if show_links %}<a href="{{ date_link }}">{% endif %}{% blocktrans with day=date|date:"d b Y" hour=date|date:"H:i" %}{{ day }} at {{ hour }}{% endblocktrans %}{% if show_links %}</a>{% endif %}
@@ -31,7 +32,7 @@
                     {% with pc=user|user_problem_count ic=user|user_idea_count cc=user|user_comment_count %}
                         {% if pc or ic or cc %}
                             <div class="badges">
-                                {% if pc %}<span><i class="fi-target-two"></i>&nbsp;{{ pc }}</span>{% endif %}
+                                {% if pc %}<span><i class="fi-info"></i>&nbsp;{{ pc }}</span>{% endif %}
                                 {% if ic %}<span><i class="fi-lightbulb"></i>&nbsp;{{ ic }}</span>{% endif %}
                                 {% if cc %}<span><i class="fi-comments"></i>&nbsp;{{ cc }}</span>{% endif %}
                             </div>
@@ -40,8 +41,7 @@
                 {% endif %}
 
                 {# Inactivation and activation link #}
-                {{ show_actions }}
-                {% if show_actions and user.is_active %}
+                {% if show_actions and user.is_active and user.is_superuser %}
                     <a class="action inactivate button radius alert tiny" href="{% url "user_inactivate" user.username %}"><i class="fi-prohibited"></i>{% if user.is_active and not user.is_staff %}{% trans "cancel invitation" %}{% else %}{% trans "inactivate user" %}{% endif %}</a>
                 {% else %} {% if show_actions and not user.is_active %}
                     <a class="action activate button radius success tiny" href="{% url "user_activate" user.username %}"><i class="fi-check"></i>{% trans "activate user" %}</a>

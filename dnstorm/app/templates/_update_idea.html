@@ -5,10 +5,6 @@
 
 {% block head %}{{ form.media }}{% endblock %}
 
-{% block modals %}
-    {% include "modal_delete.html" %}
-{% endblock %}
-
 {% block content %}
     <h3>{{ problem.title }}</h3>
     {{ problem.description|safe }}

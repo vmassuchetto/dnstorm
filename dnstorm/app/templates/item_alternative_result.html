@@ -1,0 +1,41 @@
+{% load i18n avatar_tags %}
+
+<div id="alternative-{{ alternative.id }}" class="alternative-row alternative-{{ alternative.id }}{% if mode == "result" %} alternative-result{% endif %}" data-id="{{ alternative.id }}">
+
+    <div class="row">
+
+        <div class="columns large-12 medium-12 small-12">
+
+            <div class="row">
+
+                <div class="columns large-4">
+                    <h4 class="alternative-name"><a href="{% url "problem_alternative" alternative.problem.id alternative.problem.slug alternative.id %}">{{ alternative.name }}</a></h4>
+
+                    {# Ideas #}
+
+                    <div class="alternative-ideas">
+                        {% for idea in alternative.idea.all %}
+                            <a class="button small secondary radius disabled" data-idea="{{ idea.id }}" href="javascript:void(0);" data-width="50%" data-tooltip title="{{ idea.tooltip }}">{{ idea.title }}</a>
+                            {% if not forloop.last %}<i class="fi-plus"></i>{% endif %}
+                        {% endfor %}
+                    </div>
+
+                </div>
+
+                <div class="columns large-1 alternative-votes counter-wrap">
+                    <span class="label secondary expand number"><i class="fi-like"></i>&nbsp;{{ alternative.vote_average }}</span>
+                </div>
+                <div class="columns large-7 alternative-results">
+                    {% for vote in alternative.vote_objects %}
+                        <div class="row collapse">
+                            <div class="columns large-1 counter-wrap"><span class="number label secondary expand">{{ vote.value }}</span></div>
+                            <div class="columns large-11">{% include "item_user.html" with user=vote.author %}</div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>

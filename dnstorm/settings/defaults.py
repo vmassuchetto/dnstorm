@@ -16,8 +16,8 @@ USE_L10N = True
 USE_TZ = True
 
 SITE_ROOT = os.path.dirname(os.path.realpath(__file__)) + '/../'
-MEDIA_ROOT = SITE_ROOT + '/media/'
-MEDIA_URL = ''
+MEDIA_ROOT = 'media'
+MEDIA_URL = '/media/'
 STATIC_ROOT = 'static'
 STATIC_URL = '/static/'
 
@@ -28,8 +28,6 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'htmlmin.middleware.HtmlMinifyMiddleware',
-    'htmlmin.middleware.MarkRequestMiddleware',
 )
 
 STATICFILES_FINDERS = (
@@ -128,6 +126,7 @@ ACTSTREAM_SETTINGS = {
 
 # CKEditor
 
+CKEDITOR_IMAGE_BACKEND = 'pillow'
 CKEDITOR_DEFAULT_TOOLBAR = [
     ['Format'],
     ['Bold', 'Italic', 'Strike', '-', 'RemoveFormat'],
@@ -138,7 +137,7 @@ CKEDITOR_DEFAULT_TOOLBAR = [
 CKEDITOR_UPLOAD_PATH = MEDIA_ROOT
 CKEDITOR_CONFIGS = {
     'default': { 'toolbar': CKEDITOR_DEFAULT_TOOLBAR },
-    'idea_content': { 'toolbar': CKEDITOR_DEFAULT_TOOLBAR , 'height': 200 }
+    'idea': { 'toolbar': CKEDITOR_DEFAULT_TOOLBAR , 'height': 150 }
 }
 
 # Crispy Forms
@@ -151,10 +150,3 @@ CRISPY_TEMPLATE_PACK = 'foundation-5'
 SANITIZER_ALLOWED_TAGS = ['a', 'strong', 'b', 'i', 'ul', 'li', 'ol', 'img', 'iframe', 'p', 'h4', 'h5', 'blockquote', 'strike']
 SANITIZER_ALLOWED_ATTRIBUTES = ['href', 'src']
 SANITIZER_ALLOWED_STYLES = []
-
-# Graphviz
-
-GRAPH_MODELS = {
-    'all_applications': True,
-    'group_models': True,
-}

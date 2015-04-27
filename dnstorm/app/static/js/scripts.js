@@ -265,7 +265,7 @@ function toggle_help_panel() {
                     'navigation_arrows': false,
                     'slide_number': false,
                 }});
-                var data = [
+                data = [
                     { value: 1/5, color: "#666666", highlight: "#a1a1a1" },
                     { value: 1/5, color: "#666666", highlight: "#a1a1a1" },
                     { value: 1/5, color: "#666666", highlight: "#a1a1a1" },
@@ -282,21 +282,7 @@ function toggle_help_panel() {
         }
     });
 }
-
 $(document).on('click', '.theory-help a.toggle', toggle_help_panel);
-
-$(document).ready(function(){
-    /***
-    Trigger the help panel on page load.
-    ***/
-    if ($('body').hasClass('show-help')) {
-        setTimeout(function(){
-            console.log('trigger');
-            toggle_help_panel();
-        }, 200);
-    }
-});
-
 
 function criteria_value() {
     /***
@@ -339,21 +325,6 @@ $('input#id_user_search').on('keyup', function(){
             }
         }
     });
-});
-
-$('.problem-collaborators').ready(function(){
-    if ($('input#id_public').is(':checked'))
-        $('fieldset.user-search').hide();
-    else
-        $('fieldset.user-search').show();
-});
-
-$('.problem-collaborators').on('click', 'input#id_public', function(){
-    if ($(this).is(':checked')) {
-        $('fieldset.user-search').slideUp();
-    } else {
-        $('fieldset.user-search').slideDown();
-    }
 });
 
 $('.problem-form').on('click', '.user-search-selected,.user-search-result a.username', function(e){
@@ -572,38 +543,26 @@ $(document).on('click', '.comment-button', function(e){
     var form = $('#comment-form');
     var new_form = form.clone();
     var obj;
-    if ($(this).data('activity')) {
-        var t;
-        var types = ['problem', 'criteria', 'idea', 'alternative'];
-        for (t in types) {
-            if ($(this).data(types[t])) {
-                target_type = types[t];
-                target_id = $(this).data(types[t]);
-                break;
-            }
-        }
-        console.log(target_type, target_id);
-        id = $(this).data('activity');
-        new_form.find('input#id_' + target_type).val(target_id);
-        obj = $('div#comment-form-activity-' + id);
-    } else if ($(this).data('problem')) {
+    if ($(this).data('problem')) {
         id = $(this).data('problem');
         new_form.find('input#id_problem').val(id);
         obj = $('div#comment-form-problem-' + id);
-    } else if ($(this).data('idea')) {
-        id = $(this).data('idea');
-        new_form.find('input#id_idea').val(id);
-        obj = $('div#comment-form-idea-' + id);
+
     } else if ($(this).data('criteria')) {
         id = $(this).data('criteria');
         new_form.find('input#id_criteria').val(id);
         obj = $('div#comment-form-criteria-' + id);
+
+    } else if ($(this).data('idea')) {
+        id = $(this).data('idea');
+        new_form.find('input#id_idea').val(id);
+        obj = $('div#comment-form-idea-' + id);
+
     } else if ($(this).data('alternative')) {
         id = $(this).data('alternative');
         new_form.find('input#id_alternative').val(id);
         obj = $('div#comment-form-alternative-' + id);
     }
-    console.log(obj, new_form);
     obj.html(new_form.html()).removeClass('hide');
 });
 
@@ -684,64 +643,6 @@ $(document).on('click', '.comment-delete', function(){
     toggle_delete('comment', $(this).data('comment'));
 });
 
-$(document).on('click', '.new-alternative', function(){
-    /***
-    Add new alternative to problem.
-    ***/
-    if ($(this).attr('disabled') == 'disabled')
-        return false;
-    var button = $(this);
-    $.ajax({
-        url: '/ajax/',
-        type: 'GET',
-        data: {
-            'new_alternative': 1,
-            'problem': problem_id
-        },
-        complete: function(xhr, data) {
-            if (data == 'success') {
-                response = $.parseJSON(xhr.responseText);
-                $('.new-alternative').after(response.html);
-            }
-        }
-    });
-});
-
-var alternative_delete_modal = $('#alternative-delete-modal');
-$(document).on('click', '.delete-alternative', function(){
-    /***
-    Pops the confirmation dialog to delete an alternative.
-    ***/
-    alternative_delete_modal.data('alternative', $(this).data('alternative'));
-    alternative_delete_modal.foundation('reveal', 'open');
-});
-$(document).on('click', '.delete-alternative-confirm', function(){
-    /***
-    Confirms the deletion of an alternative and sends the ajax action for it.
-    ***/
-    var button = $(this);
-    if ($(this).attr('disabled') == 'disabled')
-        return false;
-    button.attr('disabled', true);
-    button.addClass('loading');
-    $.ajax({
-        url: '/ajax/',
-        type: 'GET',
-        data: {
-            'delete_alternative': alternative_delete_modal.data('alternative')
-        },
-        complete: function(xhr, data) {
-            button.attr('disabled', false);
-            button.removeClass('loading');
-            if (data == 'success') {
-                response = $.parseJSON(xhr.responseText);
-                alternative_delete_modal.foundation('reveal', 'close');
-                $('.alternative-' + response.deleted).remove();
-            }
-        }
-    });
-});
-
 $(document).on('mouseenter', '.alternative-vote .cell-wrap', function(){
     $(this).parent().addClass('hover');
 });
@@ -773,92 +674,23 @@ $(document).on('click', '.alternative-vote .cell-wrap', function(){
     });
 });
 
-$(document).on('click', '.edit-alternative', function(){
-    /***
-    Shows the ideas modal to select them for alternatives.
-    ***/
-    var m = $('#alternative-edit');
-    m.data('alternative', $(this).data('alternative'));
-    m.data('idea', {});
-    var name = $('.alternative-' + m.data('alternative')).
-       find('.alternative-name');
-    var name_field = m.find('#id_name');
-    name_field.val(name.text());
-
-    // Update idea markings
-
-    m.find('i.idea-status').each(function(){
-        $(this).removeClass('checked');
-    });
-    $(this).parents('.alternative-row').find('.alternative-ideas a').each(function(){
-        var i = $(this).data('idea');
-        m.find('#idea-' + i + '-modal-item i.idea-status').addClass('checked');
-        m.data('idea')[i] = i;
-    });
-
-    m.foundation('reveal', 'open');
+$('.alternative-edit').on('mouseenter', '.idea-row', function(){
+    $(this).addClass('hover');
 });
-$(document).on('click', '.problem-idea-modal', function(){
-    /***
-    Select ideas in a modal.
-    ***/
-    var m = $('#alternative-edit');
-    var i = $(this).find('.idea-row').data('id');
+$('.alternative-edit').on('mouseleave', '.idea-row', function(){
+    $(this).removeClass('hover');
+});
+$('.alternative-edit .idea-row').on('click', function(){
+    var i = $(this).data('id');
     var s = $(this).find('i.idea-status');
-    if (m.data('idea') === undefined)
-        m.data('idea', {});
-    if (s.hasClass('checked')) {
+    var f = $('.alternative-edit').find('form input#idea-' + i);
+    if (f.length) {
         s.removeClass('checked');
-        delete m.data('idea')[i];
+        f.remove();
     } else {
         s.addClass('checked');
-        m.data('idea')[i] = i;
+        $('.alternative-edit form').append('<input id="idea-' + i + '" type="hidden" name="idea" value="' + i + '" />');
     }
-});
-$(document).on('click', '.alternative-save', function(){
-    /***
-    Saves the selected ideas in a modal.
-    ***/
-    var button = $(this);
-    if (button.attr('disabled') == 'disabled')
-        return false;
-    button.attr('disabled', true);
-    button.addClass('loading');
-    var m = $('#alternative-edit');
-    var alternative_id = m.data('alternative');
-    var name = $('.alternative-' + alternative_id).
-       find('.alternative-name');
-    var name_field = m.find('#id_name');
-    $.ajax({
-        url: '/ajax/',
-        type: 'POST',
-        data: {
-            'alternative_save': 1,
-            'alternative': alternative_id,
-            'idea': m.data('idea'),
-            'name': name_field.val()
-        },
-        complete: function(xhr, data) {
-            button.attr('disabled', false);
-            button.removeClass('loading');
-            if (data == 'success') {
-                response = $.parseJSON(xhr.responseText);
-                m.find('.holder').removeClass('error');
-                m.find('small.error').remove();
-                if (response.errors) {
-                    for (var e in response.errors) {
-                        m.find('#div_id_' + e).addClass('error');
-                        m.find('#div_id_' + e).after('<small class="error">' + response.errors[e] + '</small>');
-                    }
-                    return false;
-                }
-                $('.alternative-' + alternative_id).replaceWith(response.html);
-                m.foundation('reveal', 'close');
-                // # Fix slider for dynamic contents
-                Foundation.libs.slider.reflow($('.range-slider'));
-            }
-        }
-    });
 });
 
 // Foundation
