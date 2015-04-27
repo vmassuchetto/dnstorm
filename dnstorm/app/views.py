@@ -1388,22 +1388,13 @@ class ProblemView(ProblemBaseMixin, ProblemInfoMixin, TemplateView):
         self.object.get_data(self.request.user)
         return context
 
-class ProblemDeleteView(DeleteView, DeleteMixin):
+class ProblemDeleteView(DeleteMixin, DeleteView):
     model = models.Problem
-    template_name = 'confirm_delete.html'
-
-    def get_object(self, *args, **kwargs):
-        self.object = get_object_or_404(self.model, id=self.kwargs.get('pk', None))
-        if not perms.problem(self.request.user, 'delete', self.object):
-            raise PermissionDenied
-        return self.object
 
     def get_success_url(self, *args, **kwargs):
         messages.warning(self.request, _('The problem was deleted.'))
-        return reverse('problem', kwargs={'pk': self.object.problem.id, 'slug': self.object.problem.slug})
+        return reverse('home')
 
-class ProblemDeleteView(DeleteMixin, DeleteView):
-    model = models.Problem
 
 #
 # }}} Criteria {{{
@@ -1446,13 +1437,8 @@ class CriteriaCreateView(CreateView):
         utils.activity_register(self.request.user, form.instance)
         return HttpResponseRedirect(reverse('problem_tab_criteria', kwargs={'pk': self.problem.id, 'slug': self.problem.slug}))
 
-class CriteriaDeleteView(DeleteView):
-    template_name = 'confirm_delete.html'
+class CriteriaDeleteView(DeleteMixin, DeleteView):
     model = models.Criteria
-
-    def get_success_url(self, *args, **kwargs):
-        messages.warning(self.request, mark_safe(_('Criteria deleted.')))
-        return reverse('problem', kwargs={'pk': self.object.problem.pk, 'slug': self.object.slug})
 
 class CriteriaUpdateView(UpdateView):
     template_name = '_update_criteria.html'
