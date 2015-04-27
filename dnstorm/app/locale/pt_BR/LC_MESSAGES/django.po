@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: DNStorm\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2015-04-27 03:28-0300\n"
-"PO-Revision-Date: 2015-04-27 03:42-0300\n"
+"PO-Revision-Date: 2015-04-27 04:16-0300\n"
 "Last-Translator: Vinicius Massuchetto <vmassuchetto@gmail.com>\n"
 "Language-Team: \n"
 "Language: pt_BR\n"
@@ -623,11 +623,11 @@ msgstr "Colaboradores do problema"
 
 #: views.py:1317
 msgid "Permission options in the problem was successfully saved."
-msgstr ""
+msgstr "As opções de permissão do problema foram atualizada."
 
 #: views.py:1402
 msgid "The problem was deleted."
-msgstr "O problema foi removido."
+msgstr "O problema foi apagado."
 
 #: views.py:1426 views.py:1435
 msgid "Create criteria"
@@ -795,12 +795,16 @@ msgstr "Fechado"
 msgid ""
 "You are receiving updates via e-mail for this problem. Click to unsubscribe."
 msgstr ""
+"Você está recebendo atualizações via e-mail para este problema. Clique para "
+"deixar de receber."
 
 #: templates/_base_top_bar.html:99
 msgid ""
 "You are currently not receiving updates via e-mail about this problem. Click "
 "to subscribe."
 msgstr ""
+"Você não está recebendo atualizações via e-mail para este problema. Clique "
+"para começar a receber."
 
 #: templates/_base_top_bar.html:133 templates/_single_activity.html:104
 msgid "No activity so far."
@@ -824,13 +828,11 @@ msgid "last modified %(time)s"
 msgstr "última modificação em %(time)s"
 
 #: templates/_home.html:56
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "There's no problem available. <a class=\"button radius tiny\" !Y!P href="
 "\"%(item_url)s\">Why not create one?</a>"
 msgstr ""
-"Nenhum problema aqui. Você pode começar <a href=\"%(item_url)s\">criando um</"
-"a>."
 
 #: templates/_home.html:62
 #, python-format
@@ -841,23 +843,22 @@ msgid ""
 msgstr ""
 
 #: templates/_single_activity.html:9
-#, fuzzy, python-format
+#, python-format
 msgid "Page %(number)s"
-msgstr "Página %(number)s de %(total)s"
+msgstr "Página %(number)s"
 
 #: templates/_single_activity.html:20
-#, fuzzy, python-format
+#, python-format
 msgid "Created at %(created)s"
-msgstr "Critério salvo."
+msgstr "Criado em %(created)s"
 
 #: templates/_single_activity.html:26
-#, fuzzy
 msgid "No criteria defined."
-msgstr "Nenhum critério ainda!"
+msgstr "Nenhum critério definido."
 
 #: templates/_single_activity.html:42 templates/_single_activity.html.py:69
 msgid "problems"
-msgstr "Problemas"
+msgstr "problemas"
 
 #: templates/_single_activity.html:48 templates/_single_activity.html.py:76
 #: templates/part_counter.html:14
@@ -871,40 +872,40 @@ msgstr "comentários"
 #: templates/_single_activity.html:58
 #, python-format
 msgid "Joined in %(date_joined)s"
-msgstr ""
+msgstr "Entrou em %(date_joined)s"
 
 #: templates/_single_problem.html:21
 msgid ""
 "This is a preview mode from an unpublished draft. The problem is not "
 "available for user contribution until it is published."
 msgstr ""
+"Este é um modo de pré-visualização de um rascunho não publicado. O problema "
+"estará disponível para contribuição quando for publicado."
 
 #: templates/_single_problem.html:44
-#, fuzzy
 msgid "Click here to insert a new criteria."
-msgstr "Criar novo critério"
+msgstr "Clique aqui para inserir um novo critério."
 
 #: templates/_single_problem.html:52
 msgid "There's no criteria defined for this problem yet."
 msgstr "Não há critério definido para este problema ainda."
 
 #: templates/_single_problem.html:63
-#, fuzzy
 msgid "Your idea drafts"
-msgstr "Sua ideia"
+msgstr "Seus rascunhos de ideia"
 
 #: templates/_single_problem.html:70
 msgid "Click here to insert a new idea."
-msgstr ""
+msgstr "Clique aqui para inserir uma nova ideia."
 
 #: templates/_single_problem.html:80
 msgid "Ideas submission will be available when criteria are defined."
 msgstr ""
+"O envio de ideias estará disponível quando os critérios forem definidos."
 
 #: templates/_single_problem.html:92
-#, fuzzy
 msgid "Click here to insert a new alternative."
-msgstr "Adicionar nova alternativa"
+msgstr "Clique aqui para adicionar uma nova alternativa."
 
 #: templates/_single_problem.html:100
 msgid "There's no alternative created yet."
@@ -912,38 +913,35 @@ msgstr "Não há nenhuma alternativa criada ainda."
 
 #: templates/_single_problem.html:105
 msgid "Alternatives will be available when there's criteria and ideas."
-msgstr ""
+msgstr "As alternativas estarão disponíveis quando houver critérios e ideias."
 
 #: templates/_single_problem.html:118
 msgid "Alternative preference from users"
-msgstr ""
+msgstr "Preferências de alternativas por usuários"
 
 #: templates/_single_problem.html:124
-#, fuzzy
 msgid "There's no alternative to render data yet."
-msgstr "Não há nenhuma alternativa criada ainda."
+msgstr "Não há nenhuma alternativa para mostrar informações."
 
 #: templates/_single_problem.html:127
 msgid "Criteria attendance from alternatives"
-msgstr ""
+msgstr "Atendimento aos critérios pelas alternativas"
 
 #: templates/_single_problem.html:155
 msgid "There's not enough data to show criteria results."
-msgstr ""
+msgstr "Não há dados necessários para mostrar resultados para os critérios."
 
 #: templates/_single_users.html:22
 msgid "No users around here."
-msgstr ""
+msgstr "Nenhum usuário por aqui."
 
 #: templates/_update_alternative.html:10
-#, fuzzy
 msgid "Click on the ideas to select them for this alternative."
-msgstr "Clique nas células"
+msgstr "Clique nas ideias ara selecioná-las nesta alternativa"
 
 #: templates/_update_alternative.html:12
-#, fuzzy
 msgid "Add an alternative"
-msgstr "Adicionar nova alternativa"
+msgstr "Adicionar alternativa"
 
 #: templates/_update_idea.html:12
 msgid "Your idea"
@@ -951,18 +949,17 @@ msgstr "Sua ideia"
 
 #: templates/confirm_delete.html:7
 msgid "Really delete?"
-msgstr "Remover de verdade?"
+msgstr "Apagar de verdade?"
 
 #: templates/confirm_delete.html:8
 msgid "This action cannot be undone."
-msgstr ""
+msgstr "Esta ação não poderá ser desfeita."
 
 #: templates/confirm_delete.html:11
 msgid "Remove"
 msgstr "Remover"
 
 #: templates/diffbase_problem.html:10
-#, fuzzy
 msgid "Open for edition"
 msgstr "Edição aberta"
 
@@ -1013,9 +1010,8 @@ msgid "See how it works &raquo;"
 msgstr ""
 
 #: templates/help.html:38
-#, fuzzy
 msgid "Writing a good problem description"
-msgstr "Descrição do problema"
+msgstr "Escreva uma boa descrição para o problema"
 
 #: templates/help.html:42
 #, python-format
@@ -1056,9 +1052,8 @@ msgid ""
 msgstr ""
 
 #: templates/help.html:54
-#, fuzzy
 msgid "Define criteria to clarify the problem boundaries"
-msgstr "Critérios do problema"
+msgstr "Defina critérios para esclarecer os limites do problema"
 
 #: templates/help.html:56
 #, python-format
@@ -1084,7 +1079,7 @@ msgid "Combine ideas to get good alternatives"
 msgstr ""
 
 #: templates/item_activity.html:43
-#, fuzzy, python-format
+#, python-format
 msgid "Display the other <b>%(count)s</b> comments"
 msgstr "Mostrar os outros <b>%(count)s</b> comentários"
 
@@ -1096,12 +1091,11 @@ msgstr "Editar"
 #: templates/item_alternative.html:68 templates/item_criteria.html:35
 #: templates/item_idea.html:66 templates/item_problem.html:40
 msgid "Delete"
-msgstr "Remover"
+msgstr "Apagar"
 
 #: templates/item_alternative.html:74
-#, fuzzy
 msgid "Alternative coauthors"
-msgstr "Alternativas"
+msgstr "Co-autores da alternativa"
 
 #: templates/item_alternative.html:82
 #, fuzzy
