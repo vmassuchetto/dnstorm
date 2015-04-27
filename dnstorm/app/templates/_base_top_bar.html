@@ -1,4 +1,4 @@
-{% load i18n activity_tags avatar_tags display_name humanize crispy_forms_tags %}
+{% load i18n activity_tags avatar_tags display_name humanize crispy_forms_tags user_tags %}
 
 {# Top bar #}
 
@@ -78,19 +78,19 @@
                     <ul class="button-group status right">
                         <li>
                         {% if not problem.published %}
-                            <a class="button small secondary" href="{% url "problem_update" problem.id %}" data-tooltip title="{% trans "Problem is not available for user contribution until it is published." %}{% if problem_perm_manage %}<small>{% trans "Edit the problem to change this permission." %}</small>{% endif %}"><i class="fi-web"></i>&nbsp;<b>{% trans "Draft" %}</b></a>
+                            <a class="button small secondary" href="{% url "problem_update" problem.id %}" data-tooltip title="{% trans "Problem is not available for user contribution until it is published." %}{% if user|problem_manage:problem %}<small>{% trans "Edit the problem to change this permission." %}</small>{% endif %}"><i class="fi-web"></i>&nbsp;<b>{% trans "Draft" %}</b></a>
                         {% endif %}
                         {% if problem.public %}
-                            <a class="button small secondary" href="{% url "problem_collaborators" problem.id %}" data-tooltip title="{% trans "Anyone can view" %}{% if problem_perm_manage %}<br/><small>{% trans "Click here to edit the problem permissions." %}</small>{% endif %}"><i class="fi-web"></i>&nbsp;<b>{% trans "Public" %}</b></a>
+                            <a class="button small secondary" href="{% url "problem_collaborators" problem.id %}" data-tooltip title="{% trans "Anyone can view" %}{% if user|problem_manage:problem %}<br/><small>{% trans "Click here to edit the problem permissions." %}</small>{% endif %}"><i class="fi-web"></i>&nbsp;<b>{% trans "Public" %}</b></a>
                         {% else %}
-                            <a class="button small secondary" href="{% url "problem_collaborators" problem.id %}" data-tooltip title="{% trans "Only invited people can view" %}{% if problem_perm_manage %}<br/><small>{% trans "Click here to edit the problem permissions." %}</small>{% endif %}"><i class="fi-eye"></i>&nbsp;<b>{% trans "Private" %}</b></a>
+                            <a class="button small secondary" href="{% url "problem_collaborators" problem.id %}" data-tooltip title="{% trans "Only invited people can view" %}{% if user|problem_manage:problem %}<br/><small>{% trans "Click here to edit the problem permissions." %}</small>{% endif %}"><i class="fi-eye"></i>&nbsp;<b>{% trans "Private" %}</b></a>
                         {% endif %}
                         </li>
                         <li>
                         {% if problem.open %}
-                            <a class="button small secondary" href="{% url "problem_update" problem.id %}" data-tooltip title="{% trans "Anyone can collaborate." %}{% if problem_perm_manage %}<br/><small>{% trans "Click here to edit the problem permissions." %}</small>{% endif %}"><i class="fi-unlock"></i>&nbsp;<b>{% trans "Open" %}</b></a>
+                            <a class="button small secondary" href="{% url "problem_update" problem.id %}" data-tooltip title="{% trans "Anyone can collaborate." %}{% if user|problem_manage:problem %}<br/><small>{% trans "Click here to edit the problem permissions." %}</small>{% endif %}"><i class="fi-unlock"></i>&nbsp;<b>{% trans "Open" %}</b></a>
                         {% else %}
-                            <a class="button small secondary" href="{% url "problem_update" problem.id %}" data-tooltip title="{% trans "Only managers collaborate." %}{% if problem_perm_manage %}<br/><small>{% trans "Click here to edit the problem permissions." %}</small>{% endif %}"><i class="fi-lock"></i>&nbsp;<b>{% trans "Closed" %}</b></a>
+                            <a class="button small secondary" href="{% url "problem_update" problem.id %}" data-tooltip title="{% trans "Only managers collaborate." %}{% if user|problem_manage:problem %}<br/><small>{% trans "Click here to edit the problem permissions." %}</small>{% endif %}"><i class="fi-lock"></i>&nbsp;<b>{% trans "Closed" %}</b></a>
                         {% endif %}
                         </li>
 
