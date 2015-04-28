@@ -45,9 +45,9 @@ def criteria(user, mode, obj):
             user.is_authenticated() \
             and obj.published
         ) and (
-            (obj.open) or \
-            (user == obj.author) or \
-            (user in obj.collaborator.all())
+            (obj.open and obj.public) or \
+            (obj.open and user in obj.collaborator.all()) or \
+            (obj.author == user)
         )
     elif mode == 'update':
         return (
@@ -61,8 +61,8 @@ def criteria(user, mode, obj):
         )
     elif mode == 'delete':
         return (
-            user == obj.author or \
-            user == obj.problem.author)
+            obj.author == user or \
+            obj.problem.author == user)
 
 def idea(user, mode, obj):
     """

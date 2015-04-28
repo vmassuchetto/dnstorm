@@ -111,11 +111,11 @@ class RegistrationView(BaseRegistrationView):
         except:
             None
         if self.request.POST:
-            context['form'] = RegistrationForm(self.request.POST)
+            context['form'] = forms.RegistrationForm(self.request.POST)
         elif _hash:
-            context['form'] = RegistrationForm(hash=_hash)
+            context['form'] = forms.RegistrationForm(hash=_hash)
         else:
-            context['form'] = RegistrationForm()
+            context['form'] = forms.RegistrationForm()
         context['info'] = self.get_info()
 
         if _hash:
@@ -577,10 +577,13 @@ class HomeView(TemplateView):
             if self.request.user.is_superuser:
                 q_problems = Q(published=True)
             elif self.request.user.is_authenticated():
-                q_problems = (Q(published=True) & (
-                    Q(open=True) |
+                q_problems = (
+                    Q(published=True)
+                ) & (
+                    (Q(public=True) & Q(open=True)) |
                     Q(collaborator__in=[self.request.user]) |
-                    Q(author=self.request.user)))
+                    Q(author=self.request.user)
+                )
             else:
                 q_problems = (Q(published=True) & Q(public=True))
         elif self.request.resolver_match.url_name == 'problems_collaborating':
@@ -704,7 +707,7 @@ def user_buttons(request, obj):
         'icon': 'prohibited',
         'title': _('Inactivate'),
         'url': reverse('user_inactivate', kwargs={'username': obj.username}),
-        'show': request.user == obj or request.user.is_superuser
+        'show': request.user.is_superuser
     }]
 
 class UserView(LoginRequiredMixin, TemplateView):
@@ -858,6 +861,7 @@ class UserPasswordUpdateView(FormView):
         Updates the user password according to current password and two inputs
         of the new password.
         """
+        self.object = self.get_object()
         if not self.object.check_password(self.request.POST['password']):
             form._errors.setdefault('password', ErrorList())
             form._errors['password'].append(_('Wrong password.'))
