@@ -593,8 +593,6 @@ class HomeView(TemplateView):
         problems = Paginator(models.Problem.objects.filter(q_problems).distinct().order_by('-last_activity'), 25)
         context['problems'] = problems.page(self.request.GET.get('page', 1))
         context['info'] = self.get_info()
-        if not problems.count and self.request.resolver_match.url_name == 'home':
-            context['body_class'] = 'show-help'
         return context
 
     def get_info(self):

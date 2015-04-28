@@ -674,13 +674,13 @@ $(document).on('click', '.alternative-vote .cell-wrap', function(){
     });
 });
 
-$('.alternative-edit').on('mouseenter', '.idea-row', function(){
+$('.alternative-update').on('mouseenter', '.idea-row', function(){
     $(this).addClass('hover');
 });
-$('.alternative-edit').on('mouseleave', '.idea-row', function(){
+$('.alternative-update').on('mouseleave', '.idea-row', function(){
     $(this).removeClass('hover');
 });
-$('.alternative-edit .idea-row').on('click', function(){
+$('.alternative-update .idea-row').on('click', function(){
     var i = $(this).data('id');
     var s = $(this).find('i.idea-status');
     var f = $('.alternative-edit').find('form input#idea-' + i);
@@ -689,7 +689,7 @@ $('.alternative-edit .idea-row').on('click', function(){
         f.remove();
     } else {
         s.addClass('checked');
-        $('.alternative-edit form').append('<input id="idea-' + i + '" type="hidden" name="idea" value="' + i + '" />');
+        $('.alternative-update form').append('<input id="idea-' + i + '" type="hidden" name="idea" value="' + i + '" />');
     }
 });
 

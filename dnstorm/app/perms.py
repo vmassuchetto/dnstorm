@@ -8,7 +8,9 @@ def problem(user, mode, obj=None):
     elif mode == 'create': # no need for obj
         return user.is_authenticated()
     elif mode == 'update':
-        return (user.is_authenticated and (
+        return (
+            user.is_authenticated()
+        and (
             (obj.published and obj.public and obj.open) or \
             (obj.published and obj.open and user in obj.collaborator.all()) or \
             (obj.author == user)
@@ -22,11 +24,13 @@ def problem(user, mode, obj=None):
             (obj.author == user)
         )
     elif mode in ['comment', 'vote']:
-        return (user.is_authenticated() and (
+        return (
+            user.is_authenticated()
+        ) and (
             (obj.published and obj.public) or \
             (obj.published and user in obj.collaborator.all()) or \
             (obj.author == user)
-        ))
+        )
     elif mode == 'manage':
         return obj.author == user
 
@@ -37,21 +41,27 @@ def criteria(user, mode, obj):
     if user and user.is_superuser:
         return True
     elif mode == 'create': # obj is a problem
-        return (obj.published) and \
-            (
-                (obj.open) or \
-                (user == obj.author) or \
-                (user in obj.collaborator.all())
-            )
+        return (
+            user.is_authenticated() \
+            and obj.published
+        ) and (
+            (obj.open) or \
+            (user == obj.author) or \
+            (user in obj.collaborator.all())
+        )
     elif mode == 'update':
-        return (obj.problem.published and (
+        return (
+            user.is_authenticated() \
+            and obj.problem.published
+        ) and (
             obj.problem.public and obj.problem.open or \
             obj.problem.open and user in obj.problem.collaborator.all() or \
             obj.problem.author == user or \
             obj.author == user
-        ))
+        )
     elif mode == 'delete':
-        return (user == obj.author or \
+        return (
+            user == obj.author or \
             user == obj.problem.author)
 
 def idea(user, mode, obj):
@@ -63,7 +73,8 @@ def idea(user, mode, obj):
     elif mode in ['create']: # obj is a problem
         return (
             user.is_authenticated() and \
-            obj.published
+            obj.published and \
+            obj.criteria_set.count() > 0
         ) and (
             (obj.open) or \
             (user == obj.author) or \
@@ -80,6 +91,8 @@ def idea(user, mode, obj):
         )
     elif mode == 'update':
         return (
+            user.is_authenticated()
+        ) and (
             (obj.problem.published and obj.problem.open) or \
             (user == obj.author) or \
             (user == obj.problem.author)
@@ -95,14 +108,21 @@ def alternative(user, mode, obj):
     if user and user.is_superuser:
         return True
     elif mode == 'create': # obj is a problem
-        return (obj.idea_set.count() > 0 and (
-            (obj.published and obj.open) or \
-            (obj.published and user == obj.author) or \
-            (obj.published and user in obj.collaborator.all()))
+        return (
+            user.is_authenticated() \
+            and obj.published \
+            and obj.idea_set.count() > 0
+        ) and (
+            (obj.open) or \
+            (user == obj.author) or \
+            (user in obj.collaborator.all())
         )
     elif mode == 'update':
         return (
-            (obj.problem.published and obj.problem.open) or \
+            user.is_authenticated() \
+            and obj.problem.published \
+        ) and (
+            (obj.problem.open and obj.problem.public) or \
             (obj.problem.open and user in obj.problem.collaborator.all()) or \
             (user == obj.author) or \
             (user == obj.problem.author)

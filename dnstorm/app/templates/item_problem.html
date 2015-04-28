@@ -28,7 +28,7 @@
 </div>
 </div>
 
-<div class="row collapse">
+<div class="row">
 
     {# User lists #}
 
@@ -39,6 +39,7 @@
         {% if user|problem_delete:problem %}
             <a class="action-button delete" href="{% url "problem_delete" problem.id %}"><i class="fi-x"></i>&nbsp;{% trans "Delete" %}</a>
         {% endif %}
+        &nbsp;
     </div>
 
     <div class="columns large-6">
@@ -46,7 +47,7 @@
             <h6 class="subheader text-right">{% trans "Problem coauthors" %}</h6>
             <div class="row">
             {% for user in problem.coauthor.all %}
-                <div class="columns large-3 right">
+                <div class="columns large-4 right">
                     {% include "item_user.html" with class="right" user=user date=problem.created show_links=True show_date=True show_badges=True %}
                 </div>
                 {% if forloop.counter|divisibleby:"3" and not forloop.last %}<div class="row"></div>{% endif %}
@@ -77,18 +78,20 @@
         </div>
     </div>
 
-    {# Comment form #}
-
     {% if user|problem_comment:problem %}
+
+        {# Comment form #}
+
         <div class="row">
             <div class="columns large-12 comment-form hide" id="comment-form-problem-{{ problem.id }}" data-problem="{{ problem.id }}"></div>
         </div>
-    {% endif %}
 
-    {# Comment button #}
+        {# Comment button #}
 
-    <div class="row top-1em">
-        <div class="columns large-12">
-            <a class="action-button comment-button" data-problem="{{ problem.id }}" href="javascript:void(0);"><i class="fi-comments"></i>&nbsp;{% trans "Comment" context "verb" %}</a>
+        <div class="row top-1em bottom-1em">
+            <div class="columns large-12">
+                <a class="action-button comment-button" data-problem="{{ problem.id }}" href="javascript:void(0);"><i class="fi-comments"></i>&nbsp;{% trans "Comment" context "verb" %}</a>
+            </div>
         </div>
-    </div>
+
+    {% endif %}

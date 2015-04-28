@@ -6686,19 +6686,19 @@ h6.subheader {
 .reveal-modal .row {
   max-width: 100%; }
 
-.alternative-edit {
+.alternative-update {
   transition: all 200ms ease-out; }
-  .alternative-edit .idea-row:hover, .alternative-edit .idea-row.hover {
+  .alternative-update .idea-row:hover, .alternative-update .idea-row.hover {
     background-color: #F7F7F7; }
-  .alternative-edit .idea-row i.idea-status {
+  .alternative-update .idea-row i.idea-status {
     transition: all 200ms ease-out;
     font-size: 3.5em;
     color: #d1d1d1;
     display: block; }
-    .alternative-edit .idea-row i.idea-status:hover, .alternative-edit .idea-row i.idea-status.checked {
+    .alternative-update .idea-row i.idea-status:hover, .alternative-update .idea-row i.idea-status.checked {
       cursor: pointer;
       color: #43AC6A; }
-  .alternative-edit .alternative-ideas a.button {
+  .alternative-update .alternative-ideas a.button {
     font-size: 0.8125rem;
     margin-bottom: 0.3125rem; }
 

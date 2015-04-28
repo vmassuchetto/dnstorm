@@ -67,6 +67,7 @@
                     {% if user|alternative_delete:alternative %}
                         <a class="action-button delete" href="{% url "alternative_delete" alternative.id %}"><i class="fi-x"></i>&nbsp;{% trans "Delete" %}</a>
                     {% endif %}
+                    &nbsp;
                 </div>
 
                 {% if alternative.coauthor.all %}
@@ -121,7 +122,7 @@
                 {# Comment button #}
 
                 <div class="row collapse">
-                    <div class="columns large-12 top-1em">
+                    <div class="columns large-12 top-1em bottom-1em">
                         <a href="javascript:void(0)" class="action-button comment-button" data-alternative="{{ alternative.id }}"><i class="fi-comments"></i>&nbsp;{% trans "comment this alternative" %}</a>
                     </div>
                 </div>

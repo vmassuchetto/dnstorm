@@ -45,7 +45,7 @@
                         <h6 class="subheader text-right">{% trans "Criteria coauthors" %}</h6>
                         <div class="row">
                             {% for user in criteria.coauthor.all %}
-                                <div class="columns large-3 right">
+                                <div class="columns large-4 right">
                                     {% include "item_user.html" with class="right" user=user show_links=False show_date=False show_badges=True %}
                                 </div>
                                 {% if forloop.counter|divisibleby:"3" and not forloop.last %}<div class="row"></div>{% endif %}
@@ -104,7 +104,7 @@
 
             {# Comment button #}
 
-            <div class="row top-1em">
+            <div class="row top-1em bottom-1em">
                 <div class="columns large-12">
                     <a href="javascript:void(0)" class="action-button comment-button" data-criteria="{{ criteria.id }}"><i class="fi-comments"></i>&nbsp;{% trans "Comment" context "verb" %}</a>
                 </div>

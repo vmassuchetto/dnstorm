@@ -300,7 +300,7 @@ class IdeaForm(forms.ModelForm):
         if not self.instance.published:
             layout_args += (
                 Submit('publish', _('Publish'), css_class='right radius'),
-                Submit('save', _('Save as draft'), css_class='right radius secondary small'))
+                Submit('save', _('Save as draft'), css_class='right right-1em radius secondary small'),)
         else:
             layout_args += (Submit('publish', _('Save edits'), css_class='right radius'),)
 
