@@ -749,7 +749,7 @@ class UsersView(LoginRequiredMixin, TemplateView):
         else:
             users = User.objects.filter(is_active=True, is_staff=True).order_by('first_name')
         page = self.request.GET['page'] if 'page' in self.request.GET else 1
-        context['show_actions'] = True if self.request.user.is_superuser else False
+        context['show_user_actions'] = True if self.request.user.is_superuser else False
         context['user_type'] = self.user_type
         context['site_title'] = '%s | %s' % (_('Users'), utils.get_option('site_title'))
         context['info'] = self.get_info()
@@ -1516,8 +1516,10 @@ class IdeaUpdateView(ProblemMixin, UpdateView):
         if not perms.idea(self.request.user, 'update', self.object):
             raise PermissionDenied
 
-        # Base data
+        # base data
         self.object = form.save(commit=False)
+
+        # if the idea is published or is a draft
         if self.request.POST.get('publish', None):
             self.object.published = True
             return_url = self.object.get_absolute_url()
@@ -1528,6 +1530,7 @@ class IdeaUpdateView(ProblemMixin, UpdateView):
             self.object.coauthor.add(self.request.user)
         self.object.save()
 
+        # get list of criteria objects
         criteria = dict()
         r = re.compile('^([0-9]+)__(.+)$')
         for f in form.fields:
@@ -1540,7 +1543,7 @@ class IdeaUpdateView(ProblemMixin, UpdateView):
                 }
             criteria[_r.group(1)][_r.group(2)] = form.cleaned_data[f]
 
-        # Specific validation rules
+        # Specific validation rules for each type of field
 
         updated = list()
         for c in criteria:

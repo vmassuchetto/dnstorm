@@ -74,14 +74,14 @@
                     <div class="columns large-6">
                         <h6 class="subheader text-right">{% trans "Alternative coauthors" %}</h6>
                         {% for coauthor in alternative.coauthor.all %}
-                            {% include "item_user.html" with class="right" user=coauthor link=idea.get_absolute_url show_actions=False show_badges=True date=alternative.created %}
+                            {% include "item_user.html" with class="right" user=coauthor link=idea.get_absolute_url show_badges=True date=alternative.created %}
                         {% endfor %}
                     </div>
                 {% endif %}
 
                 <div class="columns large-3">
                     <h6 class="subheader">{% trans "Alternative author" %}</h6>
-                    {% include "item_user.html" with user=alternative.author link=idea.get_absolute_url show_actions=False show_date=False show_badges=True %}
+                    {% include "item_user.html" with class="left" user=alternative.author link=idea.get_absolute_url show_date=False show_badges=True %}
                 </div>
 
             </div>

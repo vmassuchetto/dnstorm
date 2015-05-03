@@ -59,7 +59,7 @@
         <h6 class="subheader">{% trans "Problem author" %}</h6>
         <div class="row">
             <div class="large-12">
-                {% include "item_user.html" with user=problem.author date=problem.created show_links=True show_date=True show_badges=True %}
+                {% include "item_user.html" with class="left" user=problem.author date=problem.created show_links=True show_date=True show_badges=True %}
             </div>
         </div>
     </div>

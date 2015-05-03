@@ -24,13 +24,13 @@
 {% if criteria.order == "asc" %}
     {% if show_paragraphs %}<p>{% endif %}
     {% if show_icons %}<span><i class="fi-arrow-up"></i>{% endif %}
-    {% blocktrans with order=criteria.order %}Ascending order is best.{% endblocktrans %}
+    {% blocktrans with order=criteria.order %}The greater, the better.{% endblocktrans %}
     {% if show_icons %}</span>{% endif %}
     {% if show_paragraphs %}</p>{% endif %}
 {% else %}
     {% if show_paragraphs %}<p>{% endif %}
     {% if show_icons %}<span><i class="fi-arrow-down"></i>{% endif %}
-    {% blocktrans with order=criteria.order %}Descending order is best.{% endblocktrans %}
+    {% blocktrans with order=criteria.order %}The lower, the better.{% endblocktrans %}
     {% if show_icons %}</span>{% endif %}
     {% if show_paragraphs %}</p>{% endif %}
 {% endif %}

@@ -10,7 +10,7 @@
     <div class="row users-list">
         {% if users %}
             {% for user in users %}
-                <div class="columns large-3">{% include "item_user.html" with clean=True show_actions=show_actions show_links=True show_date=False show_badges=True %}</div>
+                <div class="columns large-3">{% include "item_user.html" with clean=True show_links=True show_date=False show_badges=True %}</div>
 
                 {% if forloop.counter|divisibleby:4 %}
                     </div>

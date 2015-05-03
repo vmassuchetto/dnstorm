@@ -33,10 +33,12 @@
             {# Criteria #}
 
             {% for criteria in idea.criteria %}
-                <div class="row ideacriteria-row" data-width="30%" data-tooltip title="{{ criteria.tooltip }}">
+                <div class="row ideacriteria-row show-children-tooltip">
                     <div class="columns large-3">
-                        <i class="fi-{{ criteria.icon }}"></i>
-                        <h5 class="criteria-name">{{ criteria.name }}</h5>
+                        <span data-width="30%" data-tooltip title="{{ criteria.tooltip }}">
+                            <i class="fi-{{ criteria.icon }}"></i>
+                            <h5 class="criteria-name">{{ criteria.name }}</h5>
+                        </span>
                     </div>
                     {% if criteria.value %}
                         <div class="columns large-3 criteria-value">
@@ -53,7 +55,7 @@
                             </a>
                         </div>
                         <div class="columns large-6 criteria-description">
-                            {{ criteria.description|paragraphs|safe }}
+                            {{ criteria.user_description|paragraphs|safe }}
                         </div>
                     {% else %}
                         <div class="columns large-6 left">
@@ -65,7 +67,7 @@
 
             {# Action mini bar #}
 
-            <div class="row collapse top-1em">
+            <div class="row top-1em bottom-1em">
 
                 <div class="columns large-3">
                     {% if show_actions %}
@@ -78,23 +80,19 @@
                     {% endif %}
                 </div>
 
-                {% if idea.published %}
-
-                    {% if idea.coauthor.all %}
-                        <div class="columns medium-3 large-6">
-                            <h6 class="subheader text-right">{% trans "Idea coauthors" %}</h6>
-                            {% for coauthor in idea.coauthor.all %}
-                                {% include "item_user.html" with class="right" user=coauthor link=idea.get_absolute_url show_actions=False show_badges=True %}
-                            {% endfor %}
-                        </div>
-                    {% endif %}
-
-                    <div class="columns medium-3 large-3">
-                        <h6 class="subheader">{% trans "Idea author" %}</h6>
-                        {% include "item_user.html" with user=idea.author date=idea.created link=idea.get_absolute_url show_actions=False show_badges=True %}
+                {% if idea.coauthor.all %}
+                    <div class="columns medium-3 large-6">
+                        <h6 class="subheader text-right">{% trans "Idea coauthors" %}</h6>
+                        {% for coauthor in idea.coauthor.all %}
+                            {% include "item_user.html" with class="right" user=coauthor link=idea.get_absolute_url show_badges=True %}
+                        {% endfor %}
                     </div>
-
                 {% endif %}
+
+                <div class="columns medium-3 large-3">
+                    <h6 class="subheader">{% trans "Idea author" %}</h6>
+                    {% include "item_user.html" with class="left" user=idea.author date=idea.created link=idea.get_absolute_url show_badges=True %}
+                </div>
 
             </div>
 

@@ -606,6 +606,23 @@ $('.problem').on('click', 'a.show-problem-collaborators', function(e){
     }
 });
 
+$(document).on('click', 'a.show', function(e){
+    $($(this).data('show')).css('height', 'auto');
+    $($(this).data('show')).show();
+});
+
+$(document).on('mouseenter', '.show-children-tooltip', function(e){
+    $(this).find('[data-tooltip]').each(function(e){
+        Foundation.libs.tooltip.showTip($(this));
+    });
+});
+
+$(document).on('mouseleave', '.show-children-tooltip', function(e){
+    $(this).find('[data-tooltip]').each(function(){
+        $('#' + $(this).data('selector')).hide()
+    });
+});
+
 $(document).on('click', 'a.display-more', function(e){
     $(this).parents('.comment').hide();
     $(this).parents('.comments').find('.hidden').show();
