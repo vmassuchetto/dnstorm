@@ -1087,8 +1087,14 @@ h6.subheader {
 // Idea {{{
 
 .idea-edit {
-    textarea {
-        height: emCalc(60px);
+    fieldset {
+        textarea {
+            height: emCalc(60px);
+        }
+        .description {
+            height: 70px;
+            overflow: hidden;
+        }
     }
 }
 

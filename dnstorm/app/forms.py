@@ -274,10 +274,10 @@ class IdeaForm(forms.ModelForm):
                 or c.fmt == 'scale' \
                 or c.fmt == 'time':
                 vk = '%d__value_%s' % (c.id, c.fmt)
-                self.fields[vk] = forms.IntegerField(required=True, initial=c.value, validators=[MinValueValidator(Decimal('0.00'))], help_text=_('Give an integer value higher than zero.'))
+                self.fields[vk] = forms.IntegerField(required=True, initial=c.value, help_text=_('Give an integer value. Examples: -2, -1, 0, 1, 2'))
             elif c.fmt == 'currency':
                 vk = '%d__value_%s' % (c.id, c.fmt)
-                self.fields[vk] = forms.DecimalField(max_digits=10, decimal_places=2, required=True, initial=c.value, validators=[MinValueValidator(Decimal('0.00'))], help_text=_('Give a currency value higher than 0. Use dots to separate cents. e.g.: 1.23; 12.34 123.45; 12345.12'))
+                self.fields[vk] = forms.DecimalField(max_digits=10, decimal_places=2, required=True, initial=c.value, help_text=_('Give a currency value. Use dots to separate cents. Examples: -1.23, -12.34, 123.45, 12345.12'))
             elif c.fmt == 'boolean':
                 vk = '%d__value_%s' % (c.id, c.fmt)
                 self.fields[vk] = forms.BooleanField(initial=c.value, required=False, help_text=_('Mark the checkbox to represent the \'True\' value or leave unchecked for \'False\'.'))

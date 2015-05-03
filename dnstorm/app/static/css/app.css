@@ -6455,8 +6455,11 @@ h6.subheader {
   .ideacriteria-row a.button.large-icon {
     margin: 0; }
 
-.idea-edit textarea {
+.idea-edit fieldset textarea {
   height: 3.75rem; }
+.idea-edit fieldset .description {
+  height: 70px;
+  overflow: hidden; }
 
 .problem-idea-form-button {
   margin: 2em 0; }

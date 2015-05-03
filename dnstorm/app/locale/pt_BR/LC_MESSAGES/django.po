@@ -179,17 +179,17 @@ msgstr ""
 msgid "Permissions"
 msgstr "Permissões"
 
-#: forms.py:278
-msgid "Give an integer value higher than zero."
-msgstr "Forneça um valor inteiro maior do que zero."
+#: forms.py:277
+msgid "Give an integer value. Examples: -2, -1, 0, 1, 2"
+msgstr "Forneça um valor inteiro. Exemplos: -2, -1, 0, 1, 2"
 
 #: forms.py:281
 msgid ""
-"Give a currency value higher than 0. Use dots to separate cents. e.g.: 1.23; "
-"12.34 123.45; 12345.12"
+"Give a currency value. Use dots to separate cents. Examples: -1.23, -12.34, "
+"123.45, 12345.12"
 msgstr ""
-"Forneça um valor em moeda maior do que 0. Use pontos para separar centavos. "
-"ex.: 1.23; 12.34 123.45; 12345.12"
+"Forneça um valor de moeda. Use pontos para separar centavos. Exemplos: "
+"-1.23, -12.34, 123.45, 12345.12"
 
 #: forms.py:284
 msgid ""

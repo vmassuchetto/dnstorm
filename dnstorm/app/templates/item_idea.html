@@ -1,4 +1,4 @@
-{% load crispy_forms_tags humanize i18n paragraphs user_tags %}
+{% load crispy_forms_tags humanize i18n paragraphs user_tags math %}
 
 <div id="idea-{{ idea.id }}" class="idea-row{% if not idea.published %} draft{% endif %}" data-id="{{ idea.id }}">
 
@@ -40,7 +40,17 @@
                     </div>
                     {% if criteria.value %}
                         <div class="columns large-3 criteria-value">
-                            <a class="button radius secondary expand">{% if criteria.fmt == "currency" %}${% endif %}{{ criteria.value }}</a>
+                            <a class="button radius secondary expand">
+                                {% if criteria.fmt == "currency" %}
+                                    {% if criteria.value < 0 %}
+                                        -${% multiply criteria.value -1 %}
+                                    {% else %}
+                                        ${{ criteria.value }}
+                                    {% endif %}
+                                {% else %}
+                                    {{ criteria.value }}
+                                {% endif %}
+                            </a>
                         </div>
                         <div class="columns large-6 criteria-description">
                             {{ criteria.description|paragraphs|safe }}
