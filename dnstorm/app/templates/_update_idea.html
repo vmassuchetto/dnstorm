@@ -6,8 +6,14 @@
 {% block head %}{{ form.media }}{% endblock %}
 
 {% block content %}
-    <h3>{{ problem.title }}</h3>
-    {{ problem.description|safe }}
+    <fieldset>
+        <legend><i class="fi-info"></i>&nbsp;{% trans "Problem" %}</legend>
+        <h4>{{ problem.title }}</h4>
+        <div class="description bottom-1em">
+            {{ problem.description|safe }}
+        </div>
+        <a class="action-button show" data-show="fieldset .description" href="javascript:void(0)"><i class="fi-arrow-down"></i>&nbsp;{% trans "Show complete problem description" %}</a>
+    </fieldset>
     <fieldset>
         <legend><i class="fi-lightbulb"></i> {% trans "Your idea" %}</legend>
         {% crispy form %}
