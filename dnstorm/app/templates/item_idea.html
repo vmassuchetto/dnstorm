@@ -28,7 +28,9 @@
 
             <h4><a href="{{ idea.get_absolute_url }}">{{ idea.title }}</a></h4>
 
-            {{ idea.description|safe }}
+            {% if idea.description %}
+                {{ idea.description|safe }}
+            {% endif %}
 
             {# Criteria #}
 
@@ -40,7 +42,7 @@
                             <h5 class="criteria-name">{{ criteria.name }}</h5>
                         </span>
                     </div>
-                    {% if criteria.value %}
+                    {% if criteria.value != None %}
                         <div class="columns large-3 criteria-value">
                             <a class="button radius secondary expand">
                                 {% if criteria.fmt == "currency" %}
