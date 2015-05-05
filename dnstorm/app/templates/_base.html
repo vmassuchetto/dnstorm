@@ -15,7 +15,8 @@
     <script type="text/javascript" src="{% static "components/Chart.js/Chart.js" %}"></script>
     <script type="text/javascript" src="{% url "jsi18n" %}"></script>
     {% if show_help %}<script type="text/javascript">var show_help = true;</script>{% endif %}
-    {% block head %}{% endblock %}
+    {% if form.media %}{{ form.media }}{% endif %}
+    {% if problem.id %}<script type="text/javascript">var problem_id = {{ problem.id }};</script>{% endif %}
 </head>
 <body class="{% block bodyclass %}{{ block.super }}{% if bodyclass %} {{ bodyclass }}{% endif %}{% endblock %}">
 

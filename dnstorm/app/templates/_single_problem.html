@@ -1,13 +1,6 @@
 {% extends "_base.html" %}
 {% load crispy_forms_tags i18n captureas user_tags %}
 
-{% block head %}
-    {{ form.media }}
-    <script type="text/javascript">
-        var problem_id = {{ problem.id }};
-    </script>
-{% endblock %}
-
 {% block modals %}
     <div class="hide" id="comment-form">{% crispy comment_form %}</div>
 {% endblock %}

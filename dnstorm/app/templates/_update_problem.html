@@ -3,13 +3,6 @@
 
 {% block bodyclass %}problem-edit{% endblock %}
 
-{% block head %}
-    {{ form.media }}
-    <script type="text/javascript">
-        var problem_id = {{ problem.id }};
-    </script>
-{% endblock %}
-
 {% block content %}
 
     <div class="hidden" id="criteria-form">{% include "item_criteria.html" %}</div>

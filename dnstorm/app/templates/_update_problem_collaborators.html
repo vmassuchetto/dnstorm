@@ -1,13 +1,6 @@
 {% extends "_base.html" %}
 {% load i18n crispy_forms_tags user_tags %}
 
-{% block head %}
-    {{ form.media }}
-    <script type="text/javascript">
-        var problem_id = {{ problem.id }};
-    </script>
-{% endblock %}
-
 {% block content %}
 
     <div class="row">

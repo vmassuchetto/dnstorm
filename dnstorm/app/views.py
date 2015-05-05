@@ -97,32 +97,17 @@ class SuperUserRequiredMixin(TemplateResponseMixin):
 class RegistrationView(BaseRegistrationView):
     form_class = forms.RegistrationForm
 
-    def get_context_data(self, *args, **kwargs):
-        """
-        Display all the problems the user will gain access to contribution if a
-        valid hash is provided with the registration link.
-        """
+    def get_form_kwargs(self, request=None):
+        kwargs = super(RegistrationView, self).get_form_kwargs(request)
+        kwargs['hash'] = self.request.GET.get('hash', self.request.POST.get('hash', None))
+        return kwargs
+
+    '''def get_context_data(self, *args, **kwargs):
         context = super(RegistrationView, self).get_context_data()
         context['site_title'] = '%s | %s' % (_('Register'), utils.get_option('site_title'))
-
-        _hash = self.request.GET.get('hash', self.request.POST.get('hash', None))
-        try:
-            _hash = int(_hash)
-        except:
-            None
-        if self.request.POST:
-            context['form'] = forms.RegistrationForm(self.request.POST)
-        elif _hash:
-            context['form'] = forms.RegistrationForm(hash=_hash)
-        else:
-            context['form'] = forms.RegistrationForm()
         context['info'] = self.get_info()
-
-        if _hash:
-            invitation = get_object_or_404(Invitation, hash=_hash)
-            context['problems'] = Problem.objects.filter(collaborator__in=[invitation.user])
-
-        return context
+        #context['form'] = self.get_form_class(self.get_form_kwargs(request=self.request))
+        return context'''
 
     def get_info(self):
         """
@@ -161,7 +146,7 @@ class RegistrationView(BaseRegistrationView):
         # Invited user
         _hash = cleaned_data.get('hash', None)
         if len(_hash) > 2:
-            invitation = get_object_or_404(Invitation, hash=_hash)
+            invitation = get_object_or_404(models.Invitation, hash=_hash)
             user = invitation.user
             user.username, user.email, user.first_name, \
                 user.last_name, user.is_active, user.is_staff = \
@@ -181,10 +166,11 @@ class RegistrationView(BaseRegistrationView):
             # Log in
             _user = authenticate(username=cleaned_data['username'], password=cleaned_data['password1'])
             login(self.request, _user)
+            messages.success(self.request, _('Welcome to DNStorm. A confirmation e-mail was sent to you.'))
             return _user
 
-        # Delete invitations
-        for i in Invitation.objects.filter(user=user):
+        # delete invitations
+        for i in models.Invitation.objects.filter(user=user):
             i.delete()
 
         # Log in
@@ -192,7 +178,8 @@ class RegistrationView(BaseRegistrationView):
         login(self.request, _user)
 
         # Response
-        return HttpResponseRedirect(_return)
+        messages.success(self.request, _('Welcome to DNStorm. A confirmation e-mail was sent to you.'))
+        return HttpResponseRedirect(reverse('home'))
 
 class LoginView(View):
     """
@@ -376,8 +363,8 @@ class AjaxView(View):
         notification.send([user], 'invitation', utils.email_context({ 'invitation': invitation }))
 
         # Response
-        result = loader.render_to_string('_update_problem_collaborators.html', {'users': problem.collaborator.order_by('first_name')})
-        return HttpResponse(json.dumps({'result':result}))
+        result = ''.join([loader.render_to_string('item_user_collaborator.html', {'users': problem.collaborator.order_by('first_name')})])
+        return HttpResponse(json.dumps({'result': result}), content_type='application/json')
 
     def activity_reset_counter(self):
         """
