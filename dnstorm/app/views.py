@@ -102,13 +102,6 @@ class RegistrationView(BaseRegistrationView):
         kwargs['hash'] = self.request.GET.get('hash', self.request.POST.get('hash', None))
         return kwargs
 
-    '''def get_context_data(self, *args, **kwargs):
-        context = super(RegistrationView, self).get_context_data()
-        context['site_title'] = '%s | %s' % (_('Register'), utils.get_option('site_title'))
-        context['info'] = self.get_info()
-        #context['form'] = self.get_form_class(self.get_form_kwargs(request=self.request))
-        return context'''
-
     def get_info(self):
         """
         Information for the title bar.
