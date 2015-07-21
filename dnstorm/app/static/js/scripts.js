@@ -700,7 +700,7 @@ $('.alternative-update').on('mouseleave', '.idea-row', function(){
 $('.alternative-update .idea-row').on('click', function(){
     var i = $(this).data('id');
     var s = $(this).find('i.idea-status');
-    var f = $('.alternative-edit').find('form input#idea-' + i);
+    var f = $('.alternative-update').find('form input#idea-' + i);
     if (f.length) {
         s.removeClass('checked');
         f.remove();

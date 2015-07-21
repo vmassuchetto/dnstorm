@@ -18,7 +18,7 @@
     {% if form.media %}{{ form.media }}{% endif %}
     {% if problem.id %}<script type="text/javascript">var problem_id = {{ problem.id }};</script>{% endif %}
 </head>
-<body class="{% block bodyclass %}{{ block.super }}{% if bodyclass %} {{ bodyclass }}{% endif %}{% endblock %}">
+<body class="{% block bodyclass %}{{ block.super }}{% endblock %}">
 
 {# Modals #}
 {% include "modal_error.html" %}

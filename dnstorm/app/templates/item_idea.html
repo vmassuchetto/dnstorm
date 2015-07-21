@@ -1,6 +1,6 @@
 {% load crispy_forms_tags humanize i18n paragraphs user_tags math %}
 
-<div id="idea-{{ idea.id }}" class="idea-row{% if not idea.published %} draft{% endif %}" data-id="{{ idea.id }}">
+<div id="idea-{{ idea.id }}" class="idea-row{% if not idea.published %} draft{% endif %}{% if show_check %} idea-check{% endif %}" data-id="{{ idea.id }}">
 
     <div class="row">
 

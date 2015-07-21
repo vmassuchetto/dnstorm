@@ -1152,7 +1152,6 @@ class ProblemMixin(SingleObjectTemplateResponseMixin):
         context = super(ProblemMixin, self).get_context_data(*args, **kwargs)
         context['site_title'] = '%s | %s' % (self.problem.title, self.title)
         context['title'] = self.title
-        context['bodyclass'] = slugify(self.title)
         context['tabs'] = self.get_tabs() if getattr(self, 'tabs', None) else None
         context['info'] = self.get_info()
         context['problem'] = self.problem

@@ -6,7 +6,7 @@
 {% block content %}
     <h3>{{ problem.title }}</h3>
     <p>{% trans "Click on the ideas to select them for this alternative." %}</p>
-    <fieldset>
+    <fieldset class="alternative-update">
         <legend><i class="fi-lightbulb"></i> {% trans "Add an alternative" %}</legend>
         {% crispy form %}
     </fieldset>
