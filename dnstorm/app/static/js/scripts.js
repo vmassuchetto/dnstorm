@@ -440,11 +440,6 @@ $('.problem-tabs').ready(function(){
     $('.problem-' + tab).stop().slideDown(200, function(){
         if (obj)
             scrollTo('#' + obj);
-        if (tab == 'alternatives') {
-            for (var r in $('.range-slider')) {
-                Foundation.libs.slider.reflow(r);
-            }
-        }
     });
 
 });
@@ -512,9 +507,20 @@ $(document).on('click', '.idea-like', function(){
     });
 });
 
+$(document).on('mousedown', '.range-slider', function(){
+    /***
+    Fix the slider for being non-visible on page load.
+    https://github.com/zurb/foundation/issues/4984#issuecomment-45117802
+    ***/
+    Foundation.libs.slider.reflow($(this));
+});
+
 $(document).on('mouseup', '.range-slider', function(){
     /***
-    Assign a value to an alternative counter.
+    Assign a value to an alternative counter. This is not the best method
+    available, once we should be using the `change.fndtn.slider' event.
+    See 'Callbacks' section on
+    http://foundation.zurb.com/docs/components/range_slider.html
     ***/
     var vote = $(this).parent();
     var counter = vote.find('.alternative-like-counter');
