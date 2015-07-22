@@ -402,8 +402,8 @@ $('.problem-tabs').on('click', '>a', function(e){
     window.location.hash = $(this).data('tab');
     $('.problem-tabs > a').removeClass('marked');
     $(this).addClass('marked');
-    $('.problem-tab').stop().slideUp(200);
-    $('.problem-' + $(this).data('tab')).stop().slideDown(200);
+    $('.problem-tab').stop().slideUp(150);
+    $('.problem-' + $(this).data('tab')).stop().slideDown(150);
 });
 
 $('.problem-tabs').ready(function(){
