@@ -274,15 +274,15 @@ class IdeaForm(forms.ModelForm):
                 or c.fmt == 'scale' \
                 or c.fmt == 'time':
                 vk = '%d__value_%s' % (c.id, c.fmt)
-                self.fields[vk] = forms.IntegerField(required=True, initial=c.value, help_text=_('Give an integer value. Examples: -2, -1, 0, 1, 2'))
+                self.fields[vk] = forms.IntegerField(label=_('Value'), required=True, initial=c.value, help_text=_('Give an integer value. Examples: -2, -1, 0, 1, 2'))
             elif c.fmt == 'currency':
                 vk = '%d__value_%s' % (c.id, c.fmt)
-                self.fields[vk] = forms.DecimalField(max_digits=10, decimal_places=2, required=True, initial=c.value, help_text=_('Give a currency value. Use dots to separate cents. Examples: -1.23, -12.34, 123.45, 12345.12'))
+                self.fields[vk] = forms.DecimalField(label=_('Value'), max_digits=10, decimal_places=2, required=True, initial=c.value, help_text=_('Give a currency value. Use dots to separate cents. Examples: -1.23, -12.34, 123.45, 12345.12'))
             elif c.fmt == 'boolean':
                 vk = '%d__value_%s' % (c.id, c.fmt)
-                self.fields[vk] = forms.BooleanField(initial=c.value, required=False, help_text=_('Mark the checkbox to represent the \'True\' value or leave unchecked for \'False\'.'))
+                self.fields[vk] = forms.BooleanField(label=_('Value'), initial=c.value, required=False, help_text=_('Mark the checkbox to represent the \'True\' value or leave unchecked for \'False\'.'))
             dk = '%d__description' % c.id
-            self.fields[dk] = forms.CharField(widget=forms.Textarea(attrs={'rows':3}), required=True, initial=c.description, help_text=_('Describe why you gave the above value for this criteria in this idea.'))
+            self.fields[dk] = forms.CharField(label=_('Description'), widget=forms.Textarea(attrs={'rows':4}), required=True, initial=c.user_description, help_text=_('Describe why you gave the above value for this criteria in this idea.'))
 
             _argfields += (vk,dk)
             _kwargfields = {'css_class': 'large-6'}
