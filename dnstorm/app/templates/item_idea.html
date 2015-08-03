@@ -65,7 +65,7 @@
                         </div>
                     {% else %}
                         <div class="columns large-6 left">
-                            <a class="button small radius secondary expand" href="{% if user|idea_update:idea %}{% url "idea_update" idea.id %}{% else %}javascript:void(0);{% endif %}"><i class="fi-alert"></i>&nbsp;&nbsp;&nbsp;{% trans "No value for this criteria." %}</a>
+                            <a class="button small radius secondary expand" href="{% if user|idea_update:idea %}{% url "idea_update" idea.id %}{% else %}javascript:void(0);{% endif %}"><i class="fi-alert"></i>&nbsp;&nbsp;&nbsp;{% trans "No value for this criterion." %}</a>
                         </div>
                     {% endif %}
                 </div>
