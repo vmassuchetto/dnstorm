@@ -151,7 +151,7 @@ setup:
 * ``bower.json`` must be deleted
 * ``dnstorm/app/static/components`` directory must be included
 * ``dnstorm/settings/heroku.py`` file must be created accordingly to the sample
-configuration file on ``dnstorm/settings/heroku-sample.py``
+  configuration file on ``dnstorm/settings/heroku-sample.py``
 
 You can create another ``heroku`` branch to deploy to the ``heroku`` remote
 like this:
