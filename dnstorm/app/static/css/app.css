@@ -6606,12 +6606,15 @@ h6.subheader {
   .alternative-criteria:hover {
     background-color: #F7F7F7;
     cursor: pointer; }
+  .alternative-criteria .criteria-result {
+    font-size: 0.875rem;
+    border: 1px solid #B7B7B7; }
 
 .alternative-details {
   display: none; }
   .alternative-details hr {
     margin: 0.3em 0;
-    border-color: #B7B7B7; }
+    border-color: #F7F7F7; }
   .alternative-details p {
     margin: 0.3em 0;
     font-size: 0.8em; }

@@ -61,11 +61,8 @@
                             {% for idea in c.ideas %}
                                 <hr/>
                                 <div class="row">
-                                    <div class="columns large-3">
+                                    <div class="columns large-10">
                                         <p><i class="fi-like"></i>&nbsp;{{ alternative.vote_count }}&nbsp;{{ idea.title }}</a></p>
-                                    </div>
-                                    <div class="columns large-7">
-                                        {{ idea.description|safe }}
                                     </div>
                                     <div class="columns large-2">
                                         <span class="button small expand radius secondary">{{ idea.value }}</span>

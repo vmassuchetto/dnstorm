@@ -1333,12 +1333,16 @@ h6.subheader {
         background-color: $light-grey;
         cursor: pointer;
     }
+    .criteria-result {
+        font-size: emCalc(14px);
+        border: 1px solid $grey;
+    }
 }
 
 .alternative-details {
     hr {
         margin: 0.3em 0;
-        border-color: $grey;
+        border-color: $light-grey;
     }
     p {
         margin: 0.3em 0;
