@@ -2,7 +2,7 @@
     :target: https://travis-ci.org/vmassuchetto/dnstorm
 
 .. image:: https://readthedocs.org/projects/dnstorm/badge/?version=latest
-    :target: https://readthedocs.org/projects/pip/badge/?version=latest
+    :target: https://dnstorm.readthedocs.org/
 
 About
 -----
