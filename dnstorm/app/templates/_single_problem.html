@@ -127,10 +127,9 @@
                                     <i class="fi-like"></i>&nbsp;{{ alternative.vote_average }}
                                 </span>
                             </div>
-                            <div class="columns large-7">
+                            <div class="columns large-7 alternative-result-ideas">
                                 {% for idea in alternative.idea.all %}
-                                    <a class="button small secondary radius disabled bottom-03em"><i class="fi-like"></i>&nbsp;{{ alternative.vote_count }}&nbsp;{{ idea.title }}</a>
-                                    {% if not forloop.last %}<i class="fi-plus"></i>{% endif %}
+                                    <p><a class="button small secondary radius disabled bottom-03em"><i class="fi-like"></i>&nbsp;{{ alternative.vote_count }}&nbsp;{{ idea.title }}</a></p>
                                 {% endfor %}
                             </div>
                         </div>

@@ -3,11 +3,12 @@
 <a name="idea-{{ idea.id }}" class="anchor-top"></a>
 <div class="idea-row{% if not idea.published %} draft{% endif %}{% if show_check %} idea-check{% endif %}" data-id="{{ idea.id }}">
 
-    <div class="row collapse">
+    <div class="row">
 
         {% if show_check %}
             <div class="columns large-1 medium-2 small-3 text-center">
                 <i class="fi-check idea-status{% if checked %} checked{% endif %}"></i>
+                <p>{% trans "Click to select this idea." %}</p>
             </div>
         {% endif %}
 

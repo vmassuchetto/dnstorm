@@ -1351,6 +1351,12 @@ h6.subheader {
     display: none;
 }
 
+.alternative-result-ideas {
+    p {
+        margin: emCalc(5px) 0;
+    }
+}
+
 .row-line {
     border-top: 1px solid $light-grey;
     border-bottom: 1px solid $light-grey;
