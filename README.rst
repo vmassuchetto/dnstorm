@@ -139,3 +139,23 @@ To generate the `Sphinx <http://sphinx-doc.org/>`_ documentation files:
     make <documentation format>
 
 Usually you might want to replace ``<documentation format>`` with ``html``.
+
+
+Deploying on Heroku
+-------------------
+
+In order to successfully deploy on Heroku this project needs the following
+setup:
+
+* ``package.json`` file must be deleted
+* ``bower.json`` must be deleted
+* ``dnstorm/app/static/components`` directory must be included
+* ``dnstorm/settings/heroku.py`` file must be created accordingly to the sample
+configuration file on ``dnstorm/settings/heroku-sample.py``
+
+You can create another ``heroku`` branch to deploy to the ``heroku`` remote
+like this:
+
+::
+
+    git push heroku heroku:master
