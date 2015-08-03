@@ -86,7 +86,7 @@
 {% url "problem" action.target.id action.target.slug as problem_url %}
 {% url "comment" action.data.object.id as comment_url %}
 {% url "user" action.actor as actor_url %}
-{% blocktrans with problem_title=action.target.title %}<a href="{{ actor_url }}">{{ actor_name }}</a> <a href="{{ comment_url }}">commented</a> the problem <a href="{{ problem_url }}">{{ problem_title }}</a>{% endblocktrans %}
+{% blocktrans with problem_title=action.target.title %}<a href="{{ actor_url }}">{{ actor_name }}</a> commented the problem <a href="{{ problem_url }}">{{ problem_title }}</a>{% endblocktrans %}
 {% endif %}
 
 {# Commented criteria #}
@@ -96,7 +96,7 @@
 {% url "problem_tab_criteria" action.target.problem.id action.target.problem.slug as criteria_url %}
 {% url "comment" action.data.object.id as comment_url %}
 {% url "user" action.actor as actor_url %}
-{% blocktrans with criteria_title=action.target.name problem_title=action.target.problem.title %}<a href="{{ actor_url }}">{{ actor_name }}</a> <a href="{{ comment_url }}">commented</a> the criteria <a href="{{ criteria_url }}">{{ criteria_title }}</a> on the problem <a href="{{ problem_url }}">{{ problem_title }}</a>{% endblocktrans %}
+{% blocktrans with criteria_title=action.target.name problem_title=action.target.problem.title %}<a href="{{ actor_url }}">{{ actor_name }}</a> commented the criteria <a href="{{ criteria_url }}">{{ criteria_title }}</a> on the problem <a href="{{ problem_url }}">{{ problem_title }}</a>{% endblocktrans %}
 {% endif %}
 
 {# Commented idea #}
@@ -106,7 +106,7 @@
 {% url "problem_tab_idea" action.target.problem.id action.target.problem.slug as idea_url %}
 {% url "comment" action.data.object.id as comment_url %}
 {% url "user" action.actor as actor_url %}
-{% blocktrans with idea_title=action.target.title problem_title=action.target.problem.title %}<a href="{{ actor_url }}">{{ actor_name }}</a> <a href="{{ comment_url }}">commented</a> the idea <a href="{{ idea_url }}">{{ idea_title }}</a> on the problem <a href="{{ problem_url }}">{{ problem_title }}</a>{% endblocktrans %}
+{% blocktrans with idea_title=action.target.title problem_title=action.target.problem.title %}<a href="{{ actor_url }}">{{ actor_name }}</a> commented the idea <a href="{{ idea_url }}">{{ idea_title }}</a> on the problem <a href="{{ problem_url }}">{{ problem_title }}</a>{% endblocktrans %}
 {% endif %}
 
 {# Commented alternative #}
@@ -116,6 +116,6 @@
 {% url "problem_tab_alternative" action.target.problem.id action.target.problem.slug as alternative_url %}
 {% url "comment" action.action_object.id as comment_url %}
 {% url "user" action.actor as actor_url %}
-{% blocktrans with alternative_title=action.target.name problem_title=action.target.problem.title %}<a href="{{ actor_url }}">{{ actor_name }}</a> <a href="{{ comment_url }}">commented</a> the alternative <a href="{{ alternative_url }}">{{ alternative_title }}</a> on the problem <a href="{{ problem_url }}">{{ problem_title }}</a>{% endblocktrans %}
+{% blocktrans with alternative_title=action.target.name problem_title=action.target.problem.title %}<a href="{{ actor_url }}">{{ actor_name }}</a> commented the alternative <a href="{{ alternative_url }}">{{ alternative_title }}</a> on the problem <a href="{{ problem_url }}">{{ problem_title }}</a>{% endblocktrans %}
 {% endif %}
 

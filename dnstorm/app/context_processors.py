@@ -28,7 +28,7 @@ def base(request):
     context['is_update'] = 'update' in request.resolver_match.url_name
 
     # Activity
-    context['user_activity'] = user_stream(request.user, with_user_activity=False) if request.user.is_authenticated() else None
+    context['user_activity'] = user_stream(request.user, with_user_activity=True) if request.user.is_authenticated() else None
     context['user_activity_counter'] = get_option('user_%d_activity_counter' % request.user.id) if request.user.is_authenticated() else None
 
     return context

@@ -415,14 +415,14 @@ $('.problem-tabs').ready(function(){
     var match;
     // When accessing the URL directly to a tab
     r1 = /^#(criteria|ideas|alternatives|results)$/;
-    r2 = /^#(criteria|idea|alternative)-([0-9]+)$/;
+    r2 = /^#(criterion|idea|alternative)-([0-9]+)$/;
     if (window.location.hash.match(r1)) {
         match = r1.exec(window.location.hash);
         tab = match[1];
         obj = false;
     } else if (window.location.hash.match(r2)) {
         match = r2.exec(window.location.hash);
-        if (match[1] == "criteria")
+        if (match[1] == "criterion")
             tab = 'criteria';
         else if (match[1] == "idea")
             tab = 'ideas';
@@ -612,21 +612,13 @@ $('.problem').on('click', 'a.show-problem-collaborators', function(e){
     }
 });
 
-$(document).on('click', 'a.show', function(e){
-    $($(this).data('show')).css('height', 'auto');
-    $($(this).data('show')).show();
-});
-
-$(document).on('mouseenter', '.show-children-tooltip', function(e){
-    $(this).find('[data-tooltip]').each(function(e){
-        Foundation.libs.tooltip.showTip($(this));
-    });
-});
-
-$(document).on('mouseleave', '.show-children-tooltip', function(e){
-    $(this).find('[data-tooltip]').each(function(){
-        $('#' + $(this).data('selector')).hide()
-    });
+$(document).on('click', 'a.show,div.show', function(e){
+    if ($($(this).data('show')).is(':visible')) {
+        $($(this).data('show')).slideUp(150);
+    } else {
+        $($(this).data('show')).css('height', 'auto');
+        $($(this).data('show')).slideDown(150);
+    }
 });
 
 $(document).on('click', 'a.display-more', function(e){

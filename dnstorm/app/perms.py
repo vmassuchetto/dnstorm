@@ -70,7 +70,7 @@ def idea(user, mode, obj):
     """
     if user and user.is_superuser:
         return True
-    elif mode in ['create']: # obj is a problem
+    elif mode == 'create': # obj is a problem
         return (
             user.is_authenticated() and \
             obj.published and \

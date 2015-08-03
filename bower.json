@@ -6,7 +6,8 @@
     "foundation": "5.5.1",
     "jscrollpane": "2.0.20",
     "modernizr": "2.8.3",
-    "Chart.js": "1.0.2"
+    "Chart.js": "1.0.2",
+    "chart.horizontalbar": "1.0.3"
   },
   "homepage": "https://github.com/vmassuchetto/dnstorm",
   "authors": [

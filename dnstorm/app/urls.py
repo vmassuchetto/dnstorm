@@ -34,6 +34,7 @@ urlpatterns = patterns('',
     (r'^problems/(?P<pk>\d+)/(?P<slug>[^/]+)/#ideas$', views.ProblemView.as_view(), {}, 'problem_tab_idea'),
     (r'^problems/(?P<pk>\d+)/(?P<slug>[^/]+)/#alternatives$', views.ProblemView.as_view(), {}, 'problem_tab_alternative'),
     (r'^problems/(?P<pk>\d+)/(?P<slug>[^/]+)/#results$', views.ProblemView.as_view(), {}, 'problem_tab_results'),
+    (r'^problems/(?P<pk>\d+)/(?P<slug>[^/]+)/#criterion-(?P<criteria>\d+)$', views.ProblemView.as_view(), {}, 'problem_criterion'),
     (r'^problems/(?P<pk>\d+)/(?P<slug>[^/]+)/#idea-(?P<idea>\d+)$', views.ProblemView.as_view(), {}, 'problem_idea'),
     (r'^problems/(?P<pk>\d+)/(?P<slug>[^/]+)/#alternative-(?P<alternative>\d+)$', views.ProblemView.as_view(), {}, 'problem_alternative'),
 
@@ -46,7 +47,6 @@ urlpatterns = patterns('',
     (r'^ideas/create/(?P<problem>\d+)/$', views.IdeaCreateView.as_view(), {}, 'idea_create'),
     (r'^ideas/(?P<pk>\d+)/update/$', views.IdeaUpdateView.as_view(), {}, 'idea_update'),
     (r'^ideas/(?P<pk>\d+)/delete/$', views.IdeaDeleteView.as_view(), {}, 'idea_delete'),
-    (r'^ideas/(?P<pk>\d+)/$', views.IdeaView.as_view(), {}, 'idea'),
 
     # Alternatives
     (r'^alternative/create/(?P<problem>\d+)/$', views.AlternativeCreateView.as_view(), {}, 'alternative_create'),

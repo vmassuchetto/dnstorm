@@ -1,8 +1,9 @@
 {% load crispy_forms_tags humanize i18n paragraphs user_tags math %}
 
-<div id="idea-{{ idea.id }}" class="idea-row{% if not idea.published %} draft{% endif %}{% if show_check %} idea-check{% endif %}" data-id="{{ idea.id }}">
+<a name="idea-{{ idea.id }}" class="anchor-top"></a>
+<div class="idea-row{% if not idea.published %} draft{% endif %}{% if show_check %} idea-check{% endif %}" data-id="{{ idea.id }}">
 
-    <div class="row">
+    <div class="row collapse">
 
         {% if show_check %}
             <div class="columns large-1 medium-2 small-3 text-center">
@@ -26,25 +27,27 @@
 
         <div class="idea-content columns{% if show_likes or show_check %} large-11 medium-10 small-9{% else %} large-12{% endif %}">
 
-            <h4><a href="{{ idea.get_absolute_url }}">{{ idea.title }}</a></h4>
+            {# Contents #}
 
-            {% if idea.description %}
-                {{ idea.description|safe }}
-            {% endif %}
+            <div class="row collapse">
+                <div class="columns large-12">
+                    <h4><a href="{{ idea.get_absolute_url }}">{{ idea.title }}</a></h4>
+                    {% if idea.description %}
+                        {{ idea.description|safe }}
+                    {% endif %}
+                </div>
+            </div>
 
             {# Criteria #}
 
             {% for criteria in idea.criteria %}
-                <div class="row ideacriteria-row show-children-tooltip">
-                    <div class="columns large-3">
-                        <span data-width="30%" data-tooltip title="{{ criteria.tooltip }}">
-                            <i class="fi-{{ criteria.icon }}"></i>
-                            <h5 class="criteria-name">{{ criteria.name }}</h5>
-                        </span>
+                <div class="row">
+                    <div class="columns large-4">
+                        <h5>{{ criteria.name }}</h5>
                     </div>
-                    {% if criteria.value != None %}
-                        <div class="columns large-3 criteria-value">
-                            <a class="button radius secondary expand">
+                    {% if criteria.value %}
+                        <div class="columns large-2">
+                            <a class="button small radius secondary expand" data-width="40%" data-tooltip title="{{ criteria.tooltip }}">
                                 {% if criteria.fmt == "currency" %}
                                     {% if criteria.value < 0 %}
                                         -${% multiply criteria.value -1 %}
@@ -56,12 +59,12 @@
                                 {% endif %}
                             </a>
                         </div>
-                        <div class="columns large-6 criteria-description">
-                            {{ criteria.user_description|paragraphs|safe }}
+                        <div class="columns large-6">
+                            {% if criteria.user_description %}{{ criteria.user_description|paragraphs|safe }}{% endif %}
                         </div>
                     {% else %}
                         <div class="columns large-6 left">
-                            <a class="button large-icon alert radius" href="{% if criteria.perm_edit %}{% url "criteria_update" criteria.id %}{% else %}javascript:void(0);">{% endif %}<i class="fi-alert"></i>&nbsp;&nbsp;&nbsp;{% trans "Warning: No value for this criteria." %}</a>
+                            <a class="button small radius secondary expand" href="{% if user|idea_update:idea %}{% url "idea_update" idea.id %}{% else %}javascript:void(0);{% endif %}"><i class="fi-alert"></i>&nbsp;&nbsp;&nbsp;{% trans "No value for this criteria." %}</a>
                         </div>
                     {% endif %}
                 </div>
@@ -133,7 +136,7 @@
 
                         {# Comment button #}
 
-                        <div class="row collapse top-1em bottom-1em">
+                        <div class="row collapse top-1em">
                             <div class="columns large-12">
                                 <a class="action-button comment-button" data-idea="{{ idea.id }}" href="javascript:void(0);"><i class="fi-comments"></i>&nbsp;{% trans "Comment" context "verb" %}</a>
                             </div>

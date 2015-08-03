@@ -23,11 +23,11 @@
 }
 
 .no-padding {
-    margin: 0;
+    padding: 0;
 }
 
 .top-1em {
-    padding-top: 1em !important;
+    margin-top: 1em !important;
 }
 
 .right-1em {
@@ -40,6 +40,14 @@
 
 .bottom-1em {
     margin-bottom: 1em !important;
+}
+
+.top-border {
+    border-top: 1px solid $grey;
+}
+
+.bottom-border {
+    border-bottom: 1px solid $grey;
 }
 
 .no-margin-bottom {
@@ -58,6 +66,14 @@
     font-weight: bold !important;
 }
 
+.text-large {
+    font-size: 1.5em !important;
+}
+
+.text-small {
+    font-size: 0.8em !important;
+}
+
 .hidden {
     display: none;
 }
@@ -65,6 +81,14 @@
 .stick {
     position: fixed;
     top: 0;
+}
+
+.anchor-top {
+    position: relative;
+    top: -120px;
+    display: block;
+    height: 0;
+    width:0;
 }
 
 hr {
@@ -636,6 +660,7 @@ h6.subheader {
         border-left: 2px solid white;
         border-right: 2px solid white;
     }
+    span.button,
     a.button {
         padding: emCalc(15px) 0 emCalc(10px) 0;
         background-color: $light-grey;
@@ -909,13 +934,16 @@ h6.subheader {
 // Activity {{{
 
 .activity-info {
-    .activity-date {
+    h6 {
         font-size: emCalc(16px);
         margin: emCalc(20px) 0;
         line-height: emCalc(20px);
         i {
             font-size: emCalc(20px);
         }
+    }
+    .problem-collaborators a.avatar {
+        margin: emCalc(10px) emCalc(10px) 0 0;
     }
 }
 
@@ -1043,47 +1071,6 @@ h6.subheader {
     }
 }
 
-.ideacriteria-row {
-    position: relative;
-    padding: emCalc(6px) 0;
-    border-bottom: 1px solid #eee;
-    i {
-        position: absolute;
-        top: 0;
-        left: emCalc(10px);
-        font-size: emCalc(32px);
-        line-height: emCalc(32px);
-        color: lighten($base-font-color, 10%);
-    }
-    i.fi-dollar {
-        padding-left: emCalc(5px);
-    }
-    h5.criteria-name {
-        padding: emCalc(10px) 0 0 emCalc(35px);
-        margin: 0;
-        color: lighten($base-font-color, 10%);
-        font-size: emCalc(18px);
-        line-height: emCalc(18px);
-    }
-    .criteria-value a {
-        cursor: default;
-        margin: 0;
-        padding: emCalc(5px) 0;
-        font-weight: bold;
-    }
-    .criteria-description p {
-        color: lighten($base-font-color, 10%);
-        margin-bottom: emCalc(3px);
-    }
-    &:hover {
-        background-color: $light-grey;
-    }
-    a.button.large-icon {
-        margin: 0;
-    }
-}
-
-
 // Idea {{{
 
 .idea-edit {
@@ -1139,62 +1126,24 @@ h6.subheader {
 }
 
 .criteria-row {
-    padding: emCalc(10px);
-    margin: emCalc(10px) 0;
-    border: 1px solid #EAEAEA;
-    position: relative;
-    text-align: left;
-    .criteria-info {
-        h5.criteria-name {
-            margin: 0;
-            line-height: emCalc(50px);
-            padding: 0 0 0 emCalc(45px);
-        }
-        i.criteria-format {
-            position: absolute;
-            top: -10px;
-            font-size: emCalc(45px);
-            color: $grey;
-        }
-        i.criteria-format.fi-dollar {
-            padding-left: emCalc(8px);
-        }
-        .criteria-description {
-            margin: 0 0 emCalc(10px);
-            padding: emCalc(8px) emCalc(10px);
-            border-left: emCalc(15px) solid #eeeeee;
-        }
-        p {
-            color: $dark-grey;
-            font-style: italic;
-            padding: 0 0 0 emCalc(10px);
-            margin: 0;
-            span {
-                display: block;
-                clear: both;
-            }
-            i {
-                font-size: emCalc(16px);
-                margin-right: emCalc(5px);
-            }
-        }
+    h4 {
+        padding-top: 8px;
     }
-    .criteria-actions {
-        padding-top: emCalc(10px);
+    i.criteria-format {
+        color: #555;
+        font-size: emCalc(48px);
+        line-height: 1;
+        margin: 0;
+        padding: 0;
     }
-    h5.criteria-name {
-        margin: emCalc(8px) 0 0 emCalc(45px);
-        line-height: emCalc(30px);
+}
+
+.criteria-info {
+    h4 {
+        line-height: 1.1;
     }
-    a.action-icon {
-        margin: 0 0 0 emCalc(5px);
-        font-size: emCalc(16px);
-        line-height: emCalc(16px);
-        i {
-            font-size: emCalc(16px);
-            margin: 0;
-            padding: 0;
-        }
+    p {
+        margin: emCalc(3px) 0;
     }
 }
 
@@ -1215,37 +1164,7 @@ h6.subheader {
     }
 }
 
-.criteria-add {
-    margin: emCalc(10px) 0;
-}
-
 /// }}}
-
-.deleted {
-    * {
-        opacity: 0.8;
-    }
-}
-
-.idea-attrs {
-    margin-top: emCalc(10px);
-    span.secondary {
-        height: 24px;
-        line-height: 1;
-        color: lighten($black, 20%);
-        font-size: emCalc(13px);
-        font-weight: bold;
-        &:hover {
-            color: $black;
-        }
-        i {
-            vertical-align: middle;
-            font-size: emCalc(15px);
-        }
-    }
-}
-
-// Idea comment list
 
 .comment-form {
     textarea {
@@ -1265,7 +1184,7 @@ h6.subheader {
             background: lighten($black, 70%);
             padding: 2px 5px;
         }
-        a.comment-date {
+        span.comment-date {
             color: lighten($black, 40%);
         }
         a.comment-delete-toggle {
@@ -1311,56 +1230,6 @@ h6.subheader {
 }
 .jspDrag {
     background-color: #A0A0A0;
-}
-
-// Criteria modal
-
-#criteria-modal {
-    .quantifier-help {
-        margin-bottom: 1em;
-    }
-}
-
-.idea-row,
-.alternative-row {
-    margin: emCalc(6px) 0;
-    padding: emCalc(6px) 0;
-    border-bottom: 1px solid $grey;
-    &.draft {
-        background-color: $light-grey;
-        border: 1px solid $grey;
-    }
-    h4 {
-        font-size: emCalc(18px);
-    }
-    .number {
-        font-weight: bold;
-        font-size: emCalc(16px);
-    }
-   .actions {
-        margin: emCalc(15px) 0;
-        a {
-            margin: 0;
-            padding: 2px 4px;
-        }
-    }
-}
-.alternative-result {
-    padding: emCalc(15px) 0;
-    margin: emCalc(15px) 0;
-    .number {
-        padding: emCalc(10px) 0;
-    }
-    .user-box {
-        margin: 0 0 emCalc(10px) emCalc(10px);
-    }
-    hr {
-        display: block; height: 1px;
-        border: 0;
-        border-top: 1px solid #ccc;
-        margin: 1em 0;
-        padding: 0;
-    }
 }
 
 // Theory help
@@ -1424,9 +1293,7 @@ h6.subheader {
 // Results
 
 .criteria-chart {
-    width: 100%;
-    height: 290px !important;
-    margin-top: emCalc(15px);
+    margin-top: emCalc(10px);
 }
 
 // Reveal modal
@@ -1458,12 +1325,26 @@ h6.subheader {
             }
         }
     }
-    .alternative-ideas {
-        a.button {
-            font-size: emCalc(13px);
-            margin-bottom: emCalc(5px);
-        }
+}
+
+.alternative-criteria {
+    padding: 0.5em 0;
+    &:hover {
+        background-color: $light-grey;
+        cursor: pointer;
     }
+}
+
+.alternative-details {
+    hr {
+        margin: 0.3em 0;
+        border-color: $grey;
+    }
+    p {
+        margin: 0.3em 0;
+        font-size: 0.8em;
+    }
+    display: none;
 }
 
 .row-line {

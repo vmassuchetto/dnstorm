@@ -39,7 +39,8 @@
 
             {% if criteria %}
                 {% for c in criteria %}
-                    {% include "item_criteria.html" with criteria=c show_actions=True show_parameters=True show_users=True show_icons=True show_description=True show_comments=True %}
+                    {% include "item_criteria.html" with criteria=c show_actions=True show_parameters=True show_users=True show_icon=True show_description=True show_comments=True %}
+                    {% if not forloop.last %}<hr/>{% endif %}
                 {% endfor %}
             {% else %}
                 {% trans "There's no criteria defined for this problem yet." as message %}
@@ -53,9 +54,9 @@
         <div class="problem-tab problem-ideas">
 
             {% if ideas_drafts %}
-                <h4>{% trans "Your idea drafts" %}</h4>
                 {% for idea in ideas_drafts %}
                     {% include "item_idea.html" with show_likes=True show_actions=True show_comments=True %}
+                    {% if not forloop.last %}<hr/>{% endif %}
                 {% endfor %}
             {% endif %}
 
@@ -67,12 +68,16 @@
                 {% if ideas %}
                     {% for idea in ideas %}
                         {% include "item_idea.html" with show_likes=True show_actions=True show_comments=True %}
+                        {% if not forloop.last %}<hr/>{% endif %}
                     {% endfor %}
                 {% endif %}
+            {% else %} {% if criteria and not ideas %}
+                {% trans "There's no idea submitted yet." as message %}
+                {% include "part_panel.html" with icon="alert" message=message %}
             {% else %}
                 {% trans "Ideas submission will be available when criteria are defined." as message %}
                 {% include "part_panel.html" with icon="prohibited" message=message %}
-            {% endif %}
+            {% endif %} {% endif %}
         </div>
 
         {# Alternatives #}
@@ -88,6 +93,7 @@
                 {% if alternatives %}
                     {% for alternative in alternatives %}
                         {% include "item_alternative.html" %}
+                        {% if not forloop.last %}<hr/>{% endif %}
                     {% endfor %}
                 {% else %}
                     {% trans "There's no alternative created yet." as message %}
@@ -106,42 +112,58 @@
         <div class="problem-tab problem-results">
             <script type="text/javascript">
                 Chart.defaults.global.scaleIntegersOnly = false;
+                Chart.defaults.global.tooltipFontSize = 14;
+                Chart.defaults.global.scaleFontSize = 14;
             </script>
             <div class="inner-tab">
-                <h3>{% trans "Alternative preference from users" %}</h3>
-                {% if alternatives %}
-                    {% for alternative in alternatives %}
-                        {% include "item_alternative_result.html" with mode="result" %}
-                    {% endfor %}
-                {% else %}
-                    {% trans "There's no alternative to render data yet." as message %}
-                    {% include "part_panel.html" with icon="prohibited" message=message %}
-                {% endif %}
-                <h3>{% trans "Criteria attendance from alternatives" %}</h3>
                 {% if problem.criteria_results %}
+                    <h3>{% trans "Alternative preferences" %}</h3>
+                    <hr/>
+                    {% for alternative in alternatives %}
+                        <div class="row">
+                            <div class="columns large-3"><h4>{{ alternative.name }}</h4></div>
+                            <div class="columns large-2">
+                                <span class="button expand disabled text-bold radius secondary">
+                                    <i class="fi-like"></i>&nbsp;{{ alternative.vote_average }}
+                                </span>
+                            </div>
+                            <div class="columns large-7">
+                                {% for idea in alternative.idea.all %}
+                                    <a class="button small secondary radius disabled bottom-03em"><i class="fi-like"></i>&nbsp;{{ alternative.vote_count }}&nbsp;{{ idea.title }}</a>
+                                    {% if not forloop.last %}<i class="fi-plus"></i>{% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <hr/>
+                    {% endfor %}
+                    <h3>{% trans "Criteria attendance" %}</h3>
+                    <hr/>
                     {% for result in problem.criteria_results %}
                         <div class="row">
-                            <div class="columns large-4">{% include "item_criteria.html" with criteria=result.criteria show_actions=False show_parameters=True show_icons=True show_description=True show_comments=False %}</h4></div>
-                            <div class="columns large-8 text-left">
+                            <div class="columns large-3">{% include "item_criteria.html" with criteria=result.criteria show_actions=False show_parameters=True show_icon=False show_description=False show_comments=False %}</h4></div>
+                            <div class="columns large-9 text-left">
                                 <canvas id="criteria-chart-{{ result.criteria.id }}" class="criteria-chart"></canvas>
                             </div>
-                            <script type="text/javascript">
-                                var data = {
-                                    labels: [{% for alternative in result.alternatives %}'{{ alternative.name }}'{% if not forloop.last %},{% endif %}{% endfor %}],
-                                    datasets: [{
-                                        label: "{% trans "Alternatives" %}",
-                                        data: [{% for alternative in result.alternatives %}parseFloat({{ alternative.value }}){% if not forloop.last %},{% endif %}{% endfor %}]
-                                    }]
-                                };
-                                var context = document.getElementById('criteria-chart-{{ result.criteria.id }}').getContext('2d');
-                                var options = {
-                                    animationSteps: 20,
-                                    scaleShowValues: true,
-                                    tooltipTemplate: "<%= value %>"
-                                }
-                                var chart = new Chart(context).Bar(data, options);
-                            </script>
                         </div>
+                        <script type="text/javascript">
+                            var data = {
+                                labels: [{% for alternative in result.alternatives %}"{{ alternative.name }}"{% if not forloop.last %},{% endif %}{% endfor %}],
+                                datasets: [{
+                                    data: [{% for alternative in result.alternatives %}parseFloat({{ alternative.value }}){% if not forloop.last %},{% endif %}{% endfor %}]
+                                }]
+                            };
+                            var canvas = document.getElementById('criteria-chart-{{ result.criteria.id }}');
+                            canvas.style.width = '100%';
+                            canvas.style.height = 60 * {{ result.alternatives|length }} + 'px';
+                            var context = canvas.getContext('2d');
+                            var options = {
+                                animationSteps: 10,
+                                scaleShowValues: true,
+                                tooltipTemplate: "<%= value %>"
+                            }
+                            var chart = new Chart(context).HorizontalBar(data, options);
+                        </script>
+                        <hr/>
                     {% endfor %}
                 {% else %}
                     {% captureas message %}

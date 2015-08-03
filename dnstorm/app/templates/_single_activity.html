@@ -16,16 +16,31 @@
 
             {# Problem #}
 
+                <div class="row problem-date">
+                    <div class="columns large-12">
+                        <h6 class="subheader"><i class="fi-clock"></i>&nbsp;{% blocktrans with created=problem.created|date:"d F Y" %}Created at {{ created }}{% endblocktrans %}</h6>
+                    </div>
+                </div>
+
+                <div class="row collapse problem-counter bottom-1em">
+                    <div class="columns large-12">
+                        <a class="button secondary expand" href="{{ problem.get_absolute_url }}">
+                            <em class="number">{{ activity_count }}</em>
+                            <em class="description">{% trans "activities" %}</em>
+                        </a>
+                    </div>
+                </div>
                 {% include "part_counter.html" %}
-                <h6 class="subheader activity-date"><i class="fi-clock"></i>&nbsp;{% blocktrans with created=problem.created|date:"d F Y" %}Created at {{ created }}{% endblocktrans %}</h6>
-                {% if problem.criteria_set.all|length > 0 %}
-                    {% for c in problem.criteria_set.all %}
-                        {% include "item_criteria.html" with criteria=c show_actions=False show_parameters=True show_icons=True show_description=True show_comments=False %}
-                    {% endfor %}
-                {% else %}
-                    {% trans "No criteria defined." as message %}
-                    {% include "part_panel.html" with message=message icon="prohibited" %}
-                {% endif %}
+                <div class="row problem-collaborators top-1em">
+                    <div class="columns large-12">
+                        <h6 class="subheader"><i class="fi-torso"></i>&nbsp;{% trans "Collaborators" %}</h6>
+                        {% for user in problem.collaborator.all %}
+                            {% if user.is_staff %}
+                                <a class="avatar left" data-tooltip title="{% display_name user %}" href="{% url "user" user.username %}">{% avatar user 32 %}</a>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
 
             {# User profile #}
 

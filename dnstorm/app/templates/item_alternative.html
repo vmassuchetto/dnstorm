@@ -1,11 +1,12 @@
 {% load i18n avatar_tags user_tags %}
 
-<div id="alternative-{{ alternative.id }}" class="alternative-row alternative-{{ alternative.id }}{% if mode == "result" %} alternative-result{% endif %}" data-id="{{ alternative.id }}">
+<a name="alternative-{{ alternative.id }}" class="anchor-top"></a>
+<div class="alternative-row alternative-{{ alternative.id }}{% if mode == "result" %} alternative-result{% endif %}" data-id="{{ alternative.id }}">
 
 
-    <div class="row">
+    <div class="row collapse">
 
-        {# Alternative like #}
+        {# Alternative vote #}
 
         <div class="columns large-1 medium-2 small-3 alternative-like like{% if not user.is_authenticated %} like-disabled{% endif %}{% if alternative.voted %} voted{% endif %}" data-alternative="{{ alternative.id }}" data-counter="{{ alternative.vote_count }}">
             <a class="like alternative-like"><i class="fi-like"></i></a>
@@ -30,31 +31,54 @@
             {# Ideas #}
 
             <div class="row collapse bottom-1em">
-                <div class="columns large-12 alternative-ideas">
+                <div class="columns large-12">
                     {% for idea in alternative.idea.all %}
-                        <a class="button small secondary radius disabled" data-idea="{{ idea.id }}" href="javascript:void(0);" data-width="50%" data-tooltip title="{{ idea.tooltip }}">{{ idea.title }}</a>
+                        <a class="button small secondary radius disabled bottom-03em"><i class="fi-like"></i>&nbsp;{{ alternative.vote_count }}&nbsp;{{ idea.title }}</a>
                         {% if not forloop.last %}<i class="fi-plus"></i>{% endif %}
                     {% endfor %}
                 </div>
             </div>
 
-            {# Results #}
+            {# Criteria #}
 
-            <div class="row collapse bottom-1em">
-                <div class="columns large-12 alternative-results">
-                    {% for c in alternative.results.values %}
-                        <div class="row ideacriteria-row" data-width="50%" data-tooltip title="{{ c.tooltip }}">
-                            <div class="columns large-7">
-                                <i class="fi-{{ c.icon }}"></i>
-                                <h5 class="criteria-name">{{ c.name }}</h5>
+            {% for c in alternative.results.values %}
+
+                <div class="row collapse">
+                    <div class="columns large-12 alternative-results">
+
+                        {# Main result #}
+                        <div class="row alternative-criteria show" data-show=".alternative-details-{{ alternative.id }}-{{ c.id }}">
+                            <div class="columns large-10">
+                                <h6>{{ c.name }}</h6>
                             </div>
-                            <div class="columns large-5 criteria-value">
-                                <a class="button radius secondary expand">{% if c.fmt == "currency" %}${% endif %}{{ c.result_value }}</a>
+                            <div class="columns large-2">
+                                <a class="criteria-result button small disabled text-bold radius secondary expand" data-width="70%" data-tooltip title="{{ c.tooltip }}">{% if c.fmt == "currency" %}${% endif %}{{ c.result_value }}</a>
                             </div>
                         </div>
-                    {% endfor %}
+
+                        {# Result details #}
+                        <div class="alternative-details alternative-details-{{ alternative.id }}-{{ c.id }}">
+                            {% for idea in c.ideas %}
+                                <hr/>
+                                <div class="row">
+                                    <div class="columns large-3">
+                                        <p><i class="fi-like"></i>&nbsp;{{ alternative.vote_count }}&nbsp;{{ idea.title }}</a></p>
+                                    </div>
+                                    <div class="columns large-7">
+                                        {{ idea.description|safe }}
+                                    </div>
+                                    <div class="columns large-2">
+                                        <span class="button small expand radius secondary">{{ idea.value }}</span>
+                                    </div>
+                                </div>
+                                {% if forloop.last %}<hr/>{% endif %}
+                            {% endfor %}
+                        </div>
+
+                    </div>
                 </div>
-            </div>
+
+            {% endfor %}
 
             {# Actions and authoring #}
 
@@ -122,8 +146,8 @@
                 {# Comment button #}
 
                 <div class="row collapse">
-                    <div class="columns large-12 top-1em bottom-1em">
-                        <a href="javascript:void(0)" class="action-button comment-button" data-alternative="{{ alternative.id }}"><i class="fi-comments"></i>&nbsp;{% trans "comment this alternative" %}</a>
+                    <div class="columns large-12 top-1em">
+                        <a href="javascript:void(0)" class="action-button comment-button" data-alternative="{{ alternative.id }}"><i class="fi-comments"></i>&nbsp;{% trans "Comment" context "verb" %}</a>
                     </div>
                 </div>
 

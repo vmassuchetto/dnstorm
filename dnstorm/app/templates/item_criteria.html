@@ -1,117 +1,125 @@
 {% load i18n crispy_forms_tags paragraphs user_tags %}
 
+<a name="criterion-{{ criteria.id }}" class="anchor-top"></a>
 <div class="criteria-row" data-id="{{ criteria.id }}">
 
     {# Parameters #}
 
-    <div class="row">
-        <div class="columns large-12 criteria-info">
-            <i class="criteria-format fi-{{ criteria.icon }}"></i>
-            <h5 class="criteria-name">{{ criteria.name }}</h5>
-            {% if show_parameters %}
-                <div class="row">
-                    <div class="columns large-12 criteria-description">
-                        {% if show_description %}
-                            {{ criteria.description|paragraphs|safe }}
-                        {% endif %}
+    <div class="row collapse">
+
+        {% if show_icon %}
+            <div class="columns large-1 medium-2 small-3 text-center">
+                <i class="criteria-format fi-{{ criteria.icon }}"></i>
+            </div>
+        {% endif %}
+
+        <div class="columns {% if show_icon %}large-11{% else %}large-12{% endif %}">
+
+            {# Contents #}
+
+            <div class="row collapse">
+                <div class="columns {% if show_description %}large-5{% else %}large-12{% endif %} criteria-info">
+                    <h4>{{ criteria.name }}</h4>
+                    {% if show_parameters %}
                         {% include "item_criteria_parameters.html" with show_paragraphs=True %}
+                    {% endif %}
+                </div>
+                {% if show_description %}
+                    <div class="columns large-7">
+                        {{ criteria.description|paragraphs|safe }}
                     </div>
-                </div>
-            {% endif %}
-        </div>
-    </div>
+                {% endif %}
+            </div>
 
-    {% if show_actions or show_users %}
-        <div class="row top-1em">
+            {% if show_actions or show_users %}
+                <div class="row top-1em">
 
-            {# Actions #}
+                    {# Actions #}
 
-            {% if show_actions %}
-                <div class="columns large-3">
-                    {% if user|criteria_update:criteria %}
-                        <a href="{% url "criteria_update" criteria.id %}" class="action-button"><i class="fi-pencil"></i>&nbsp;{% trans "Edit" %}</a>&nbsp;
+                    {% if show_actions %}
+                        <div class="columns large-3">
+                            {% if user|criteria_update:criteria %}
+                                <a href="{% url "criteria_update" criteria.id %}" class="action-button"><i class="fi-pencil"></i>&nbsp;{% trans "Edit" %}</a>&nbsp;
+                            {% endif %}
+                            {% if user|criteria_delete:criteria %}
+                                <a href="{% url "criteria_delete" criteria.id %}" class="action-button delete"><i class="fi-x"></i>&nbsp;{% trans "Delete" %}</a>&nbsp;
+                            {% endif %}
+                        </div>
                     {% endif %}
-                    {% if user|criteria_delete:criteria %}
-                        <a href="{% url "criteria_delete" criteria.id %}" class="action-button delete"><i class="fi-x"></i>&nbsp;{% trans "Delete" %}</a>&nbsp;
-                    {% endif %}
-                </div>
-            {% endif %}
 
-            {# Users #}
+                    {# Users #}
 
-            {% if show_users %}
-                <div class="columns large-6">
-                    {% if criteria.coauthor.all %}
-                        <h6 class="subheader text-right">{% trans "Criteria coauthors" %}</h6>
-                        <div class="row">
-                            {% for user in criteria.coauthor.all %}
-                                <div class="columns large-4 right">
-                                    {% include "item_user.html" with class="right" user=user show_links=False show_date=False show_badges=True %}
+                    {% if show_users %}
+                        <div class="columns large-6">
+                            {% if criteria.coauthor.all %}
+                                <h6 class="subheader text-right">{% trans "Criteria coauthors" %}</h6>
+                                <div class="row">
+                                    {% for user in criteria.coauthor.all %}
+                                        <div class="columns large-4 right">
+                                            {% include "item_user.html" with class="right" user=user show_links=False show_date=False show_badges=True %}
+                                        </div>
+                                        {% if forloop.counter|divisibleby:"3" and not forloop.last %}<div class="row"></div>{% endif %}
+                                    {% endfor %}
                                 </div>
-                                {% if forloop.counter|divisibleby:"3" and not forloop.last %}<div class="row"></div>{% endif %}
-                            {% endfor %}
+                            {% endif %}
                         </div>
-                    {% endif %}
-                </div>
-                <div class="columns large-3">
-                    <h6 class="subheader">{% trans "Criteria author" %}</h6>
-                    <div class="row">
-                        <div class="large-12">
-                            {% include "item_user.html" with class="left" user=criteria.author show_links=False show_date=False show_badges=True %}
-                        </div>
-                    </div>
-                </div>
-            {% endif %}
-        </div>
-    {% endif %}
-
-    {% if show_comments %}
-
-        {# Comments #}
-
-        <div class="row top-1em">
-            <div class="columns large-12">
-                <div class="comments comments-criteria" id="comments-criteria-{{ criteria.id }}">
-                    {% for comment in criteria.comments %}
-                        {% if forloop.counter > 3 %}
-                            {% include "item_comment.html" with hidden=True %}
-                        {% else %}
-                            {% include "item_comment.html" %}
-                        {% endif %}
-                    {% endfor %}
-                    {% if criteria.comments.count > 3 %}
-                        <div class="row collapse comment">
-                            <div class="columns large-12">
-                                <div class="comment-content top-1em">
-                                    <a href="javascript:void(0)" class="display-more action-button"><i class="fi-arrow-down"></i>&nbsp;{% blocktrans with count=criteria.comments.count|add:"-3" %}Display the other <b>{{ count }}</b> comments.{% endblocktrans %}</a>
+                        <div class="columns large-3">
+                            <h6 class="subheader">{% trans "Criteria author" %}</h6>
+                            <div class="row">
+                                <div class="large-12">
+                                    {% include "item_user.html" with class="left" user=criteria.author show_links=False show_date=False show_badges=True %}
                                 </div>
                             </div>
                         </div>
                     {% endif %}
                 </div>
-            </div>
-        </div>
+            {% endif %}
 
-        {% if user|problem_comment:idea.problem %}
+            {# Comments #}
 
-            {# Comment form #}
+            {% if show_comments %}
 
-            <div class="row top-1em">
-                <div class="columns large-12">
+                <div class="row top-1em">
+                    <div class="columns large-12">
+                        <div class="comments comments-criteria" id="comments-criteria-{{ criteria.id }}">
+                            {% for comment in criteria.comments %}
+                                {% if forloop.counter > 3 %}
+                                    {% include "item_comment.html" with hidden=True %}
+                                {% else %}
+                                    {% include "item_comment.html" %}
+                                {% endif %}
+                            {% endfor %}
+                            {% if criteria.comments.count > 3 %}
+                                <div class="row collapse comment">
+                                    <div class="columns large-12">
+                                        <div class="comment-content top-1em">
+                                            <a href="javascript:void(0)" class="display-more action-button"><i class="fi-arrow-down"></i>&nbsp;{% blocktrans with count=criteria.comments.count|add:"-3" %}Display the other <b>{{ count }}</b> comments.{% endblocktrans %}</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                {% if user|problem_comment:criteria.problem %}
+
+                    {# Comment form #}
+
                     <div class="comment-form hide" id="comment-form-criteria-{{ criteria.id }}"></div>
-                </div>
-            </div>
 
-            {# Comment button #}
+                    {# Comment button #}
 
-            <div class="row top-1em bottom-1em">
-                <div class="columns large-12">
-                    <a href="javascript:void(0)" class="action-button comment-button" data-criteria="{{ criteria.id }}"><i class="fi-comments"></i>&nbsp;{% trans "Comment" context "verb" %}</a>
-                </div>
-            </div>
+                    <div class="row top-1em">
+                        <div class="columns large-12">
+                            <a href="javascript:void(0)" class="action-button comment-button" data-criteria="{{ criteria.id }}"><i class="fi-comments"></i>&nbsp;{% trans "Comment" context "verb" %}</a>
+                        </div>
+                    </div>
 
-        {% endif %}
+                {% endif %}
 
-    {% endif %}
+            {% endif %}
 
+        </div>
+    </div>
 </div>

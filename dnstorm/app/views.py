@@ -71,7 +71,7 @@ class DeleteMixin(object):
         return obj
 
     def get_success_url(self):
-        messages.warning(self.request, _('The %s was deleted successfully' % self.object._meta.verbose_name))
+        messages.success(self.request, _('The %s was deleted successfully' % self.object._meta.verbose_name))
         obj = self.object.problem if hasattr(self.object, 'problem') else self.object
         return reverse('problem_tab_%s' % self.object.__class__.__name__.lower(), kwargs={'pk': obj.id, 'slug': obj.slug})
 
@@ -662,9 +662,8 @@ class CommentView(RedirectView):
     permanent = True
 
     def get_redirect_url(self, *args, **kwargs):
-        comment = get_object_or_404(Comment, id=kwargs['pk'])
-        problem = comment.problem if comment.problem else comment.idea.problem
-        return reverse('problem', kwargs={'pk': problem.id, 'slug':problem.slug}) + '#comment-' + str(comment.id)
+        comment = get_object_or_404(models.Comment, id=kwargs['pk'])
+        return comment.get_absolute_url()
 
 #
 # }}} Users {{{
@@ -989,7 +988,7 @@ class ActivityView(LoginRequiredMixin, TemplateView):
             activities = Action.objects.public(action_object_content_type=_content_type)
             context['tabs'] = self.get_tabs()
         elif self.url_name == 'activity_problem':
-            self.title = _('Problem activity: %s' % self.problem.title)
+            self.title = self.problem.title
             activities = Action.objects.target(self.problem)
             context['tabs'] = self.get_problem_tabs()
             context['problem'] = self.problem
@@ -998,8 +997,8 @@ class ActivityView(LoginRequiredMixin, TemplateView):
             activities = Action.objects.public(action_object_content_type=_content_type, target_object_id=self.problem.id)
             context['tabs'] = self.get_problem_tabs()
             context['problem'] = self.problem
-        activities = Paginator(activities, 25)
-        context['activities'] = activities.page(self.request.GET.get('page', 1))
+        context['activities'] = Paginator(activities, 25).page(self.request.GET.get('page', 1))
+        context['activity_count'] = activities.count()
 
         context['info'] = self.get_info()
         context['site_title'] = '%s | %s' % (_('Activity'), utils.get_option('site_title'))
@@ -1184,6 +1183,9 @@ class ProblemMixin(SingleObjectTemplateResponseMixin):
             }]
         }
 
+    def get_title(self):
+        return self.title
+
     def get_info(self):
         """
         Information for the title bar.
@@ -1191,7 +1193,7 @@ class ProblemMixin(SingleObjectTemplateResponseMixin):
         return {
             'icon': getattr(self, 'icon', 'info'),
             'icon_url': reverse('problem', kwargs={'pk': self.problem.id, 'slug': self.problem.slug}),
-            'title': self.title,
+            'title': self.get_title(),
             'title_url': self.problem.get_absolute_url(),
             'show': perms.problem(self.request.user, 'view', self.problem),
             'buttons': [{
@@ -1239,6 +1241,9 @@ class ProblemUpdateView(ProblemMixin, UpdateView):
     model = models.Problem
     permission = 'update'
 
+    def get_title(self):
+        return self.object.title
+
     def form_valid(self, form):
         """
         Save the object, clear the criteria and add the submitted ones in
@@ -1282,6 +1287,9 @@ class ProblemCollaboratorsView(ProblemMixin, FormView):
     model = models.Problem
     permission = 'manage'
 
+    def get_title(self):
+        return self.object.title
+
     def get_object(self):
         if not hasattr(self, '_object'):
             self._object = get_object_or_404(models.Problem, id=self.kwargs['pk'])
@@ -1317,6 +1325,9 @@ class ProblemView(ProblemMixin, DetailView):
     template_name = '_single_problem.html'
     model = models.Problem
     tabs = True
+
+    def get_title(self):
+        return self.object.title
 
     def dispatch(self, *args, **kwargs):
         self.object = self.get_object()
@@ -1383,7 +1394,7 @@ class ProblemDeleteView(DeleteMixin, DeleteView):
     model = models.Problem
 
     def get_success_url(self, *args, **kwargs):
-        messages.warning(self.request, _('The problem was deleted.'))
+        messages.success(self.request, _('The problem was deleted.'))
         return reverse('home')
 
 
@@ -1416,6 +1427,9 @@ class CriteriaUpdateView(ProblemMixin, UpdateView):
     model = models.Criteria
     permission = 'update'
     icon = 'target-two'
+
+    def get_title(self):
+        return self.object.problem.title
 
     def get_object(self):
         if not hasattr(self, '_object'):
@@ -1452,16 +1466,6 @@ class CriteriaDeleteView(DeleteMixin, DeleteView):
 # }}} Idea {{{
 #
 
-class IdeaView(RedirectView):
-    permanent = True
-
-    def get_redirect_url(self, *args, **kwargs):
-        """
-        Creates a draft problem for the user to start edition.
-        """
-        self.object = get_object_or_404(models.Idea, id=kwargs['pk'])
-        return reverse('problem_ideas', kwargs={'pk':self.object.problem.id})
-
 class IdeaCreateView(RedirectView):
     permanent = False
 
@@ -1486,6 +1490,9 @@ class IdeaUpdateView(ProblemMixin, UpdateView):
     model = models.Idea
     permission = 'update'
     icon = 'lightbulb'
+
+    def get_title(self):
+        return self.object.problem.title
 
     def form_valid(self, form, *args, **kwargs):
         """

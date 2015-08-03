@@ -1,64 +1,64 @@
 {% load i18n %}
 {% if criteria.min and criteria.max %}
     {% if show_paragraphs %}<p>{% endif %}
-    {% if show_icons %}<span><i class="fi-filter"></i>{% endif %}
+    <span><i class="fi-filter"></i>
     {% blocktrans with min=criteria.min max=criteria.max %}Values from {{ min }} to {{ max }}.{% endblocktrans %}
-    {% if show_icons %}</span>{% endif %}
+    </span>
     {% if show_paragraphs %}</p>{% endif %}
 {% endif %}
 {% if criteria.min and not criteria.max %}
     {% if show_paragraphs %}<p>{% endif %}
-    {% if show_icons %}<span><i class="fi-filter"></i>{% endif %}
+    <span><i class="fi-filter"></i>
     {% blocktrans with min=criteria.min max=criteria.max %}Values lower than {{ min }}.{% endblocktrans %}
-    {% if show_icons %}</span>{% endif %}
+    </span>
     {% if show_paragraphs %}</p>{% endif %}
 {% endif %}
 {% if not criteria.min and criteria.max %}
     {% if show_paragraphs %}<p>{% endif %}
-    {% if show_icons %}<span><i class="fi-filter"></i>{% endif %}
+    <span><i class="fi-filter"></i>
     {% blocktrans with min=criteria.min max=criteria.max %}Values greater than {{ max }}.{% endblocktrans %}
-    {% if show_icons %}</span>{% endif %}
+    </span>
     {% if show_paragraphs %}</p>{% endif %}
 {% endif %}
 
 {% if criteria.order == "asc" %}
     {% if show_paragraphs %}<p>{% endif %}
-    {% if show_icons %}<span><i class="fi-arrow-up"></i>{% endif %}
+    <span><i class="fi-arrow-up"></i>
     {% blocktrans with order=criteria.order %}The greater, the better.{% endblocktrans %}
-    {% if show_icons %}</span>{% endif %}
+    </span>
     {% if show_paragraphs %}</p>{% endif %}
 {% else %}
     {% if show_paragraphs %}<p>{% endif %}
-    {% if show_icons %}<span><i class="fi-arrow-down"></i>{% endif %}
+    <span><i class="fi-arrow-down"></i>
     {% blocktrans with order=criteria.order %}The lower, the better.{% endblocktrans %}
-    {% if show_icons %}</span>{% endif %}
+    </span>
     {% if show_paragraphs %}</p>{% endif %}
 {% endif %}
 
 {% if criteria.weight %}
     {% if show_paragraphs %}<p>{% endif %}
-    {% if show_icons %}<span><i class="fi-download"></i>{% endif %}
+    <span><i class="fi-download"></i>
     {% blocktrans with weight=criteria.weight %}Weight {{ weight }}.{% endblocktrans %}
-    {% if show_icons %}</span>{% endif %}
+    </span>
     {% if show_paragraphs %}</p>{% endif %}
 {% endif %}
 
 {% if criteria.result == "sum" %}
     {% if show_paragraphs %}<p>{% endif %}
-    {% if show_icons %}<span><i class="fi-plus"></i>{% endif %}
+    <span><i class="fi-plus"></i>
     {% trans "Results the sum of values." %}
-    {% if show_icons %}</span>{% endif %}
+    </span>
     {% if show_paragraphs %}</p>{% endif %}
 {% else %} {% if criteria.result == "average" %}
     {% if show_paragraphs %}<p>{% endif %}
-    {% if show_icons %}<span><i class="fi-list"></i>{% endif %}
+    <span><i class="fi-list"></i>
     {% trans "Results the average value of ideas." %}
-    {% if show_icons %}</span>{% endif %}
+    </span>
     {% if show_paragraphs %}</p>{% endif %}
 {% else %} {% if criteria.result == "absolute" %}
     {% if show_paragraphs %}<p>{% endif %}
-    {% if show_icons %}<span><i class="fi-target"></i>{% endif %}
+    <span><i class="fi-target"></i>
     {% trans "Results the absolute value of ideas." %}
-    {% if show_icons %}</span>{% endif %}
+    </span>
     {% if show_paragraphs %}</p>{% endif %}
 {% endif %} {% endif %} {% endif %}

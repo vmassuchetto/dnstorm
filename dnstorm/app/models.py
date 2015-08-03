@@ -147,9 +147,7 @@ class Problem(models.Model):
 
     def fill_data(self, user=False):
         self.criteria_results = list()
-        # Data organization
         self.comments = Comment.objects.filter(problem=self).order_by('created')
-        # Permissions
         for c in self.criteria_set.all():
             alternatives = list()
             for a in self.alternative_set.all():
@@ -211,7 +209,10 @@ class Criteria(models.Model):
         return _('criteria')
 
     def get_absolute_url(self, *args, **kwargs):
-        return reverse('criteria_update', kwargs={'pk': self.id })
+        return reverse('problem_criterion', kwargs={
+            'pk': self.problem.id,
+            'slug': self.problem.slug,
+            'criteria': self.id })
 
     def problem_count(self):
         return Problem.objects.filter(criteria=self).count()
@@ -227,9 +228,9 @@ class Criteria(models.Model):
         return icons[self.fmt]
 
     def tooltip(self):
-        return '<p class="description">%s</p>%s' % (self.description,
-            re.sub('\n', '', re.sub(' {2,}', '', render_to_string('item_criteria_parameters.html',
-                {'criteria': self, 'show_paragraphs': True, 'show_icons': True}))))
+        return re.sub('\n', '', re.sub(' {2,}', '',
+            render_to_string('item_criteria_parameters.html',
+            {'criteria': self, 'show_paragraphs': True, 'show_icons': True})))
 
     def get_data(self, user=False):
         if not hasattr(self, '_data'):
@@ -261,7 +262,10 @@ class Idea(models.Model):
         return _('idea')
 
     def get_absolute_url(self, *args, **kwargs):
-        return reverse('idea', kwargs={'pk': self.id})
+        return reverse('problem_idea', kwargs={
+            'pk': self.problem.id,
+            'slug': self.problem.slug,
+            'idea': self.id })
 
     def vote_count(self):
         w = Vote.objects.filter(idea=self).count()
@@ -293,7 +297,7 @@ class Idea(models.Model):
         for c in self.problem.criteria_set.all():
             ic = get_object_or_none(IdeaCriteria, idea=self, criteria=c)
             c.value = ic.get_value() if ic else ''
-            d = getattr(ic, 'description', None)
+            d = getattr(ic, 'description', '')
             c.user_description = d
             c.get_data()
             self.criteria.append(c)
@@ -352,6 +356,12 @@ class Alternative(models.Model):
     def type(self):
         return _('alternative')
 
+    def get_absolute_url(self, *args, **kwargs):
+        return reverse('problem_alternative', kwargs={
+            'pk': self.problem.id,
+            'slug': self.problem.slug,
+            'alternative': self.id })
+
     def vote_count(self):
         w = Vote.objects.filter(alternative=self).count()
         return w if w else 0
@@ -367,8 +377,9 @@ class Alternative(models.Model):
         """
         self.comments = Comment.objects.filter(alternative=self).order_by('created')
         self.total_ideas = self.idea.all().count()
+        # Votes
         self.votes = self.vote_count()
-        if user.is_authenticated():
+        if user and user.is_authenticated():
             vote = get_object_or_none(Vote, alternative=self, author=user)
         else:
             vote = False
@@ -377,27 +388,38 @@ class Alternative(models.Model):
         self.vote_average = Vote.objects.filter(alternative=self).aggregate(avg=Avg('value'))['avg']
         self.vote_average = '%2.d%%' % self.vote_average if self.vote_average else '0%'
         self.vote_objects = Vote.objects.filter(alternative=self).order_by('-value')
+        # Criteria
         self.results = dict()
         for c in self.problem.criteria_set.order_by('name').all():
             c.get_data()
             self.fmt = c.fmt
+            c.ideas = list()
             c.result_value = 0
             self.results[c.id] = c
             if self.idea.count() == 0:
                 continue
             for i in self.idea.all():
                 ic = get_object_or_none(IdeaCriteria, idea=i, criteria=c)
-                value = ic.get_value() if ic else 0
+                i.value = ic.get_value() if ic else 0
+                c.ideas.append(i)
                 weight = getattr(c, 'weight')
                 weight = weight if weight else 1
+                self.results[c.id].criteria_name = c.name
+
                 # Just sum for sums or averages
                 if c.result == 'sum' or c.result == 'average':
-                    self.results[c.id].result_value += value * weight
+                    self.results[c.id].result_value += i.value * weight
+
                 # Absolute results depend on value ordering
                 elif c.result == 'absolute' and c.order == 'asc':
-                    self.results[c.id].result_value = value if value > self.results[c.id] else self.results[c.id]
+                    self.results[c.id].result_value = i.value \
+                        if i.value > self.results[c.id].result_value \
+                        else self.results[c.id].result_value
                 elif c.result == 'absolute' and c.order == 'desc':
-                    self.results[c.id].result_value = value if value < self.results[c.id] else self.results[c.id]
+                    self.results[c.id].result_value = i.value \
+                        if i.value < self.results[c.id].result_value \
+                        else self.results[c.id].result_value
+
             # Finish the average
             if c.result == 'average':
                 self.results[c.id].result_value = self.results[c.id].result_value / self.idea.count()

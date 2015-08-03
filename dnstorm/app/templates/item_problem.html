@@ -70,7 +70,6 @@
     <div class="row">
         <div class="columns large-12 comments" id="comments-problem-{{ problem.id }}">
             {% if comments %}
-                <h5 class="top-1em">{% trans "Comments" %}</h5>
                 {% for comment in comments %}
                     {% include "item_comment.html" %}
                 {% endfor %}
@@ -82,13 +81,11 @@
 
         {# Comment form #}
 
-        <div class="row">
-            <div class="columns large-12 comment-form hide" id="comment-form-problem-{{ problem.id }}" data-problem="{{ problem.id }}"></div>
-        </div>
+        <div class="comment-form hide" id="comment-form-problem-{{ problem.id }}" data-problem="{{ problem.id }}"></div>
 
         {# Comment button #}
 
-        <div class="row top-1em bottom-1em">
+        <div class="row top-1em">
             <div class="columns large-12">
                 <a class="action-button comment-button" data-problem="{{ problem.id }}" href="javascript:void(0);"><i class="fi-comments"></i>&nbsp;{% trans "Comment" context "verb" %}</a>
             </div>
