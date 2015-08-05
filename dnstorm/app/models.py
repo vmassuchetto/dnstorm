@@ -148,7 +148,7 @@ class Problem(models.Model):
     def fill_data(self, user=False):
         self.criteria_results = list()
         self.comments = Comment.objects.filter(problem=self).order_by('created')
-        for c in self.criteria_set.all().order_by('name'):
+        for c in self.criteria_set.order_by('name').all():
             alternatives = list()
             for a in self.alternative_set.all():
                 a.get_data(user)
@@ -293,7 +293,7 @@ class Idea(models.Model):
         # Criterias
 
         self.criteria = list()
-        for c in self.problem.criteria_set.all():
+        for c in self.problem.criteria_set.order_by('name').all():
             ic = get_object_or_none(IdeaCriteria, idea=self, criteria=c)
             c.value = ic.get_value() if ic else ''
             d = getattr(ic, 'description', '')

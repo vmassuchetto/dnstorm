@@ -1,4 +1,4 @@
-{% load i18n avatar_tags user_tags %}
+{% load i18n avatar_tags order_by user_tags %}
 
 <a name="alternative-{{ alternative.id }}" class="anchor-top"></a>
 <div class="alternative-row alternative-{{ alternative.id }}{% if mode == "result" %} alternative-result{% endif %}" data-id="{{ alternative.id }}">
@@ -41,7 +41,7 @@
 
             {# Criteria #}
 
-            {% for c in alternative.results.values %}
+            {% for c in alternative.results.values|order_by:"name" %}
 
                 <div class="row collapse">
                     <div class="columns large-12 alternative-results">
