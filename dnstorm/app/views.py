@@ -1364,7 +1364,7 @@ class ProblemView(ProblemMixin, DetailView):
             c.problem_count = models.Problem.objects.filter(criteria=c).count()
             c.get_data(self.request.user)
             context['criteria'].append(c)
-        context['criteria'] = sorted(context['criteria'], key=lambda x: (x.weight))
+        context['criteria'] = sorted(context['criteria'], key=lambda x: (x.name))
 
         # Ideas drafts
         if self.request.user.is_authenticated():

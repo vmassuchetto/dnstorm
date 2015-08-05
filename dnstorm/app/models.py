@@ -148,7 +148,7 @@ class Problem(models.Model):
     def fill_data(self, user=False):
         self.criteria_results = list()
         self.comments = Comment.objects.filter(problem=self).order_by('created')
-        for c in self.criteria_set.all():
+        for c in self.criteria_set.all().order_by('name'):
             alternatives = list()
             for a in self.alternative_set.all():
                 a.get_data(user)
