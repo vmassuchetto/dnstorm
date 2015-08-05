@@ -154,8 +154,7 @@ class Problem(models.Model):
                 a.get_data(user)
                 a.value = a.results[c.id].result_value
                 alternatives.append(a)
-            reverse = True if c.order == 'asc' else False
-            alternatives.sort(key=lambda x:x.value, reverse=reverse)
+            alternatives.sort(key=lambda x:x.name, reverse=True)
             self.criteria_results.append({'criteria': c, 'alternatives': alternatives})
 
     def send_invitation(self, request):

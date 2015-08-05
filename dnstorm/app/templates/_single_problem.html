@@ -1,5 +1,5 @@
 {% extends "_base.html" %}
-{% load crispy_forms_tags i18n captureas user_tags %}
+{% load crispy_forms_tags i18n captureas order_by user_tags %}
 
 {% block modals %}
     <div class="hide" id="comment-form">{% crispy comment_form %}</div>
@@ -119,7 +119,7 @@
                 {% if problem.criteria_results %}
                     <h3>{% trans "Alternative preferences" %}</h3>
                     <hr/>
-                    {% for alternative in alternatives %}
+                    {% for alternative in alternatives|order_by:"name" %}
                         <div class="row">
                             <div class="columns large-3"><h4>{{ alternative.name }}</h4></div>
                             <div class="columns large-2">
