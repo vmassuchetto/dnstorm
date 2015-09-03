@@ -72,27 +72,33 @@ def idea(user, mode, obj):
         return True
     elif mode == 'create': # obj is a problem
         return (
+            user and \
             user.is_authenticated() and \
             obj.published and \
             obj.criteria_set.count() > 0
         ) and (
+            user and \
             (obj.open) or \
             (user == obj.author) or \
             (user in obj.collaborator.all())
         )
     elif mode == 'vote':
         return (
+            user and \
             user.is_authenticated() and \
             obj.published and \
             user != obj.author \
         ) and (
+            user and \
             obj.problem.open or \
             user in obj.problem.collaborator.all()
         )
     elif mode == 'update':
         return (
+            user and \
             user.is_authenticated()
         ) and (
+            user and \
             (obj.problem.published and obj.problem.open) or \
             (user == obj.author) or \
             (user == obj.problem.author)
@@ -109,19 +115,23 @@ def alternative(user, mode, obj):
         return True
     elif mode == 'create': # obj is a problem
         return (
-            user.is_authenticated() \
-            and obj.published \
-            and obj.idea_set.count() > 0
+            user and \
+            user.is_authenticated() and \
+            obj.published and \
+            obj.idea_set.count() > 0
         ) and (
+            user and \
             (obj.open) or \
             (user == obj.author) or \
             (user in obj.collaborator.all())
         )
     elif mode == 'update':
         return (
-            user.is_authenticated() \
-            and obj.problem.published \
+            user and \
+            user.is_authenticated() and \
+            obj.problem.published
         ) and (
+            user and \
             (obj.problem.open and obj.problem.public) or \
             (obj.problem.open and user in obj.problem.collaborator.all()) or \
             (user == obj.author) or \
