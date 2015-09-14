@@ -267,6 +267,20 @@ form {
     .button-holder {
         margin-top: emCalc(10px);
     }
+    .hint {
+        background-color: $light-grey;
+        font-size: emCalc(13px);
+        border-left: 1px solid $grey;
+        border-bottom: 1px solid $grey;
+        border-right: 1px solid $grey;
+        padding: 0.4em 0.6em;
+        margin-bottom: 1em;
+    }
+    .holder {
+        p, input, select {
+            margin: 0;
+        }
+    }
 }
 
 form.auth-form {
